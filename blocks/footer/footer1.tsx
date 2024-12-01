@@ -3,51 +3,55 @@ import Link from "next/link";
 export const Footer1 = () => {
   const navigationItems = [
     {
-      title: "Home",
+      title: "",
       href: "/",
       description: "",
     },
     {
-      title: "Product",
-      description: "Managing a small business today is already tough.",
+      title: "",
+      description: "",
       items: [
         {
-          title: "Reports",
+          title: "",
           href: "/reports",
         },
         {
-          title: "Statistics",
+          title: "",
           href: "/statistics",
         },
         {
-          title: "Dashboards",
+          title: "",
           href: "/dashboards",
         },
         {
-          title: "Recordings",
+          title: "",
           href: "/recordings",
         },
       ],
     },
     {
-      title: "Company",
-      description: "Managing a small business today is already tough.",
+      title: "Firma",
+      description: "Wytrzymałe, odporno posadzki żywiczne",
       items: [
         {
-          title: "About us",
-          href: "/about",
+          title: "Stronga główna",
+          href: "/",
         },
         {
-          title: "Fundraising",
-          href: "/fundraising",
+          title: "Balkony i tarasy",
+          href: "/posadzki-zywiczne-na-balkony",
         },
         {
-          title: "Investors",
-          href: "/investors",
+          title: "Garaże",
+          href: "/garaze",
         },
         {
-          title: "Contact us",
-          href: "/contact",
+          title: "Pomieszczenia czyste",
+          href: "/pomieszczenia-czyste",
+        },
+        {
+          title: "Kuchnia i Salon",
+          href: "/kuchnia-salon",
         },
       ],
     },
@@ -60,21 +64,20 @@ export const Footer1 = () => {
           <div className="flex gap-8 flex-col items-start">
             <div className="flex gap-2 flex-col">
               <h2 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular text-left">
-                TWBlocks™
+                Posadzki Żywiczne
               </h2>
               <p className="text-lg max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
-                Managing a small business today is already tough.
+                Wytrzymałe, odporno posadzki żywiczne
               </p>
             </div>
             <div className="flex gap-20 flex-row">
               <div className="flex flex-col text-sm max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
-                <p>1 Tailwind Way</p>
-                <p>Menlo Park</p>
-                <p>CA 94025</p>
+                <p>Sędziszów Młp</p>
+                <p>Warszawska 72</p>
               </div>
               <div className="flex flex-col text-sm max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
-                <Link href="/">Terms of service</Link>
-                <Link href="/">Privacy Policy</Link>
+                {/* <Link href="/">Terms of service</Link>
+                <Link href="/">Privacy Policy</Link> */}
               </div>
             </div>
           </div>

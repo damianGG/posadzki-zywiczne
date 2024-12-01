@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarIcon, Check, MoveRight, PhoneCall } from "lucide-react";
+import { CalendarIcon, Check, MailIcon, MoveRight, PhoneCall } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -21,20 +21,26 @@ export const Contact1 = () => {
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-4">
               <div>
-                <Badge>Contact</Badge>
+                <Badge>Kontakt</Badge>
               </div>
               <div className="flex flex-col gap-2">
                 <h4 className="text-3xl md:text-5xl tracking-tighter max-w-xl text-left font-regular">
-                  Something new
+                  Skontaktuj się z nami
                 </h4>
                 <p className="text-lg leading-relaxed tracking-tight text-muted-foreground max-w-sm text-left">
-                  Managing a small business today is already tough. Avoid
-                  further complications by ditching outdated, tedious trade
-                  methods.
+                  Zadzwoń do nas zapytaj o co chcesz, umów się na spotkanie kiedy Ci pasuje, jesteśmy do Twojej dyspozycji.
                 </p>
+                <span className="flex items-center mt-8">
+                  <MailIcon className="w-4 h-4 mr-3 " /><a href="mailto:biuro@posadzkizywiczne.com">biuro@posadzkizywiczne.com</a>
+
+                </span>
+                <span className="flex items-center">
+                  <PhoneCall className="w-4 h-4 mr-3 " />  <a href="tel:+48507384619">+48 507 384 619</a>
+
+                </span>
               </div>
             </div>
-            <div className="flex flex-row gap-6 items-start text-left">
+            {/* <div className="flex flex-row gap-6 items-start text-left">
                <Check className="w-4 h-4 mt-2 text-primary" />
               <div className="flex flex-col gap-1">
                 <p>Easy to use</p>
@@ -60,10 +66,10 @@ export const Contact1 = () => {
                   We&apos;ve made it easy to use and understand.
                 </p>
               </div>
-            </div>
+            </div> */}
           </div>
 
-          <div className="justify-center flex items-center">
+          {/* <div className="justify-center flex items-center">
             <div className="rounded-md max-w-sm flex flex-col border p-8 gap-4">
               <p>Book a meeting</p>
               <div className="grid w-full max-w-sm items-center gap-1">
@@ -108,7 +114,7 @@ export const Contact1 = () => {
                 Book the meeting <MoveRight className="w-4 h-4" />
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
