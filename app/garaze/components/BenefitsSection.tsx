@@ -1,3 +1,5 @@
+
+
 import Image from "next/image"
 import { Sun, Sparkles, Palette, Shield, Timer, ThumbsUp } from 'lucide-react'
 

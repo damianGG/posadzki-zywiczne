@@ -121,9 +121,9 @@ export const Header2 = () => {
                                     {item.href ? (
                                         <>
                                             <Link href={item.href} passHref>
-                                                <NavigationMenuLink>
-                                                    <Button variant="ghost">{item.title}</Button>
-                                                </NavigationMenuLink>
+
+                                                <Button variant="ghost">{item.title}</Button>
+
 
                                             </Link>
                                         </>
