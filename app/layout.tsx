@@ -9,6 +9,8 @@ import { Header2 } from "@/blocks/header/header2";
 import { Header3 } from "@/blocks/header/header3";
 import { Footer1 } from "@/blocks/footer/footer1";
 import { NextSeo } from 'next-seo';
+import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -63,6 +65,8 @@ export default function RootLayout({
           {/* <ModeToggle /> */}
 
           {children}
+          <SpeedInsights />
+          <Analytics />
           <Footer1 />
         </ThemeProvider>
       </body>
