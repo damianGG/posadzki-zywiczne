@@ -52,23 +52,23 @@ export default function RootLayout({
     <html lang="pl">
 
       <body className={inter.className}>
-        <ThemeProvider
+        {/* <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-        >
+        > */}
 
 
-          <Header2 />
+        <Header2 />
 
-          {/* <ModeToggle /> */}
+        {/* <ModeToggle /> */}
 
-          {children}
-          <SpeedInsights />
-          <Analytics />
-          <Footer1 />
-        </ThemeProvider>
+        {children}
+        <SpeedInsights />
+        <Analytics />
+        <Footer1 />
+        {/* </ThemeProvider> */}
       </body>
     </html>
   );

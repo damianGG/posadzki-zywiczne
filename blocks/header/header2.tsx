@@ -13,6 +13,7 @@ import { Menu, MoveRight, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 interface NavigationSubItem {
     title: string;
@@ -101,8 +102,23 @@ export const Header2 = () => {
         };
     }, [scrolled]);
 
-    const [isOpen, setOpen] = useState(true);
+    const [isOpen, setOpen] = useState(false);
     const [hoveredSubItem, setHoveredSubItem] = useState<NavigationSubItem | null>(null);
+
+    const menuVariants = {
+        open: {
+            opacity: 1,
+            height: "auto",
+            transition: { duration: 0.3 },
+        },
+        closed: {
+            opacity: 0,
+            height: 0,
+            transition: { duration: 0.3 },
+        },
+    };
+
+
     return (
         <header className={`w-full z-40 sticky top-0 left-0 transition-all duration-300 ${scrolled ? 'bg-background/50 backdrop-blur-md' : 'bg-background'
             }`}>
@@ -197,51 +213,35 @@ export const Header2 = () => {
                     </NavigationMenu>
                 </div>
 
-                <div className="flex justify-end w-full gap-4">
+                <div className="flex justify-start lg:justify-end w-full gap-4">
                     {/* <div className="border-r hidden md:inline"></div> */}
                     <Button variant="outline"><Link href="/kontakt">Kontakt</Link></Button>
-                    <Button><Link href="/kontakt">Bezpłatna konsultacja</Link></Button>
+                    <Button className="hidden sm:block"><Link href="/kontakt">Bezpłatna konsultacja</Link></Button>
                 </div>
+                {/* Menu mobilne */}
                 <div className="flex w-12 shrink lg:hidden items-end justify-end">
                     <Button variant="ghost" onClick={() => setOpen(!isOpen)}>
                         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                     </Button>
-                    {isOpen && (
-                        <div className="absolute top-20 border-t flex flex-col w-full right-0 bg-background shadow-lg py-4 container gap-8">
-                            {navigationItems.map((item) => (
-                                <div key={item.title}>
-                                    <div className="flex flex-col gap-2">
-                                        {item.href ? (
-                                            <Link
-                                                href={item.href}
-                                                className="flex justify-between items-center"
-                                                onClick={() => setOpen(false)}
-                                            >
-                                                <span className="text-lg">{item.title}</span>
-                                                <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
-                                            </Link>
-                                        ) : (
-                                            <p className="text-lg">{item.title}</p>
-                                        )}
-                                        {item.items &&
-                                            item.items.map((subItem) => (
-                                                <Link
-                                                    key={subItem.title}
-                                                    href={subItem.href}
-                                                    className="flex justify-between items-center"
-                                                    onClick={() => setOpen(false)}
-                                                >
-                                                    <span className="text-muted-foreground">
-                                                        {subItem.title}
-                                                    </span>
-                                                    <MoveRight className="w-4 h-4 stroke-1" />
-                                                </Link>
-                                            ))}
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                    <motion.div
+                        className="absolute top-20 border-t flex flex-col w-full right-0 bg-background shadow-lg py-4 container gap-8"
+                        initial="closed"
+                        animate={isOpen ? "open" : "closed"}
+                        variants={menuVariants}
+                    >
+                        {navigationItems.map((item) => (
+                            <div key={item.title} className="flex flex-col gap-2">
+                                <Link
+                                    href={item.href ?? "#"}
+                                    className="flex justify-between items-center"
+                                    onClick={() => setOpen(false)}
+                                >
+                                    <span className="text-lg">{item.title}</span>
+                                    <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
+                                </Link>
+                            </div>
+                        ))}
+                    </motion.div>
                 </div>
             </div>
         </header>

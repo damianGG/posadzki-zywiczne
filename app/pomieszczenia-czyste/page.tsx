@@ -9,7 +9,7 @@ import { Feature3 } from "./components/feature3";
 
 import ProblemSolutionSection from "./components/issuse-solution";
 import BenefitsSection from "./components/BenefitsSection";
-import SocialProofSection from "./components/SocialProofSection";
+import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 export const metadata = {
     title: "Posadzki Żywiczne do Pomieszczeń Czystych | Higieniczne i Trwałe",

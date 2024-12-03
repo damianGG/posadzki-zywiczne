@@ -9,7 +9,7 @@ export const CTA2 = () => (
         <div>
           {/* <Badge>Get started</Badge> */}
         </div>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col  gap-2">
           <h3 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular">
             Potrzebujesz więcej infomracji?
           </h3>
@@ -17,7 +17,7 @@ export const CTA2 = () => (
             Jeśli potrzebujesz więcej infomracji zadzwoń lub napisz bezpośrednio do nas, odpowiemy w ciągu 3 godzin.
           </p>
         </div>
-        <div className="flex flex-row gap-4">
+        <div className="flex flex-col lg:flex-row gap-4">
           <Button className="gap-4" variant="outline">
             <a href="tel:+48507384619">+48 507 384 619</a><PhoneCall className="w-4 h-4" />
           </Button>

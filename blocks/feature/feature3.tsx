@@ -55,9 +55,7 @@ const features = [
 export const FeatureList = ({ features }) => (
   <div className="w-full py-20 lg:py-40">
     <div className="container mx-auto">
-      <h2 className="text-xl md:text-3xl lg:text-5xl tracking-tighter font-medium text-left mb-20">
-        Najważniesze zalety
-      </h2>
+      <h2 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular text-left mb-12">Najważniejsze zalety posadzek żywicznych</h2>
       <div className="flex flex-col gap-10">
         {features.map((feature, index) => (
           <div

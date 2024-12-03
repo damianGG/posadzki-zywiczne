@@ -11,6 +11,7 @@ import { Contact1 } from "@/blocks/contact/contact1";
 
 import { Feature3 } from "@/blocks/feature/feature3";
 import { NextSeo } from 'next-seo';
+import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 export default function Home() {
 
@@ -21,11 +22,12 @@ export default function Home() {
       <HeroMainPage />
       <Feature5 />
       <Feature3 />
-      <Feature4 />
+      {/* <Feature4 /> */}
       <FAQ2 />
       <CTA2 />
       {/* <Case2 /> */}
       <Stats2 />
+      <SocialProofSection />
       {/* <Blog1 /> */}
       <Contact1 />
     </>

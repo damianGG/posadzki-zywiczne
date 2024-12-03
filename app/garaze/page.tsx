@@ -8,7 +8,7 @@ import { Contact1 } from "@/blocks/contact/contact1";
 import { Feature3 } from "./components/feature3";
 import ProblemSolutionSection from "./components/issuse-solution";
 import BenefitsSection from "./components/BenefitsSection";
-import SocialProofSection from "./components/SocialProofSection";
+import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 export const metadata = {
     title: "Posadzki Żywiczne do Garaży | Wytrzymałe i Odporne",
@@ -39,13 +39,13 @@ export default function Home() {
             <HeroMainPage />
             <ProblemSolutionSection />
             <BenefitsSection />
-            <SocialProofSection />
             <Feature3 />
             <FAQ2 />
             <CTA2 />
             {/* <Case2 /> */}
             {/* <Stats2 /> */}
             {/* <Blog1 /> */}
+            <SocialProofSection />
             <Feature5 />
             <Contact1 />
         </>

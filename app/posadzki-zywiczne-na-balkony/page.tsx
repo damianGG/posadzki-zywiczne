@@ -11,7 +11,7 @@ import { Feature3 } from "@/blocks/feature/feature3";
 
 import ProblemSolutionSection from "./components/issuse-solution";
 import BenefitsSection from "./components/BenefitsSection";
-import SocialProofSection from "./components/SocialProofSection";
+import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 export const metadata = {
     title: "Posadzki Żywiczne na Balkony | Trwałe i Estetyczne",
@@ -42,7 +42,6 @@ export default function Home() {
             <HeroMainPage />
             <ProblemSolutionSection />
             <BenefitsSection />
-            <SocialProofSection />
             <Feature3 />
             {/* <Feature4 /> */}
             <FAQ2 />
@@ -51,6 +50,7 @@ export default function Home() {
             {/* <Stats2 /> */}
             {/* <Blog1 /> */}
             <Feature5 />
+            <SocialProofSection />
             <Contact1 />
         </>
     );
