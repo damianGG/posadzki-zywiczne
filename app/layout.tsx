@@ -14,6 +14,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
+
   title: "Posadzki Żywiczne na Balkony i Tarasy | Profesjonalne Usługi",
   description:
     "Specjalizujemy się w wykonywaniu posadzek żywicznych na balkony, tarasy i do wnętrz. Gwarancja jakości i trwałości. Skontaktuj się z nami!",
@@ -50,7 +51,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-
+      <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
       <body className={inter.className}>
         {/* <ThemeProvider
           attribute="class"
