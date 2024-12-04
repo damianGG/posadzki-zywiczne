@@ -10,7 +10,9 @@ import ProblemSolutionSection from "./components/issuse-solution";
 import BenefitsSection from "./components/BenefitsSection";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
-export const metadata = {
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
     title: "Posadzki Żywiczne do Garaży | Wytrzymałe i Odporne",
     description:
         "Oferujemy trwałe i odporne posadzki żywiczne do garaży. Wytrzymałość na obciążenia i estetyczny wygląd. Sprawdź ofertę!",

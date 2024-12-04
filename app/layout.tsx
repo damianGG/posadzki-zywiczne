@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -12,8 +12,10 @@ import { NextSeo } from 'next-seo';
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 const inter = Inter({ subsets: ["latin"] });
+import { GoogleAnalytics } from '@next/third-parties/google'
+import type { Metadata } from 'next'
 
-export const metadata = {
+export const metadata: Metadata = {
 
   title: "Posadzki Żywiczne na Balkony i Tarasy | Profesjonalne Usługi",
   description:
@@ -51,8 +53,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
+      <GoogleAnalytics gaId="GTM-5D97JCZ5" />
       <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
       <body className={inter.className}>
+        <GoogleAnalytics gaId="GTM-5D97JCZ5" />
         {/* <ThemeProvider
           attribute="class"
           defaultTheme="system"

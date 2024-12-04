@@ -83,11 +83,13 @@ export default function HeroMainPage() {
                             </p>
                         </div>
                         <div className="flex flex-col md:flex-row gap-3">
-                            <Button size="lg" className="gap-4" variant="outline">
-                                Skontaktuj się z nami <PhoneCall className="w-4 h-4" />
+                            <Button className="gap-4" variant="outline">
+                                <a href="tel:+48507384619">+48 507 384 619</a><PhoneCall className="w-4 h-4" />
                             </Button>
-                            <Button size="lg" className="gap-4">
-                                Zobacz nasze realizacje balkonów<MoveRight className="w-4 h-4" />
+
+                            <Button className="gap-4">
+                                <a href="mailto:biuro@posadzkizywiczne.com">biuro@posadzkizywiczne.com</a>
+                                <MoveRight className="w-4 h-4" />
                             </Button>
                         </div>
                     </div>
