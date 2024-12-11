@@ -17,15 +17,15 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
 
-  title: "Posadzki Żywiczne na Balkony i Tarasy | Profesjonalne Usługi",
+  title: "Posadzki żywiczne | Remonty balkonów i tarasów | Gwarancja",
   description:
-    "Specjalizujemy się w wykonywaniu posadzek żywicznych na balkony, tarasy i do wnętrz. Gwarancja jakości i trwałości. Skontaktuj się z nami!",
+    "Specjalizujemy się w posadzkach żywicznych i remontach balkonów oraz tarasów. Zapewniamy profesjonalne doradztwo i kompleksową realizację. Sprawdź naszą ofertę!",
   keywords:
     "posadzki żywiczne, balkony, tarasy, posadzki dekoracyjne, żywica epoksydowa, Warszawa, Kraków, Rzeszów",
   openGraph: {
-    title: "Posadzki Żywiczne na Balkony i Tarasy | Profesjonalne Usługi",
+    title: "Posadzki żywiczne | Remonty balkonów i tarasów | Gwarancja",
     description:
-      "Specjalizujemy się w wykonywaniu posadzek żywicznych na balkony, tarasy i do wnętrz. Gwarancja jakości i trwałości. Skontaktuj się z nami!",
+      "Specjalizujemy się w posadzkach żywicznych i remontach balkonów oraz tarasów. Zapewniamy profesjonalne doradztwo i kompleksową realizację. Sprawdź naszą ofertę!",
     url: "https://posadzkizywiczne.com",
     images: [
       {
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Posadzki Żywiczne na Balkony i Tarasy | Profesjonalne Usługi",
+    title: "Posadzki żywiczne | Remonty balkonów i tarasów | Gwarancja",
     description:
-      "Specjalizujemy się w wykonywaniu posadzek żywicznych na balkony, tarasy i do wnętrz. Gwarancja jakości i trwałości. Skontaktuj się z nami!",
+      "Specjalizujemy się w posadzkach żywicznych i remontach balkonów oraz tarasów. Zapewniamy profesjonalne doradztwo i kompleksową realizację. Sprawdź naszą ofertę!",
     images: ["https://posadzkizywiczne.com/images/home-banner.jpg"],
   },
 };
@@ -54,9 +54,11 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <GoogleAnalytics gaId="GTM-5D97JCZ5" />
+      <GoogleAnalytics gaId="G-VCXQVYV8TG" />
       <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
       <body className={inter.className}>
         <GoogleAnalytics gaId="GTM-5D97JCZ5" />
+
         {/* <ThemeProvider
           attribute="class"
           defaultTheme="system"
