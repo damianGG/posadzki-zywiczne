@@ -66,24 +66,29 @@ export const Feature5 = () => (
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {featuresData.map((feature, index) => (
-            <div key={index} className="flex flex-col gap-2">
-              <Link href={feature.href}>
-                <Image
-                  src={feature.imageSrc}
-                  width={424}
-                  height={238}
-                  alt={feature.altText}
-                  className="rounded-md aspect-video mb-2"
-                />
+            <Link
+              key={index}
+              href={feature.href}
+              className="flex flex-col gap-2  border border-gray-200 rounded-lg transition-all duration-200 hover:shadow-lg"
+            >
+              <Image
+                src={feature.imageSrc}
+                width={424}
+                height={238}
+                alt={feature.altText}
+                className="rounded-tl-lg rounded-tr-lg aspect-video mb-2"
+              />
+              <div className="p-4">
                 <h3 className="text-xl tracking-tight">{feature.title}</h3>
                 <p className="text-muted-foreground text-base">
                   {feature.description}
                 </p>
-              </Link>
-            </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
     </div>
   </div>
-);
+)
+

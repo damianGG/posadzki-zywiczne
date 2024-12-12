@@ -8,6 +8,9 @@ overrides:
   embla-carousel: 8.1.7
 
 dependencies:
+  '@microsoft/clarity':
+    specifier: ^1.0.0
+    version: 1.0.0
   '@next/third-parties':
     specifier: ^15.0.3
     version: 15.0.3(next@15.0.3)(react@18.3.1)
@@ -452,6 +455,10 @@ packages:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
+
+  /@microsoft/clarity@1.0.0:
+    resolution: {integrity: sha512-2QY6SmXnqRj6dWhNY8NYCN3e53j4zCFebH4wGnNhdGV1mqAsQwql2fT0w8TISxCvwwfVp8idsWLIdrRHOms1PQ==}
+    dev: false
 
   /@next/env@13.5.7:
     resolution: {integrity: sha512-uVuRqoj28Ys/AI/5gVEgRAISd0KWI0HRjOO1CTpNgmX3ZsHb5mdn14Y59yk0IxizXdo7ZjsI2S7qbWnO+GNBcA==}
