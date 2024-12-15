@@ -58,6 +58,26 @@ export default function RootLayout({
       <GoogleAnalytics gaId="G-VCXQVYV8TG" /> */}
       <GoogleTagManager gtmId="G-VCXQVYV8TG" />
       <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
+
+      {/* Google Analytics - gtag.js */}
+      <Script
+        id="google-analytics-script"
+        strategy="afterInteractive"
+        src="https://www.googletagmanager.com/gtag/js?id=G-VCXQVYV8TG"
+      />
+      <Script
+        id="google-analytics-init"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-VCXQVYV8TG');
+          `,
+        }}
+      />
+
       <Script
         id="clarity-script"
         strategy="afterInteractive"
@@ -71,6 +91,8 @@ export default function RootLayout({
           `,
         }}
       />
+
+
       <body className={inter.className}>
         {/* <GoogleAnalytics gaId="GTM-5D97JCZ5" /> */}
 
