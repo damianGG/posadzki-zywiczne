@@ -12,8 +12,9 @@ import { NextSeo } from 'next-seo';
 import { Analytics } from "@vercel/analytics/react"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 const inter = Inter({ subsets: ["latin"] });
-import { GoogleAnalytics } from '@next/third-parties/google'
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import type { Metadata } from 'next'
+import Script from "next/script";
 
 export const metadata: Metadata = {
 
@@ -53,11 +54,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pl">
-      <GoogleAnalytics gaId="GTM-5D97JCZ5" />
-      <GoogleAnalytics gaId="G-VCXQVYV8TG" />
+      {/* <GoogleAnalytics gaId="GTM-5D97JCZ5" />
+      <GoogleAnalytics gaId="G-VCXQVYV8TG" /> */}
+      <GoogleTagManager gtmId="G-VCXQVYV8TG" />
       <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
+      {/* <Script
+        id="clarity-script"
+        strategy="afterInteractive"
+        dangerouslySetInnerHTML={{
+          __html: `
+            (function(c,l,a,r,i,t,y){
+                c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+                t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+                y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+            })(window, document, "clarity", "script", "pcuspvg0dc");
+          `,
+        }}
+      /> */}
       <body className={inter.className}>
-        <GoogleAnalytics gaId="GTM-5D97JCZ5" />
+        {/* <GoogleAnalytics gaId="GTM-5D97JCZ5" /> */}
+
 
         {/* <ThemeProvider
           attribute="class"
