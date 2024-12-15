@@ -58,7 +58,7 @@ export default function RootLayout({
       <GoogleAnalytics gaId="G-VCXQVYV8TG" /> */}
       <GoogleTagManager gtmId="G-VCXQVYV8TG" />
       <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
-      {/* <Script
+      <Script
         id="clarity-script"
         strategy="afterInteractive"
         dangerouslySetInnerHTML={{
@@ -70,7 +70,7 @@ export default function RootLayout({
             })(window, document, "clarity", "script", "pcuspvg0dc");
           `,
         }}
-      /> */}
+      />
       <body className={inter.className}>
         {/* <GoogleAnalytics gaId="GTM-5D97JCZ5" /> */}
 
