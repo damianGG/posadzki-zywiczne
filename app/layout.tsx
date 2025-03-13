@@ -56,7 +56,8 @@ export default function RootLayout({
     <html lang="pl">
       {/* <GoogleAnalytics gaId="GTM-5D97JCZ5" />
       <GoogleAnalytics gaId="G-VCXQVYV8TG" /> */}
-      <GoogleTagManager gtmId="G-VCXQVYV8TG" />
+      {/* <GoogleTagManager gtmId="G-VCXQVYV8TG" /> */}
+      <GoogleTagManager gtmId="GTM-5D97JCZ5" />
       <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
 
       {/* Google Analytics - gtag.js */}
