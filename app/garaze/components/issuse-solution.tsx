@@ -10,6 +10,7 @@ import {
     type CarouselApi,
 } from "@/components/ui/carousel";
 import { useState, useEffect } from "react";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const data = {
     problem: {
@@ -88,14 +89,28 @@ function ImageCarousel({
                 <CarouselContent>
                     {images.map((image, index) => (
                         <CarouselItem key={index}>
-                            <div className="relative aspect-video">
-                                <Image
-                                    src={image.src}
-                                    alt={image.alt}
-                                    fill
-                                    className="rounded-lg object-cover"
-                                />
-                            </div>
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <div className="relative aspect-video cursor-pointer">
+                                        <Image
+                                            src={image.src}
+                                            alt={image.alt}
+                                            fill
+                                            className="rounded-lg object-cover"
+                                        />
+                                    </div>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-3xl">
+                                    <div className="relative w-full h-[80vh]">
+                                        <Image
+                                            src={image.src}
+                                            alt={image.alt}
+                                            fill
+                                            className="object-contain"
+                                        />
+                                    </div>
+                                </DialogContent>
+                            </Dialog>
                         </CarouselItem>
                     ))}
                 </CarouselContent>
