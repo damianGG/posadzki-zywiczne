@@ -1,7 +1,17 @@
 import { MetadataRoute } from 'next';
 
+import { getAllPosts } from '@/lib/posts-json';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://posadzkizywiczne.com';
+
+const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+  const posts = getAllPosts().map(p => ({
+    url: `${base}/blog/${p.slug}`,
+    lastModified: p.updated ?? p.date,
+    changeFrequency: 'monthly' as const,
+    priority: 0.7
+  }));
 
   return [
     {
@@ -40,5 +50,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
+     { url: base, lastModified: new Date(), changeFrequency: 'weekly', priority: 1 },
+    { url: `${base}/blog`, lastModified: new Date(), changeFrequency: 'weekly', priority: 0.8 },
+    ...posts
   ];
 }

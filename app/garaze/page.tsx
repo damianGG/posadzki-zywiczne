@@ -11,7 +11,10 @@ import BenefitsSection from "./components/BenefitsSection";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 import type { Metadata } from 'next'
+import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-renovation-timeline";
+import BlogPreviewSection from "@/components/blog-preview-section";
 
+import { getLatestBlogPosts, getBlogPostsByCategories } from "@/lib/blog"
 export const metadata: Metadata = {
     title: "Posadzki Żywiczne do Garaży | Wytrzymałe i Odporne",
     description:
@@ -34,19 +37,22 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-
+    const latestPosts = getLatestBlogPosts(3)
+    const postsByCategory = getBlogPostsByCategories()
 
     return (
         <>
             <HeroMainPage />
             <ProblemSolutionSection />
+            <ScrollDrivenRenovationTimeline />
             <BenefitsSection />
-            <Feature3 />
             <FAQ2 />
+            <BlogPreviewSection
+                posts={latestPosts}
+                title="Najnowsze Artykuły o Posadzkach"
+                subtitle="Poznaj najnowsze trendy, porady ekspertów i praktyczne rozwiązania w świecie posadzek żywicznych"
+            />
             <CTA2 />
-            {/* <Case2 /> */}
-            {/* <Stats2 /> */}
-            {/* <Blog1 /> */}
             <SocialProofSection />
             <Feature5 />
             <Contact1 />

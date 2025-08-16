@@ -1,6 +1,7 @@
-"use client";
+"use client"
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
+import { Calculator } from "lucide-react"
 import {
     NavigationMenu,
     NavigationMenuContent,
@@ -8,25 +9,25 @@ import {
     NavigationMenuLink,
     NavigationMenuList,
     NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import { Menu, MoveRight, X } from "lucide-react";
-import { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { motion } from "framer-motion";
+} from "@/components/ui/navigation-menu"
+import { Menu, MoveRight, X } from "lucide-react"
+import { useEffect, useState } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { motion } from "framer-motion"
 
 interface NavigationSubItem {
-    title: string;
-    href: string;
-    image: string;
+    title: string
+    href: string
+    image: string
 }
 
 interface NavigationItem {
-    title: string;
-    href?: string;
-    description?: string;
-    image?: string;
-    items?: NavigationSubItem[];
+    title: string
+    href?: string
+    description?: string
+    image?: string
+    items?: NavigationSubItem[]
 }
 
 export const Header2 = () => {
@@ -36,32 +37,6 @@ export const Header2 = () => {
             href: "/",
             description: "",
         },
-        // {
-        //     title: "Oferta",
-        //     // description: "Sprawdzone rozwiązania w budownictwie prywatnym",
-        //     items: [
-        //         {
-        //             title: "Balkony i Tarasy",
-        //             href: "/posadzki-zywiczne-na-balkony",
-        //             image: "/IMG_2966_res.jpg"
-        //         },
-        //         {
-        //             title: "Garaże",
-        //             href: "/garaze",
-        //             image: "/garage.jpg"
-        //         },
-        //         {
-        //             title: "Pomieszczenia czyste",
-        //             href: "/pomieszczenia-czyste",
-        //             image: "/gastronomia.jpg"
-        //         },
-        //         {
-        //             title: "Kuchnie i Salony",
-        //             href: "/kuchnia-salon",
-        //             image: "/kuchnia.jpg"
-        //         },
-        //     ],
-        // },
         {
             title: "Balkony i Tarasy",
             href: "/posadzki-zywiczne-na-balkony",
@@ -82,28 +57,27 @@ export const Header2 = () => {
             href: "/kuchnia-salon",
             description: "",
         },
+    ]
 
-    ];
-
-    const [scrolled, setScrolled] = useState(false);
+    const [scrolled, setScrolled] = useState(false)
 
     useEffect(() => {
         const handleScroll = () => {
-            const isScrolled = window.scrollY > 10;
+            const isScrolled = window.scrollY > 10
             if (isScrolled !== scrolled) {
-                setScrolled(isScrolled);
+                setScrolled(isScrolled)
             }
-        };
+        }
 
-        window.addEventListener('scroll', handleScroll, { passive: true });
+        window.addEventListener("scroll", handleScroll, { passive: true })
 
         return () => {
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, [scrolled]);
+            window.removeEventListener("scroll", handleScroll)
+        }
+    }, [scrolled])
 
-    const [isOpen, setOpen] = useState(false);
-    const [hoveredSubItem, setHoveredSubItem] = useState<NavigationSubItem | null>(null);
+    const [isOpen, setOpen] = useState(false)
+    const [hoveredSubItem, setHoveredSubItem] = useState<NavigationSubItem | null>(null)
 
     const menuVariants = {
         open: {
@@ -116,65 +90,57 @@ export const Header2 = () => {
             height: 0,
             transition: { duration: 0.3 },
         },
-    };
-
+    }
 
     return (
-        <header className={`w-full z-40 sticky top-0 left-0 transition-all duration-300 ${scrolled ? 'bg-background/50 backdrop-blur-md' : 'bg-background'
-            }`}>
+        <header
+            className={`sticky top-0 left-0 z-40 w-full bg-zinc-50`}
+        >
 
-            <div className="container relative mx-auto min-h-20 flex gap-4 flex-row lg:grid lg:grid-cols-2 items-center">
+            <div className="container relative mx-auto min-h-20 flex items-center justify-between">
+                {/* LOGO/BRAND - DODANE */}
+                <div className="flex items-center">
+                    <Link href="/" className="flex items-center space-x-2">
+                        <div className="w-8 h-8  rounded-md flex items-center justify-center">
+                            <span className="text-primary-foreground font-bold text-sm"><img src="/posadzkizywiczne.com_logo.png" alt="logo posadzkizywiczne.com" srcSet="logo" /></span>
+                        </div>
+                        <span className="font-bold text-lg hidden sm:block">PosadzkiŻywiczne.com</span>
+                    </Link>
+                </div>
 
-                <div className="justify-start items-center gap-4 lg:flex hidden flex-row">
-                    <NavigationMenu className="flex justify-start items-start">
-                        <NavigationMenuList className="flex justify-start gap-4 flex-row">
+                {/* NAVIGATION - ŚRODEK */}
+                <div className="hidden lg:flex items-center">
+                    <NavigationMenu className="flex justify-center items-center">
+                        <NavigationMenuList className="flex justify-center gap-2 flex-row">
                             {navigationItems.map((item) => (
-                                <NavigationMenuItem
-                                    key={item.title}
-                                    className="relative"
-                                    onMouseLeave={() => setHoveredSubItem(null)} // Reset when leaving the menu item
-                                >
+                                <NavigationMenuItem key={item.title} className="relative" onMouseLeave={() => setHoveredSubItem(null)}>
                                     {item.href ? (
-                                        <>
-                                            <Link href={item.href} passHref>
-
-                                                <Button variant="ghost">{item.title}</Button>
-
-
-                                            </Link>
-                                        </>
+                                        <Link href={item.href} passHref>
+                                            <Button variant="ghost" size="sm" className="text-sm">
+                                                {item.title}
+                                            </Button>
+                                        </Link>
                                     ) : (
                                         <>
                                             <NavigationMenuTrigger
                                                 className="font-medium text-sm"
                                                 onMouseEnter={() => {
-                                                    // Set the hoveredSubItem to the first submenu item
                                                     if (item.items && item.items.length > 0) {
-                                                        setHoveredSubItem(item.items[2]);
+                                                        setHoveredSubItem(item.items[2])
                                                     }
-                                                }}
-                                                onMouseLeave={() => {
-                                                    // Optionally reset the hoveredSubItem when leaving the trigger
-                                                    // setHoveredSubItem(null);
                                                 }}
                                             >
                                                 {item.title}
                                             </NavigationMenuTrigger>
-                                            <NavigationMenuContent
-                                                className="absolute left-1/2 transform -translate-x-1/2 !w-[450px] p-4"
-                                            >
+                                            <NavigationMenuContent className="absolute left-1/2 transform -translate-x-1/2 !w-[450px] p-4">
                                                 <div className="flex flex-col lg:grid grid-cols-2 gap-4">
                                                     <div className="flex flex-col h-full justify-between">
                                                         <div className="flex flex-col">
-                                                            {item.description && (
-                                                                <p className="text-muted-foreground text-sm">
-                                                                    {item.description}
-                                                                </p>
-                                                            )}
+                                                            {item.description && <p className="text-muted-foreground text-sm">{item.description}</p>}
                                                         </div>
                                                         {(hoveredSubItem?.image || item.image) && (
                                                             <Image
-                                                                src={hoveredSubItem?.image || item.image}
+                                                                src={hoveredSubItem?.image || item.image || "/placeholder.svg"}
                                                                 alt={hoveredSubItem?.title || item.title}
                                                                 width={424}
                                                                 height={424}
@@ -190,11 +156,10 @@ export const Header2 = () => {
                                                                 className="flex flex-row justify-between items-center hover:bg-muted py-2 px-4 rounded"
                                                                 onMouseEnter={() => setHoveredSubItem(subItem)}
                                                                 onMouseLeave={() => {
-                                                                    // Reset to the first submenu item when leaving a subItem
                                                                     if (item.items && item.items.length > 0) {
-                                                                        setHoveredSubItem(item.items[0]);
+                                                                        setHoveredSubItem(item.items[0])
                                                                     } else {
-                                                                        setHoveredSubItem(null);
+                                                                        setHoveredSubItem(null)
                                                                     }
                                                                 }}
                                                             >
@@ -213,37 +178,59 @@ export const Header2 = () => {
                     </NavigationMenu>
                 </div>
 
-                <div className="flex justify-start lg:justify-end w-full gap-4">
-                    {/* <div className="border-r hidden md:inline"></div> */}
-                    <Button variant="outline"><Link href="/kontakt">Kontakt</Link></Button>
-                    <Button className="hidden sm:block"><Link href="/kontakt">Bezpłatna konsultacja</Link></Button>
+                {/* CTA BUTTONS - PRAWA STRONA */}
+                <div className="flex items-center gap-3">
+                    <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
+                        <Link href="/kontakt">Kontakt</Link>
+                    </Button>
+                    <Button size="sm" className="flex items-center gap-2">
+                        <Link href="/blog" className="flex items-center gap-2">
+                            {/* <Calculator className="w-4 h-4" /> */}
+                            <span className="hidden sm:inline">Baza wiedzy</span>
+                            <span className="sm:hidden">Baza wiedzy</span>
+                        </Link>
+                    </Button>
                 </div>
-                {/* Menu mobilne */}
-                <div className="flex w-12 shrink lg:hidden items-end justify-end">
-                    <Button variant="ghost" onClick={() => setOpen(!isOpen)}>
+
+                {/* MOBILE MENU BUTTON */}
+                <div className="flex lg:hidden">
+                    <Button variant="ghost" size="sm" onClick={() => setOpen(!isOpen)}>
                         {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
                     </Button>
-                    <motion.div
-                        className="absolute top-20 border-t flex flex-col w-full right-0 bg-background shadow-lg py-4 container gap-8"
-                        initial="closed"
-                        animate={isOpen ? "open" : "closed"}
-                        variants={menuVariants}
-                    >
-                        {navigationItems.map((item) => (
-                            <div key={item.title} className="flex flex-col gap-2">
-                                <Link
-                                    href={item.href ?? "#"}
-                                    className="flex justify-between items-center"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    <span className="text-lg">{item.title}</span>
-                                    <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
-                                </Link>
-                            </div>
-                        ))}
-                    </motion.div>
                 </div>
             </div>
+
+            {/* MOBILE MENU */}
+            <motion.div
+                className="lg:hidden border-t bg-background/95 backdrop-blur-md"
+                initial="closed"
+                animate={isOpen ? "open" : "closed"}
+                variants={menuVariants}
+                style={{ overflow: "hidden" }}
+            >
+                <div className="container py-4 space-y-4">
+                    {navigationItems.map((item) => (
+                        <div key={item.title}>
+                            <Link
+                                href={item.href ?? "#"}
+                                className="flex justify-between items-center py-2"
+                                onClick={() => setOpen(false)}
+                            >
+                                <span className="text-base font-medium">{item.title}</span>
+                                <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
+                            </Link>
+                        </div>
+                    ))}
+                    <div className="pt-4 border-t space-y-3">
+                        <Button variant="outline" className="w-full bg-transparent" asChild>
+                            <Link href="/kontakt">Kontakt</Link>
+                        </Button>
+                        <Button className="w-full" asChild>
+                            <Link href="/kontakt">Bezpłatna konsultacja</Link>
+                        </Button>
+                    </div>
+                </div>
+            </motion.div>
         </header>
-    );
-};
+    )
+}

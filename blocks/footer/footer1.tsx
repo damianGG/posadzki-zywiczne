@@ -2,33 +2,29 @@ import Link from "next/link";
 
 export const Footer1 = () => {
   const navigationItems = [
-    {
-      title: "",
-      href: "/",
-      description: "",
-    },
-    {
-      title: "",
-      description: "",
-      items: [
-        {
-          title: "",
-          href: "/reports",
-        },
-        {
-          title: "",
-          href: "/statistics",
-        },
-        {
-          title: "",
-          href: "/dashboards",
-        },
-        {
-          title: "",
-          href: "/recordings",
-        },
-      ],
-    },
+
+    // {
+    //   title: "2",
+    //   description: "",
+    //   items: [
+    //     {
+    //       title: "",
+    //       href: "/reports",
+    //     },
+    //     {
+    //       title: "",
+    //       href: "/statistics",
+    //     },
+    //     {
+    //       title: "",
+    //       href: "/dashboards",
+    //     },
+    //     {
+    //       title: "",
+    //       href: "/recordings",
+    //     },
+    //   ],
+    // },
     {
       title: "Firma",
       description: "Wytrzymałe, odporno posadzki żywiczne",
@@ -64,7 +60,7 @@ export const Footer1 = () => {
           <div className="flex gap-8 flex-col items-start">
             <div className="flex gap-2 flex-col">
               <h2 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular text-left">
-                Posadzki Żywiczne
+                PosadzkiZywiczne.Com
               </h2>
               <p className="text-lg max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
                 Wytrzymałe, odporno posadzki żywiczne
@@ -72,8 +68,13 @@ export const Footer1 = () => {
             </div>
             <div className="flex gap-20 flex-row">
               <div className="flex flex-col text-sm max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
-                <p>Sędziszów Młp</p>
-                <p>Warszawska 72</p>
+                <p>Rzeszów</p>
+                <p>Adres: Podwisłocze 27, 35-309 Rzeszów</p>
+                <p>Telefon: 507 384 619</p>
+                <p></p>
+                <p className="mt-10">Kraków</p>
+                <p>Adres: Czyżówka 14, 30-526 Kraków</p>
+                <p>Telefon: 507 384 619</p>
               </div>
               <div className="flex flex-col text-sm max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
                 {/* <Link href="/">Terms of service</Link>
@@ -88,7 +89,7 @@ export const Footer1 = () => {
                 className="flex text-base gap-1 flex-col items-start"
               >
                 <div className="flex flex-col gap-2">
-                  {item.href ? (
+                  {/* {item.href ? (
                     <Link
                       href={item.href}
                       className="flex justify-between items-center"
@@ -97,7 +98,7 @@ export const Footer1 = () => {
                     </Link>
                   ) : (
                     <p className="text-xl">{item.title}</p>
-                  )}
+                  )} */}
                   {item.items &&
                     item.items.map((subItem) => (
                       <Link
