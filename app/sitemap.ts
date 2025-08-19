@@ -5,7 +5,7 @@ import { getAllPosts } from '@/lib/posts-json';
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://posadzkizywiczne.com';
 
-const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.posadzkizywiczne.com';
+const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://posadzkizywiczne.com';
   const posts = getAllPosts().map(p => ({
     url: `${base}/blog/${p.slug}`,
     lastModified: p.updated ?? p.date,
