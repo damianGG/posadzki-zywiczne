@@ -102,7 +102,7 @@ export const Header2 = () => {
                 <div className="flex items-center">
                     <Link href="/" className="flex items-center space-x-2">
                         <div className="w-8 h-8  rounded-md flex items-center justify-center">
-                            <span className="text-primary-foreground font-bold text-sm"><Image src="/posadzkizywiczne.com_logo.png" alt="logo posadzkizywiczne.com" /></span>
+                            <span className="text-primary-foreground font-bold text-sm"><Image src="/posadzkizywiczne.com_logo.png" alt="logo posadzkizywiczne.com" width={300} height={100} /></span>
                         </div>
                         <span className="font-bold text-lg hidden sm:block">PosadzkiŻywiczne.com</span>
                     </Link>
