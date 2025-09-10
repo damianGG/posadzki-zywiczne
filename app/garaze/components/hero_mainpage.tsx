@@ -29,7 +29,7 @@ export default function HeroMainPage() {
             <div
                 className="absolute inset-0 bg-cover bg-right"
                 style={{
-                    backgroundImage: 'url("/garaz/garaz-tesla-po.png")',
+                    backgroundImage: 'url("/garaz/IMG_1253.JPG")',
                 }}
             >
                 {/* Gradient Overlay */}
