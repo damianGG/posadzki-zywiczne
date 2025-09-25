@@ -6,8 +6,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://posadzkizywiczne.com"
 
   const posts = getAllPosts().map((post) => ({
-    url: `${base}/blog/${post.id}`,
-    lastModified: post.updatedAt ? new Date(post.updatedAt) : new Date(post.publishedAt),
+    url: `${base}/blog/${post.slug}`,
+    lastModified: post.updated ? new Date(post.updated) : new Date(post.date),
     changeFrequency: "monthly" as const,
     priority: post.featured ? 0.8 : 0.7,
   }))

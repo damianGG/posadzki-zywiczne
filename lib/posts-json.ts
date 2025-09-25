@@ -2,37 +2,19 @@ import fs from "fs"
 import path from "path"
 
 export interface BlogPost {
-  id: string
+  category: any
+  slug: string
   title: string
   excerpt: string
-  content: string
-  author: {
-    name: string
-    avatar: string
-    bio: string
-  }
-  publishedAt: string
-  updatedAt: string
-  category: string
+  date: string
+  updated: string
+  author: string
   tags: string[]
-  readTime: string
-  image: {
-    url: string
-    alt: string
-    caption: string
-  }
-  seo: {
-    metaTitle: string
-    metaDescription: string
-    keywords: string[]
-    canonicalUrl: string
-  }
   featured: boolean
-  status: string
 }
 
 export function getAllPosts(): BlogPost[] {
-  const postsDirectory = path.join(process.cwd(), "data/nlod")
+  const postsDirectory = path.join(process.cwd(), "data/blog")
 
   // Check if directory exists
   if (!fs.existsSync(postsDirectory)) {
@@ -49,21 +31,21 @@ export function getAllPosts(): BlogPost[] {
 
       try {
         const post: BlogPost = JSON.parse(fileContents)
-        return post.status === "published" ? post : null
+        return post
       } catch (error) {
         console.error(`Error parsing ${name}:`, error)
         return null
       }
     })
     .filter((post): post is BlogPost => post !== null)
-    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
   return posts
 }
 
-export function getPostById(id: string): BlogPost | null {
+export function getPostBySlug(slug: string): BlogPost | null {
   const posts = getAllPosts()
-  return posts.find((post) => post.id === id) || null
+  return posts.find((post) => post.slug === slug) || null
 }
 
 export function getFeaturedPosts(): BlogPost[] {
