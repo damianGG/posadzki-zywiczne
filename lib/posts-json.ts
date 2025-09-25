@@ -1,46 +1,79 @@
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "fs"
+import path from "path"
 
-export type PostJson = {
-  slug: string;
-  title: string;
-  description: string;
-  date: string;
-  updated?: string;
-  tags?: string[];
-  cover?: string;
-  canonical?: string;
-  contentHtml: string;
-};
-
-const CONTENT_DIR = path.join(process.cwd(), 'content', 'blog');
-
-export function getAllSlugs() {
-  return fs.readdirSync(CONTENT_DIR)
-    .filter(f => f.endsWith('.json'))
-    .map(f => f.replace(/\.json$/, ''));
+export interface BlogPost {
+  id: string
+  title: string
+  excerpt: string
+  content: string
+  author: {
+    name: string
+    avatar: string
+    bio: string
+  }
+  publishedAt: string
+  updatedAt: string
+  category: string
+  tags: string[]
+  readTime: string
+  image: {
+    url: string
+    alt: string
+    caption: string
+  }
+  seo: {
+    metaTitle: string
+    metaDescription: string
+    keywords: string[]
+    canonicalUrl: string
+  }
+  featured: boolean
+  status: string
 }
 
-export function getPostBySlug(slug: string): PostJson | null {
-  const full = path.join(CONTENT_DIR, `${slug}.json`);
-  if (!fs.existsSync(full)) return null;
-  const raw = fs.readFileSync(full, 'utf8');
-  return JSON.parse(raw) as PostJson;
+export function getAllPosts(): BlogPost[] {
+  const postsDirectory = path.join(process.cwd(), "data/nlod")
+
+  // Check if directory exists
+  if (!fs.existsSync(postsDirectory)) {
+    console.warn("Blog posts directory not found:", postsDirectory)
+    return []
+  }
+
+  const filenames = fs.readdirSync(postsDirectory)
+  const posts = filenames
+    .filter((name) => name.endsWith(".json"))
+    .map((name) => {
+      const filePath = path.join(postsDirectory, name)
+      const fileContents = fs.readFileSync(filePath, "utf8")
+
+      try {
+        const post: BlogPost = JSON.parse(fileContents)
+        return post.status === "published" ? post : null
+      } catch (error) {
+        console.error(`Error parsing ${name}:`, error)
+        return null
+      }
+    })
+    .filter((post): post is BlogPost => post !== null)
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
+
+  return posts
 }
 
-export function getAllPosts(): PostJson[] {
-  return getAllSlugs()
-    .map(s => getPostBySlug(s)!)
-    .filter(Boolean)
-    .sort((a, b) => +new Date(b.date) - +new Date(a.date));
+export function getPostById(id: string): BlogPost | null {
+  const posts = getAllPosts()
+  return posts.find((post) => post.id === id) || null
 }
 
-export const PAGE_SIZE = 10;
+export function getFeaturedPosts(): BlogPost[] {
+  return getAllPosts().filter((post) => post.featured)
+}
 
-export function getPage(page: number) {
-  const all = getAllPosts();
-  const total = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
-  const start = (page - 1) * PAGE_SIZE;
-  const items = all.slice(start, start + PAGE_SIZE);
-  return { items, page, total };
+export function getPostsByTag(tag: string): BlogPost[] {
+  return getAllPosts().filter((post) => post.tags.some((postTag) => postTag.toLowerCase() === tag.toLowerCase()))
+}
+
+export function getPostsByCategory(category: string): BlogPost[] {
+  return getAllPosts().filter((post) => post.category.toLowerCase() === category.toLowerCase())
 }
