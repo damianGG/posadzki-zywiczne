@@ -5,7 +5,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://posadzkizywiczne.com"
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://posadzkizywiczne.com"
 
-  const posts = getAllPosts().map((post) => {
+  const allPosts = getAllPosts()
+  console.log("[v0] getAllPosts returned:", allPosts.length, "posts")
+  console.log("[v0] First post:", allPosts[0])
+
+  const posts = allPosts.map((post) => {
+    console.log("[v0] Processing post:", post.slug, post.title)
+
     // Validate and create date objects safely
     let lastModified = new Date()
 
@@ -27,12 +33,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified = new Date()
     }
 
-    return {
-      url: `${base}/blog/${post.slug}`,
+    const sitemapEntry = {
+      url: `${base}/${post.slug}`,
       lastModified,
       changeFrequency: "monthly" as const,
       priority: post.featured ? 0.8 : 0.7,
     }
+
+    console.log("[v0] Sitemap entry:", sitemapEntry)
+
+    return sitemapEntry
   })
 
   return [
@@ -73,7 +83,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
-      url: `${base}/blog`,
+      url: `${base}/blog/`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,

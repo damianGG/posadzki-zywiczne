@@ -3,7 +3,7 @@ import path from "path"
 
 export interface BlogPost {
   category: any
-  slug: string
+  slug:string
   title: string
   excerpt: string
   date: string
