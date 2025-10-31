@@ -1,4 +1,3 @@
-// lib/posts-json.ts
 import fs from "fs"
 import path from "path"
 
@@ -15,12 +14,15 @@ type RawPost = {
 export type Post = RawPost & {
   id?: string
   slug: string
-  title: string
+  title?: string
   date?: string
   updated?: string
   featured?: boolean
 }
 
+/**
+ * Generate slug from title (basic PL-friendly normalization)
+ */
 function generateSlugFromTitle(title?: string): string {
   if (!title) return `post-${Date.now()}`
   return title
@@ -31,46 +33,69 @@ function generateSlugFromTitle(title?: string): string {
     .replace(/-+/g, "-")
 }
 
-export function getAllPosts(): Post[] {
-  const dataPath = path.join(process.cwd(), "data", "posts.json")
-  if (!fs.existsSync(dataPath)) {
-    console.warn("[getAllPosts] Brak pliku posts.json pod:", dataPath)
-    return []
-  }
-
-  let raw: RawPost[] = []
+/**
+ * Safely parse JSON file, return null on error
+ */
+function readJsonSafe(filePath: string): RawPost | null {
   try {
-    const file = fs.readFileSync(dataPath, "utf8")
-    raw = JSON.parse(file)
-    if (!Array.isArray(raw)) {
-      console.warn("[getAllPosts] Oczekiwano listy postów w posts.json")
-      raw = []
-    }
+    const raw = fs.readFileSync(filePath, "utf8")
+    return JSON.parse(raw)
   } catch (err) {
-    console.error("[getAllPosts] Błąd podczas parsowania posts.json:", err)
+    console.warn(`[getAllPosts] Nie można wczytać/parować pliku ${filePath}:`, err && (err as Error).message)
+    return null
+  }
+}
+
+/**
+ * Read all JSON files from data/blog and return normalized posts with slug guaranteed.
+ */
+export function getAllPosts(): Post[] {
+  const blogDir = path.join(process.cwd(), "data", "blog")
+
+  if (!fs.existsSync(blogDir)) {
+    console.warn("[getAllPosts] Brak katalogu data/blog pod:", blogDir)
     return []
   }
 
-  const posts: Post[] = raw.map((p) => {
-    const derivedSlug = (p.slug && String(p.slug).trim()) || (p.id && String(p.id).trim()) || generateSlugFromTitle(p.title)
+  const files = fs.readdirSync(blogDir).filter((f) => f.toLowerCase().endsWith(".json"))
+  if (files.length === 0) {
+    console.warn("[getAllPosts] Brak plików .json w katalogu data/blog:", blogDir)
+    return []
+  }
 
-    if (!p.slug && p.id) {
-      p.slug = String(p.id)
-    } else if (!p.slug) {
-      p.slug = derivedSlug
+  const posts: Post[] = []
+
+  for (const file of files) {
+    const filePath = path.join(blogDir, file)
+    const raw = readJsonSafe(filePath)
+    if (!raw) continue
+
+    // Determine slug: prefer raw.slug, then raw.id, then filename without extension, then generated from title
+    const filenameSlug = file.replace(/\.json$/i, "")
+    const derivedSlug =
+      (raw.slug && String(raw.slug).trim()) ||
+      (raw.id && String(raw.id).trim()) ||
+      (filenameSlug && String(filenameSlug).trim()) ||
+      generateSlugFromTitle(raw.title)
+
+    const slug = derivedSlug || generateSlugFromTitle(raw.title)
+
+    if (!raw.slug && !raw.id) {
+      console.warn(`[getAllPosts] Plik ${file} nie zawiera slug/id — używam: ${slug}`)
     }
 
-    if (!p.slug || !String(p.slug).trim()) {
-      p.slug = generateSlugFromTitle(p.title)
-      console.warn(`[getAllPosts] Wygenerowano slug dla posta (brak slug/id): ${JSON.stringify(p).slice(0, 200)}`)
+    const post: Post = {
+      ...raw,
+      slug: String(slug),
+      id: raw.id ? String(raw.id) : raw.id,
     }
 
-    return {
-      ...p,
-      slug: String(p.slug),
-      id: p.id ? String(p.id) : undefined,
-    } as Post
-  })
+    posts.push(post)
+  }
 
+  // opcjonalnie: posortuj po dacie malejąco jeśli chcesz
+  // posts.sort((a,b) => (b.date || b.updated || "").localeCompare(a.date || a.updated || ""))
+
+  console.log(`[getAllPosts] Wczytano ${posts.length} postów z data/blog`)
   return posts
 }
