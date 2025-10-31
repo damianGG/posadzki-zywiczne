@@ -1,61 +1,76 @@
+// lib/posts-json.ts
 import fs from "fs"
 import path from "path"
 
-export interface BlogPost {
-  category: any
-  slug:string
-  title: string
-  excerpt: string
-  date: string
-  updated: string
-  author: string
-  tags: string[]
-  featured: boolean
+type RawPost = {
+  id?: string
+  slug?: string
+  title?: string
+  date?: string
+  updated?: string
+  featured?: boolean
+  [key: string]: any
 }
 
-export function getAllPosts(): BlogPost[] {
-  const postsDirectory = path.join(process.cwd(), "data/blog")
+export type Post = RawPost & {
+  id?: string
+  slug: string
+  title: string
+  date?: string
+  updated?: string
+  featured?: boolean
+}
 
-  // Check if directory exists
-  if (!fs.existsSync(postsDirectory)) {
-    console.warn("Blog posts directory not found:", postsDirectory)
+function generateSlugFromTitle(title?: string): string {
+  if (!title) return `post-${Date.now()}`
+  return title
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-ąćęłńóśżź]+/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+}
+
+export function getAllPosts(): Post[] {
+  const dataPath = path.join(process.cwd(), "data", "posts.json")
+  if (!fs.existsSync(dataPath)) {
+    console.warn("[getAllPosts] Brak pliku posts.json pod:", dataPath)
     return []
   }
 
-  const filenames = fs.readdirSync(postsDirectory)
-  const posts = filenames
-    .filter((name) => name.endsWith(".json"))
-    .map((name) => {
-      const filePath = path.join(postsDirectory, name)
-      const fileContents = fs.readFileSync(filePath, "utf8")
+  let raw: RawPost[] = []
+  try {
+    const file = fs.readFileSync(dataPath, "utf8")
+    raw = JSON.parse(file)
+    if (!Array.isArray(raw)) {
+      console.warn("[getAllPosts] Oczekiwano listy postów w posts.json")
+      raw = []
+    }
+  } catch (err) {
+    console.error("[getAllPosts] Błąd podczas parsowania posts.json:", err)
+    return []
+  }
 
-      try {
-        const post: BlogPost = JSON.parse(fileContents)
-        return post
-      } catch (error) {
-        console.error(`Error parsing ${name}:`, error)
-        return null
-      }
-    })
-    .filter((post): post is BlogPost => post !== null)
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  const posts: Post[] = raw.map((p) => {
+    const derivedSlug = (p.slug && String(p.slug).trim()) || (p.id && String(p.id).trim()) || generateSlugFromTitle(p.title)
+
+    if (!p.slug && p.id) {
+      p.slug = String(p.id)
+    } else if (!p.slug) {
+      p.slug = derivedSlug
+    }
+
+    if (!p.slug || !String(p.slug).trim()) {
+      p.slug = generateSlugFromTitle(p.title)
+      console.warn(`[getAllPosts] Wygenerowano slug dla posta (brak slug/id): ${JSON.stringify(p).slice(0, 200)}`)
+    }
+
+    return {
+      ...p,
+      slug: String(p.slug),
+      id: p.id ? String(p.id) : undefined,
+    } as Post
+  })
 
   return posts
-}
-
-export function getPostBySlug(slug: string): BlogPost | null {
-  const posts = getAllPosts()
-  return posts.find((post) => post.slug === slug) || null
-}
-
-export function getFeaturedPosts(): BlogPost[] {
-  return getAllPosts().filter((post) => post.featured)
-}
-
-export function getPostsByTag(tag: string): BlogPost[] {
-  return getAllPosts().filter((post) => post.tags.some((postTag) => postTag.toLowerCase() === tag.toLowerCase()))
-}
-
-export function getPostsByCategory(category: string): BlogPost[] {
-  return getAllPosts().filter((post) => post.category.toLowerCase() === category.toLowerCase())
 }
