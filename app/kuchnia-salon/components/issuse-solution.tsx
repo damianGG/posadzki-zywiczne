@@ -15,52 +15,52 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const data = {
     problem: {
-        title: "Problem",
-        description: "Masz dość pylącego betnu w którym trudno utrzymać czystość?",
+        title: "Wyzwanie",
+        description: "Tradycyjne podłogi w kuchni i salonie wymagają ciągłego utrzymania",
         points: [
-            "Pęknięcia i pylenie betonu",
-            "Nasiąkliwość i plamy",
-            "Brak odporności chemicznej i na sól drogową",
-            "Nierówności i brak estetyki",
-            "Brak odporności na zmienne temperatury i wilgoć",
+            "Trudności w utrzymaniu czystości",
+            "Podatność na plamy i zabrudzenia",
+            "Problemy z wilgocią w kuchni",
+            "Brak spójnej estetyki pomieszczeń",
+            "Częsta konieczność renowacji",
         ],
         images: [
             {
-                src: "/garaz/garaz-tesla.png",
-                alt: "Zniszczona powierzchnia balkonu - przykład 3",
+                src: "/newsletter/kuchnia_przed.jpg",
+                alt: "Tradycyjna podłoga w kuchni przed renowacją",
             },
             {
-                src: "/garaz/beton-plamy.jpg",
-                alt: "Zniszczona powierzchnia balkonu - przykład 1",
+                src: "/kuchnia.jpg",
+                alt: "Kuchnia wymagająca odnowienia podłogi",
             },
             {
-                src: "/garaz/beton-problem.jpg",
-                alt: "Zniszczona powierzchnia balkonu - przykład 2",
+                src: "/newsletter/kuchnia_przed.jpg",
+                alt: "Powierzchnia wymagająca modernizacji",
             },
         ],
     },
     solution: {
         title: "Rozwiązanie",
-        description: "Posadzki żywiczne - trwałe i eleganckie rozwiązanie",
+        description: "Posadzki żywiczne - nowoczesne, eleganckie i praktyczne",
         points: [
-            "Odporność na obciążenia mechaniczne",
-            "Odporność chemiczna",
-            "Łatwość czyszczenia",
-            "Estetyka i personalizacja",
-            "Wodoodporność i zabezpieczenie przed wilgocią",
+            "Łatwość w utrzymaniu czystości",
+            "Elegancki, nowoczesny wygląd",
+            "Bezspoinowa powierzchnia",
+            "Szeroki wybór kolorów i wzorów",
+            "Higieniczna i odporna powierzchnia",
         ],
         images: [
             {
-                src: "/garaz/garaz-tesla-po.png",
-                alt: "Profesjonalna posadzka żywiczna - przykład 3",
+                src: "/newsletter/kuchnia_po.jpg",
+                alt: "Nowoczesna posadzka żywiczna w kuchni",
             },
             {
-                src: "/garaz/garaz-zywica.webp",
-                alt: "Profesjonalna posadzka żywiczna - przykład 1",
+                src: "/mieszkanie/DeWatermark.ai_1732886162387.png",
+                alt: "Elegancka posadzka żywiczna w salonie",
             },
             {
-                src: "/garaz/garaz-zywica-2.jpg",
-                alt: "Profesjonalna posadzka żywiczna - przykład 2",
+                src: "/newsletter/kuchnia_po.jpg",
+                alt: "Piękna wykończona posadzka w pomieszczeniu mieszkalnym",
             },
         ],
     },
@@ -140,10 +140,10 @@ export default function ProblemSolutionSection() {
                 <div className="flex flex-col items-center space-y-4 text-center">
                     <div className="space-y-2">
                         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                            Problem & Rozwiązanie
+                            Przekształć swoje wnętrze
                         </h2>
                         <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                            Poznaj różnicę, jaką może przynieść profesjonalna posadzka żywiczna
+                            Zobacz, jak posadzka żywiczna odmieni Twoją kuchnię i salon
                         </p>
                     </div>
                 </div>

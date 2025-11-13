@@ -15,52 +15,52 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 const data = {
     problem: {
-        title: "Problem",
-        description: "Masz dość pylącego betnu w którym trudno utrzymać czystość?",
+        title: "Wyzwanie",
+        description: "Utrzymanie najwyższego poziomu czystości i higieny w pomieszczeniach",
         points: [
-            "Pęknięcia i pylenie betonu",
-            "Nasiąkliwość i plamy",
-            "Brak odporności chemicznej i na sól drogową",
-            "Nierówności i brak estetyki",
-            "Brak odporności na zmienne temperatury i wilgoć",
+            "Trudności w utrzymaniu sterylności",
+            "Rysy i szczeliny gromadzące bakterie",
+            "Problemy z odpornością chemiczną",
+            "Brak jednolitej, łatwej w czyszczeniu powierzchni",
+            "Częsta konieczność dezynfekcji i mycia",
         ],
         images: [
             {
-                src: "/garaz/garaz-tesla.png",
-                alt: "Zniszczona powierzchnia balkonu - przykład 3",
+                src: "/gastronomia.jpg",
+                alt: "Pomieszczenie wymagające wysokich standardów czystości",
             },
             {
-                src: "/garaz/beton-plamy.jpg",
-                alt: "Zniszczona powierzchnia balkonu - przykład 1",
+                src: "/mieszkanie/DeWatermark.ai_1732886162387.png",
+                alt: "Pomieszczenie przed zastosowaniem posadzki żywicznej",
             },
             {
-                src: "/garaz/beton-problem.jpg",
-                alt: "Zniszczona powierzchnia balkonu - przykład 2",
+                src: "/gastronomia.jpg",
+                alt: "Powierzchnia wymagająca łatwej w utrzymaniu podłogi",
             },
         ],
     },
     solution: {
         title: "Rozwiązanie",
-        description: "Posadzki żywiczne - trwałe i eleganckie rozwiązanie",
+        description: "Posadzki żywiczne - najwyższy standard czystości i higieny",
         points: [
-            "Odporność na obciążenia mechaniczne",
-            "Odporność chemiczna",
-            "Łatwość czyszczenia",
-            "Estetyka i personalizacja",
-            "Wodoodporność i zabezpieczenie przed wilgocią",
+            "Bezspoinowa, łatwa w dezynfekcji powierzchnia",
+            "Wysoka odporność chemiczna",
+            "Antypoślizgowa warstwa bezpieczeństwa",
+            "Szybkie i łatwe czyszczenie",
+            "Spełnia najwyższe normy sanitarne",
         ],
         images: [
             {
-                src: "/garaz/garaz-tesla-po.png",
-                alt: "Profesjonalna posadzka żywiczna - przykład 3",
+                src: "/mieszkanie/DeWatermark.ai_1732886162387.png",
+                alt: "Profesjonalna posadzka żywiczna w czystym pomieszczeniu",
             },
             {
-                src: "/garaz/garaz-zywica.webp",
-                alt: "Profesjonalna posadzka żywiczna - przykład 1",
+                src: "/newsletter/kuchnia_po.jpg",
+                alt: "Higieniczna posadzka żywiczna łatwa w utrzymaniu",
             },
             {
-                src: "/garaz/garaz-zywica-2.jpg",
-                alt: "Profesjonalna posadzka żywiczna - przykład 2",
+                src: "/gastronomia.jpg",
+                alt: "Nowoczesna posadzka spełniająca najwyższe standardy",
             },
         ],
     },
@@ -140,10 +140,10 @@ export default function ProblemSolutionSection() {
                 <div className="flex flex-col items-center space-y-4 text-center">
                     <div className="space-y-2">
                         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                            Problem & Rozwiązanie
+                            Higiena i czystość na najwyższym poziomie
                         </h2>
                         <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                            Poznaj różnicę, jaką może przynieść profesjonalna posadzka żywiczna
+                            Posadzki żywiczne zapewniające najwyższe standardy sanitarne
                         </p>
                     </div>
                 </div>
