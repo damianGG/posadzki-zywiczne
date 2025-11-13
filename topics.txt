@@ -1,0 +1,24 @@
+# Lista tematów do wygenerowania artykułów
+# Dodaj poniżej tematy, jeden temat w każdej linii
+# Skrypt wygeneruje artykuły dla wszystkich tematów poniżej
+
+Jak wybrać odpowiednią żywicę do garażu - porównanie epoksydu i poliuretanu
+Przygotowanie podłoża pod posadzkę żywiczną - kompletny przewodnik
+Posadzka żywiczna w kuchni - zalety, wady i praktyczne wskazówki
+Najczęstsze błędy przy aplikacji żywicy epoksydowej i jak ich unikać
+Konserwacja i czyszczenie posadzek żywicznych - poradnik
+Posadzka żywiczna na balkonie - czy to dobry wybór
+Ile trwa schnięcie posadzki żywicznej i kiedy można z niej korzystać
+Posadzka żywiczna a ogrzewanie podłogowe - co musisz wiedzieć
+Jak naprawić uszkodzoną posadzkę żywiczną - przewodnik krok po kroku
+Posadzka żywiczna w garażu wielorodzinnym - wymagania i procedury
+Kolorystyka posadzek żywicznych - jak dobrać odcień do wnętrza
+Posadzki żywiczne w pomieszczeniach przemysłowych - specyfika i zastosowania
+Czy można zrobić posadzkę żywiczną samodzielnie - analiza DIY
+Posadzka żywiczna vs płytki ceramiczne - szczegółowe porównanie
+Żywica epoksydowa w środowisku wilgotnym - piwnice i łazienki
+Posadzki antypoślizgowe - jak zwiększyć bezpieczeństwo
+Dekoracyjne posadzki żywiczne - flakes, metallic i inne efekty
+Grubość posadzki żywicznej - jak dobrać odpowiednią warstwę
+Posadzka żywiczna w showroomie samochodowym - specyfikacja i wymagania
+Wpływ temperatury na aplikację i trwałość posadzek żywicznych
