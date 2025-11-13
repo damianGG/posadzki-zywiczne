@@ -3,6 +3,7 @@ import path from "path"
 
 export interface BlogPost {
   id: string
+  slug?: string
   title: string
   excerpt: string
   content: string
@@ -21,6 +22,8 @@ export interface BlogPost {
     alt: string
     caption: string
   }
+  cover?: string
+  gallery?: string[]
   seo: {
     metaTitle: string
     metaDescription: string
@@ -31,28 +34,54 @@ export interface BlogPost {
   status: "published" | "draft"
 }
 
-const blogDirectory = path.join(process.cwd(), "data/blog")
+const dataBlogDirectory = path.join(process.cwd(), "data/blog")
+const contentPostsDirectory = path.join(process.cwd(), "content/posts")
 
 export function getAllBlogPosts(): BlogPost[] {
   try {
-    const fileNames = fs.readdirSync(blogDirectory)
-    const allPostsData = fileNames
-      .filter((fileName) => fileName.endsWith(".json"))
-      .map((fileName) => {
-        const id = fileName.replace(/\.json$/, "")
-        const fullPath = path.join(blogDirectory, fileName)
-        const fileContents = fs.readFileSync(fullPath, "utf8")
-        const postData = JSON.parse(fileContents) as BlogPost
+    const allPostsData: BlogPost[] = []
+    
+    // Read from data/blog directory
+    if (fs.existsSync(dataBlogDirectory)) {
+      const dataFileNames = fs.readdirSync(dataBlogDirectory)
+      const dataPosts = dataFileNames
+        .filter((fileName) => fileName.endsWith(".json"))
+        .map((fileName) => {
+          const id = fileName.replace(/\.json$/, "")
+          const fullPath = path.join(dataBlogDirectory, fileName)
+          const fileContents = fs.readFileSync(fullPath, "utf8")
+          const postData = JSON.parse(fileContents) as BlogPost
 
-        return {
-          ...postData,
-          id,
-        }
-      })
+          return {
+            ...postData,
+            id,
+          }
+        })
+      allPostsData.push(...dataPosts)
+    }
+    
+    // Read from content/posts directory
+    if (fs.existsSync(contentPostsDirectory)) {
+      const contentFileNames = fs.readdirSync(contentPostsDirectory)
+      const contentPosts = contentFileNames
+        .filter((fileName) => fileName.endsWith(".json"))
+        .map((fileName) => {
+          const id = fileName.replace(/\.json$/, "")
+          const fullPath = path.join(contentPostsDirectory, fileName)
+          const fileContents = fs.readFileSync(fullPath, "utf8")
+          const postData = JSON.parse(fileContents) as BlogPost
+
+          return {
+            ...postData,
+            id,
+          }
+        })
+      allPostsData.push(...contentPosts)
+    }
+    
+    return allPostsData
       .filter((post) => post.status === "published")
       .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
-
-    return allPostsData
   } catch (error) {
     console.error("Error reading blog posts:", error)
     return []
@@ -61,7 +90,30 @@ export function getAllBlogPosts(): BlogPost[] {
 
 export function getBlogPostBySlug(slug: string): BlogPost | null {
   try {
-    const fullPath = path.join(blogDirectory, `${slug}.json`)
+    // Try to find in data/blog first
+    let fullPath = path.join(dataBlogDirectory, `${slug}.json`)
+    
+    if (!fs.existsSync(fullPath)) {
+      // Try to find in content/posts
+      fullPath = path.join(contentPostsDirectory, `${slug}.json`)
+      
+      // Also try with date prefix in content/posts (YYYY-MM-DD-slug.json)
+      if (!fs.existsSync(fullPath)) {
+        const contentFiles = fs.readdirSync(contentPostsDirectory)
+        const matchingFile = contentFiles.find(file => 
+          file.endsWith(`-${slug}.json`) || file === `${slug}.json`
+        )
+        
+        if (matchingFile) {
+          fullPath = path.join(contentPostsDirectory, matchingFile)
+        }
+      }
+    }
+    
+    if (!fs.existsSync(fullPath)) {
+      return null
+    }
+    
     const fileContents = fs.readFileSync(fullPath, "utf8")
     const postData = JSON.parse(fileContents) as BlogPost
 
