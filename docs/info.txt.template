@@ -1,0 +1,30 @@
+TITLE: Tytuł realizacji (np. Posadzka epoksydowa - garaż Warszawa Mokotów)
+DESCRIPTION: Krótki opis realizacji (1-2 zdania)
+LOCATION: Lokalizacja (np. Warszawa Mokotów)
+AREA: Powierzchnia (np. 25 m²)
+DATE: Data realizacji YYYY-MM-DD (np. 2024-10-15)
+CLIENT: Nazwa klienta (opcjonalnie, można zostawić puste lub napisać "Klient prywatny")
+TYPE: Typ projektu (garaż / taras / balkon / przemysł / inne)
+SURFACE: Rodzaj powierzchni (epoksydowa / poliuretanowa)
+TAGS: tagi, oddzielone, przecinkami
+FEATURED: true lub false (czy ma być wyróżniona)
+---
+## Szczegółowy opis realizacji
+
+Tutaj możesz napisać szczegółowy opis w formacie Markdown.
+
+### Zakres prac
+
+- Pierwsza czynność
+- Druga czynność
+- Trzecia czynność
+
+### Parametry techniczne
+
+- Grubość systemu: X mm
+- Odporność chemiczna: ...
+- Antypoślizg: R10/R11/R12
+
+### Efekt końcowy
+
+Opisz efekt końcowy i zadowolenie klienta...

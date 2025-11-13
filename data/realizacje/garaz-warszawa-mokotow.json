@@ -1,0 +1,54 @@
+{
+  "id": "garaz-warszawa-mokotow",
+  "title": "Posadzka epoksydowa - garaż Warszawa Mokotów",
+  "description": "Profesjonalna posadzka epoksydowa w garażu prywatnym. System bezpyłowy z antypoślizgiem.",
+  "content": "## Realizacja posadzki żywicznej w garażu - Warszawa Mokotów\n\nW tym projekcie wykonaliśmy kompleksową posadzkę epoksydową w garażu prywatnym o powierzchni 25 m². Inwestycja obejmowała pełne przygotowanie podłoża oraz aplikację systemu bezpyłowego z warstwą antypoślizgową.\n\n### Zakres prac\n\n- Diagnostyka i przygotowanie podłoża betonowego\n- Szlifowanie mechaniczne powierzchni\n- Naprawa rys i ubytków\n- Aplikacja podkładu epoksydowego\n- Warstwa bazowa epoksydowa z posypką kwarcową\n- Lakier ochronny UV\n\n### Parametry techniczne\n\n- Grubość systemu: 0,4 mm\n- Odporność chemiczna: oleje, paliwa, sole drogowe\n- Antypoślizg: R10\n- Termin wykonania: 3 dni\n\n### Efekt końcowy\n\nPosadzka charakteryzuje się wysoką odpornością na истирание i substancje chemiczne. Łatwa w utrzymaniu czystości, bezpyłowa powierzchnia. Klient bardzo zadowolony z efektu końcowego.",
+  "location": "Warszawa Mokotów",
+  "area": "25 m²",
+  "realizationDate": "2024-10-15",
+  "client": "Klient prywatny",
+  "projectType": "garaż",
+  "surface": "epoksydowa",
+  "images": [
+    {
+      "url": "/realizacje/garaz-warszawa-mokotow/01.jpg",
+      "alt": "Posadzka epoksydowa w garażu - widok ogólny",
+      "caption": "Gotowa posadzka epoksydowa z antypoślizgiem"
+    },
+    {
+      "url": "/realizacje/garaz-warszawa-mokotow/02.jpg",
+      "alt": "Przygotowanie podłoża pod posadzkę",
+      "caption": "Szlifowanie i przygotowanie powierzchni"
+    },
+    {
+      "url": "/realizacje/garaz-warszawa-mokotow/03.jpg",
+      "alt": "Aplikacja warstwy epoksydowej",
+      "caption": "Nakładanie warstwy bazowej"
+    }
+  ],
+  "thumbnail": {
+    "url": "/realizacje/garaz-warszawa-mokotow/01.jpg",
+    "alt": "Posadzka epoksydowa w garażu - miniatura"
+  },
+  "tags": [
+    "posadzka epoksydowa",
+    "garaż",
+    "Warszawa",
+    "antypoślizg",
+    "posadzka garażowa"
+  ],
+  "featured": true,
+  "status": "published",
+  "seo": {
+    "metaTitle": "Posadzka epoksydowa w garażu - Warszawa Mokotów | Realizacja",
+    "metaDescription": "Zobacz realizację posadzki epoksydowej w garażu prywatnym w Warszawie. Kompleksowe przygotowanie podłoża i system bezpyłowy z antypoślizgiem.",
+    "keywords": [
+      "posadzka epoksydowa",
+      "garaż Warszawa",
+      "posadzka garażowa",
+      "realizacja posadzki",
+      "antypoślizg"
+    ],
+    "canonicalUrl": "https://posadzkizywiczne.com/realizacje/garaz-warszawa-mokotow"
+  }
+}

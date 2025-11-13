@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "sync-drive": "node scripts/sync-google-drive.js"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.0",
@@ -35,6 +36,7 @@
     "embla-carousel-autoplay": "^8.1.7",
     "embla-carousel-react": "^8.1.7",
     "framer-motion": "^11.12.0",
+    "googleapis": "^166.0.0",
     "gray-matter": "^4.0.3",
     "jspdf": "^3.0.1",
     "lucide-react": "^0.359.0",
