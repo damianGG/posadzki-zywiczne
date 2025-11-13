@@ -57,6 +57,11 @@ export const Header2 = () => {
             href: "/kuchnia-salon",
             description: "",
         },
+        {
+            title: "Realizacje",
+            href: "/realizacje",
+            description: "",
+        },
     ]
 
     const [scrolled, setScrolled] = useState(false)

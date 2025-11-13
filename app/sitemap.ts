@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { getAllPosts } from "@/lib/posts-json"
+import { getAllRealizations } from "@/lib/realizations"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://posadzkizywiczne.com"
@@ -8,6 +9,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const allPosts = getAllPosts()
   console.log("[v0] getAllPosts returned:", allPosts.length, "posts")
   console.log("[v0] First post:", allPosts[0])
+
+  const allRealizations = getAllRealizations()
+  console.log("[v0] getAllRealizations returned:", allRealizations.length, "realizations")
 
   const posts = allPosts.map((post) => {
     console.log("[v0] Processing post:", post.slug, post.title)
@@ -43,6 +47,29 @@ export default function sitemap(): MetadataRoute.Sitemap {
     console.log("[v0] Sitemap entry:", sitemapEntry)
 
     return sitemapEntry
+  })
+
+  const realizations = allRealizations.map((realization) => {
+    let lastModified = new Date()
+
+    try {
+      if (realization.realizationDate && realization.realizationDate.trim()) {
+        const dateObj = new Date(realization.realizationDate)
+        if (!isNaN(dateObj.getTime())) {
+          lastModified = dateObj
+        }
+      }
+    } catch (error) {
+      console.warn(`Invalid date for realization ${realization.id}:`, error)
+      lastModified = new Date()
+    }
+
+    return {
+      url: `${base}/realizacje/${realization.id}`,
+      lastModified,
+      changeFrequency: "monthly" as const,
+      priority: realization.featured ? 0.8 : 0.7,
+    }
   })
 
   return [
@@ -83,11 +110,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
+      url: `${baseUrl}/realizacje`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       url: `${base}/blog/`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     ...posts,
+    ...realizations,
   ]
 }
