@@ -6,6 +6,11 @@ import Link from "next/link"
 import { useState } from "react"
 import { MapPin, Calendar, Ruler } from "lucide-react"
 
+// Sanitize slug to prevent XSS - only allow alphanumeric characters and hyphens
+function sanitizeSlug(slug: string): string {
+  return slug.replace(/[^a-z0-9-]/gi, "")
+}
+
 interface RealizationsGalleryProps {
   allRealizations: Realization[]
   featuredRealizations: Realization[]
@@ -108,9 +113,11 @@ interface RealizationCardProps {
 }
 
 function RealizationCard({ realization, featured = false }: RealizationCardProps) {
+  const safeId = sanitizeSlug(realization.id)
+  
   return (
     <Link
-      href={`/realizacje/${realization.id}`}
+      href={`/realizacje/${safeId}`}
       className="group overflow-hidden rounded-lg border bg-card transition-all hover:shadow-lg"
     >
       <div className="relative aspect-video overflow-hidden">
