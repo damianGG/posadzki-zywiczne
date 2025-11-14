@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     title: "Posadzki Żywiczne do Garaży | Wytrzymałe i Odporne",
     description:
       "Oferujemy trwałe i odporne posadzki żywiczne do garaży. Wytrzymałość na obciążenia i estetyczny wygląd. Sprawdź ofertę!",
-    url: "https://posadzkizywiczne.com/posadzki-garaz",
+    url: "https://posadzkizywiczne.com/garaze",
     images: [
       {
         url: "https://posadzkizywiczne.com/images/posadzki-garaz.jpg",
@@ -20,6 +20,9 @@ export const metadata: Metadata = {
         alt: "Posadzki Żywiczne do Garaży",
       },
     ],
+  },
+  alternates: {
+    canonical: "https://posadzkizywiczne.com/garaze",
   },
 };
 

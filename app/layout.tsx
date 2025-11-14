@@ -15,6 +15,7 @@ const inter = Inter({ subsets: ["latin"] });
 import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google'
 import type { Metadata } from 'next'
 import Script from "next/script";
+import { getOrganizationSchema, getWebsiteSchema } from "@/lib/structured-data";
 
 export const metadata: Metadata = {
   title: "Posadzki żywiczne | Garaże, kuchnie, balkony, tarasy | Gwarancja",
@@ -43,6 +44,9 @@ export const metadata: Metadata = {
       "Wykonujemy trwałe i estetyczne posadzki żywiczne w garażach, kuchniach, łazienkach, piwnicach, halach oraz na balkonach i tarasach. Oferujemy kompleksowy montaż i fachowe doradztwo. Sprawdź naszą ofertę!",
     images: ["https://posadzkizywiczne.com/images/home-banner.jpg"],
   },
+  alternates: {
+    canonical: "https://posadzkizywiczne.com",
+  },
 };
 
 
@@ -51,8 +55,30 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const organizationSchema = getOrganizationSchema();
+  const websiteSchema = getWebsiteSchema();
+
   return (
     <html lang="pl">
+      <head>
+        {/* Structured Data for SEO */}
+        <Script
+          id="organization-schema"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+        <Script
+          id="website-schema"
+          type="application/ld+json"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
+      </head>
       {/* <GoogleAnalytics gaId="GTM-5D97JCZ5" />
       <GoogleAnalytics gaId="G-VCXQVYV8TG" /> */}
       {/* <GoogleTagManager gtmId="G-VCXQVYV8TG" /> */}

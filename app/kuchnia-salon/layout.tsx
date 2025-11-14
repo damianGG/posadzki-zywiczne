@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "Posadzki Żywiczne w Kuchni i Salonie | Styl i Funkcjonalność",
     description:
       "Stylowe posadzki żywiczne do kuchni i salonu. Estetyczne, łatwe w utrzymaniu i trwałe rozwiązanie. Zamów u nas!",
-    url: "https://posadzkizywiczne.com/posadzki-kuchnia-salon",
+    url: "https://posadzkizywiczne.com/kuchnia-salon",
     images: [
       {
         url: "https://posadzkizywiczne.com/images/posadzki-kuchnia-salon.jpg",
@@ -21,6 +21,9 @@ export const metadata: Metadata = {
         alt: "Posadzki Żywiczne w Kuchni i Salonie",
       },
     ],
+  },
+  alternates: {
+    canonical: "https://posadzkizywiczne.com/kuchnia-salon",
   },
 };
 
