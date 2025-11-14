@@ -254,17 +254,72 @@ export default function AllBlogPosts({ posts }: AllBlogPostsProps) {
               </Button>
 
               <div className="flex space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-10"
-                  >
-                    {page}
-                  </Button>
-                ))}
+                {(() => {
+                  const pages = []
+                  const maxVisible = 5
+                  
+                  if (totalPages <= maxVisible + 2) {
+                    // Show all pages if total is small
+                    for (let i = 1; i <= totalPages; i++) {
+                      pages.push(i)
+                    }
+                  } else {
+                    // Always show first page
+                    pages.push(1)
+                    
+                    let start = Math.max(2, currentPage - 1)
+                    let end = Math.min(totalPages - 1, currentPage + 1)
+                    
+                    // Adjust if at the beginning
+                    if (currentPage <= 3) {
+                      end = maxVisible - 1
+                    }
+                    
+                    // Adjust if at the end
+                    if (currentPage >= totalPages - 2) {
+                      start = totalPages - maxVisible + 2
+                    }
+                    
+                    // Add ellipsis before middle pages
+                    if (start > 2) {
+                      pages.push('...')
+                    }
+                    
+                    // Add middle pages
+                    for (let i = start; i <= end; i++) {
+                      pages.push(i)
+                    }
+                    
+                    // Add ellipsis after middle pages
+                    if (end < totalPages - 1) {
+                      pages.push('...')
+                    }
+                    
+                    // Always show last page
+                    pages.push(totalPages)
+                  }
+                  
+                  return pages.map((page, index) => {
+                    if (page === '...') {
+                      return (
+                        <span key={`ellipsis-${index}`} className="px-2 py-1 text-muted-foreground">
+                          ...
+                        </span>
+                      )
+                    }
+                    return (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(page as number)}
+                        className="w-10"
+                      >
+                        {page}
+                      </Button>
+                    )
+                  })
+                })()}
               </div>
 
               <Button
