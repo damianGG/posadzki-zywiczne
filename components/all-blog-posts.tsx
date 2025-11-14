@@ -18,6 +18,8 @@ import {
   DollarSign,
   Shield,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -247,32 +249,91 @@ export default function AllBlogPosts({ posts }: AllBlogPostsProps) {
             <div className="flex justify-center items-center space-x-2">
               <Button
                 variant="outline"
+                size="icon"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
+                aria-label="Poprzednia strona"
               >
-                Poprzednia
+                <ChevronLeft className="h-4 w-4" />
               </Button>
 
               <div className="flex space-x-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <Button
-                    key={page}
-                    variant={currentPage === page ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setCurrentPage(page)}
-                    className="w-10"
-                  >
-                    {page}
-                  </Button>
-                ))}
+                {(() => {
+                  const pages = []
+                  const maxVisible = 5
+                  
+                  if (totalPages <= maxVisible + 2) {
+                    // Show all pages if total is small
+                    for (let i = 1; i <= totalPages; i++) {
+                      pages.push(i)
+                    }
+                  } else {
+                    // Always show first page
+                    pages.push(1)
+                    
+                    let start = Math.max(2, currentPage - 1)
+                    let end = Math.min(totalPages - 1, currentPage + 1)
+                    
+                    // Adjust if at the beginning
+                    if (currentPage <= 3) {
+                      end = maxVisible - 1
+                    }
+                    
+                    // Adjust if at the end
+                    if (currentPage >= totalPages - 2) {
+                      start = totalPages - maxVisible + 2
+                    }
+                    
+                    // Add ellipsis before middle pages
+                    if (start > 2) {
+                      pages.push('...')
+                    }
+                    
+                    // Add middle pages
+                    for (let i = start; i <= end; i++) {
+                      pages.push(i)
+                    }
+                    
+                    // Add ellipsis after middle pages
+                    if (end < totalPages - 1) {
+                      pages.push('...')
+                    }
+                    
+                    // Always show last page
+                    pages.push(totalPages)
+                  }
+                  
+                  return pages.map((page, index) => {
+                    if (page === '...') {
+                      return (
+                        <span key={`ellipsis-${index}`} className="px-2 py-1 text-muted-foreground">
+                          ...
+                        </span>
+                      )
+                    }
+                    return (
+                      <Button
+                        key={page}
+                        variant={currentPage === page ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => setCurrentPage(page as number)}
+                        className="w-10"
+                      >
+                        {page}
+                      </Button>
+                    )
+                  })
+                })()}
               </div>
 
               <Button
                 variant="outline"
+                size="icon"
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
+                aria-label="Następna strona"
               >
-                Następna
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           )}
