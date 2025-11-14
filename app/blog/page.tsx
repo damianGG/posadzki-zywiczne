@@ -8,7 +8,12 @@ export const metadata: Metadata = {
         "Przeglądaj wszystkie artykuły o posadzkach żywicznych. Porady ekspertów, przewodniki, porównania i praktyczne rozwiązania.",
     keywords:
         "blog posadzki żywiczne, artykuły o posadzkach, porady ekspertów, przewodniki posadzki, posadzki epoksydowe",
+    alternates: {
+        canonical: "https://posadzkizywiczne.com/blog",
+    },
 }
+
+export const dynamic = "force-static"
 
 export default function BlogPage() {
     const posts = getAllBlogPosts()

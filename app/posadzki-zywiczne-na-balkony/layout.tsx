@@ -3,24 +3,27 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Posadzki Żywiczne do Pomieszczeń Czystych | Higieniczne i Trwałe",
+  title: "Posadzki Żywiczne na Balkony i Tarasy | Wodoodporne i Estetyczne",
   description:
-    "Higieniczne posadzki żywiczne do pomieszczeń czystych. Idealne do laboratoriów, szpitali i zakładów przemysłowych. Skontaktuj się z nami!",
+    "Posadzki żywiczne na balkony i tarasy. Wodoodporne, odporne na warunki atmosferyczne i estetyczne rozwiązanie. Sprawdź naszą ofertę!",
   keywords:
-    "posadzki żywiczne pomieszczenia czyste, higieniczne posadzki, laboratoria",
+    "posadzki żywiczne balkony, tarasy, posadzki zewnętrzne, wodoodporne posadzki",
   openGraph: {
-    title: "Posadzki Żywiczne do Pomieszczeń Czystych | Higieniczne i Trwałe",
+    title: "Posadzki Żywiczne na Balkony i Tarasy | Wodoodporne i Estetyczne",
     description:
-      "Higieniczne posadzki żywiczne do pomieszczeń czystych. Idealne do laboratoriów, szpitali i zakładów przemysłowych. Skontaktuj się z nami!",
-    url: "https://posadzkizywiczne.com/posadzki-pomieszczenia-czyste",
+      "Posadzki żywiczne na balkony i tarasy. Wodoodporne, odporne na warunki atmosferyczne i estetyczne rozwiązanie. Sprawdź naszą ofertę!",
+    url: "https://posadzkizywiczne.com/posadzki-zywiczne-na-balkony",
     images: [
       {
-        url: "https://posadzkizywiczne.com/images/posadzki-pomieszczenia-czyste.jpg",
+        url: "https://posadzkizywiczne.com/images/posadzki-balkony-tarasy.jpg",
         width: 1200,
         height: 630,
-        alt: "Posadzki Żywiczne do Pomieszczeń Czystych",
+        alt: "Posadzki Żywiczne na Balkony i Tarasy",
       },
     ],
+  },
+  alternates: {
+    canonical: "https://posadzkizywiczne.com/posadzki-zywiczne-na-balkony",
   },
 };
 

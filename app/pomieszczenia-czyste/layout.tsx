@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     title: "Posadzki Żywiczne do Pomieszczeń Czystych | Higieniczne i Trwałe",
     description:
       "Higieniczne posadzki żywiczne do pomieszczeń czystych. Idealne do laboratoriów, szpitali i zakładów przemysłowych. Skontaktuj się z nami!",
-    url: "https://posadzkizywiczne.com/posadzki-pomieszczenia-czyste",
+    url: "https://posadzkizywiczne.com/pomieszczenia-czyste",
     images: [
       {
         url: "https://posadzkizywiczne.com/images/posadzki-pomieszczenia-czyste.jpg",
@@ -21,6 +21,9 @@ export const metadata: Metadata = {
         alt: "Posadzki Żywiczne do Pomieszczeń Czystych",
       },
     ],
+  },
+  alternates: {
+    canonical: "https://posadzkizywiczne.com/pomieszczenia-czyste",
   },
 };
 

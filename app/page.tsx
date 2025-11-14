@@ -17,6 +17,9 @@ import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-re
 import BenefitsSection from "./garaze/components/BenefitsSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
 import { getLatestBlogPosts, getBlogPostsByCategories } from "@/lib/blog"
+
+export const dynamic = "force-static"
+
 export default function Home() {
   const latestPosts = getLatestBlogPosts(3)
 
