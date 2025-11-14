@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import ReactMarkdown from "react-markdown"
 import type { BlogPost } from "@/lib/blog"
 
 interface BlogArticleDynamicProps {
@@ -119,7 +118,7 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
           <figcaption className="text-sm text-muted-foreground mt-2 text-center">{post.image.caption}</figcaption>
         </div>
 
-        {/* Article Content - POPRAWIONA WERSJA */}
+        {/* Article Content */}
         <div
           className="prose prose-lg max-w-none dark:prose-invert 
                         prose-headings:text-foreground 
@@ -130,9 +129,8 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
                         prose-blockquote:text-muted-foreground
                         prose-code:text-foreground
                         prose-pre:bg-muted"
-        >
-          <ReactMarkdown>{post.content}</ReactMarkdown>
-        </div>
+          dangerouslySetInnerHTML={{ __html: post.content }}
+        />
 
         {/* Article Footer */}
         <footer className="mt-12 pt-8 border-t">
