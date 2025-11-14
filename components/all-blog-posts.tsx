@@ -18,6 +18,8 @@ import {
   DollarSign,
   Shield,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -247,10 +249,12 @@ export default function AllBlogPosts({ posts }: AllBlogPostsProps) {
             <div className="flex justify-center items-center space-x-2">
               <Button
                 variant="outline"
+                size="icon"
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                 disabled={currentPage === 1}
+                aria-label="Poprzednia strona"
               >
-                Poprzednia
+                <ChevronLeft className="h-4 w-4" />
               </Button>
 
               <div className="flex space-x-1">
@@ -324,10 +328,12 @@ export default function AllBlogPosts({ posts }: AllBlogPostsProps) {
 
               <Button
                 variant="outline"
+                size="icon"
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                 disabled={currentPage === totalPages}
+                aria-label="Następna strona"
               >
-                Następna
+                <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           )}
