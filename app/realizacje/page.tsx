@@ -1,68 +1,44 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { getAllRealizacje, getCategoryDisplayName, getTypeDisplayName, getAllTags } from '@/lib/realizacje';
+import { getAllRealizacje, getCategoryDisplayName, getTypeDisplayName } from '@/lib/realizacje';
 import { RealizacjaCategory, RealizacjaType } from '@/types/realizacje';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
-import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Search, X } from 'lucide-react';
+import { X } from 'lucide-react';
 
 export default function RealizacjePage() {
   const allRealizacje = getAllRealizacje();
-  const allTags = getAllTags();
   
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<RealizacjaCategory | 'all'>('all');
   const [selectedType, setSelectedType] = useState<RealizacjaType | 'all'>('all');
-  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const categories: RealizacjaCategory[] = ['mieszkania-domy', 'balkony-tarasy', 'kuchnie', 'pomieszczenia-czyste', 'schody'];
   const types: (RealizacjaType | 'all')[] = ['all', 'indywidualna', 'komercyjna'];
 
-  // Filter and search logic
+  // Filter logic
   const filteredRealizacje = useMemo(() => {
     return allRealizacje.filter((realizacja) => {
-      // Search filter
-      const searchLower = searchQuery.toLowerCase();
-      const matchesSearch = searchQuery === '' || 
-        realizacja.title.toLowerCase().includes(searchLower) ||
-        realizacja.description.toLowerCase().includes(searchLower) ||
-        realizacja.location.toLowerCase().includes(searchLower) ||
-        realizacja.tags.some(tag => tag.toLowerCase().includes(searchLower));
-
       // Category filter
       const matchesCategory = selectedCategory === 'all' || realizacja.category === selectedCategory;
 
       // Type filter
       const matchesType = selectedType === 'all' || realizacja.type === selectedType;
 
-      // Tags filter
-      const matchesTags = selectedTags.length === 0 || 
-        selectedTags.every(tag => realizacja.tags.includes(tag));
-
-      return matchesSearch && matchesCategory && matchesType && matchesTags;
+      return matchesCategory && matchesType;
     });
-  }, [allRealizacje, searchQuery, selectedCategory, selectedType, selectedTags]);
-
-  const toggleTag = (tag: string) => {
-    setSelectedTags(prev => 
-      prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
-    );
-  };
+  }, [allRealizacje, selectedCategory, selectedType]);
 
   const clearFilters = () => {
-    setSearchQuery('');
     setSelectedCategory('all');
     setSelectedType('all');
-    setSelectedTags([]);
   };
 
-  const hasActiveFilters = searchQuery !== '' || selectedCategory !== 'all' || selectedType !== 'all' || selectedTags.length > 0;
+  const hasActiveFilters = selectedCategory !== 'all' || selectedType !== 'all';
 
   return (
     <div className="w-full">
@@ -81,30 +57,10 @@ export default function RealizacjePage() {
         </div>
       </section>
 
-      {/* Search and Filters */}
+      {/* Filters */}
       <section className="w-full py-8 bg-white border-b">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto space-y-6">
-            {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Szukaj po nazwie, lokalizacji, tagach..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 h-12 text-base"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              )}
-            </div>
-
             {/* Type Filter */}
             <div className="flex flex-wrap gap-2">
               <span className="text-sm font-medium text-gray-700 self-center">Typ projektu:</span>
@@ -145,23 +101,6 @@ export default function RealizacjePage() {
               ))}
             </div>
 
-            {/* Tags Filter */}
-            <div className="space-y-2">
-              <span className="text-sm font-medium text-gray-700">Tagi:</span>
-              <div className="flex flex-wrap gap-2">
-                {allTags.slice(0, 15).map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant={selectedTags.includes(tag) ? 'default' : 'outline'}
-                    className="cursor-pointer hover:bg-gray-100"
-                    onClick={() => toggleTag(tag)}
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
             {/* Clear Filters */}
             {hasActiveFilters && (
               <div className="flex justify-center">
@@ -191,7 +130,7 @@ export default function RealizacjePage() {
             {filteredRealizacje.length === 0 ? (
               <div className="text-center py-16">
                 <p className="text-xl text-gray-600">
-                  Nie znaleziono projektów spełniających kryteria wyszukiwania.
+                  Nie znaleziono projektów spełniających kryteria filtrowania.
                 </p>
                 <Button onClick={clearFilters} className="mt-4">
                   Wyczyść filtry
