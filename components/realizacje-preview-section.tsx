@@ -1,8 +1,7 @@
-import { getLatestRealizacje } from '@/lib/realizacje';
+import { getLatestRealizacje, getCategoryDisplayName, getTypeDisplayName } from '@/lib/realizacje';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
-import { getCategoryDisplayName } from '@/lib/realizacje';
 
 interface RealizacjePreviewSectionProps {
   title?: string;
@@ -48,9 +47,12 @@ export default function RealizacjePreviewSection({
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="absolute top-4 right-4">
-                    <Badge className="bg-white/90 text-gray-900 hover:bg-white">
+                  <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+                    <Badge className="bg-blue-600 text-white hover:bg-blue-700">
                       {getCategoryDisplayName(realizacja.category)}
+                    </Badge>
+                    <Badge variant="secondary" className="bg-white/90 text-gray-900">
+                      {getTypeDisplayName(realizacja.type)}
                     </Badge>
                   </div>
                 </div>

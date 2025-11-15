@@ -1,0 +1,39 @@
+{
+  "slug": "schody-warszawa-2024",
+  "title": "Posadzka żywiczna na schodach wewnętrznych - Warszawa",
+  "description": "Eleganckie schody wewnętrzne w domu jednorodzinnym wykończone żywicą epoksydową. Antypoślizgowa powierzchnia w kolorze grafitu dodaje nowoczesnego charakteru wnętrzu.",
+  "category": "schody",
+  "type": "indywidualna",
+  "location": "Warszawa, Wilanów",
+  "date": "2024-11-01",
+  "tags": ["schody", "wewnętrzne", "epoksyd", "antypoślizg", "nowoczesne", "grafitowe"],
+  "images": {
+    "main": "/mieszkanie.jpg",
+    "gallery": [
+      "/kuchnia.jpg"
+    ]
+  },
+  "details": {
+    "surface": "12 m²",
+    "system": "Epoksyd antypoślizgowy",
+    "color": "Grafitowy",
+    "duration": "2 dni"
+  },
+  "features": [
+    "Powierzchnia antypoślizgowa",
+    "Estetyczny, nowoczesny wygląd",
+    "Wysoka odporność na ścieranie",
+    "Łatwe utrzymanie czystości",
+    "Bezspoinowe wykonanie"
+  ],
+  "keywords": [
+    "posadzka schody",
+    "schody żywiczne",
+    "epoksyd schody",
+    "schody antypoślizgowe"
+  ],
+  "clientTestimonial": {
+    "content": "Schody wyglądają przepięknie! Antypoślizgowa powierzchnia daje poczucie bezpieczeństwa, a nowoczesny wygląd idealnie pasuje do naszego wnętrza.",
+    "author": "Pani Karolina, Warszawa"
+  }
+}

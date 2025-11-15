@@ -2,9 +2,11 @@
   "slug": "garaz-nowy-sacz-2024",
   "title": "Posadzka przemysłowa w garażu z halą warsztatową - Nowy Sącz",
   "description": "Wytrzymała posadzka przemysłowa w garażu połączonym z halą warsztatową. Zastosowano system poliuretanowy odporny na intensywny ruch, oleje i chemikalia.",
-  "category": "garaz",
+  "category": "pomieszczenia-czyste",
+  "type": "komercyjna",
   "location": "Nowy Sącz",
   "date": "2024-07-25",
+  "tags": ["garaż", "warsztat", "przemysłowa", "poliuretan", "chemoodporna", "hala"],
   "images": {
     "main": "/garaz/garaz-hala.png",
     "gallery": [

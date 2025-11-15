@@ -1,4 +1,4 @@
-import { getAllRealizacje, getRealizacjaBySlug, getCategoryDisplayName } from '@/lib/realizacje';
+import { getAllRealizacje, getRealizacjaBySlug, getCategoryDisplayName, getTypeDisplayName } from '@/lib/realizacje';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -116,9 +116,14 @@ export default async function RealizacjaDetailPage({ params }: Props) {
         <section className="w-full py-12 lg:py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <Badge className="mb-4">
-                {getCategoryDisplayName(realizacja.category)}
-              </Badge>
+              <div className="flex gap-2 mb-4">
+                <Badge className="mb-4">
+                  {getCategoryDisplayName(realizacja.category)}
+                </Badge>
+                <Badge variant="secondary" className="mb-4">
+                  {getTypeDisplayName(realizacja.type)}
+                </Badge>
+              </div>
               
               <h1 className="text-3xl lg:text-5xl font-bold tracking-tight mb-6">
                 {realizacja.title}
@@ -138,6 +143,15 @@ export default async function RealizacjaDetailPage({ params }: Props) {
                   </svg>
                   <span>{new Date(realizacja.date).toLocaleDateString('pl-PL', { year: 'numeric', month: 'long' })}</span>
                 </div>
+              </div>
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2 mb-6">
+                {realizacja.tags.map((tag) => (
+                  <Badge key={tag} variant="outline">
+                    {tag}
+                  </Badge>
+                ))}
               </div>
 
               <p className="text-xl text-gray-700 leading-relaxed">
