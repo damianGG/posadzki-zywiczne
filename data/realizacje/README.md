@@ -9,9 +9,9 @@ Dodawanie nowej realizacji jest bardzo proste! Wystarczy utworzyć nowy plik JSO
 Nazwij plik według schematu: `nazwa-projektu-rok.json`
 
 Przykłady:
-- `garaz-warszawa-2024.json`
+- `mieszkanie-warszawa-2024.json`
 - `balkon-krakow-2025.json`
-- `mieszkanie-rzeszow-2024.json`
+- `kuchnia-rzeszow-2024.json`
 
 ### Krok 2: Wypełnij dane projektu
 
@@ -19,23 +19,25 @@ Użyj poniższego szablonu i wypełnij wszystkie pola:
 
 ```json
 {
-  "slug": "garaz-warszawa-2024",
-  "title": "Posadzka żywiczna w garażu dwustanowiskowym - Warszawa",
-  "description": "Kompleksowa realizacja posadzki epoksydowej w garażu dwustanowiskowym w Warszawie. System epoksydowy z posypką kwarcową zapewniający wysoką odporność na ścieranie i ruch samochodów.",
-  "category": "garaz",
+  "slug": "mieszkanie-warszawa-2024",
+  "title": "Posadzka żywiczna w mieszkaniu - Warszawa",
+  "description": "Kompleksowa realizacja posadzki epoksydowej w mieszkaniu w Warszawie. System epoksydowy z gładką powierzchnią zapewniający nowoczesny wygląd.",
+  "category": "mieszkania-domy",
+  "type": "indywidualna",
   "location": "Warszawa, Mokotów",
   "date": "2024-10-15",
+  "tags": ["mieszkanie", "epoksyd", "nowoczesna", "gładka", "salon"],
   "images": {
-    "main": "/garaz/garaz-zywica-2.jpg",
+    "main": "/mieszkanie/glowne.jpg",
     "gallery": [
-      "/garaz/garaz-zywica.webp",
-      "/garaz/garaz-tesla-po.png",
-      "/garaz/IMG_0780.JPG"
+      "/mieszkanie/foto1.jpg",
+      "/mieszkanie/foto2.jpg",
+      "/mieszkanie/foto3.jpg"
     ]
   },
   "details": {
     "surface": "40 m²",
-    "system": "Epoksyd z posypką kwarcową",
+    "system": "Epoksyd samopoziomujący",
     "color": "Szary RAL 7037",
     "duration": "3 dni"
   },
@@ -43,16 +45,16 @@ Użyj poniższego szablonu i wypełnij wszystkie pola:
     "Wysoka odporność na ścieranie",
     "Łatwe utrzymanie czystości",
     "Estetyczny wygląd",
-    "Odporność na plamy olejowe",
-    "Antypoślizgowa powierzchnia"
+    "Bezspoinowa powierzchnia",
+    "Kompatybilność z ogrzewaniem podłogowym"
   ],
   "keywords": [
-    "posadzka żywiczna garaż",
-    "epoksyd garaż Warszawa",
-    "posadzka garaż dwustanowiskowy"
+    "posadzka żywiczna mieszkanie",
+    "epoksyd mieszkanie Warszawa",
+    "posadzka salon"
   ],
   "clientTestimonial": {
-    "content": "Jestem bardzo zadowolony z wykonanej posadzki. Garaż wygląda profesjonalnie, a powierzchnia jest bardzo wytrzymała.",
+    "content": "Jestem bardzo zadowolony z wykonanej posadzki. Mieszkanie wygląda profesjonalnie, a powierzchnia jest bardzo wytrzymała.",
     "author": "Pan Tomasz, Warszawa"
   }
 }
@@ -65,11 +67,20 @@ Użyj poniższego szablonu i wypełnij wszystkie pola:
 - **title**: Tytuł realizacji (pojawi się jako nagłówek)
 - **description**: Szczegółowy opis projektu (2-3 zdania, ważne dla SEO)
 - **category**: Kategoria projektu - MUSI być jedną z:
-  - `"garaz"` - dla garaży
-  - `"dom"` - dla domów i mieszkań
-  - `"balkon-taras"` - dla balkonów i tarasów
+  - `"mieszkania-domy"` - dla mieszkań i domów
+  - `"balkony-tarasy"` - dla balkonów i tarasów
+  - `"kuchnie"` - dla kuchni
+  - `"pomieszczenia-czyste"` - dla pomieszczeń czystych, hal, warsztatów
+  - `"schody"` - dla schodów
+- **type**: Typ projektu - MUSI być jedną z:
+  - `"indywidualna"` - dla projektów prywatnych/indywidualnych
+  - `"komercyjna"` - dla projektów komercyjnych/biznesowych
 - **location**: Lokalizacja (np. "Warszawa, Mokotów")
 - **date**: Data realizacji w formacie YYYY-MM-DD (np. "2024-10-15")
+- **tags**: Tablica tagów opisujących projekt (np. ["garaż", "epoksyd", "antypoślizg"])
+  - Używaj konkretnych, opisowych tagów
+  - 5-7 tagów to optymalna liczba
+  - Tagi pomagają w wyszukiwaniu i filtrowaniu
 
 #### Zdjęcia:
 - **images.main**: Główne zdjęcie (pojawi się jako miniatura)
@@ -143,28 +154,32 @@ Po zapisaniu pliku JSON, nowa realizacja automatycznie pojawi się na stronie:
 - Cytuj konkretne korzyści wymienione przez klienta
 - Możesz pominąć nazwisko (np. "Pan Tomasz, Warszawa")
 
-## Przykłady kategorii
+## Przykłady kategorii i typów
 
-### Garaż:
+### Mieszkanie/Dom (Indywidualne):
 ```json
 {
-  "category": "garaz",
+  "category": "mieszkania-domy",
+  "type": "indywidualna",
+  "tags": ["mieszkanie", "salon", "epoksyd", "nowoczesna", "gładka"],
   "keywords": [
-    "posadzka żywiczna garaż",
-    "epoksyd garaż",
-    "posadzka przemysłowa garaż"
+    "posadzka żywiczna mieszkanie",
+    "posadzka salon",
+    "epoksyd mieszkanie"
   ]
 }
 ```
 
-### Dom/Mieszkanie:
+### Kuchnia:
 ```json
 {
-  "category": "dom",
+  "category": "kuchnie",
+  "type": "indywidualna",
+  "tags": ["kuchnia", "epoksyd", "bezspoinowa", "biała", "minimalizm"],
   "keywords": [
-    "posadzka żywiczna mieszkanie",
-    "posadzka salon",
-    "epoksyd kuchnia"
+    "posadzka kuchnia",
+    "epoksyd kuchnia",
+    "posadzka bezspoinowa kuchnia"
   ]
 }
 ```
@@ -172,11 +187,41 @@ Po zapisaniu pliku JSON, nowa realizacja automatycznie pojawi się na stronie:
 ### Balkon/Taras:
 ```json
 {
-  "category": "balkon-taras",
+  "category": "balkony-tarasy",
+  "type": "indywidualna",
+  "tags": ["balkon", "poliuretan", "UV", "wodoszczelność", "antypoślizg"],
   "keywords": [
     "posadzka balkon",
     "renowacja balkonu",
-    "taras żywica"
+    "balkon wodoszczelny"
+  ]
+}
+```
+
+### Pomieszczenia Czyste (Komercyjne):
+```json
+{
+  "category": "pomieszczenia-czyste",
+  "type": "komercyjna",
+  "tags": ["hala", "warsztat", "przemysłowa", "chemoodporna", "garaż"],
+  "keywords": [
+    "posadzka przemysłowa",
+    "posadzka hala",
+    "posadzka chemoodporna"
+  ]
+}
+```
+
+### Schody:
+```json
+{
+  "category": "schody",
+  "type": "indywidualna",
+  "tags": ["schody", "wewnętrzne", "antypoślizg", "epoksyd", "nowoczesne"],
+  "keywords": [
+    "posadzka schody",
+    "schody żywiczne",
+    "schody antypoślizgowe"
   ]
 }
 ```
