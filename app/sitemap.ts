@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next"
 import { getAllPosts } from "@/lib/posts-json"
+import { getAllRealizacje } from "@/lib/realizacje"
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = "https://posadzkizywiczne.com"
@@ -8,6 +9,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const allPosts = getAllPosts()
   console.log("[v0] getAllPosts returned:", allPosts.length, "posts")
   console.log("[v0] First post:", allPosts[0])
+
+  const allRealizacje = getAllRealizacje()
+  console.log("[v0] getAllRealizacje returned:", allRealizacje.length, "realizacje")
 
   const posts = allPosts.map((post) => {
     console.log("[v0] Processing post:", post.slug, post.title)
@@ -44,6 +48,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     return sitemapEntry
   })
+
+  const realizacje = allRealizacje.map((realizacja) => ({
+    url: `${base}/realizacje/${realizacja.slug}`,
+    lastModified: new Date(realizacja.date),
+    changeFrequency: "monthly" as const,
+    priority: 0.8,
+  }))
 
   return [
     {
@@ -89,11 +100,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
+      url: `${baseUrl}/realizacje`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       url: `${base}/blog/`,
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     ...posts,
+    ...realizacje,
   ]
 }

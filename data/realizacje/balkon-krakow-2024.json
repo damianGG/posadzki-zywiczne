@@ -1,0 +1,40 @@
+{
+  "slug": "balkon-krakow-2024",
+  "title": "Renowacja balkonu z powłoką poliuretanową - Kraków",
+  "description": "Profesjonalna renowacja balkonu w bloku mieszkalnym w Krakowie. Zastosowano elastyczny system poliuretanowy odporny na UV i warunki atmosferyczne.",
+  "category": "balkony-tarasy",
+  "type": "indywidualna",
+  "location": "Kraków, Podgórze",
+  "date": "2024-09-20",
+  "tags": ["balkon", "renowacja", "poliuretan", "UV", "wodoszczelność", "blok mieszkalny"],
+  "images": {
+    "main": "/remont-balkon.webp",
+    "gallery": [
+      "/garaz/posadkazywiczne-taras.png",
+      "/sprzatanie-balokonu-2.jpg"
+    ]
+  },
+  "details": {
+    "surface": "8 m²",
+    "system": "Poliuretan elastyczny UV",
+    "color": "Beżowy RAL 1019",
+    "duration": "2 dni"
+  },
+  "features": [
+    "Odporność na warunki atmosferyczne",
+    "Elastyczność - zabezpiecza przed pękaniem",
+    "Ochrona UV - nie żółknie",
+    "Wodoszczelność",
+    "Łatwe czyszczenie"
+  ],
+  "keywords": [
+    "posadzka balkon",
+    "renowacja balkonu Kraków",
+    "powłoka poliuretanowa balkon",
+    "balkon wodoszczelny"
+  ],
+  "clientTestimonial": {
+    "content": "Balkon wygląda jak nowy! Powłoka jest gładka, ładnie się prezentuje i jest łatwa w utrzymaniu. Polecam!",
+    "author": "Pani Anna, Kraków"
+  }
+}

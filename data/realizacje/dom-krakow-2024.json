@@ -1,0 +1,40 @@
+{
+  "slug": "dom-krakow-2024",
+  "title": "Posadzka żywiczna w całym domu jednorodzinnym - Kraków",
+  "description": "Kompleksowe wykonanie posadzki żywicznej w całym domu jednorodzinnym. Bezspoinowa powierzchnia w kolorze szarym łączy wszystkie pomieszczenia, tworząc spójną i nowoczesną przestrzeń.",
+  "category": "mieszkania-domy",
+  "type": "indywidualna",
+  "location": "Kraków, Krowodrza",
+  "date": "2024-09-05",
+  "tags": ["dom", "całe mieszkanie", "epoksyd", "bezspoinowa", "nowoczesna", "szara"],
+  "images": {
+    "main": "/mieszkanie/DeWatermark.ai_1732886162387.png",
+    "gallery": [
+      "/mieszkanie.jpg",
+      "/kuchnia.jpg"
+    ]
+  },
+  "details": {
+    "surface": "120 m²",
+    "system": "Epoksyd samopoziomujący",
+    "color": "Szary RAL 7040",
+    "duration": "7 dni"
+  },
+  "features": [
+    "Bezspoinowa powierzchnia w całym domu",
+    "Łatwe utrzymanie czystości",
+    "Odporność na wilgoć",
+    "Kompatybilność z ogrzewaniem podłogowym",
+    "Nowoczesny, minimalistyczny wygląd"
+  ],
+  "keywords": [
+    "posadzka dom",
+    "posadzka całe mieszkanie",
+    "epoksyd dom",
+    "posadzka bezspoinowa dom"
+  ],
+  "clientTestimonial": {
+    "content": "Jesteśmy zachwyceni efektem! Posadzka w całym domu wygląda spójnie i elegancko. Bardzo łatwa w utrzymaniu i idealna dla naszej rodziny.",
+    "author": "Państwo Nowaków, Kraków"
+  }
+}
