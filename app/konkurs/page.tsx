@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Gift, Snowflake, Calendar, CheckCircle2, Loader2 } from "lucide-react"
+import SnowfallAnimation from "@/components/snowfall-animation"
 
 export default function KonkursPage() {
   const [name, setName] = useState("")
@@ -59,6 +60,7 @@ export default function KonkursPage() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-b from-blue-50 via-white to-purple-50">
+      <SnowfallAnimation />
       {/* Header Section */}
       <div className="w-full py-16 lg:py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 opacity-10"></div>
