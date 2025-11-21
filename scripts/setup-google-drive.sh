@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e  # Exit on any error
 
 # Google Drive Agent - Setup Script
 # Ten skrypt pomoże w konfiguracji Google Drive Agent

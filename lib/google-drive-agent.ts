@@ -416,8 +416,13 @@ export class GoogleDriveAgent {
   ): Partial<Realizacja> {
     // Mapowanie obrazów
     const imageUrls = images.map(img => {
-      // W produkcji, obrazy powinny być pobrane i zapisane lokalnie
-      // Tutaj używamy thumbnailLink jako placeholder
+      // TODO: W pełnej implementacji produkcyjnej należy:
+      // 1. Pobrać pliki binarne z Google Drive (gapi.client.drive.files.get with alt='media')
+      // 2. Zapisać je lokalnie w public/images/realizacje/{slug}/
+      // 3. LUB przesłać do CDN (Cloudinary, Vercel Blob, itp.)
+      // 
+      // Aktualnie używamy tylko thumbnailLink jako placeholder.
+      // Fallback do lokalnej ścieżki zakłada, że obrazy zostały ręcznie dodane.
       return img.thumbnailLink || `/images/realizacje/${descriptor.slug}/${img.name}`;
     });
 
