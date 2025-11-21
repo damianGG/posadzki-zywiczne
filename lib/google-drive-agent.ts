@@ -11,9 +11,17 @@
  * - Pobieranie metadanych plików graficznych
  * - Aktualizacja lokalnych plików JSON
  * - Wywoływanie revalidation w Vercel
+ * 
+ * OGRANICZENIA I UWAGI:
+ * - YAML Parser: Implementacja jest uproszczona i obsługuje tylko podstawowe struktury.
+ *   Dla produkcji zalecane jest użycie biblioteki 'js-yaml'.
+ * - Obrazy: Agent pobiera tylko metadane (URL-e). Faktyczne pliki binarne nie są
+ *   pobierane. W pełnej implementacji należy dodać pobieranie i zapis obrazów.
+ * - Type Safety: Używa deklaracji globalnych dla Google API (gapi, google).
+ *   Dla lepszej type safety zalecane jest zainstalowanie @types/gapi.
  */
 
-import { Realizacja } from '@/types/realizacje';
+import { Realizacja, RealizacjaCategory, RealizacjaType } from '@/types/realizacje';
 
 // Typy dla Google Drive API
 interface GoogleDriveFile {
@@ -368,6 +376,38 @@ export class GoogleDriveAgent {
   }
 
   /**
+   * Walidacja kategorii realizacji
+   */
+  private validateCategory(category: string | undefined): RealizacjaCategory {
+    const validCategories: RealizacjaCategory[] = [
+      'mieszkania-domy',
+      'balkony-tarasy',
+      'kuchnie',
+      'pomieszczenia-czyste',
+      'schody'
+    ];
+    
+    if (category && validCategories.includes(category as RealizacjaCategory)) {
+      return category as RealizacjaCategory;
+    }
+    
+    return 'mieszkania-domy'; // domyślna kategoria
+  }
+
+  /**
+   * Walidacja typu realizacji
+   */
+  private validateType(type: string | undefined): RealizacjaType {
+    const validTypes: RealizacjaType[] = ['indywidualna', 'komercyjna'];
+    
+    if (type && validTypes.includes(type as RealizacjaType)) {
+      return type as RealizacjaType;
+    }
+    
+    return 'indywidualna'; // domyślny typ
+  }
+
+  /**
    * Konwersja deskryptora na obiekt Realizacja
    */
   convertToRealizacja(
@@ -388,8 +428,8 @@ export class GoogleDriveAgent {
       slug: descriptor.slug,
       title: descriptor.title,
       description: descriptor.description,
-      category: (descriptor.category as any) || 'mieszkania-domy',
-      type: (descriptor.type as any) || 'indywidualna',
+      category: this.validateCategory(descriptor.category),
+      type: this.validateType(descriptor.type),
       location: descriptor.location,
       date: new Date().toISOString().split('T')[0],
       tags: descriptor.tags || [],
