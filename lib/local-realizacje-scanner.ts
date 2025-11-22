@@ -193,17 +193,14 @@ export async function scanRealizacjaFolder(folderPath: string, folderName: strin
       const existingContent = fs.readFileSync(dataPath, 'utf-8');
       const existingData = JSON.parse(existingContent);
       
-      // Porównaj kluczowe pola
-      const fieldsToCompare = ['title', 'description', 'location', 'area', 'technology'];
-      const hasChanges = fieldsToCompare.some(field => {
-        const existingValue = field === 'area' ? existingData.details?.surface : 
-                             field === 'technology' ? existingData.details?.system :
-                             existingData[field as keyof typeof existingData];
-        const newValue = field === 'area' ? descriptor.area :
-                        field === 'technology' ? descriptor.technology :
-                        (descriptor as any)[field];
-        return existingValue !== newValue;
-      });
+      // Porównaj kluczowe pola typu-safe way
+      const hasChanges = (
+        existingData.title !== realizacja.title ||
+        existingData.description !== realizacja.description ||
+        existingData.location !== realizacja.location ||
+        existingData.details?.surface !== realizacja.details.surface ||
+        existingData.details?.system !== realizacja.details.system
+      );
       
       if (!hasChanges) {
         result.status = 'unchanged';
