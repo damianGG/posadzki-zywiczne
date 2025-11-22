@@ -1,0 +1,42 @@
+{
+  "slug": "example-warszawa-mokotow-garaz",
+  "title": "Posadzka żywiczna w garażu - Warszawa Mokotów",
+  "description": "Kompleksowa realizacja posadzki epoksydowej w garażu dwustanowiskowym w Warszawie. System epoksydowy z posypką kwarcową zapewniający wysoką odporność na ścieranie i ruch samochodów.",
+  "category": "mieszkania-domy",
+  "type": "indywidualna",
+  "location": "Warszawa, Mokotów",
+  "date": "2025-11-22",
+  "tags": [
+    "garaż",
+    "epoksyd",
+    "antypoślizg",
+    "dwustanowiskowy"
+  ],
+  "images": {
+    "main": "",
+    "gallery": []
+  },
+  "details": {
+    "surface": "40 m²",
+    "system": "Epoksyd z posypką kwarcową",
+    "color": "Szary RAL 7037",
+    "duration": "3 dni"
+  },
+  "features": [
+    "Wysoka odporność na ścieranie",
+    "Łatwe utrzymanie czystości",
+    "Estetyczny wygląd",
+    "Odporność na plamy olejowe",
+    "Antypoślizgowa powierzchnia"
+  ],
+  "keywords": [
+    "posadzka żywiczna garaż",
+    "epoksyd garaż Warszawa",
+    "posadzka garaż dwustanowiskowy",
+    "posadzka antypoślizgowa garaż"
+  ],
+  "clientTestimonial": {
+    "content": "Jestem bardzo zadowolony z wykonanej posadzki. Garaż wygląda profesjonalnie, a powierzchnia jest bardzo wytrzymała.",
+    "author": "Pan Tomasz, Warszawa"
+  }
+}
