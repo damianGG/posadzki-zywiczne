@@ -72,9 +72,22 @@ function extractTypeFromFolderName(folderName: string): string | null {
 
 /**
  * Generowanie slug z nazwy folderu
+ * Obsługuje polskie znaki specjalne
  */
 function generateSlug(folderName: string): string {
-  return folderName.toLowerCase()
+  // Mapowanie polskich znaków
+  const polishChars: Record<string, string> = {
+    'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
+    'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+    'Ą': 'a', 'Ć': 'c', 'Ę': 'e', 'Ł': 'l', 'Ń': 'n',
+    'Ó': 'o', 'Ś': 's', 'Ź': 'z', 'Ż': 'z'
+  };
+
+  return folderName
+    .toLowerCase()
+    .split('')
+    .map(char => polishChars[char] || char)
+    .join('')
     .replace(/[^a-z0-9-]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
@@ -180,9 +193,19 @@ export async function scanRealizacjaFolder(folderPath: string, folderName: strin
       const existingContent = fs.readFileSync(dataPath, 'utf-8');
       const existingData = JSON.parse(existingContent);
       
-      // Porównaj tytuły i opisy
-      if (existingData.title === realizacja.title && 
-          existingData.description === realizacja.description) {
+      // Porównaj kluczowe pola
+      const fieldsToCompare = ['title', 'description', 'location', 'area', 'technology'];
+      const hasChanges = fieldsToCompare.some(field => {
+        const existingValue = field === 'area' ? existingData.details?.surface : 
+                             field === 'technology' ? existingData.details?.system :
+                             existingData[field as keyof typeof existingData];
+        const newValue = field === 'area' ? descriptor.area :
+                        field === 'technology' ? descriptor.technology :
+                        (descriptor as any)[field];
+        return existingValue !== newValue;
+      });
+      
+      if (!hasChanges) {
         result.status = 'unchanged';
         result.message = 'Realizacja już istnieje i nie wymaga aktualizacji';
       } else {

@@ -1,16 +1,16 @@
-#!/usr/bin/env node
-
 /**
  * CLI Script for scanning local realizacje folders
  * 
  * Usage:
- *   node scripts/scan-realizacje.mjs
+ *   npm run scan-realizacje
+ *   or
+ *   npx tsx scripts/scan-realizacje.ts
  * 
  * This script scans public/realizacje/ for project folders and
  * creates/updates corresponding JSON files in data/realizacje/
  */
 
-import { scanAllRealizacje, findOrphanedRealizacje } from '../lib/local-realizacje-scanner.js';
+import { scanAllRealizacje, findOrphanedRealizacje } from '../lib/local-realizacje-scanner';
 
 async function main() {
   console.log('\n' + '='.repeat(50));

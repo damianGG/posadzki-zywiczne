@@ -40,7 +40,7 @@ cp ~/zdjecia/*.jpg public/realizacje/warszawa-bemowo-balkon/
 
 ### Krok 4: Uruchom skaner
 ```bash
-node scripts/scan-realizacje.mjs
+npx tsx scripts/scan-realizacje.ts
 ```
 
 ### Wynik:
@@ -154,7 +154,7 @@ cp ~/photos/taras-*.jpg .
 
 # 4. Skanuj
 cd ../../../
-node scripts/scan-realizacje.mjs
+npx tsx scripts/scan-realizacje.ts
 
 # ✅ Gotowe!
 ```

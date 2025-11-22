@@ -122,7 +122,7 @@ Przykład: `Warszawa-Mokotów-Garaż` → `warszawa-mokotow-garaz`
 
 ```bash
 # Uruchom skaner
-node scripts/scan-realizacje.mjs
+npx tsx scripts/scan-realizacje.ts
 ```
 
 Skrypt:
@@ -196,7 +196,7 @@ const result = await scanRealizacjaFolder(
 
 4. Uruchom skaner:
    ```bash
-   node scripts/scan-realizacje.mjs
+   npx tsx scripts/scan-realizacje.ts
    ```
 
 5. Sprawdź wynik:
@@ -321,7 +321,7 @@ Website:
 ### Regularne skanowanie
 ```bash
 # Dodaj do crontab lub uruchamiaj po dodaniu nowych realizacji
-node scripts/scan-realizacje.mjs
+npx tsx scripts/scan-realizacje.ts
 ```
 
 ## FAQ
