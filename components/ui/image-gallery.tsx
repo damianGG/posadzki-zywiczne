@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -14,10 +14,14 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   
-  // Combine main image with gallery images
-  const allImages = [mainImage, ...images];
+  // Combine main image with gallery images, filter out empty strings and duplicates
+  const allImages = useMemo(() => {
+    const combined = mainImage ? [mainImage, ...images] : images;
+    return [...new Set(combined)].filter(Boolean);
+  }, [mainImage, images]);
 
   const openGallery = (index: number) => {
+    if (allImages.length === 0) return;
     setCurrentIndex(index);
     setIsOpen(true);
   };
@@ -64,6 +68,15 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
     };
   }, [isOpen]);
 
+  // If no images available, show placeholder
+  if (allImages.length === 0 || !mainImage) {
+    return (
+      <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl bg-gray-100 flex items-center justify-center">
+        <span className="text-gray-400">Brak zdjęć</span>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Main Image - clickable to open gallery */}
@@ -72,17 +85,19 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
         onClick={() => openGallery(0)}
       >
         <Image
-          src={mainImage}
+          src={allImages[0]}
           alt={title}
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           priority
         />
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-          <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 px-4 py-2 rounded-lg">
-            Kliknij aby otworzyć galerię
-          </span>
-        </div>
+        {allImages.length > 1 && (
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+            <span className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50 px-4 py-2 rounded-lg">
+              Kliknij aby otworzyć galerię ({allImages.length} zdjęć)
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Lightbox Modal */}
