@@ -3,10 +3,16 @@
   "title": "Renowacja balkonu z powłoką poliuretanową - Kraków",
   "description": "Profesjonalna renowacja balkonu w bloku mieszkalnym w Krakowie. Zastosowano elastyczny system poliuretanowy odporny na UV i warunki atmosferyczne.",
   "category": "balkony-tarasy",
-  "type": "indywidualna",
   "location": "Kraków, Podgórze",
   "date": "2024-09-20",
-  "tags": ["balkon", "renowacja", "poliuretan", "UV", "wodoszczelność", "blok mieszkalny"],
+  "tags": [
+    "balkon",
+    "renowacja",
+    "poliuretan",
+    "UV",
+    "wodoszczelność",
+    "blok mieszkalny"
+  ],
   "images": {
     "main": "/remont-balkon.webp",
     "gallery": [

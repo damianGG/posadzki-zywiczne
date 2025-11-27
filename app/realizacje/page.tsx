@@ -2,6 +2,7 @@ import { getAllRealizacje } from '@/lib/realizacje';
 import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
 import { Metadata } from 'next';
+import { Suspense } from 'react';
 import RealizacjeClient from './realizacje-client';
 
 export const metadata: Metadata = {
@@ -26,8 +27,6 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = 'force-static';
-
 export default function RealizacjePage() {
   const allRealizacje = getAllRealizacje();
 
@@ -49,7 +48,9 @@ export default function RealizacjePage() {
       </section>
 
       {/* Client-side filtering component */}
-      <RealizacjeClient realizacje={allRealizacje} />
+      <Suspense fallback={<div className="w-full py-8 text-center">Ładowanie...</div>}>
+        <RealizacjeClient realizacje={allRealizacje} />
+      </Suspense>
 
       {/* CTA Section */}
       <CTA2 />

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { Realizacja, RealizacjaCategory, RealizacjaType, RealizacjeMetadata } from '@/types/realizacje';
+import { Realizacja, RealizacjaCategory, RealizacjeMetadata } from '@/types/realizacje';
 
 const realizacjeDirectory = path.join(process.cwd(), 'data/realizacje');
 
@@ -35,14 +35,6 @@ export function getAllRealizacje(): Realizacja[] {
 export function getRealizacjeByCategory(category: RealizacjaCategory): Realizacja[] {
   const allRealizacje = getAllRealizacje();
   return allRealizacje.filter((realizacja) => realizacja.category === category);
-}
-
-/**
- * Get realizacje filtered by type
- */
-export function getRealizacjeByType(type: RealizacjaType): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
-  return allRealizacje.filter((realizacja) => realizacja.type === type);
 }
 
 /**
@@ -113,11 +105,11 @@ export function getRealizacjeMetadata(): RealizacjeMetadata {
   const allRealizacje = getAllRealizacje();
   
   const byCategory: Record<RealizacjaCategory, number> = {
-    'mieszkania-domy': 0,
-    'balkony-tarasy': 0,
-    'kuchnie': 0,
-    'pomieszczenia-czyste': 0,
     'schody': 0,
+    'garaze': 0,
+    'kuchnie': 0,
+    'balkony-tarasy': 0,
+    'domy-mieszkania': 0,
   };
 
   allRealizacje.forEach((realizacja) => {
@@ -131,7 +123,7 @@ export function getRealizacjeMetadata(): RealizacjeMetadata {
 }
 
 // Re-export helper functions that can be used in client components
-export { getCategoryDisplayName, getTypeDisplayName } from './realizacje-helpers';
+export { getCategoryDisplayName } from './realizacje-helpers';
 
 /**
  * Get latest realizacje (for homepage/previews)

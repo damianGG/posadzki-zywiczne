@@ -1,12 +1,10 @@
-export type RealizacjaCategory = 'mieszkania-domy' | 'balkony-tarasy' | 'kuchnie' | 'pomieszczenia-czyste' | 'schody';
-export type RealizacjaType = 'indywidualna' | 'komercyjna';
+export type RealizacjaCategory = 'schody' | 'garaze' | 'kuchnie' | 'balkony-tarasy' | 'domy-mieszkania';
 
 export interface Realizacja {
   slug: string;
   title: string;
   description: string;
   category: RealizacjaCategory;
-  type: RealizacjaType; // indywidualna (private) or komercyjna (commercial)
   location: string;
   date: string;
   tags: string[]; // e.g., ["garaż", "epoksyd", "antypoślizg"]
