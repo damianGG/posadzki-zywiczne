@@ -69,7 +69,7 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
   }, [isOpen]);
 
   // If no images available, show placeholder
-  if (allImages.length === 0 || !mainImage) {
+  if (allImages.length === 0) {
     return (
       <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl bg-gray-100 flex items-center justify-center">
         <span className="text-gray-400">Brak zdjęć</span>

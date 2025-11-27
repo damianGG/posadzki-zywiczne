@@ -35,7 +35,8 @@ export default function RealizacjeClient({ realizacje }: RealizacjeClientProps) 
     } else {
       params.set('kategoria', category);
     }
-    const newUrl = params.toString() ? `?${params.toString()}` : '/realizacje';
+    const queryString = params.toString();
+    const newUrl = queryString ? `/realizacje?${queryString}` : '/realizacje';
     router.push(newUrl, { scroll: false });
   }, [router, searchParams]);
 
