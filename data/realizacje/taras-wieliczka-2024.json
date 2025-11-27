@@ -3,10 +3,16 @@
   "title": "Taras z powłoką żywiczną przy domu jednorodzinnym - Wieliczka",
   "description": "Elegancki taras zewnętrzny przy domu jednorodzinnym. Zastosowano system poliuretanowy z ochroną UV, zapewniający wodoszczelność i estetyczny wygląd na długie lata.",
   "category": "balkony-tarasy",
-  "type": "indywidualna",
   "location": "Wieliczka",
   "date": "2024-06-15",
-  "tags": ["taras", "dom jednorodzinny", "poliuretan", "UV", "wodoszczelność", "zewnętrzne"],
+  "tags": [
+    "taras",
+    "dom jednorodzinny",
+    "poliuretan",
+    "UV",
+    "wodoszczelność",
+    "zewnętrzne"
+  ],
   "images": {
     "main": "/garaz/posadkazywiczne-taras.png",
     "gallery": [

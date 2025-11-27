@@ -2,11 +2,17 @@
   "slug": "dom-krakow-2024",
   "title": "Posadzka żywiczna w całym domu jednorodzinnym - Kraków",
   "description": "Kompleksowe wykonanie posadzki żywicznej w całym domu jednorodzinnym. Bezspoinowa powierzchnia w kolorze szarym łączy wszystkie pomieszczenia, tworząc spójną i nowoczesną przestrzeń.",
-  "category": "mieszkania-domy",
-  "type": "indywidualna",
+  "category": "domy-mieszkania",
   "location": "Kraków, Krowodrza",
   "date": "2024-09-05",
-  "tags": ["dom", "całe mieszkanie", "epoksyd", "bezspoinowa", "nowoczesna", "szara"],
+  "tags": [
+    "dom",
+    "całe mieszkanie",
+    "epoksyd",
+    "bezspoinowa",
+    "nowoczesna",
+    "szara"
+  ],
   "images": {
     "main": "/mieszkanie/DeWatermark.ai_1732886162387.png",
     "gallery": [

@@ -9,21 +9,20 @@
  *   - opis.json (descriptor file with project details)
  *   - *.jpg, *.png, *.webp (image files)
  * 
- * Where [typ] can be: taras, balkon, garaz, mieszkanie, gastronomia
+ * Where [typ] can be: taras, balkon, garaz, mieszkanie, kuchnia, schody
  */
 
 import fs from 'fs';
 import path from 'path';
-import { Realizacja, RealizacjaCategory, RealizacjaType } from '@/types/realizacje';
+import { Realizacja, RealizacjaCategory } from '@/types/realizacje';
 
 // Mapowanie typów z nazwy folderu na kategorie
 const TYPE_TO_CATEGORY_MAP: Record<string, RealizacjaCategory> = {
   'taras': 'balkony-tarasy',
   'balkon': 'balkony-tarasy',
-  'garaz': 'mieszkania-domy',
-  'mieszkanie': 'mieszkania-domy',
-  'dom': 'mieszkania-domy',
-  'gastronomia': 'pomieszczenia-czyste',
+  'garaz': 'garaze',
+  'mieszkanie': 'domy-mieszkania',
+  'dom': 'domy-mieszkania',
   'kuchnia': 'kuchnie',
   'schody': 'schody',
 };
@@ -34,7 +33,6 @@ interface LocalDescriptor {
   location?: string;
   area?: string;
   technology?: string;
-  type?: 'indywidualna' | 'komercyjna';
   tags?: string[];
   color?: string;
   duration?: string;
@@ -97,7 +95,7 @@ function generateSlug(folderName: string): string {
  * Pobranie kategorii na podstawie typu
  */
 function getCategoryFromType(type: string): RealizacjaCategory {
-  return TYPE_TO_CATEGORY_MAP[type] || 'mieszkania-domy';
+  return TYPE_TO_CATEGORY_MAP[type] || 'domy-mieszkania';
 }
 
 /**
@@ -145,7 +143,7 @@ export async function scanRealizacjaFolder(folderPath: string, folderName: strin
 
     // Pobierz typ z nazwy folderu
     const typeFromFolder = extractTypeFromFolderName(folderName);
-    const category = typeFromFolder ? getCategoryFromType(typeFromFolder) : 'mieszkania-domy';
+    const category = typeFromFolder ? getCategoryFromType(typeFromFolder) : 'domy-mieszkania';
 
     // Pobierz listę plików obrazów
     const files = fs.readdirSync(folderPath);
@@ -165,7 +163,6 @@ export async function scanRealizacjaFolder(folderPath: string, folderName: strin
       title: descriptor.title,
       description: descriptor.description,
       category: category,
-      type: descriptor.type || 'indywidualna',
       location: descriptor.location || folderName.split('-')[0] || '',
       date: new Date().toISOString().split('T')[0],
       tags: descriptor.tags || [],

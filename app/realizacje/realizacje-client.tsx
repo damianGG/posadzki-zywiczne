@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { getCategoryDisplayName, getTypeDisplayName } from '@/lib/realizacje-helpers';
-import { Realizacja, RealizacjaCategory, RealizacjaType } from '@/types/realizacje';
+import { useMemo, useCallback } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { getCategoryDisplayName } from '@/lib/realizacje-helpers';
+import { Realizacja, RealizacjaCategory } from '@/types/realizacje';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
@@ -13,32 +14,43 @@ interface RealizacjeClientProps {
   realizacje: Realizacja[];
 }
 
-export default function RealizacjeClient({ realizacje }: RealizacjeClientProps) {
-  const [selectedCategory, setSelectedCategory] = useState<RealizacjaCategory | 'all'>('all');
-  const [selectedType, setSelectedType] = useState<RealizacjaType | 'all'>('all');
+const categories: RealizacjaCategory[] = ['schody', 'garaze', 'kuchnie', 'balkony-tarasy', 'domy-mieszkania'];
 
-  const categories: RealizacjaCategory[] = ['mieszkania-domy', 'balkony-tarasy', 'kuchnie', 'pomieszczenia-czyste', 'schody'];
-  const types: (RealizacjaType | 'all')[] = ['all', 'indywidualna', 'komercyjna'];
+export default function RealizacjeClient({ realizacje }: RealizacjeClientProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  // Get category from URL, validate it's a valid category
+  const categoryParam = searchParams.get('kategoria');
+  const selectedCategory: RealizacjaCategory | 'all' = 
+    categoryParam && categories.includes(categoryParam as RealizacjaCategory) 
+      ? (categoryParam as RealizacjaCategory) 
+      : 'all';
+
+  // Update URL when category changes
+  const setSelectedCategory = useCallback((category: RealizacjaCategory | 'all') => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (category === 'all') {
+      params.delete('kategoria');
+    } else {
+      params.set('kategoria', category);
+    }
+    const newUrl = params.toString() ? `?${params.toString()}` : '/realizacje';
+    router.push(newUrl, { scroll: false });
+  }, [router, searchParams]);
 
   // Filter logic
   const filteredRealizacje = useMemo(() => {
     return realizacje.filter((realizacja) => {
-      // Category filter
-      const matchesCategory = selectedCategory === 'all' || realizacja.category === selectedCategory;
-
-      // Type filter
-      const matchesType = selectedType === 'all' || realizacja.type === selectedType;
-
-      return matchesCategory && matchesType;
+      return selectedCategory === 'all' || realizacja.category === selectedCategory;
     });
-  }, [realizacje, selectedCategory, selectedType]);
+  }, [realizacje, selectedCategory]);
 
   const clearFilters = () => {
     setSelectedCategory('all');
-    setSelectedType('all');
   };
 
-  const hasActiveFilters = selectedCategory !== 'all' || selectedType !== 'all';
+  const hasActiveFilters = selectedCategory !== 'all';
 
   return (
     <>
@@ -46,22 +58,6 @@ export default function RealizacjeClient({ realizacje }: RealizacjeClientProps) 
       <section className="w-full py-8 bg-white border-b">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto space-y-6">
-            {/* Type Filter */}
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm font-medium text-gray-700 self-center">Typ projektu:</span>
-              {types.map((type) => (
-                <Button
-                  key={type}
-                  variant={selectedType === type ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedType(type)}
-                  className="rounded-full"
-                >
-                  {type === 'all' ? 'Wszystkie' : getTypeDisplayName(type)}
-                </Button>
-              ))}
-            </div>
-
             {/* Category Filter */}
             <div className="flex flex-wrap gap-2">
               <span className="text-sm font-medium text-gray-700 self-center">Kategoria:</span>
@@ -137,12 +133,9 @@ export default function RealizacjeClient({ realizacje }: RealizacjeClientProps) 
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
                         />
-                        <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
+                        <div className="absolute top-4 left-4">
                           <Badge className="bg-blue-600 text-white hover:bg-blue-700">
                             {getCategoryDisplayName(realizacja.category)}
-                          </Badge>
-                          <Badge variant="secondary" className="bg-white/90 text-gray-900">
-                            {getTypeDisplayName(realizacja.type)}
                           </Badge>
                         </div>
                       </div>

@@ -1,4 +1,4 @@
-import { getAllRealizacje, getRealizacjaBySlug, getCategoryDisplayName, getTypeDisplayName } from '@/lib/realizacje';
+import { getAllRealizacje, getRealizacjaBySlug, getCategoryDisplayName } from '@/lib/realizacje';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -6,6 +6,7 @@ import { Metadata } from 'next';
 import { Badge } from '@/components/ui/badge';
 import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
+import { ImageGallery } from '@/components/ui/image-gallery';
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -116,14 +117,9 @@ export default async function RealizacjaDetailPage({ params }: Props) {
         <section className="w-full py-12 lg:py-20">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <div className="flex gap-2 mb-4">
-                <Badge className="mb-4">
-                  {getCategoryDisplayName(realizacja.category)}
-                </Badge>
-                <Badge variant="secondary" className="mb-4">
-                  {getTypeDisplayName(realizacja.type)}
-                </Badge>
-              </div>
+              <Badge className="mb-4">
+                {getCategoryDisplayName(realizacja.category)}
+              </Badge>
               
               <h1 className="text-3xl lg:text-5xl font-bold tracking-tight mb-6">
                 {realizacja.title}
@@ -161,19 +157,15 @@ export default async function RealizacjaDetailPage({ params }: Props) {
           </div>
         </section>
 
-        {/* Main Image */}
+        {/* Main Image with Gallery */}
         <section className="w-full py-8">
           <div className="container mx-auto px-4">
             <div className="max-w-6xl mx-auto">
-              <div className="relative aspect-video rounded-lg overflow-hidden shadow-xl">
-                <Image
-                  src={realizacja.images.main}
-                  alt={realizacja.title}
-                  fill
-                  className="object-cover"
-                  priority
-                />
-              </div>
+              <ImageGallery 
+                images={realizacja.images.gallery}
+                mainImage={realizacja.images.main}
+                title={realizacja.title}
+              />
             </div>
           </div>
         </section>
@@ -225,13 +217,13 @@ export default async function RealizacjaDetailPage({ params }: Props) {
                 </ul>
               </div>
 
-              {/* Gallery */}
+              {/* Gallery thumbnails - now part of ImageGallery component */}
               {realizacja.images.gallery.length > 0 && (
                 <div className="mb-12">
-                  <h2 className="text-2xl font-bold mb-6">Galeria zdjęć</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <h2 className="text-2xl font-bold mb-6">Więcej zdjęć</h2>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {realizacja.images.gallery.map((image, index) => (
-                      <div key={index} className="relative aspect-video rounded-lg overflow-hidden shadow-md">
+                      <div key={index} className="relative aspect-square rounded-lg overflow-hidden shadow-md">
                         <Image
                           src={image}
                           alt={`${realizacja.title} - zdjęcie ${index + 1}`}
