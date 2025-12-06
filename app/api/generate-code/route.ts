@@ -34,6 +34,12 @@ function generateUniqueCode(): string {
 }
 
 async function sendConfirmationEmail(email: string, name: string, code: string): Promise<void> {
+  // Check if email credentials are configured
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.error("Email credentials not configured. Please set EMAIL_USER and EMAIL_PASS environment variables.")
+    throw new Error("Email configuration missing")
+  }
+
   const transporter = nodemailer.createTransporter({
     service: "gmail",
     auth: {
@@ -96,6 +102,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
   }
 
   await transporter.sendMail(mailOptions)
+  console.log(`Confirmation email sent successfully to ${email} with code ${code}`)
 }
 
 export async function POST(request: NextRequest) {
@@ -123,6 +130,14 @@ export async function POST(request: NextRequest) {
     // Check if email already exists
     const existingEntry = entries.find((entry) => entry.email === email)
     if (existingEntry) {
+      // Resend confirmation email
+      try {
+        await sendConfirmationEmail(email, existingEntry.name, existingEntry.code)
+      } catch (emailError) {
+        console.error("Error resending email:", emailError)
+        // Continue even if email fails - user got the code in response
+      }
+      
       return NextResponse.json({
         success: true,
         code: existingEntry.code,
@@ -153,6 +168,7 @@ export async function POST(request: NextRequest) {
     // Send confirmation email
     try {
       await sendConfirmationEmail(email, name, code)
+      console.log(`New contest entry created for ${email}`)
     } catch (emailError) {
       console.error("Error sending email:", emailError)
       // Continue even if email fails - user got the code in response
