@@ -37,7 +37,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
   // Check if email credentials are configured
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
     console.error("Email credentials not configured. Please set EMAIL_USER and EMAIL_PASS environment variables.")
-    throw new Error("Email configuration missing")
+    throw new Error("Email configuration missing.")
   }
 
   const transporter = nodemailer.createTransporter({
