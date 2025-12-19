@@ -1,3 +1,24 @@
+# Posadzki Żywiczne - E-commerce Website
+
+Professional website for resin flooring services with integrated e-commerce functionality.
+
+## 🛒 E-commerce Module
+
+This project includes a complete MVP e-commerce module for selling resin flooring kits. 
+
+**For setup and usage instructions, see [ECOMMERCE_README.md](./ECOMMERCE_README.md)**
+
+Key features:
+- Product catalog with SKU-based system kits
+- Guided configurator for garage flooring
+- Shopping cart with cookie persistence
+- Przelewy24 payment integration (BLIK, cards, transfers)
+- Cash on Delivery (COD) option
+- Admin panel for order management
+- PostgreSQL database with Prisma ORM
+
+---
+
 # TWBlocks
 
 Free open-source website blocks you can easily copy & paste into your react projects.

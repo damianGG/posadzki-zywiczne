@@ -1,0 +1,83 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Product Kit Model
+model ProductKit {
+  id          String   @id @default(cuid())
+  sku         String   @unique
+  name        String
+  description String?
+  type        String   // EP or PU
+  bucket      Int      // area bucket size
+  hasR10      Boolean  @default(false)
+  color       String?
+  basePrice   Decimal  @db.Decimal(10, 2)
+  r10Surcharge Decimal @default(0) @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  orderItems  OrderItem[]
+
+  @@index([sku])
+  @@index([type])
+}
+
+// Order Model
+model Order {
+  id              String   @id @default(cuid())
+  orderNumber     String   @unique
+  status          String   @default("pending") // pending, paid, failed, cancelled
+  paymentMethod   String   // COD or PRZELEWY24
+  paymentStatus   String   @default("pending") // pending, completed, failed
+  przelewy24Id    String?  @unique
+  
+  // Customer details
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  customerAddress String
+  customerCity    String
+  customerZip     String
+  
+  // Order totals
+  subtotal        Decimal  @db.Decimal(10, 2)
+  total           Decimal  @db.Decimal(10, 2)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  items           OrderItem[]
+
+  @@index([orderNumber])
+  @@index([customerEmail])
+  @@index([status])
+}
+
+// Order Item Model
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  productKitId String
+  productKit   ProductKit @relation(fields: [productKitId], references: [id])
+  
+  quantity    Int      @default(1)
+  price       Decimal  @db.Decimal(10, 2)
+  
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productKitId])
+}
