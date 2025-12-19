@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createOrder, CreateOrderInput } from '@/lib/orders'
 import { getCart, clearCart } from '@/lib/cart'
+import { validateCart } from '@/lib/cart-validation'
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,9 +42,22 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate cart items and prices
+    const validation = await validateCart(cart)
+    
+    if (!validation.valid) {
+      return NextResponse.json(
+        { error: 'Cart validation failed', details: validation.errors },
+        { status: 400 }
+      )
+    }
+
+    // Use validated cart
+    const validatedCart = validation.validatedCart!
+
     // Create order
     const orderInput: CreateOrderInput = {
-      cart,
+      cart: validatedCart,
       customerName,
       customerEmail,
       customerPhone,

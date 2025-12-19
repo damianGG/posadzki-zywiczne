@@ -60,8 +60,8 @@ function generateSignature(data: {
   currency: string
   crc: string
 }): string {
-  const json = JSON.stringify(data)
-  return crypto.createHash('sha384').update(json).digest('hex')
+  const signString = `${data.sessionId}|${data.merchantId}|${data.amount}|${data.currency}|${data.crc}`
+  return crypto.createHash('sha384').update(signString).digest('hex')
 }
 
 /**
@@ -148,13 +148,8 @@ export function verifyWebhookSignature(
 ): boolean {
   const config = getConfig()
 
-  const signature = generateSignature({
-    sessionId,
-    merchantId: orderId,
-    amount,
-    currency,
-    crc: config.crc,
-  })
+  const signString = `${sessionId}|${orderId}|${amount}|${currency}|${config.crc}`
+  const signature = crypto.createHash('sha384').update(signString).digest('hex')
 
   return signature === receivedSign
 }

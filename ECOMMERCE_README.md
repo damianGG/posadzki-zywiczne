@@ -191,6 +191,12 @@ Features:
 - See order details, customer info, and payment status
 - Filter and search orders
 
+**Security Note**: The current implementation uses Basic Authentication which is suitable for MVP but should be replaced with proper session-based authentication in production. Consider implementing:
+- Session-based authentication with secure tokens
+- Rate limiting on login attempts
+- Multi-factor authentication for sensitive operations
+- IP whitelisting if accessing from known locations
+
 ## Seeded Products
 
 The seed script creates 3 example products:
@@ -236,6 +242,30 @@ Before deploying to production:
 - Run `npm install` to ensure all dependencies are installed
 - Run `npm run prisma:generate` to generate Prisma client
 - Clear `.next` folder and rebuild
+
+## Security Considerations
+
+### Environment Variables
+- Never commit `.env` file to version control
+- Use different credentials for development and production
+- Rotate API keys and passwords regularly
+- Use strong, unique passwords for admin access
+
+### Cart Validation
+- Cart contents are validated against database before order creation
+- Prices are recalculated server-side to prevent manipulation
+- Product availability is checked before processing orders
+
+### Payment Security
+- All payment processing is handled by Przelewy24 (PCI compliant)
+- Webhook signature verification prevents fraudulent payment confirmations
+- Order status is only updated after successful signature verification
+
+### Admin Access
+- Basic Authentication is used (suitable for MVP)
+- For production, consider implementing proper session management
+- Enable rate limiting on authentication endpoints
+- Monitor for suspicious login attempts
 
 ## Support
 
