@@ -38,6 +38,11 @@ export const Header2 = () => {
             description: "",
         },
         {
+            title: "Sklep",
+            href: "/sklep",
+            description: "",
+        },
+        {
             title: "Realizacje",
             href: "/realizacje",
             description: "",
