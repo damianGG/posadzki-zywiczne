@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Progress } from '@/components/ui/progress'
 import { getConfiguratorResult, AVAILABLE_COLORS } from '@/lib/configurator'
-import { prisma } from '@/lib/prisma'
 import { useRouter } from 'next/navigation'
 
 export default function KonfiguratorPage() {
@@ -73,14 +72,27 @@ export default function KonfiguratorPage() {
 
     try {
       // Find product by SKU
+      const productResponse = await fetch(`/api/products?sku=${result.sku}`)
+      
+      if (!productResponse.ok) {
+        alert('Nie znaleziono produktu o tym SKU. Produkt może nie istnieć w bazie danych.')
+        setLoading(false)
+        return
+      }
+
+      const product = await productResponse.json()
+      const totalPrice = parseFloat(product.basePrice) + parseFloat(product.r10Surcharge || 0)
+
       const response = await fetch(`/api/cart`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'add',
           item: {
-            sku: result.sku,
-            name: result.recommendedKit,
+            productKitId: product.id,
+            sku: product.sku,
+            name: product.name,
+            price: totalPrice,
             quantity: 1,
           },
         }),
@@ -89,7 +101,7 @@ export default function KonfiguratorPage() {
       if (response.ok) {
         router.push('/koszyk')
       } else {
-        alert('Nie znaleziono produktu o tym SKU. Spróbuj wybrać produkt ze sklepu.')
+        alert('Nie udało się dodać produktu do koszyka.')
       }
     } catch (error) {
       console.error('Error adding to cart:', error)
