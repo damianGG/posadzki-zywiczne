@@ -8,18 +8,6 @@ export const metadata: Metadata = {
   description: 'Kup gotowe zestawy posadzek żywicznych do garażu. Systemy epoksydowe i poliuretanowe z opcją antypoślizgu R10.',
 };
 
-async function addToCartAction(formData: FormData) {
-  'use server';
-  
-  const kitId = formData.get('kitId') as string;
-  const sku = formData.get('sku') as string;
-  const name = formData.get('name') as string;
-  const price = parseFloat(formData.get('price') as string);
-  
-  // This would typically make an API call to add to cart
-  // For now, we'll handle this on the client side
-}
-
 export default async function SklepPage() {
   const kits = await getProductKits();
   

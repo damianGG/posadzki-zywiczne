@@ -60,4 +60,3 @@ console.log('  Result:', calculatePrice(2500, true), 'PLN');
 console.log('  Expected:', 2500 + R10_SURCHARGE, 'PLN ✓');
 
 console.log('\n✅ All configurator tests passed!');
-

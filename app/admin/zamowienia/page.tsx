@@ -3,6 +3,22 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
+/**
+ * SECURITY NOTE: This is a simplified admin panel for MVP purposes.
+ * The password check is client-side only, which is NOT secure for production.
+ * 
+ * For production deployment, you MUST implement:
+ * 1. Server-side authentication (NextAuth.js, Clerk, or custom)
+ * 2. Secure session management
+ * 3. Role-based access control
+ * 4. HTTP-only cookies for auth tokens
+ * 
+ * Current implementation is suitable only for:
+ * - Local development
+ * - Demo purposes
+ * - Internal tools with network-level security
+ */
+
 interface Order {
   id: string;
   orderNumber: string;
