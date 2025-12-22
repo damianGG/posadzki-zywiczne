@@ -44,3 +44,5 @@ node_modules/.pnpm/
 
 # contest data
 data/contest-entries.json
+/lib/generated/prisma
+.env
