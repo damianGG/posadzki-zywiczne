@@ -61,3 +61,55 @@ Here is a list of available blocks:
 | **Blogs**    | ![Blog2](https://github.com/tommyjepsen/twblocks/blob/main/public/blog2.png?raw=true)       | ![Blog2](https://github.com/tommyjepsen/twblocks/blob/main/public/darkmode-blog2.png?raw=true)       |
 | **Contacts** | ![Contact1](https://github.com/tommyjepsen/twblocks/blob/main/public/contact1.png?raw=true) | ![Contact1](https://github.com/tommyjepsen/twblocks/blob/main/public/darkmode-contact1.png?raw=true) |
 | **Footers**  | ![Footer1](https://github.com/tommyjepsen/twblocks/blob/main/public/footer1.png?raw=true)   | ![Footer1](https://github.com/tommyjepsen/twblocks/blob/main/public/darkmode-footer1.png?raw=true)   |
+
+## E-commerce Module
+
+This project includes a complete MVP e-commerce module for selling resin flooring kits for garages in Poland.
+
+### Features
+
+- **Product Catalog** - Browse garage flooring kits
+- **Smart Configurator** - Step-by-step wizard to calculate the perfect kit
+- **Shopping Cart** - Cookie-based cart with persistent storage
+- **Checkout** - Complete order flow with customer information
+- **Payment Integration** - Przelewy24 (BLIK, cards, transfers) + Cash on Delivery
+- **Admin Panel** - Manage orders with password protection
+- **Order Tracking** - View order status and details
+
+### Quick Setup
+
+1. Copy environment configuration:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Configure your database in `.env`:
+   ```
+   DATABASE_URL="postgresql://user:password@localhost:5432/posadzki_db"
+   ADMIN_PASSWORD=your-secure-password
+   ```
+
+3. Run the setup script:
+   ```bash
+   ./scripts/setup-ecommerce.sh
+   ```
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Visit the shop at: http://localhost:3000/sklep
+
+### Documentation
+
+See [ECOMMERCE_README.md](./ECOMMERCE_README.md) for detailed setup instructions, API documentation, and deployment guide.
+
+### Pages
+
+- `/sklep` - Product listing
+- `/konfigurator` - Step-based configurator
+- `/koszyk` - Shopping cart
+- `/checkout` - Checkout and payment
+- `/zamowienie/[id]` - Order status
+- `/admin/zamowienia` - Admin panel (password protected)
