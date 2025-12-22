@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { clearCart, CartItem } from '@/lib/cart'
-import crypto from 'crypto'
+import { przelewy24 } from '@/lib/przelewy24'
 
 interface CreateOrderRequest {
   customerName: string
@@ -77,13 +77,35 @@ export async function POST(request: Request) {
 
     // If payment method is Przelewy24, create payment transaction
     if (body.paymentMethod === 'przelewy24') {
-      // TODO: Implement Przelewy24 integration
-      // For now, return a mock payment URL
-      return NextResponse.json({
+      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      
+      const paymentUrl = await przelewy24.createTransaction({
         orderId: order.id,
         orderNumber: order.orderNumber,
-        paymentUrl: `/zamowienie/${order.id}?payment=przelewy24`
+        amount: body.totalAmount,
+        currency: 'PLN',
+        description: `Zamówienie ${order.orderNumber}`,
+        email: body.customerEmail,
+        country: 'PL',
+        language: 'pl',
+        urlReturn: `${baseUrl}/zamowienie/${order.id}?payment=success`,
+        urlStatus: `${baseUrl}/api/payments/przelewy24/callback`
       })
+
+      if (paymentUrl) {
+        return NextResponse.json({
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          paymentUrl
+        })
+      } else {
+        // If payment creation failed, return error but keep the order
+        return NextResponse.json({
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+          error: 'Failed to create payment. Please contact us to complete the order.'
+        }, { status: 500 })
+      }
     }
 
     // For COD, just return order ID
