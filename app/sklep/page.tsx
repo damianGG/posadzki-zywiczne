@@ -2,6 +2,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { prisma } from '@/lib/prisma'
 import { ShoppingCart } from 'lucide-react'
+import { AddToCartButton } from '@/components/add-to-cart-button'
 
 export const metadata: Metadata = {
   title: 'Sklep - Zestawy Posadzkowe do Garażu | Posadzki Żywiczne',
@@ -97,21 +98,7 @@ export default async function SklepPage() {
                   )}
                 </div>
 
-                <form action={`/api/cart/add`} method="POST" className="space-y-3">
-                  <input type="hidden" name="productKitId" value={product.id} />
-                  <input type="hidden" name="sku" value={product.sku} />
-                  <input type="hidden" name="name" value={product.name} />
-                  <input type="hidden" name="price" value={product.basePrice} />
-                  <input type="hidden" name="quantity" value="1" />
-                  
-                  <button
-                    type="submit"
-                    className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition font-semibold disabled:bg-gray-300 disabled:cursor-not-allowed"
-                    disabled={product.stock <= 0}
-                  >
-                    {product.stock > 0 ? 'Dodaj do koszyka' : 'Brak w magazynie'}
-                  </button>
-                </form>
+                <AddToCartButton product={product} />
 
                 <p className="text-xs text-gray-500 mt-2 text-center">
                   Dostępne: {product.stock} szt.

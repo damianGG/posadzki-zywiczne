@@ -46,3 +46,6 @@ node_modules/.pnpm/
 data/contest-entries.json
 /lib/generated/prisma
 .env
+
+# Prisma
+prisma/migrations/
