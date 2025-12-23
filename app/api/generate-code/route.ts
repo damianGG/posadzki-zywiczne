@@ -49,9 +49,14 @@ async function isCodeUnique(code: string): Promise<boolean> {
     .from('contest_entries')
     .select('code')
     .eq('code', code)
-    .single()
+    .maybeSingle()  // Use maybeSingle to differentiate between "no rows" and actual errors
   
-  // If error and no data, code is unique
+  // If there's an actual database error, throw it
+  if (error && error.code !== 'PGRST116') {
+    throw new Error(`Database error checking code uniqueness: ${error.message}`)
+  }
+  
+  // Code is unique if no data was found
   return !data
 }
 

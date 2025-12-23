@@ -19,6 +19,23 @@ export async function GET(request: NextRequest) {
     const orderBy = searchParams.get('orderBy') || 'created_at'
     const order = searchParams.get('order') || 'desc'
 
+    // Validate orderBy parameter against whitelist to prevent SQL injection
+    const allowedOrderByFields = ['id', 'email', 'name', 'code', 'timestamp', 'email_sent', 'email_opened', 'created_at']
+    if (!allowedOrderByFields.includes(orderBy)) {
+      return NextResponse.json(
+        { success: false, message: "Invalid orderBy field" },
+        { status: 400 }
+      )
+    }
+
+    // Validate order parameter
+    if (order !== 'asc' && order !== 'desc') {
+      return NextResponse.json(
+        { success: false, message: "Order must be 'asc' or 'desc'" },
+        { status: 400 }
+      )
+    }
+
     // Validate parameters
     if (limit < 1 || limit > 1000) {
       return NextResponse.json(

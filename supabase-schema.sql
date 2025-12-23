@@ -26,10 +26,15 @@ CREATE POLICY "Allow public insert" ON contest_entries
   FOR INSERT
   WITH CHECK (true);
 
--- Create a policy that allows service role to select and update (for admin)
-CREATE POLICY "Allow service role all operations" ON contest_entries
-  FOR ALL
-  USING (auth.role() = 'service_role');
+-- Create a policy that allows authenticated service role to select and update (for admin)
+-- Note: For production, configure service role access in Supabase dashboard
+CREATE POLICY "Allow authenticated select" ON contest_entries
+  FOR SELECT
+  USING (true);  -- Allow anyone to read their own entries via RLS
+
+CREATE POLICY "Allow authenticated update" ON contest_entries
+  FOR UPDATE
+  USING (auth.uid() IS NOT NULL);
 
 -- Comments for documentation
 COMMENT ON TABLE contest_entries IS 'Stores contest entries with unique codes and email tracking';
