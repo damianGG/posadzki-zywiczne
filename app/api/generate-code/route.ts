@@ -1,36 +1,44 @@
 import { type NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
-import { promises as fs } from "fs"
-import path from "path"
 import crypto from "crypto"
+import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 
-interface ContestEntry {
-  email: string
-  name: string
-  code: string
-  timestamp: string
-}
-
-const DATA_FILE = path.join(process.cwd(), "data", "contest-entries.json")
-
-async function readEntries(): Promise<ContestEntry[]> {
-  try {
-    const data = await fs.readFile(DATA_FILE, "utf-8")
-    return JSON.parse(data)
-  } catch (error) {
-    // If file doesn't exist, return empty array
-    return []
-  }
-}
-
-async function writeEntries(entries: ContestEntry[]): Promise<void> {
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(entries, null, 2))
-}
+const SUPABASE_URL = process.env.SUPABASE_URL
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
+let supabaseClient: SupabaseClient | null = null
+const MAX_CODE_GENERATION_ATTEMPTS = 5
+// PostgreSQL error code for unique constraint violations
+const POSTGRES_UNIQUE_VIOLATION_CODE = "23505"
 
 function generateUniqueCode(): string {
   const randomString = crypto.randomBytes(4).toString("hex").toUpperCase()
   return `PXZ-${randomString}`
+}
+
+function getSupabase(): SupabaseClient | null {
+  if (supabaseClient) return supabaseClient
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    return null
+  }
+
+  supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
+    auth: {
+      autoRefreshToken: false,
+      persistSession: false,
+    },
+  })
+  return supabaseClient
+}
+
+async function ensureSupabaseConnection(client: SupabaseClient) {
+  const { error } = await client.from("contest_entries").select("code", { head: true }).limit(1)
+  if (error) {
+    return {
+      ok: false as const,
+      message: `Brak połączenia z bazą danych Supabase: ${error.message}`,
+    }
+  }
+  return { ok: true as const }
 }
 
 async function sendConfirmationEmail(email: string, name: string, code: string): Promise<void> {
@@ -101,6 +109,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
 export async function POST(request: NextRequest) {
   try {
     const { name, email } = await request.json()
+    const supabase = getSupabase()
 
     // Validate input
     if (!name || name.length < 2) {
@@ -117,38 +126,96 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Read existing entries
-    const entries = await readEntries()
+    if (!supabase) {
+      return NextResponse.json(
+        { success: false, message: "Supabase nie jest skonfigurowany (brak SUPABASE_URL lub SUPABASE_SERVICE_ROLE_KEY)." },
+        { status: 500 }
+      )
+    }
+
+    const connectionStatus = await ensureSupabaseConnection(supabase)
+    if (!connectionStatus.ok) {
+      return NextResponse.json({ success: false, message: connectionStatus.message }, { status: 500 })
+    }
 
     // Check if email already exists
-    const existingEntry = entries.find((entry) => entry.email === email)
+    const { data: existingEntry, error: existingError } = await supabase
+      .from("contest_entries")
+      .select("code")
+      .eq("email", email)
+      .maybeSingle()
+
+    if (existingError) {
+      console.error("Error checking existing entry:", existingError)
+      return NextResponse.json(
+        { success: false, message: "Błąd podczas sprawdzania istniejącego wpisu w bazie danych." },
+        { status: 500 }
+      )
+    }
+
     if (existingEntry) {
       return NextResponse.json({
         success: true,
         code: existingEntry.code,
-        message: "Ten email był już użyty. Wysłaliśmy ponownie Twój kod.",
+        message: "Ten email był już użyty. Twój kod pozostaje bez zmian.",
         alreadyExists: true,
       })
     }
 
-    // Generate unique code
-    let code = generateUniqueCode()
-    // Ensure code is unique
-    while (entries.some((entry) => entry.code === code)) {
+    let code = ""
+    let entrySaved = false
+    let lastInsertErrorMessage: string | null = null
+    for (let attempt = 0; attempt < MAX_CODE_GENERATION_ATTEMPTS; attempt++) {
       code = generateUniqueCode()
+      const { error: insertError } = await supabase.from("contest_entries").insert({
+        email,
+        name,
+        code,
+      })
+
+      if (!insertError) {
+        entrySaved = true
+        break
+      }
+
+      if (insertError.code === POSTGRES_UNIQUE_VIOLATION_CODE) {
+        const { data: racedEntry } = await supabase
+          .from("contest_entries")
+          .select("code")
+          .eq("email", email)
+          .maybeSingle()
+
+        if (racedEntry) {
+          return NextResponse.json({
+            success: true,
+            code: racedEntry.code,
+            message: "Ten email był już użyty. Twój kod pozostaje bez zmian.",
+            alreadyExists: true,
+          })
+        }
+
+        // Unique constraint triggered by code collision - try again with a new code
+        continue
+      }
+
+      lastInsertErrorMessage = insertError.message
+      break
     }
 
-    // Create new entry
-    const newEntry: ContestEntry = {
-      email,
-      name,
-      code,
-      timestamp: new Date().toISOString(),
-    }
+    if (!entrySaved) {
+      if (lastInsertErrorMessage) {
+        console.error("Error saving contest entry to Supabase:", lastInsertErrorMessage)
+        return NextResponse.json(
+          { success: false, message: "Nie udało się zapisać zgłoszenia w bazie danych. Spróbuj ponownie później." },
+          { status: 500 }
+        )
+      }
 
-    // Save to database
-    entries.push(newEntry)
-    await writeEntries(entries)
+      return NextResponse.json(
+        { success: false, message: "Nie udało się wygenerować unikalnego kodu. Spróbuj ponownie później." },
+        { status: 500 }
+      )
+    }
 
     // Send confirmation email
     try {

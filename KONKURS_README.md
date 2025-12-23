@@ -23,7 +23,7 @@ A complete Christmas contest landing page that allows users to participate in a 
 - **Format**: `PXZ-XXXXXXXX` (e.g., PXZ-A392F5BD)
 - **Method**: Cryptographically secure random bytes
 - **Uniqueness**: Guaranteed unique codes checked against database
-- **Storage**: JSON file persistence at `data/contest-entries.json`
+- **Storage**: Supabase table persistence with connection health check
 
 ### Email Notification
 - Automatic email sent upon code generation
@@ -72,20 +72,14 @@ A complete Christmas contest landing page that allows users to participate in a 
 ```
 
 ### Data Storage
-Contest entries are stored in JSON format at `data/contest-entries.json`:
+Contest entries are stored in a Supabase table `contest_entries` with the following fields:
 
-```json
-[
-  {
-    "email": "jan@example.com",
-    "name": "Jan Kowalski",
-    "code": "PXZ-A392F5BD",
-    "timestamp": "2025-11-19T13:03:24.346Z"
-  }
-]
-```
+- `email` (unique)
+- `name`
+- `code`
+- `created_at` (timestamp with timezone, default `now()`)
 
-**Note**: This file is excluded from version control via `.gitignore`.
+The API checks Supabase connectivity before processing submissions and returns a descriptive error if the database is unreachable.
 
 ## Configuration
 
@@ -98,6 +92,10 @@ Create a `.env` file with the following variables:
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password-here
 ADMIN_EMAIL=biuro@posadzkizywiczne.com
+
+# Supabase (contest storage)
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 ```
 
 ### Setting up Gmail App Password
@@ -133,7 +131,7 @@ ADMIN_EMAIL=biuro@posadzkizywiczne.com
 - [x] Email format validation
 - [x] Duplicate email prevention
 - [x] Code generation uniqueness
-- [x] Data persistence to JSON file
+- [x] Data persistence to Supabase table
 - [x] Success message display
 - [x] Error message display
 - [x] Mobile responsiveness
@@ -176,10 +174,10 @@ curl -X POST http://localhost:3000/api/generate-code \
 - ✅ Input validation (server-side and client-side)
 - ✅ Email format validation with regex
 - ✅ Cryptographically secure random code generation
-- ✅ No SQL injection risk (using JSON file storage)
+- ✅ Supabase service role key stored in environment variables only on the server
+- ✅ Supabase RLS should restrict access to `contest_entries` (service role key limited to server-side use)
 - ✅ No XSS vulnerabilities (React escapes output by default)
 - ✅ Environment variables for sensitive data
-- ✅ Contest data excluded from version control
 
 ### CodeQL Security Scan
 - **Status**: ✅ Passed
@@ -188,7 +186,7 @@ curl -X POST http://localhost:3000/api/generate-code \
 ## Future Improvements
 
 ### Potential Enhancements
-1. **Database**: Migrate from JSON to proper database (PostgreSQL, Supabase)
+1. **Database**: Supabase-backed storage with health checks
 2. **Admin Panel**: View all entries, export codes, select winner
 3. **Email Service**: Use dedicated service like Resend.com for better deliverability
 4. **Analytics**: Track conversion rates, popular entry times
