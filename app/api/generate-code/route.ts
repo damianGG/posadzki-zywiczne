@@ -193,13 +193,14 @@ export async function POST(request: NextRequest) {
     }
 
     if (existingEntry) {
-      let existingEntryMessage = "Ten email był już użyty. Wysłaliśmy ponownie Twój kod."
+      let existingEntryMessage =
+        "Cześć, ten mail został już wykorzystany. Jeśli nie dotarł do Ciebie kod konkursowy, napisz do nas na biuro@posadzkizywiczne.com."
       try {
         await sendConfirmationEmail(email, name, existingEntry.code)
       } catch (emailError) {
         console.warn("Error sending email to existing entry:", emailError)
         existingEntryMessage =
-          "Ten email był już użyty. Nie udało się ponownie wysłać wiadomości, ale poniżej masz swój kod."
+          "Cześć, ten mail został już wykorzystany. Nie udało się ponownie wysłać wiadomości – jeśli nie dotarł do Ciebie kod, napisz do nas na biuro@posadzkizywiczne.com. Poniżej masz swój kod."
       }
 
       return NextResponse.json({
