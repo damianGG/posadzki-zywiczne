@@ -72,20 +72,27 @@ A complete Christmas contest landing page that allows users to participate in a 
 ```
 
 ### Data Storage
-Contest entries are stored in JSON format at `data/contest-entries.json`:
+Contest entries are stored in **Supabase** cloud database in the `contest_entries` table:
 
-```json
-[
-  {
-    "email": "jan@example.com",
-    "name": "Jan Kowalski",
-    "code": "PXZ-A392F5BD",
-    "timestamp": "2025-11-19T13:03:24.346Z"
-  }
-]
-```
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | BIGSERIAL | Auto-increment primary key |
+| `email` | VARCHAR(255) | Participant email (unique) |
+| `name` | VARCHAR(255) | Participant name |
+| `code` | VARCHAR(50) | Contest code (unique) |
+| `timestamp` | TIMESTAMP | Code generation time |
+| `email_sent` | BOOLEAN | Email delivery status |
+| `email_opened` | BOOLEAN | Email open tracking |
+| `created_at` | TIMESTAMP | Record creation time |
 
-**Note**: This file is excluded from version control via `.gitignore`.
+**Benefits:**
+- ✅ Cloud-hosted persistent storage
+- ✅ Email tracking (sent/opened status)
+- ✅ Fast indexed lookups
+- ✅ Row Level Security (RLS)
+- ✅ Scalable and reliable
+
+**Previous:** Data was stored in `data/contest-entries.json` (deprecated)
 
 ## Configuration
 
@@ -93,12 +100,26 @@ Contest entries are stored in JSON format at `data/contest-entries.json`:
 Create a `.env` file with the following variables:
 
 ```env
+# Supabase Configuration (required)
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
+
 # Email Configuration (for contest emails)
 # Gmail: Use App Password (https://myaccount.google.com/apppasswords)
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password-here
 ADMIN_EMAIL=biuro@posadzkizywiczne.com
 ```
+
+### Setting up Supabase
+
+1. Create account at https://app.supabase.com
+2. Create a new project
+3. Go to SQL Editor and run `supabase-schema.sql`
+4. Go to Settings → API to get your credentials
+5. Add credentials to `.env` file
+
+See **[SUPABASE_INTEGRATION.md](./SUPABASE_INTEGRATION.md)** for detailed setup instructions.
 
 ### Setting up Gmail App Password
 1. Go to your Google Account settings
@@ -188,14 +209,15 @@ curl -X POST http://localhost:3000/api/generate-code \
 ## Future Improvements
 
 ### Potential Enhancements
-1. **Database**: Migrate from JSON to proper database (PostgreSQL, Supabase)
-2. **Admin Panel**: View all entries, export codes, select winner
-3. **Email Service**: Use dedicated service like Resend.com for better deliverability
-4. **Analytics**: Track conversion rates, popular entry times
-5. **Social Sharing**: Allow users to share contest on social media
-6. **Multi-language**: Support for English version
-7. **Captcha**: Add reCAPTCHA to prevent bot submissions
-8. **Rate Limiting**: Prevent abuse with request throttling
+1. ~~**Database**: Migrate from JSON to proper database (PostgreSQL, Supabase)~~ ✅ **Completed!**
+2. **Email Open Tracking**: Implement tracking pixels to detect when emails are opened
+3. **Admin Panel**: View all entries, export codes, select winner
+4. **Email Service**: Use dedicated service like Resend.com for better deliverability
+5. **Analytics**: Track conversion rates, popular entry times
+6. **Social Sharing**: Allow users to share contest on social media
+7. **Multi-language**: Support for English version
+8. **Captcha**: Add reCAPTCHA to prevent bot submissions
+9. **Rate Limiting**: Prevent abuse with request throttling
 
 ## Support
 
