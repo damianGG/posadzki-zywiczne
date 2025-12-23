@@ -6,6 +6,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 const SUPABASE_URL = process.env.SUPABASE_URL
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 let supabaseClient: SupabaseClient | null = null
+const MAX_CODE_GENERATION_ATTEMPTS = 5
 
 function generateUniqueCode(): string {
   const randomString = crypto.randomBytes(4).toString("hex").toUpperCase()
@@ -28,7 +29,7 @@ function getSupabase(): SupabaseClient | null {
 }
 
 async function ensureSupabaseConnection(client: SupabaseClient) {
-  const { error } = await client.from("contest_entries").select("*", { head: true, count: "exact" }).limit(1)
+  const { error } = await client.from("contest_entries").select("code", { head: true }).limit(1)
   if (error) {
     return {
       ok: false as const,
@@ -162,8 +163,8 @@ export async function POST(request: NextRequest) {
     // Generate unique code
     let code = generateUniqueCode()
     // Ensure code is unique in Supabase
-    const maxAttempts = 5
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    let uniqueCodeGenerated = false
+    for (let attempt = 0; attempt < MAX_CODE_GENERATION_ATTEMPTS; attempt++) {
       const { data: codeMatch, error: codeError } = await supabase
         .from("contest_entries")
         .select("code")
@@ -179,10 +180,18 @@ export async function POST(request: NextRequest) {
       }
 
       if (!codeMatch) {
+        uniqueCodeGenerated = true
         break
       }
 
       code = generateUniqueCode()
+    }
+
+    if (!uniqueCodeGenerated) {
+      return NextResponse.json(
+        { success: false, message: "Nie udało się wygenerować unikalnego kodu. Spróbuj ponownie później." },
+        { status: 500 }
+      )
     }
 
     const { error: insertError } = await supabase.from("contest_entries").insert({
