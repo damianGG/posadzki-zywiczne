@@ -56,8 +56,13 @@ async function writeEntries(entries: ContestEntry[]): Promise<void> {
 }
 
 function generateUniqueCode(): string {
-  const randomString = crypto.randomBytes(4).toString("hex").toUpperCase()
-  return `PXZ-${randomString}`
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+  let code = ""
+  for (let i = 0; i < 5; i++) {
+    const randomIndex = crypto.randomInt(0, alphabet.length)
+    code += alphabet[randomIndex]
+  }
+  return code
 }
 
 async function sendConfirmationEmail(email: string, name: string, code: string): Promise<void> {
