@@ -71,9 +71,9 @@ export default function KonkursPage() {
               <Gift className="w-16 h-16 text-purple-600" />
               <Snowflake className="w-12 h-12 text-blue-600 animate-pulse" />
             </div>
-            <Badge className="text-lg px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600">
-              Świąteczny Konkurs 2025
-            </Badge>
+             <Badge className="text-lg px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600">
+               Noworoczny Konkurs 2025/2026
+             </Badge>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-4xl">
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
                 Wygraj Posadzkę Żywiczną
@@ -81,9 +81,9 @@ export default function KonkursPage() {
               <br />
               <span className="text-gray-900">o wartości 5000 zł!</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 max-w-3xl">
-              🎄 Spraw sobie najlepszy prezent pod choinkę 🎁
-            </p>
+             <p className="text-xl md:text-2xl text-gray-600 max-w-3xl">
+               🎆 Wejdź w Nowy Rok z szansą na posadzkę wartą 5000 zł 🎇
+             </p>
           </div>
         </div>
       </div>
@@ -252,8 +252,8 @@ export default function KonkursPage() {
               </p>
               <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 max-w-md mx-auto">
                 <Calendar className="w-12 h-12 mx-auto mb-4" />
-                <p className="text-lg font-semibold mb-2">Data zakończenia konkursu:</p>
-                <p className="text-3xl font-bold">20 grudnia 2025</p>
+                 <p className="text-lg font-semibold mb-2">Data losowania:</p>
+                 <p className="text-3xl font-bold">3 stycznia 2026</p>
               </div>
             </div>
           </div>

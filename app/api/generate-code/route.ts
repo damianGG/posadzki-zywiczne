@@ -77,18 +77,18 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: "Twój kod konkursowy – Świąteczny Konkurs Posadzki Żywiczne",
+    subject: "Twój kod konkursowy – Noworoczny Konkurs Posadzki Żywiczne",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 28px;">🎄 Świąteczny Konkurs 🎄</h1>
-          <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Posadzki Żywiczne</p>
+           <h1 style="color: white; margin: 0; font-size: 28px;">🎆 Noworoczny Konkurs 🎆</h1>
+           <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Posadzki Żywiczne</p>
         </div>
         
         <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
           <h2 style="color: #333; margin-top: 0;">Witaj ${name}!</h2>
           <p style="color: #555; font-size: 16px; line-height: 1.6;">
-            Dziękujemy za udział w Świątecznym Konkursie!
+             Dziękujemy za udział w Noworocznym Konkursie!
           </p>
           
           <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea;">

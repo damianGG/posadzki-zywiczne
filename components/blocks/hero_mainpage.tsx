@@ -83,7 +83,7 @@ export default function HeroMainPage() {
                                 jak możemy to zrobić dla Ciebie!
                             </p>
                         </div>
-                        <div className="flex flex-col md:flex-row gap-3">
+                        <div className="flex flex-col md:flex-row gap-3 flex-wrap">
 
                             <Button className="gap-4" variant="outline">
                                 <a href="tel:+48507384619">+48 507 384 619</a><PhoneCall className="w-4 h-4" />
@@ -91,6 +91,11 @@ export default function HeroMainPage() {
 
                             <Button className="gap-4">
                                 <a href="mailto:biuro@posadzkizywiczne.com">biuro@posadzkizywiczne.com</a>
+                                <MoveRight className="w-4 h-4" />
+                            </Button>
+
+                            <Button className="gap-3 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 hover:from-purple-700 hover:via-pink-600 hover:to-orange-500 text-white">
+                                <a href="/konkurs">Wygraj 5000 zł – dołącz do konkursu</a>
                                 <MoveRight className="w-4 h-4" />
                             </Button>
 
