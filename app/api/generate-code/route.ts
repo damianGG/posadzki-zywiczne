@@ -1,31 +1,58 @@
 import { type NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
-import { promises as fs } from "fs"
-import path from "path"
 import crypto from "crypto"
+import { supabase, type ContestEntry } from "@/lib/supabase"
 
-interface ContestEntry {
-  email: string
-  name: string
-  code: string
-  timestamp: string
+async function checkExistingEntry(email: string): Promise<ContestEntry | null> {
+  const { data, error } = await supabase
+    .from('contest_entries')
+    .select('*')
+    .eq('email', email)
+    .single()
+  
+  if (error) {
+    // No entry found or other error
+    return null
+  }
+  
+  return data
 }
 
-const DATA_FILE = path.join(process.cwd(), "data", "contest-entries.json")
+async function createEntry(entry: Omit<ContestEntry, 'id' | 'created_at'>): Promise<ContestEntry | null> {
+  const { data, error } = await supabase
+    .from('contest_entries')
+    .insert([entry])
+    .select()
+    .single()
+  
+  if (error) {
+    console.error('Error creating entry:', error)
+    return null
+  }
+  
+  return data
+}
 
-async function readEntries(): Promise<ContestEntry[]> {
-  try {
-    const data = await fs.readFile(DATA_FILE, "utf-8")
-    return JSON.parse(data)
-  } catch (error) {
-    // If file doesn't exist, return empty array
-    return []
+async function updateEmailStatus(email: string, emailSent: boolean, emailOpened: boolean = false): Promise<void> {
+  const { error } = await supabase
+    .from('contest_entries')
+    .update({ email_sent: emailSent, email_opened: emailOpened })
+    .eq('email', email)
+  
+  if (error) {
+    console.error('Error updating email status:', error)
   }
 }
 
-async function writeEntries(entries: ContestEntry[]): Promise<void> {
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(entries, null, 2))
+async function isCodeUnique(code: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('contest_entries')
+    .select('code')
+    .eq('code', code)
+    .single()
+  
+  // If error and no data, code is unique
+  return !data
 }
 
 function generateUniqueCode(): string {
@@ -33,7 +60,7 @@ function generateUniqueCode(): string {
   return `PXZ-${randomString}`
 }
 
-async function sendConfirmationEmail(email: string, name: string, code: string): Promise<void> {
+async function sendConfirmationEmail(email: string, name: string, code: string): Promise<boolean> {
   const transporter = nodemailer.createTransporter({
     service: "gmail",
     auth: {
@@ -95,7 +122,13 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
     `,
   }
 
-  await transporter.sendMail(mailOptions)
+  try {
+    await transporter.sendMail(mailOptions)
+    return true
+  } catch (error) {
+    console.error('Email sending error:', error)
+    return false
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -117,12 +150,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Read existing entries
-    const entries = await readEntries()
-
     // Check if email already exists
-    const existingEntry = entries.find((entry) => entry.email === email)
+    const existingEntry = await checkExistingEntry(email)
     if (existingEntry) {
+      // Resend email
+      const emailSent = await sendConfirmationEmail(email, existingEntry.name, existingEntry.code)
+      await updateEmailStatus(email, emailSent)
+      
       return NextResponse.json({
         success: true,
         code: existingEntry.code,
@@ -134,29 +168,32 @@ export async function POST(request: NextRequest) {
     // Generate unique code
     let code = generateUniqueCode()
     // Ensure code is unique
-    while (entries.some((entry) => entry.code === code)) {
+    while (!(await isCodeUnique(code))) {
       code = generateUniqueCode()
     }
 
-    // Create new entry
-    const newEntry: ContestEntry = {
+    // Create new entry in database
+    const newEntry = await createEntry({
       email,
       name,
       code,
       timestamp: new Date().toISOString(),
-    }
+      email_sent: false,
+      email_opened: false,
+    })
 
-    // Save to database
-    entries.push(newEntry)
-    await writeEntries(entries)
+    if (!newEntry) {
+      return NextResponse.json(
+        { success: false, message: "Wystąpił błąd podczas zapisywania danych. Spróbuj ponownie." },
+        { status: 500 }
+      )
+    }
 
     // Send confirmation email
-    try {
-      await sendConfirmationEmail(email, name, code)
-    } catch (emailError) {
-      console.error("Error sending email:", emailError)
-      // Continue even if email fails - user got the code in response
-    }
+    const emailSent = await sendConfirmationEmail(email, name, code)
+    
+    // Update email status
+    await updateEmailStatus(email, emailSent)
 
     return NextResponse.json({
       success: true,
