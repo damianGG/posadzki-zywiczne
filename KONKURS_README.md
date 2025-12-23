@@ -175,6 +175,7 @@ curl -X POST http://localhost:3000/api/generate-code \
 - ✅ Email format validation with regex
 - ✅ Cryptographically secure random code generation
 - ✅ Supabase service role key stored in environment variables only on the server
+- ✅ Supabase RLS should restrict access to `contest_entries` (service role key limited to server-side use)
 - ✅ No XSS vulnerabilities (React escapes output by default)
 - ✅ Environment variables for sensitive data
 

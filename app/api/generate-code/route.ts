@@ -7,6 +7,8 @@ const SUPABASE_URL = process.env.SUPABASE_URL
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY
 let supabaseClient: SupabaseClient | null = null
 const MAX_CODE_GENERATION_ATTEMPTS = 5
+// PostgreSQL error code for unique constraint violations
+const POSTGRES_UNIQUE_VIOLATION_CODE = "23505"
 
 function generateUniqueCode(): string {
   const randomString = crypto.randomBytes(4).toString("hex").toUpperCase()
@@ -155,55 +157,62 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         code: existingEntry.code,
-        message: "Ten email był już użyty. Wysłaliśmy ponownie Twój kod.",
+        message: "Ten email był już użyty. Twój kod pozostaje bez zmian.",
         alreadyExists: true,
       })
     }
 
-    // Generate unique code
-    let code = generateUniqueCode()
-    // Ensure code is unique in Supabase
-    let uniqueCodeGenerated = false
+    let code = ""
+    let entrySaved = false
+    let lastInsertErrorMessage: string | null = null
     for (let attempt = 0; attempt < MAX_CODE_GENERATION_ATTEMPTS; attempt++) {
-      const { data: codeMatch, error: codeError } = await supabase
-        .from("contest_entries")
-        .select("code")
-        .eq("code", code)
-        .maybeSingle()
+      code = generateUniqueCode()
+      const { error: insertError } = await supabase.from("contest_entries").insert({
+        email,
+        name,
+        code,
+      })
 
-      if (codeError) {
-        console.error("Error checking code uniqueness:", codeError)
+      if (!insertError) {
+        entrySaved = true
+        break
+      }
+
+      if (insertError.code === POSTGRES_UNIQUE_VIOLATION_CODE) {
+        const { data: racedEntry } = await supabase
+          .from("contest_entries")
+          .select("code")
+          .eq("email", email)
+          .maybeSingle()
+
+        if (racedEntry) {
+          return NextResponse.json({
+            success: true,
+            code: racedEntry.code,
+            message: "Ten email był już użyty. Twój kod pozostaje bez zmian.",
+            alreadyExists: true,
+          })
+        }
+
+        // Unique constraint triggered by code collision - try again with a new code
+        continue
+      }
+
+      lastInsertErrorMessage = insertError.message
+      break
+    }
+
+    if (!entrySaved) {
+      if (lastInsertErrorMessage) {
+        console.error("Error saving contest entry to Supabase:", lastInsertErrorMessage)
         return NextResponse.json(
-          { success: false, message: "Błąd podczas generowania unikalnego kodu." },
+          { success: false, message: "Nie udało się zapisać zgłoszenia w bazie danych. Spróbuj ponownie później." },
           { status: 500 }
         )
       }
 
-      if (!codeMatch) {
-        uniqueCodeGenerated = true
-        break
-      }
-
-      code = generateUniqueCode()
-    }
-
-    if (!uniqueCodeGenerated) {
       return NextResponse.json(
         { success: false, message: "Nie udało się wygenerować unikalnego kodu. Spróbuj ponownie później." },
-        { status: 500 }
-      )
-    }
-
-    const { error: insertError } = await supabase.from("contest_entries").insert({
-      email,
-      name,
-      code,
-    })
-
-    if (insertError) {
-      console.error("Error saving contest entry to Supabase:", insertError)
-      return NextResponse.json(
-        { success: false, message: "Nie udało się zapisać zgłoszenia w bazie danych. Spróbuj ponownie później." },
         { status: 500 }
       )
     }
