@@ -29,6 +29,12 @@ function getSupabaseClient(): SupabaseClient | null {
 async function verifySupabaseConnection(client: SupabaseClient) {
   const { error } = await client.from("contest_entries").select("code").limit(1)
 
+  if (error?.code === "42P01") {
+    throw new Error(
+      "Brak tabeli contest_entries w Supabase. Utwórz ją (kolumny: email text, name text, code text, timestamp text) lub zaktualizuj migracje."
+    )
+  }
+
   if (error) {
     throw error
   }
@@ -130,7 +136,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           message:
-            "Brak połączenia z bazą danych Supabase. Skontaktuj się z administratorem i spróbuj ponownie później.",
+            "Brak konfiguracji Supabase. Ustaw SUPABASE_URL oraz SUPABASE_SERVICE_ROLE_KEY i spróbuj ponownie.",
         },
         { status: 500 }
       )
@@ -140,11 +146,12 @@ export async function POST(request: NextRequest) {
       await verifySupabaseConnection(supabase)
     } catch (connectionError) {
       console.error("Supabase connection error:", connectionError)
+      const detailedMessage =
+        connectionError instanceof Error ? connectionError.message : "Nieznany błąd połączenia z Supabase."
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Nie udało się nawiązać połączenia z bazą danych Supabase. Spróbuj ponownie później.",
+          message: `Nie udało się nawiązać połączenia z bazą danych Supabase: ${detailedMessage}`,
         },
         { status: 500 }
       )
