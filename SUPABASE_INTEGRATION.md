@@ -99,6 +99,85 @@ VALUES
 
 Or create a migration script in Node.js to read from JSON and insert into Supabase.
 
+## API Endpoints
+
+### POST /api/generate-code
+
+Generate a new contest code and send confirmation email.
+
+**Request:**
+```json
+{
+  "name": "Jan Kowalski",
+  "email": "jan@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "code": "PXZ-A392F5BD",
+  "message": "Kod został wygenerowany i wysłany na Twój email!"
+}
+```
+
+### GET /api/contest-entries
+
+Get all contest entries (admin endpoint).
+
+**Query Parameters:**
+- `limit` (optional): Number of entries to return (default: 100, max: 1000)
+- `offset` (optional): Offset for pagination (default: 0)
+- `orderBy` (optional): Field to sort by (default: created_at)
+- `order` (optional): Sort order - 'asc' or 'desc' (default: desc)
+
+**Example:**
+```bash
+curl http://localhost:3000/api/contest-entries?limit=50&offset=0
+```
+
+**Response:**
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "email": "user@example.com",
+      "name": "User Name",
+      "code": "PXZ-ABCD1234",
+      "timestamp": "2025-12-23T10:00:00Z",
+      "email_sent": true,
+      "email_opened": false,
+      "created_at": "2025-12-23T10:00:01Z"
+    }
+  ],
+  "stats": {
+    "total": 100,
+    "emailsSent": 95,
+    "emailsOpened": 20
+  },
+  "pagination": {
+    "limit": 50,
+    "offset": 0,
+    "total": 100,
+    "hasMore": true
+  }
+}
+```
+
+### GET /api/contest-entries/export
+
+Export all contest entries to CSV file (admin endpoint).
+
+**Example:**
+```bash
+curl http://localhost:3000/api/contest-entries/export -o contest-entries.csv
+```
+
+**Response:** CSV file download with all entries
+
 ## API Changes
 
 ### Response Format (Unchanged)
@@ -121,6 +200,18 @@ The API response format remains the same for backward compatibility:
 - Added `updateEmailStatus()` for tracking email delivery
 - Added `isCodeUnique()` for code validation
 - Modified `sendConfirmationEmail()` to return boolean success status
+
+### Admin Endpoints
+
+Two new admin endpoints have been added:
+- `GET /api/contest-entries` - View all entries with pagination and statistics
+- `GET /api/contest-entries/export` - Export entries to CSV
+
+**⚠️ Security Note:** These admin endpoints are currently unprotected. In production, you should add authentication middleware to protect them. Consider using:
+- Next.js middleware with JWT tokens
+- Supabase Auth for authentication
+- API keys or basic authentication
+- IP whitelisting
 
 ## Testing
 
