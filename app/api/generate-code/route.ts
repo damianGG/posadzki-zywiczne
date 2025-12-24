@@ -92,7 +92,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
           </p>
           
           <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea;">
-            <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Twój kod konkursowy to:</p>
+             <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Twój kod konkursowy (losowanie 3 stycznia 2026) to:</p>
             <p style="color: #667eea; font-size: 32px; font-weight: bold; margin: 0; letter-spacing: 2px; font-family: 'Courier New', monospace;">
               ${code}
             </p>
@@ -115,7 +115,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
           </div>
           
           <p style="color: #555; font-size: 14px; margin-top: 25px; line-height: 1.6;">
-            Powodzenia! 🎄🎁
+             Powodzenia w noworocznym losowaniu! 🎆🎁
           </p>
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d; font-size: 12px;">

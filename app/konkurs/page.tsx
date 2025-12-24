@@ -277,7 +277,7 @@ export default function KonkursPage() {
 
               <h3 className="text-xl font-semibold mt-6">Regulamin konkursu</h3>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Konkurs trwa do 20 grudnia 2025 roku.</li>
+                <li>Konkurs trwa do 3 stycznia 2026 roku.</li>
                 <li>W konkursie może wziąć udział każda osoba pełnoletnia.</li>
                 <li>Jeden adres email = jeden kod konkursowy.</li>
                 <li>Nagroda główna: posadzka żywiczna o wartości 5000 zł.</li>
