@@ -188,11 +188,13 @@ export const Header2 = () => {
                     <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
                         <Link href="/kontakt">Kontakt</Link>
                     </Button>
-                    <Button size="sm" className="flex items-center gap-2">
-                        <Link href="/blog" className="flex items-center gap-2">
-                            {/* <Calculator className="w-4 h-4" /> */}
-                            <span className="hidden sm:inline">Baza wiedzy</span>
-                            <span className="sm:hidden">Baza wiedzy</span>
+                    <Button
+                        size="sm"
+                        className="flex items-center gap-2 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 text-white hover:from-purple-700 hover:via-pink-600 hover:to-orange-500"
+                    >
+                        <Link href="/konkurs" className="flex items-center gap-2">
+                            <span className="hidden sm:inline">Wygraj 5000 zł</span>
+                            <span className="sm:hidden">Wygraj 5000 zł</span>
                         </Link>
                     </Button>
                 </div>

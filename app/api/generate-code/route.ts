@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
+import { type SupabaseClient, createClient } from "@supabase/supabase-js"
 import { promises as fs } from "fs"
 import path from "path"
 import crypto from "crypto"
@@ -12,6 +13,32 @@ interface ContestEntry {
 }
 
 const DATA_FILE = path.join(process.cwd(), "data", "contest-entries.json")
+const MAX_CODE_GENERATION_ATTEMPTS = 10
+
+function getSupabaseClient(): SupabaseClient | null {
+  const supabaseUrl = process.env.SUPABASE_URL
+  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+  if (!supabaseUrl || !supabaseServiceRoleKey) {
+    return null
+  }
+
+  return createClient(supabaseUrl, supabaseServiceRoleKey)
+}
+
+async function verifySupabaseConnection(client: SupabaseClient) {
+  const { error } = await client.from("contest_entries").select("code").limit(1)
+
+  if (error?.code === "42P01") {
+    throw new Error(
+      "Brak tabeli contest_entries w Supabase. Utwórz ją (kolumny: email text, name text, code text, timestamp text) lub zaktualizuj migracje."
+    )
+  }
+
+  if (error) {
+    throw error
+  }
+}
 
 async function readEntries(): Promise<ContestEntry[]> {
   try {
@@ -29,12 +56,17 @@ async function writeEntries(entries: ContestEntry[]): Promise<void> {
 }
 
 function generateUniqueCode(): string {
-  const randomString = crypto.randomBytes(4).toString("hex").toUpperCase()
-  return `PXZ-${randomString}`
+  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+  let code = ""
+  for (let i = 0; i < 5; i++) {
+    const randomIndex = crypto.randomInt(0, alphabet.length)
+    code += alphabet[randomIndex]
+  }
+  return code
 }
 
 async function sendConfirmationEmail(email: string, name: string, code: string): Promise<void> {
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
@@ -45,22 +77,22 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: "Twój kod konkursowy – Świąteczny Konkurs Posadzki Żywiczne",
+    subject: "Twój kod konkursowy – Noworoczny Konkurs Posadzki Żywiczne",
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px 10px 0 0; text-align: center;">
-          <h1 style="color: white; margin: 0; font-size: 28px;">🎄 Świąteczny Konkurs 🎄</h1>
-          <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Posadzki Żywiczne</p>
+           <h1 style="color: white; margin: 0; font-size: 28px;">🎆 Noworoczny Konkurs 🎆</h1>
+           <p style="color: white; margin: 10px 0 0 0; font-size: 16px;">Posadzki Żywiczne</p>
         </div>
         
         <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
           <h2 style="color: #333; margin-top: 0;">Witaj ${name}!</h2>
           <p style="color: #555; font-size: 16px; line-height: 1.6;">
-            Dziękujemy za udział w Świątecznym Konkursie!
+             Dziękujemy za udział w Noworocznym Konkursie!
           </p>
           
           <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea;">
-            <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Twój kod konkursowy to:</p>
+             <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Twój kod konkursowy (losowanie 3 stycznia 2026) to:</p>
             <p style="color: #667eea; font-size: 32px; font-weight: bold; margin: 0; letter-spacing: 2px; font-family: 'Courier New', monospace;">
               ${code}
             </p>
@@ -83,7 +115,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
           </div>
           
           <p style="color: #555; font-size: 14px; margin-top: 25px; line-height: 1.6;">
-            Powodzenia! 🎄🎁
+             Powodzenia w noworocznym losowaniu! 🎆🎁
           </p>
           
           <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #dee2e6; color: #6c757d; font-size: 12px;">
@@ -102,6 +134,34 @@ export async function POST(request: NextRequest) {
   try {
     const { name, email } = await request.json()
 
+    const supabase = getSupabaseClient()
+
+    if (!supabase) {
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Brak konfiguracji Supabase. Ustaw SUPABASE_URL oraz SUPABASE_SERVICE_ROLE_KEY i spróbuj ponownie.",
+        },
+        { status: 500 }
+      )
+    }
+
+    try {
+      await verifySupabaseConnection(supabase)
+    } catch (connectionError) {
+      console.error("Supabase connection error:", connectionError)
+      const detailedMessage =
+        connectionError instanceof Error ? connectionError.message : "Nieznany błąd połączenia z Supabase."
+      return NextResponse.json(
+        {
+          success: false,
+          message: `Nie udało się nawiązać połączenia z bazą danych Supabase: ${detailedMessage}`,
+        },
+        { status: 500 }
+      )
+    }
+
     // Validate input
     if (!name || name.length < 2) {
       return NextResponse.json(
@@ -117,25 +177,73 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Read existing entries
-    const entries = await readEntries()
+    // Check if email already exists in Supabase
+    const { data: existingEntry, error: existingEntryError } = await supabase
+      .from("contest_entries")
+      .select("email, name, code")
+      .eq("email", email)
+      .maybeSingle()
 
-    // Check if email already exists
-    const existingEntry = entries.find((entry) => entry.email === email)
+    if (existingEntryError) {
+      console.error("Error checking existing entry in Supabase:", existingEntryError)
+      return NextResponse.json(
+        { success: false, message: "Wystąpił błąd podczas sprawdzania zgłoszenia. Spróbuj ponownie." },
+        { status: 500 }
+      )
+    }
+
     if (existingEntry) {
+      let existingEntryMessage =
+        "Cześć, ten mail został już wykorzystany. Jeśli nie dotarł do Ciebie kod konkursowy, napisz do nas na biuro@posadzkizywiczne.com."
+      try {
+        await sendConfirmationEmail(email, name, existingEntry.code)
+      } catch (emailError) {
+        console.warn("Error sending email to existing entry:", emailError)
+        existingEntryMessage =
+          "Cześć, ten mail został już wykorzystany. Nie udało się ponownie wysłać wiadomości – jeśli nie dotarł do Ciebie kod, napisz do nas na biuro@posadzkizywiczne.com. Poniżej masz swój kod."
+      }
+
       return NextResponse.json({
         success: true,
         code: existingEntry.code,
-        message: "Ten email był już użyty. Wysłaliśmy ponownie Twój kod.",
+        message: existingEntryMessage,
         alreadyExists: true,
       })
     }
 
     // Generate unique code
     let code = generateUniqueCode()
-    // Ensure code is unique
-    while (entries.some((entry) => entry.code === code)) {
+    let attempts = 0
+
+    // Ensure code is unique in Supabase
+    while (attempts < MAX_CODE_GENERATION_ATTEMPTS) {
+      const { data: codeCheck, error: codeError } = await supabase
+        .from("contest_entries")
+        .select("code")
+        .eq("code", code)
+        .maybeSingle()
+
+      if (codeError) {
+        console.error("Error checking code uniqueness:", codeError)
+        return NextResponse.json(
+          { success: false, message: "Wystąpił błąd podczas generowania kodu. Spróbuj ponownie." },
+          { status: 500 }
+        )
+      }
+
+      if (!codeCheck) {
+        break
+      }
+
       code = generateUniqueCode()
+      attempts += 1
+    }
+
+    if (attempts >= MAX_CODE_GENERATION_ATTEMPTS) {
+      return NextResponse.json(
+        { success: false, message: "Nie udało się wygenerować unikalnego kodu. Spróbuj ponownie." },
+        { status: 500 }
+      )
     }
 
     // Create new entry
@@ -146,9 +254,25 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     }
 
-    // Save to database
-    entries.push(newEntry)
-    await writeEntries(entries)
+    // Save to Supabase
+    const { error: insertError } = await supabase.from("contest_entries").insert(newEntry)
+
+    if (insertError) {
+      console.error("Error inserting entry to Supabase:", insertError)
+      return NextResponse.json(
+        { success: false, message: "Wystąpił błąd podczas zapisywania zgłoszenia. Spróbuj ponownie." },
+        { status: 500 }
+      )
+    }
+
+    // Save locally as fallback
+    try {
+      const entries = await readEntries()
+      entries.push(newEntry)
+      await writeEntries(entries)
+    } catch (localError) {
+      console.error("Error writing local contest entry backup:", localError)
+    }
 
     // Send confirmation email
     try {
