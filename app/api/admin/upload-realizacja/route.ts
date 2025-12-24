@@ -80,7 +80,28 @@ export async function POST(request: NextRequest) {
     // Generate slug and folder name
     const baseSlug = generateSlugFromTitle(data.title);
     const folderType = getFolderTypeFromCategory(data.category);
-    const location = data.location ? data.location.split(',')[0].toLowerCase().replace(/\s+/g, '-') : 'polska';
+    
+    // Sanitize location to remove Polish characters and special chars
+    const sanitizeString = (str: string): string => {
+      const polishChars: Record<string, string> = {
+        'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
+        'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+        'Ą': 'a', 'Ć': 'c', 'Ę': 'e', 'Ł': 'l', 'Ń': 'n',
+        'Ó': 'o', 'Ś': 's', 'Ź': 'z', 'Ż': 'z'
+      };
+      return str
+        .split('')
+        .map(char => polishChars[char] || char)
+        .join('')
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+    };
+    
+    const location = data.location 
+      ? sanitizeString(data.location.split(',')[0]) 
+      : 'polska';
     
     // Create folder name: [miasto]-[slug]-[typ]
     const folderName = `${location}-${baseSlug}-${folderType}`;
@@ -98,9 +119,16 @@ export async function POST(request: NextRequest) {
       const bytes = await image.arrayBuffer();
       const buffer = Buffer.from(bytes);
       
-      // Generate filename
-      const extension = image.name.split('.').pop() || 'jpg';
-      const filename = i === 0 ? `0-glowne.${extension}` : `${i}.${extension}`;
+      // Generate filename - sanitize extension
+      const nameParts = image.name.split('.');
+      const extension = nameParts.length > 1 
+        ? nameParts.pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
+        : 'jpg';
+      // Ensure extension is valid image format
+      const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+      const safeExtension = validExtensions.includes(extension) ? extension : 'jpg';
+      
+      const filename = i === 0 ? `0-glowne.${safeExtension}` : `${i}.${safeExtension}`;
       const imagePath = path.join(folderPath, filename);
       
       await writeFile(imagePath, buffer);
