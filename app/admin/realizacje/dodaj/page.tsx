@@ -123,7 +123,11 @@ export default function DodajRealizacjePage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Błąd podczas dodawania realizacji');
+        // Show detailed error with instructions if available
+        const errorMessage = result.details 
+          ? `${result.error}\n\n${result.details}\n\n${result.instructions || ''}`
+          : result.error || 'Błąd podczas dodawania realizacji';
+        throw new Error(errorMessage);
       }
 
       setSubmitSuccess(true);
@@ -455,7 +459,8 @@ export default function DodajRealizacjePage() {
               <div className="pt-6 border-t">
                 {submitError && (
                   <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-800 dark:text-red-200">
-                    {submitError}
+                    <div className="font-semibold mb-2">Błąd</div>
+                    <pre className="whitespace-pre-wrap text-sm font-mono">{submitError}</pre>
                   </div>
                 )}
 

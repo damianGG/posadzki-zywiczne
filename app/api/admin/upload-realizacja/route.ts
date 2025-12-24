@@ -8,7 +8,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
-import { scanAllRealizacje } from '@/lib/local-realizacje-scanner';
 
 // Helper function to generate slug from title
 function generateSlugFromTitle(title: string): string {
@@ -46,6 +45,21 @@ function getFolderTypeFromCategory(category: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if we're in Vercel production environment
+    // Vercel sets VERCEL_ENV to 'production' in production
+    const isVercelProduction = process.env.VERCEL_ENV === 'production';
+    
+    if (isVercelProduction) {
+      return NextResponse.json(
+        { 
+          error: 'Funkcja dodawania realizacji nie jest dostępna w środowisku produkcyjnym Vercel',
+          details: 'Vercel używa systemu plików tylko do odczytu w środowisku serverless. Pliki nie będą zapisane trwale.',
+          instructions: 'Aby dodać realizację:\n1. Sklonuj repozytorium lokalnie\n2. Dodaj folder i zdjęcia w public/realizacje/\n3. Utwórz opis.json\n4. Uruchom skaner: npx tsx scripts/scan-realizacje.ts\n5. Commit i push zmian\n\nAlternatywnie: Skonfiguruj zewnętrzne przechowywanie plików (Vercel Blob Storage, AWS S3, Cloudinary).'
+        },
+        { status: 501 } // 501 Not Implemented
+      );
+    }
+
     // Parse form data
     const formData = await request.formData();
     const formDataJson = formData.get('formData') as string;
@@ -205,15 +219,16 @@ export async function POST(request: NextRequest) {
     const opisPath = path.join(folderPath, 'opis.json');
     await writeFile(opisPath, JSON.stringify(opisData, null, 2));
 
-    // Run scanner to update data/realizacje/
-    console.log('Running scanner to update realizacje data...');
-    await scanAllRealizacje();
+    // Note: In local development, files are saved directly
+    // In production (Vercel), this won't persist - see note below
+    console.log('Realizacja saved successfully. Files created in:', folderPath);
 
     return NextResponse.json({
       success: true,
-      message: 'Realizacja została dodana pomyślnie',
+      message: 'Realizacja została dodana pomyślnie (tylko w trybie development)',
       folderName,
       slug: folderName,
+      warning: 'W środowisku produkcyjnym pliki muszą być dodane przez lokalny skaner i commit do repozytorium.',
     });
 
   } catch (error) {
