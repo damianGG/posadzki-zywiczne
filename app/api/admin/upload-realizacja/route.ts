@@ -107,8 +107,26 @@ export async function POST(request: NextRequest) {
       imageFiles.push(filename);
     }
 
-    // Create opis.json
-    const opisData: any = {
+    // Create opis.json - Define the type for opisData
+    interface OpisData {
+      title: string;
+      description: string;
+      location?: string;
+      area?: string;
+      technology?: string;
+      color?: string;
+      duration?: string;
+      tags?: string[];
+      features?: string[];
+      keywords?: string[];
+      clientTestimonial?: {
+        content: string;
+        author: string;
+      };
+      type?: string;
+    }
+
+    const opisData: OpisData = {
       title: data.title,
       description: data.description,
     };
