@@ -17,6 +17,7 @@ import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-re
 import BenefitsSection from "./garaze/components/BenefitsSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
 import { getLatestBlogPosts, getBlogPostsByCategories } from "@/lib/blog"
+import ContestHero from "@/components/contest-hero"
 
 export const dynamic = "force-static"
 
@@ -26,6 +27,7 @@ export default function Home() {
   return (
     <>
       <HeroMainPage />
+      <ContestHero />
       <ProblemSolutionSection />
       <ScrollDrivenRenovationTimeline />
       <BenefitsSection />

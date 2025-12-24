@@ -253,7 +253,7 @@ export default function KonkursPage() {
               <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 max-w-md mx-auto">
                 <Calendar className="w-12 h-12 mx-auto mb-4" />
                  <p className="text-lg font-semibold mb-2">Data losowania:</p>
-                 <p className="text-3xl font-bold">3 stycznia 2026</p>
+                 <p className="text-3xl font-bold">10 stycznia 2026</p>
               </div>
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function KonkursPage() {
 
               <h3 className="text-xl font-semibold mt-6">Regulamin konkursu</h3>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Konkurs trwa do 3 stycznia 2026 roku.</li>
+                <li>Konkurs trwa do 10 stycznia 2026 roku.</li>
                 <li>W konkursie może wziąć udział każda osoba pełnoletnia.</li>
                 <li>Jeden adres email = jeden kod konkursowy.</li>
                 <li>Nagroda główna: posadzka żywiczna o wartości 5000 zł.</li>
