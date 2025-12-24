@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card';
 import { Upload, X, Loader2, CheckCircle2, Trash2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import GoogleDrivePicker from '@/components/admin/google-drive-picker';
 
 interface FormData {
   title: string;
@@ -129,6 +130,14 @@ export default function EdytujRealizacjePage() {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
+    addNewImages(files);
+  };
+
+  const handleGoogleDriveFiles = (files: File[]) => {
+    addNewImages(files);
+  };
+
+  const addNewImages = (files: File[]) => {
     setNewImages(prev => [...prev, ...files]);
     const previews = files.map(file => URL.createObjectURL(file));
     setNewImagePreviews(prev => [...prev, ...previews]);
@@ -368,24 +377,38 @@ export default function EdytujRealizacjePage() {
               <div className="space-y-4">
                 <h3 className="font-semibold text-lg">Dodaj nowe zdjęcia</h3>
                 
-                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6">
-                  <input
-                    type="file"
-                    id="new-images"
-                    multiple
-                    accept="image/*"
-                    onChange={handleNewImageSelect}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="new-images"
-                    className="flex flex-col items-center cursor-pointer"
-                  >
-                    <Upload className="w-12 h-12 text-gray-400 mb-2" />
-                    <span className="text-sm text-gray-600 dark:text-gray-300">
-                      Kliknij aby dodać zdjęcia
-                    </span>
-                  </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Local file upload */}
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6">
+                    <input
+                      type="file"
+                      id="new-images"
+                      multiple
+                      accept="image/*"
+                      onChange={handleNewImageSelect}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="new-images"
+                      className="flex flex-col items-center cursor-pointer"
+                    >
+                      <Upload className="w-12 h-12 text-gray-400 mb-2" />
+                      <span className="text-sm text-gray-600 dark:text-gray-300">
+                        Z urządzenia
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        Kliknij aby wybrać
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Google Drive picker */}
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex items-center justify-center">
+                    <GoogleDrivePicker
+                      onFilesPicked={handleGoogleDriveFiles}
+                      disabled={isSubmitting}
+                    />
+                  </div>
                 </div>
 
                 {newImagePreviews.length > 0 && (

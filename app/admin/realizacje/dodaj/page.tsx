@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Upload, X, Loader2, CheckCircle2, ImagePlus } from 'lucide-react';
 import Image from 'next/image';
 import LoginForm from '@/components/admin/login-form';
+import GoogleDrivePicker from '@/components/admin/google-drive-picker';
 
 interface FormData {
   title: string;
@@ -72,6 +73,14 @@ export default function DodajRealizacjePage() {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
 
+    addImages(files);
+  };
+
+  const handleGoogleDriveFiles = (files: File[]) => {
+    addImages(files);
+  };
+
+  const addImages = (files: File[]) => {
     // Add new images to existing ones
     const newImages = [...images, ...files];
     setImages(newImages);
@@ -330,28 +339,43 @@ export default function DodajRealizacjePage() {
                   Zdjęcia *
                 </h3>
                 
-                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                  <input
-                    type="file"
-                    id="images"
-                    multiple
-                    accept="image/*"
-                    onChange={handleImageSelect}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor="images"
-                    className="cursor-pointer flex flex-col items-center space-y-2"
-                  >
-                    <ImagePlus className="w-12 h-12 text-gray-400" />
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      Kliknij aby dodać zdjęcia
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      (pierwsze zdjęcie będzie głównym)
-                    </span>
-                  </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Local file upload */}
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
+                    <input
+                      type="file"
+                      id="images"
+                      multiple
+                      accept="image/*"
+                      onChange={handleImageSelect}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor="images"
+                      className="cursor-pointer flex flex-col items-center space-y-2"
+                    >
+                      <ImagePlus className="w-12 h-12 text-gray-400" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Z urządzenia
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        Kliknij aby wybrać
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* Google Drive picker */}
+                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex items-center justify-center">
+                    <GoogleDrivePicker
+                      onFilesPicked={handleGoogleDriveFiles}
+                      disabled={isSubmitting}
+                    />
+                  </div>
                 </div>
+
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  Pierwsze zdjęcie będzie zdjęciem głównym
+                </p>
 
                 {imagePreviews.length > 0 && (
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
