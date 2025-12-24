@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Upload, X, Loader2, CheckCircle2, ImagePlus } from 'lucide-react';
 import Image from 'next/image';
+import LoginForm from '@/components/admin/login-form';
 
 interface FormData {
   title: string;
@@ -28,6 +29,18 @@ interface FormData {
 }
 
 export default function DodajRealizacjePage() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    // Check if user is already authenticated
+    const token = sessionStorage.getItem('admin_token');
+    if (token) {
+      setIsAuthenticated(true);
+    }
+    setIsCheckingAuth(false);
+  }, []);
+
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
@@ -101,9 +114,15 @@ export default function DodajRealizacjePage() {
       // Add form data
       uploadData.append('formData', JSON.stringify(formData));
 
+      // Get auth token
+      const token = sessionStorage.getItem('admin_token');
+
       // Submit to API
       const response = await fetch('/api/admin/upload-realizacja', {
         method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
         body: uploadData,
       });
 
@@ -144,6 +163,20 @@ export default function DodajRealizacjePage() {
       setIsSubmitting(false);
     }
   };
+
+  // Show loading state while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
+
+  // Show login form if not authenticated
+  if (!isAuthenticated) {
+    return <LoginForm onSuccess={() => setIsAuthenticated(true)} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 py-8 px-4">
