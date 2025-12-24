@@ -114,15 +114,9 @@ export default function DodajRealizacjePage() {
       // Add form data
       uploadData.append('formData', JSON.stringify(formData));
 
-      // Get auth token
-      const token = sessionStorage.getItem('admin_token');
-
       // Submit to API
       const response = await fetch('/api/admin/upload-realizacja', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
         body: uploadData,
       });
 
