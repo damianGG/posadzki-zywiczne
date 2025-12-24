@@ -1,13 +1,22 @@
 /**
  * API Route: /api/admin/upload-realizacja
  * 
- * Handles uploading new realizacja with images from mobile/web form
+ * Handles uploading new realizacja with images using Cloudinary
+ * Works in both development and production environments
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { v2 as cloudinary } from 'cloudinary';
 import { writeFile, mkdir } from 'fs/promises';
 import { existsSync } from 'fs';
 import path from 'path';
+
+// Configure Cloudinary
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 // Helper function to generate slug from title
 function generateSlugFromTitle(title: string): string {
@@ -43,20 +52,35 @@ function getFolderTypeFromCategory(category: string): string {
   return categoryMap[category] || 'mieszkanie';
 }
 
+// Sanitize location string
+function sanitizeString(str: string): string {
+  const polishChars: Record<string, string> = {
+    'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
+    'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
+    'Ą': 'a', 'Ć': 'c', 'Ę': 'e', 'Ł': 'l', 'Ń': 'n',
+    'Ó': 'o', 'Ś': 's', 'Ź': 'z', 'Ż': 'z'
+  };
+  return str
+    .split('')
+    .map(char => polishChars[char] || char)
+    .join('')
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // Check if we're in Vercel production environment
-    // Vercel sets VERCEL_ENV to 'production' in production
-    const isVercelProduction = process.env.VERCEL_ENV === 'production';
-    
-    if (isVercelProduction) {
+    // Check Cloudinary configuration
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
       return NextResponse.json(
         { 
-          error: 'Funkcja dodawania realizacji nie jest dostępna w środowisku produkcyjnym Vercel',
-          details: 'Vercel używa systemu plików tylko do odczytu w środowisku serverless. Pliki nie będą zapisane trwale.',
-          instructions: 'Aby dodać realizację:\n1. Sklonuj repozytorium lokalnie\n2. Dodaj folder i zdjęcia w public/realizacje/\n3. Utwórz opis.json\n4. Uruchom skaner: npx tsx scripts/scan-realizacje.ts\n5. Commit i push zmian\n\nAlternatywnie: Skonfiguruj zewnętrzne przechowywanie plików (Vercel Blob Storage, AWS S3, Cloudinary).'
+          error: 'Cloudinary nie jest skonfigurowany',
+          details: 'Brak zmiennych środowiskowych Cloudinary. Dodaj CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY i CLOUDINARY_API_SECRET w ustawieniach środowiska.',
+          instructions: 'Skonfiguruj zmienne środowiskowe w Vercel lub lokalnie w pliku .env'
         },
-        { status: 501 } // 501 Not Implemented
+        { status: 500 }
       );
     }
 
@@ -94,40 +118,17 @@ export async function POST(request: NextRequest) {
     // Generate slug and folder name
     const baseSlug = generateSlugFromTitle(data.title);
     const folderType = getFolderTypeFromCategory(data.category);
-    
-    // Sanitize location to remove Polish characters and special chars
-    const sanitizeString = (str: string): string => {
-      const polishChars: Record<string, string> = {
-        'ą': 'a', 'ć': 'c', 'ę': 'e', 'ł': 'l', 'ń': 'n',
-        'ó': 'o', 'ś': 's', 'ź': 'z', 'ż': 'z',
-        'Ą': 'a', 'Ć': 'c', 'Ę': 'e', 'Ł': 'l', 'Ń': 'n',
-        'Ó': 'o', 'Ś': 's', 'Ź': 'z', 'Ż': 'z'
-      };
-      return str
-        .split('')
-        .map(char => polishChars[char] || char)
-        .join('')
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
-    };
-    
     const location = data.location 
       ? sanitizeString(data.location.split(',')[0]) 
       : 'polska';
     
     // Create folder name: [miasto]-[slug]-[typ]
     const folderName = `${location}-${baseSlug}-${folderType}`;
-    const folderPath = path.join(process.cwd(), 'public', 'realizacje', folderName);
-
-    // Create folder if it doesn't exist
-    if (!existsSync(folderPath)) {
-      await mkdir(folderPath, { recursive: true });
-    }
-
-    // Save images
-    const imageFiles: string[] = [];
+    
+    // Upload images to Cloudinary
+    console.log(`Uploading ${images.length} images to Cloudinary...`);
+    const uploadedImages: { url: string; publicId: string; filename: string }[] = [];
+    
     for (let i = 0; i < images.length; i++) {
       const image = images[i];
       const bytes = await image.arrayBuffer();
@@ -142,14 +143,35 @@ export async function POST(request: NextRequest) {
       const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
       const safeExtension = validExtensions.includes(extension) ? extension : 'jpg';
       
-      const filename = i === 0 ? `0-glowne.${safeExtension}` : `${i}.${safeExtension}`;
-      const imagePath = path.join(folderPath, filename);
+      const filename = i === 0 ? `0-glowne` : `${i}`;
+      const publicId = `realizacje/${folderName}/${filename}`;
       
-      await writeFile(imagePath, buffer);
-      imageFiles.push(filename);
+      // Upload to Cloudinary
+      const result = await new Promise<any>((resolve, reject) => {
+        cloudinary.uploader.upload_stream(
+          {
+            folder: `realizacje/${folderName}`,
+            public_id: filename,
+            resource_type: 'image',
+            format: safeExtension,
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        ).end(buffer);
+      });
+      
+      uploadedImages.push({
+        url: result.secure_url,
+        publicId: result.public_id,
+        filename: `${filename}.${safeExtension}`,
+      });
+      
+      console.log(`Uploaded image ${i + 1}/${images.length}: ${result.secure_url}`);
     }
 
-    // Create opis.json - Define the type for opisData
+    // Create opis.json structure
     interface OpisData {
       title: string;
       description: string;
@@ -166,11 +188,19 @@ export async function POST(request: NextRequest) {
         author: string;
       };
       type?: string;
+      cloudinary?: {
+        images: { url: string; publicId: string; filename: string }[];
+        folderName: string;
+      };
     }
 
     const opisData: OpisData = {
       title: data.title,
       description: data.description,
+      cloudinary: {
+        images: uploadedImages,
+        folderName,
+      },
     };
 
     // Add optional fields
@@ -215,20 +245,36 @@ export async function POST(request: NextRequest) {
     // Add type (indywidualna/komercyjna)
     opisData.type = data.type || 'indywidualna';
 
-    // Save opis.json
-    const opisPath = path.join(folderPath, 'opis.json');
-    await writeFile(opisPath, JSON.stringify(opisData, null, 2));
+    // Try to save locally if in development mode
+    const isDevelopment = process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview';
+    
+    if (isDevelopment) {
+      try {
+        const folderPath = path.join(process.cwd(), 'public', 'realizacje', folderName);
+        if (!existsSync(folderPath)) {
+          await mkdir(folderPath, { recursive: true });
+        }
+        
+        const opisPath = path.join(folderPath, 'opis.json');
+        await writeFile(opisPath, JSON.stringify(opisData, null, 2));
+        
+        console.log('Saved opis.json locally:', opisPath);
+      } catch (localError) {
+        console.warn('Could not save locally (this is OK in production):', localError);
+      }
+    }
 
-    // Note: In local development, files are saved directly
-    // In production (Vercel), this won't persist - see note below
-    console.log('Realizacja saved successfully. Files created in:', folderPath);
-
+    // Return success response
     return NextResponse.json({
       success: true,
-      message: 'Realizacja została dodana pomyślnie (tylko w trybie development)',
+      message: 'Realizacja została dodana pomyślnie! Zdjęcia zapisane w Cloudinary.',
       folderName,
       slug: folderName,
-      warning: 'W środowisku produkcyjnym pliki muszą być dodane przez lokalny skaner i commit do repozytorium.',
+      images: uploadedImages.map(img => img.url),
+      cloudinaryFolder: `realizacje/${folderName}`,
+      note: isDevelopment 
+        ? 'Pliki zapisane lokalnie i w Cloudinary. Pamiętaj o commit i push do repozytorium.'
+        : 'Zdjęcia zapisane w Cloudinary. Aby realizacja była widoczna na stronie, uruchom lokalnie skaner i zrób commit.',
     });
 
   } catch (error) {
@@ -246,6 +292,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   return NextResponse.json({
     message: 'Użyj metody POST aby dodać nową realizację',
-    info: 'Endpoint do dodawania realizacji przez formularz webowy',
+    info: 'Endpoint do dodawania realizacji przez formularz webowy z Cloudinary',
+    cloudinaryConfigured: !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET),
   });
 }
