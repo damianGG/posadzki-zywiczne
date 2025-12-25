@@ -211,58 +211,93 @@ export async function POST(request: NextRequest) {
     if (data.duration) opisData.duration = data.duration;
 
     // Parse tags (comma-separated)
-    if (data.tags) {
-      opisData.tags = data.tags
-        .split(',')
-        .map((tag: string) => tag.trim())
-        .filter((tag: string) => tag.length > 0);
-    }
+    const tags = data.tags
+      ? data.tags
+          .split(',')
+          .map((tag: string) => tag.trim())
+          .filter((tag: string) => tag.length > 0)
+      : [];
 
     // Parse features (line-separated)
-    if (data.features) {
-      opisData.features = data.features
-        .split('\n')
-        .map((feature: string) => feature.trim())
-        .filter((feature: string) => feature.length > 0);
-    }
+    const features = data.features
+      ? data.features
+          .split('\n')
+          .map((feature: string) => feature.trim())
+          .filter((feature: string) => feature.length > 0)
+      : [];
 
     // Parse keywords (line-separated)
-    if (data.keywords) {
-      opisData.keywords = data.keywords
-        .split('\n')
-        .map((keyword: string) => keyword.trim())
-        .filter((keyword: string) => keyword.length > 0);
-    }
+    const keywords = data.keywords
+      ? data.keywords
+          .split('\n')
+          .map((keyword: string) => keyword.trim())
+          .filter((keyword: string) => keyword.length > 0)
+      : [];
+
+    // Create realizacja data structure for data/realizacje/ (public page format)
+    const realizacjaData: any = {
+      slug: folderName,
+      title: data.title,
+      description: data.description,
+      category: data.category,
+      location: data.location || '',
+      date: new Date().toISOString().split('T')[0],
+      tags,
+      images: {
+        main: uploadedImages[0]?.url || '',
+        gallery: uploadedImages.map(img => img.url),
+      },
+      details: {
+        surface: data.area || '',
+        system: data.technology || '',
+        color: data.color || '',
+        duration: data.duration || '',
+      },
+      features,
+      keywords,
+    };
 
     // Add testimonial if provided
+    if (data.testimonialContent && data.testimonialAuthor) {
+      realizacjaData.clientTestimonial = {
+        content: data.testimonialContent,
+        author: data.testimonialAuthor,
+      };
+    }
+
+    // Save to data/realizacje/ directory (where the public page reads from)
+    try {
+      const dataDir = path.join(process.cwd(), 'data', 'realizacje');
+      if (!existsSync(dataDir)) {
+        await mkdir(dataDir, { recursive: true });
+      }
+      
+      const jsonPath = path.join(dataDir, `${folderName}.json`);
+      await writeFile(jsonPath, JSON.stringify(realizacjaData, null, 2));
+      
+      console.log('Saved realizacja JSON to data/realizacje/:', jsonPath);
+    } catch (saveError) {
+      console.error('Error saving realizacja JSON:', saveError);
+      throw new Error('Failed to save realizacja data');
+    }
+
+    // Also save to old format for backward compatibility (optional)
+    if (data.tags) {
+      opisData.tags = tags;
+    }
+    if (data.features) {
+      opisData.features = features;
+    }
+    if (data.keywords) {
+      opisData.keywords = keywords;
+    }
     if (data.testimonialContent && data.testimonialAuthor) {
       opisData.clientTestimonial = {
         content: data.testimonialContent,
         author: data.testimonialAuthor,
       };
     }
-
-    // Add type (indywidualna/komercyjna)
     opisData.type = data.type || 'indywidualna';
-
-    // Try to save locally if in development mode
-    const isDevelopment = process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview';
-    
-    if (isDevelopment) {
-      try {
-        const folderPath = path.join(process.cwd(), 'public', 'realizacje', folderName);
-        if (!existsSync(folderPath)) {
-          await mkdir(folderPath, { recursive: true });
-        }
-        
-        const opisPath = path.join(folderPath, 'opis.json');
-        await writeFile(opisPath, JSON.stringify(opisData, null, 2));
-        
-        console.log('Saved opis.json locally:', opisPath);
-      } catch (localError) {
-        console.warn('Could not save locally (this is OK in production):', localError);
-      }
-    }
 
     // Return success response
     return NextResponse.json({

@@ -111,7 +111,7 @@ export async function PUT(request: NextRequest) {
     // Combine existing and new images
     const allImages = [...existingImages, ...uploadedImages];
 
-    // Update realizacja data
+    // Update realizacja data with correct structure
     const updatedRealizacja = {
       ...existingRealizacja,
       title: data.title,
@@ -119,6 +119,10 @@ export async function PUT(request: NextRequest) {
       location: data.location || existingRealizacja.location,
       category: data.category || existingRealizacja.category,
       date: data.date || existingRealizacja.date || new Date().toISOString().split('T')[0],
+      images: {
+        main: allImages[0]?.url || existingRealizacja.images?.main || '',
+        gallery: allImages.map((img: any) => img.url || img),
+      },
       details: {
         surface: data.area || existingRealizacja.details?.surface,
         system: data.technology || existingRealizacja.details?.system,
