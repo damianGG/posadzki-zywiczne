@@ -18,17 +18,19 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
 
   const category = categoryMap[data.project_type] || 'domy-mieszkania' as RealizacjaCategory;
 
-  // Process images - handle both string URLs and objects with url property
+  // Process images - extract URLs from database structure
   const mainImage = data.images?.main || '';
   const galleryImages = Array.isArray(data.images?.gallery) 
-    ? data.images.gallery.map(img => {
-        if (typeof img === 'string') {
-          return img;
-        } else if (img && typeof img === 'object' && 'url' in img) {
-          return img.url;
-        }
-        return '';
-      }).filter(url => url !== '')
+    ? data.images.gallery
+        .map(img => {
+          // Database stores images as objects: { url: string, alt?: string }
+          if (typeof img === 'string') {
+            return img; // fallback for string URLs
+          }
+          // Extract URL from object
+          return (img as any)?.url || '';
+        })
+        .filter((url: string) => url && url.trim() !== '')
     : [];
 
   return {
