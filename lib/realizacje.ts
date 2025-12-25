@@ -30,20 +30,23 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
   
   const galleryImages = Array.isArray(data.images?.gallery) 
     ? data.images.gallery
-        .map((img, index) => {
+        .map((img: any, index: number) => {
           console.log(`[Image Debug] Gallery item ${index}:`, typeof img, img);
+          
+          // Fallback for string URLs (check this first)
+          if (typeof img === 'string') {
+            const url = img.trim();
+            console.log(`[Image Debug] Using string URL:`, url);
+            return url;
+          }
+          
           // Database stores images as objects: { url: string, alt?: string }
           if (typeof img === 'object' && img !== null && 'url' in img) {
             const url = typeof img.url === 'string' ? img.url.trim() : '';
             console.log(`[Image Debug] Extracted URL from object:`, url);
             return url;
           }
-          // Fallback for string URLs
-          if (typeof img === 'string') {
-            const url = img.trim();
-            console.log(`[Image Debug] Using string URL:`, url);
-            return url;
-          }
+          
           console.log(`[Image Debug] Invalid image format, returning empty`);
           return '';
         })
