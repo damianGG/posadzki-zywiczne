@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
         const mimeType = firstImage.type;
 
         const visionResponse = await openai.chat.completions.create({
-          model: 'gpt-4o',
+          model: 'gpt-4-vision-preview',
           messages: [
             {
               role: 'user',
@@ -141,7 +141,7 @@ WAŻNE:
 - Zwróć tylko czysty JSON, bez markdown`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4-turbo-preview',
       messages: [
         {
           role: 'system',
