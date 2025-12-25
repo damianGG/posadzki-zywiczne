@@ -302,14 +302,11 @@ export async function POST(request: NextRequest) {
     // Return success response
     return NextResponse.json({
       success: true,
-      message: 'Realizacja została dodana pomyślnie! Zdjęcia zapisane w Cloudinary.',
+      message: 'Realizacja została dodana pomyślnie! Zdjęcia zapisane w Cloudinary i realizacja jest już widoczna na stronie.',
       folderName,
       slug: folderName,
       images: uploadedImages.map(img => img.url),
       cloudinaryFolder: `realizacje/${folderName}`,
-      note: isDevelopment 
-        ? 'Pliki zapisane lokalnie i w Cloudinary. Pamiętaj o commit i push do repozytorium.'
-        : 'Zdjęcia zapisane w Cloudinary. Aby realizacja była widoczna na stronie, uruchom lokalnie skaner i zrób commit.',
     });
 
   } catch (error) {
