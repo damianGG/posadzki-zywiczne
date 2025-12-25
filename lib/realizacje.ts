@@ -18,6 +18,19 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
 
   const category = categoryMap[data.project_type] || 'domy-mieszkania' as RealizacjaCategory;
 
+  // Process images - handle both string URLs and objects with url property
+  const mainImage = data.images?.main || '';
+  const galleryImages = Array.isArray(data.images?.gallery) 
+    ? data.images.gallery.map(img => {
+        if (typeof img === 'string') {
+          return img;
+        } else if (img && typeof img === 'object' && 'url' in img) {
+          return img.url;
+        }
+        return '';
+      }).filter(url => url !== '')
+    : [];
+
   return {
     slug: data.slug,
     title: data.title,
@@ -27,8 +40,8 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
     date: data.created_at || new Date().toISOString(),
     tags: data.tags || [],
     images: {
-      main: data.images?.main || (Array.isArray(data.images?.gallery) && data.images.gallery.length > 0 ? data.images.gallery[0].url : ''),
-      gallery: Array.isArray(data.images?.gallery) ? data.images.gallery.map(img => typeof img === 'string' ? img : img.url) : [],
+      main: mainImage || (galleryImages.length > 0 ? galleryImages[0] : ''),
+      gallery: galleryImages,
     },
     details: {
       surface: data.surface_area || '',
