@@ -1,11 +1,10 @@
 /**
  * API Route: /api/admin/get-realizacja
- * Gets a single realizacja for editing
+ * Gets a single realizacja for editing from Supabase
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { getRealizacjaBySlug } from '@/lib/supabase-realizacje';
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,27 +18,18 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const dataPath = path.join(process.cwd(), 'data/realizacje', `${slug}.json`);
-    
-    if (!fs.existsSync(dataPath)) {
+    const result = await getRealizacjaBySlug(slug);
+
+    if (!result.success) {
       return NextResponse.json(
-        { error: 'Realizacja nie istnieje' },
+        { error: result.error || 'Realizacja nie znaleziona' },
         { status: 404 }
       );
     }
 
-    const realizacja = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
-
-    // Also check for local opis.json with Cloudinary info
-    const opisPath = path.join(process.cwd(), 'public/realizacje', slug, 'opis.json');
-    if (fs.existsSync(opisPath)) {
-      const opisData = JSON.parse(fs.readFileSync(opisPath, 'utf-8'));
-      realizacja.cloudinary = opisData.cloudinary;
-    }
-
     return NextResponse.json({
       success: true,
-      realizacja,
+      realizacja: result.data,
     });
 
   } catch (error) {

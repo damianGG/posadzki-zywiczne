@@ -1,45 +1,41 @@
 /**
  * API Route: /api/admin/list-realizacje
  * 
- * Lists all realizacje from data/realizacje/ directory
+ * Lists all realizacje from Supabase database
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { listRealizacje } from '@/lib/supabase-realizacje';
 
 export async function GET(request: NextRequest) {
   try {
-    const realizacjeDir = path.join(process.cwd(), 'data/realizacje');
-    
-    // Check if directory exists
-    if (!fs.existsSync(realizacjeDir)) {
-      return NextResponse.json({
-        realizacje: [],
-        message: 'Brak katalogu z realizacjami',
-      });
+    const { searchParams } = new URL(request.url);
+    const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit')!) : undefined;
+    const offset = searchParams.get('offset') ? parseInt(searchParams.get('offset')!) : undefined;
+    const projectType = searchParams.get('projectType') || undefined;
+
+    const result = await listRealizacje({
+      limit,
+      offset,
+      projectType,
+      orderBy: 'created_at',
+      orderDirection: 'desc',
+    });
+
+    if (!result.success) {
+      return NextResponse.json(
+        {
+          error: 'Błąd podczas pobierania listy realizacji',
+          details: result.error,
+        },
+        { status: 500 }
+      );
     }
-
-    // Read all JSON files
-    const files = fs.readdirSync(realizacjeDir).filter(file => file.endsWith('.json') && file !== 'README.md');
-    
-    const realizacje = files.map(file => {
-      const filePath = path.join(realizacjeDir, file);
-      const fileContent = fs.readFileSync(filePath, 'utf-8');
-      return JSON.parse(fileContent);
-    });
-
-    // Sort by date (newest first)
-    realizacje.sort((a, b) => {
-      const dateA = a.date ? new Date(a.date).getTime() : 0;
-      const dateB = b.date ? new Date(b.date).getTime() : 0;
-      return dateB - dateA;
-    });
 
     return NextResponse.json({
       success: true,
-      realizacje,
-      count: realizacje.length,
+      realizacje: result.data || [],
+      count: result.count || 0,
     });
 
   } catch (error) {

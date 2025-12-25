@@ -1,13 +1,12 @@
 /**
  * API Route: /api/admin/delete-realizacja
  * 
- * Deletes a realizacja and its images from Cloudinary
+ * Deletes a realizacja from Supabase and its images from Cloudinary
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import fs from 'fs';
-import path from 'path';
+import { deleteRealizacja, getRealizacjaBySlug } from '@/lib/supabase-realizacje';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -28,51 +27,60 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Read realizacja data
-    const dataPath = path.join(process.cwd(), 'data/realizacje', `${slug}.json`);
+    // Get realizacja data first
+    const realizacjaResult = await getRealizacjaBySlug(slug);
     
-    if (!fs.existsSync(dataPath)) {
+    if (!realizacjaResult.success || !realizacjaResult.data) {
       return NextResponse.json(
         { error: 'Realizacja nie istnieje' },
         { status: 404 }
       );
     }
 
-    const realizacjaData = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+    const realizacjaData = realizacjaResult.data;
 
-    // Delete images from Cloudinary if they exist
-    if (realizacjaData.cloudinary?.images) {
-      for (const image of realizacjaData.cloudinary.images) {
+    // Delete images from Cloudinary
+    if (realizacjaData.images?.gallery) {
+      for (const image of realizacjaData.images.gallery) {
         try {
-          await cloudinary.uploader.destroy(image.publicId);
-          console.log(`Deleted from Cloudinary: ${image.publicId}`);
+          // Extract public_id from Cloudinary URL
+          const urlParts = image.url.split('/');
+          const versionIndex = urlParts.findIndex(part => part.startsWith('v'));
+          if (versionIndex > 0) {
+            const pathAfterVersion = urlParts.slice(versionIndex + 1).join('/');
+            const publicId = pathAfterVersion.replace(/\.[^.]+$/, ''); // Remove extension
+            
+            await cloudinary.uploader.destroy(publicId);
+            console.log(`Deleted from Cloudinary: ${publicId}`);
+          }
         } catch (cloudinaryError) {
-          console.warn(`Could not delete from Cloudinary: ${image.publicId}`, cloudinaryError);
+          console.warn(`Could not delete from Cloudinary:`, cloudinaryError);
         }
       }
 
       // Try to delete the folder from Cloudinary
-      if (realizacjaData.cloudinary.folderName) {
+      if (realizacjaData.cloudinary_folder) {
         try {
-          await cloudinary.api.delete_folder(`realizacje/${realizacjaData.cloudinary.folderName}`);
+          await cloudinary.api.delete_folder(realizacjaData.cloudinary_folder);
         } catch (err) {
           console.warn('Could not delete Cloudinary folder:', err);
         }
       }
     }
 
-    // Delete local files if they exist
-    const publicPath = path.join(process.cwd(), 'public/realizacje', slug);
-    if (fs.existsSync(publicPath)) {
-      fs.rmSync(publicPath, { recursive: true, force: true });
-    }
+    // Delete from Supabase database
+    const deleteResult = await deleteRealizacja(slug);
 
-    // Delete JSON file
-    fs.unlinkSync(dataPath);
+    if (!deleteResult.success) {
+      return NextResponse.json(
+        { error: 'Błąd podczas usuwania z bazy', details: deleteResult.error },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Realizacja została usunięta pomyślnie',
+      message: 'Realizacja została usunięta pomyślnie z Supabase i Cloudinary',
       slug,
     });
 

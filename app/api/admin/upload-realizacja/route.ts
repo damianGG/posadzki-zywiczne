@@ -7,9 +7,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import path from 'path';
+import { createRealizacja, RealizacjaData } from '@/lib/supabase-realizacje';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -171,45 +169,6 @@ export async function POST(request: NextRequest) {
       console.log(`Uploaded image ${i + 1}/${images.length}: ${result.secure_url}`);
     }
 
-    // Create opis.json structure
-    interface OpisData {
-      title: string;
-      description: string;
-      location?: string;
-      area?: string;
-      technology?: string;
-      color?: string;
-      duration?: string;
-      tags?: string[];
-      features?: string[];
-      keywords?: string[];
-      clientTestimonial?: {
-        content: string;
-        author: string;
-      };
-      type?: string;
-      cloudinary?: {
-        images: { url: string; publicId: string; filename: string }[];
-        folderName: string;
-      };
-    }
-
-    const opisData: OpisData = {
-      title: data.title,
-      description: data.description,
-      cloudinary: {
-        images: uploadedImages,
-        folderName,
-      },
-    };
-
-    // Add optional fields
-    if (data.location) opisData.location = data.location;
-    if (data.area) opisData.area = data.area;
-    if (data.technology) opisData.technology = data.technology;
-    if (data.color) opisData.color = data.color;
-    if (data.duration) opisData.duration = data.duration;
-
     // Parse tags (comma-separated)
     const tags = data.tags
       ? data.tags
@@ -234,99 +193,77 @@ export async function POST(request: NextRequest) {
           .filter((keyword: string) => keyword.length > 0)
       : [];
 
-    // Create realizacja data structure for data/realizacje/ (public page format)
-    const realizacjaData: any = {
+    // Parse benefits (line-separated) - from features or separate field
+    const benefits = data.benefits
+      ? data.benefits
+          .split('\n')
+          .map((benefit: string) => benefit.trim())
+          .filter((benefit: string) => benefit.length > 0)
+      : features; // Use features as benefits if not provided separately
+
+    // Parse FAQ if provided
+    const faq = data.faq
+      ? JSON.parse(data.faq)
+      : [];
+
+    // Create realizacja data for Supabase
+    const realizacjaData: RealizacjaData = {
       slug: folderName,
       title: data.title,
       description: data.description,
-      category: data.category,
+      short_description: data.shortDescription || data.description.substring(0, 160),
       location: data.location || '',
-      date: new Date().toISOString().split('T')[0],
+      surface_area: data.area || '',
+      project_type: folderType,
+      technology: data.technology || '',
+      color: data.color || '',
+      duration: data.duration || '',
+      keywords,
       tags,
+      features,
+      benefits,
+      meta_description: data.metaDescription || data.description.substring(0, 160),
+      og_title: data.ogTitle || data.title,
+      og_description: data.ogDescription || data.description.substring(0, 200),
       images: {
         main: uploadedImages[0]?.url || '',
-        gallery: uploadedImages.map(img => img.url),
+        gallery: uploadedImages.map(img => ({
+          url: img.url,
+          alt: `${data.title} - ${data.location || 'realizacja'}`,
+        })),
       },
-      details: {
-        surface: data.area || '',
-        system: data.technology || '',
-        color: data.color || '',
-        duration: data.duration || '',
-      },
-      features,
-      keywords,
+      faq,
+      cloudinary_folder: `realizacje/${folderName}`,
     };
 
-    // Add testimonial if provided
-    if (data.testimonialContent && data.testimonialAuthor) {
-      realizacjaData.clientTestimonial = {
-        content: data.testimonialContent,
-        author: data.testimonialAuthor,
-      };
+    // Save to Supabase database
+    console.log('Saving realizacja to Supabase database...');
+    const supabaseResult = await createRealizacja(realizacjaData);
+    
+    if (!supabaseResult.success) {
+      console.error('❌ Error saving to Supabase:', supabaseResult.error);
+      // Clean up uploaded Cloudinary images if database save fails
+      for (const img of uploadedImages) {
+        try {
+          await cloudinary.uploader.destroy(img.publicId);
+        } catch (cleanupError) {
+          console.error('Error cleaning up image:', img.publicId, cleanupError);
+        }
+      }
+      throw new Error(`Nie udało się zapisać do bazy danych: ${supabaseResult.error}`);
     }
 
-    // Save to data/realizacje/ directory (where the public page reads from)
-    try {
-      const dataDir = path.join(process.cwd(), 'data', 'realizacje');
-      console.log('Attempting to save to directory:', dataDir);
-      console.log('Directory exists:', existsSync(dataDir));
-      
-      if (!existsSync(dataDir)) {
-        console.log('Creating directory...');
-        await mkdir(dataDir, { recursive: true });
-      }
-      
-      const jsonPath = path.join(dataDir, `${folderName}.json`);
-      console.log('Writing file to:', jsonPath);
-      await writeFile(jsonPath, JSON.stringify(realizacjaData, null, 2));
-      
-      console.log('✅ Successfully saved realizacja JSON to:', jsonPath);
-    } catch (saveError) {
-      console.error('❌ Error saving realizacja JSON:', saveError);
-      console.error('Error details:', {
-        message: saveError instanceof Error ? saveError.message : String(saveError),
-        code: (saveError as any)?.code,
-        errno: (saveError as any)?.errno,
-        path: (saveError as any)?.path,
-      });
-      
-      // Provide more specific error message
-      const errorMessage = saveError instanceof Error ? saveError.message : String(saveError);
-      if (errorMessage.includes('EACCES') || errorMessage.includes('permission')) {
-        throw new Error('Brak uprawnień do zapisu plików. Sprawdź uprawnienia katalogu data/realizacje/');
-      } else if (errorMessage.includes('EROFS') || errorMessage.includes('read-only')) {
-        throw new Error('System plików jest tylko do odczytu. Na produkcji Vercel użyj zewnętrznej bazy danych.');
-      } else {
-        throw new Error(`Nie udało się zapisać danych realizacji: ${errorMessage}`);
-      }
-    }
-
-    // Also save to old format for backward compatibility (optional)
-    if (data.tags) {
-      opisData.tags = tags;
-    }
-    if (data.features) {
-      opisData.features = features;
-    }
-    if (data.keywords) {
-      opisData.keywords = keywords;
-    }
-    if (data.testimonialContent && data.testimonialAuthor) {
-      opisData.clientTestimonial = {
-        content: data.testimonialContent,
-        author: data.testimonialAuthor,
-      };
-    }
-    opisData.type = data.type || 'indywidualna';
+    console.log('✅ Successfully saved realizacja to Supabase');
 
     // Return success response
     return NextResponse.json({
       success: true,
-      message: 'Realizacja została dodana pomyślnie! Zdjęcia zapisane w Cloudinary i realizacja jest już widoczna na stronie.',
+      message: 'Realizacja została dodana pomyślnie! Dane zapisane w bazie Supabase, zdjęcia w Cloudinary.',
       folderName,
       slug: folderName,
       images: uploadedImages.map(img => img.url),
       cloudinaryFolder: `realizacje/${folderName}`,
+      realizacja: supabaseResult.data,
     });
 
   } catch (error) {

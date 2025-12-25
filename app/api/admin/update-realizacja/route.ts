@@ -1,14 +1,11 @@
 /**
  * API Route: /api/admin/update-realizacja
- * Updates an existing realizacja with new data and images
+ * Updates an existing realizacja with new data and images in Supabase
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { writeFile, mkdir } from 'fs/promises';
-import { existsSync } from 'fs';
-import fs from 'fs';
-import path from 'path';
+import { updateRealizacja, getRealizacjaBySlug } from '@/lib/supabase-realizacje';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -35,29 +32,26 @@ export async function PUT(request: NextRequest) {
     const data = JSON.parse(formDataJson);
     const deleteImageIds = imagesToDelete ? JSON.parse(imagesToDelete) : [];
 
-    // Get existing realizacja
-    const dataPath = path.join(process.cwd(), 'data/realizacje', `${slug}.json`);
-    if (!fs.existsSync(dataPath)) {
+    // Get existing realizacja from Supabase
+    const existingResult = await getRealizacjaBySlug(slug);
+    if (!existingResult.success || !existingResult.data) {
       return NextResponse.json(
         { error: 'Realizacja nie istnieje' },
         { status: 404 }
       );
     }
 
-    const existingRealizacja = JSON.parse(fs.readFileSync(dataPath, 'utf-8'));
+    const existingRealizacja = existingResult.data;
     
-    // Get existing Cloudinary images
-    let existingImages: any[] = [];
-    if (existingRealizacja.cloudinary?.images) {
-      existingImages = existingRealizacja.cloudinary.images;
-    }
+    // Get existing images
+    let existingGallery = existingRealizacja.images?.gallery || [];
 
     // Delete specified images from Cloudinary
     for (const publicId of deleteImageIds) {
       try {
         await cloudinary.uploader.destroy(publicId);
         console.log(`Deleted from Cloudinary: ${publicId}`);
-        existingImages = existingImages.filter(img => img.publicId !== publicId);
+        existingGallery = existingGallery.filter(img => !img.url.includes(publicId));
       } catch (error) {
         console.warn(`Could not delete: ${publicId}`, error);
       }
@@ -65,10 +59,10 @@ export async function PUT(request: NextRequest) {
 
     // Upload new images if provided
     const newImages = formData.getAll('newImages') as File[];
-    const uploadedImages: { url: string; publicId: string; filename: string }[] = [];
+    const uploadedImages: Array<{ url: string; alt: string }> = [];
     
     if (newImages.length > 0 && newImages[0].size > 0) {
-      const folderName = existingRealizacja.cloudinary?.folderName || slug;
+      const folderName = existingRealizacja.cloudinary_folder?.replace('realizacje/', '') || slug;
       
       for (let i = 0; i < newImages.length; i++) {
         const image = newImages[i];
@@ -102,61 +96,62 @@ export async function PUT(request: NextRequest) {
         
         uploadedImages.push({
           url: result.secure_url,
-          publicId: result.public_id,
-          filename: `${filename}.${safeExtension}`,
+          alt: `${data.title} - ${data.location || 'realizacja'}`,
         });
       }
     }
 
     // Combine existing and new images
-    const allImages = [...existingImages, ...uploadedImages];
+    const allGallery = [...existingGallery, ...uploadedImages];
 
-    // Update realizacja data with correct structure
-    const updatedRealizacja = {
-      ...existingRealizacja,
+    // Parse arrays from form data
+    const tags = data.tags ? data.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : existingRealizacja.tags;
+    const features = data.features ? data.features.split('\n').map((f: string) => f.trim()).filter(Boolean) : existingRealizacja.features;
+    const keywords = data.keywords ? data.keywords.split('\n').map((k: string) => k.trim()).filter(Boolean) : existingRealizacja.keywords;
+    const benefits = data.benefits ? data.benefits.split('\n').map((b: string) => b.trim()).filter(Boolean) : existingRealizacja.benefits;
+
+    // Update realizacja in Supabase
+    const updateData = {
       title: data.title,
       description: data.description,
+      short_description: data.shortDescription || data.description.substring(0, 160),
       location: data.location || existingRealizacja.location,
-      category: data.category || existingRealizacja.category,
-      date: data.date || existingRealizacja.date || new Date().toISOString().split('T')[0],
+      surface_area: data.area || existingRealizacja.surface_area,
+      technology: data.technology || existingRealizacja.technology,
+      color: data.color || existingRealizacja.color,
+      duration: data.duration || existingRealizacja.duration,
+      tags,
+      features,
+      keywords,
+      benefits,
+      meta_description: data.metaDescription || existingRealizacja.meta_description,
+      og_title: data.ogTitle || existingRealizacja.og_title,
+      og_description: data.ogDescription || existingRealizacja.og_description,
       images: {
-        main: allImages[0]?.url || existingRealizacja.images?.main || '',
-        gallery: allImages.map((img: any) => img.url || img),
+        main: allGallery[0]?.url || existingRealizacja.images?.main,
+        gallery: allGallery,
       },
-      details: {
-        surface: data.area || existingRealizacja.details?.surface,
-        system: data.technology || existingRealizacja.details?.system,
-        color: data.color || existingRealizacja.details?.color,
-        duration: data.duration || existingRealizacja.details?.duration,
-      },
-      tags: data.tags ? data.tags.split(',').map((t: string) => t.trim()) : existingRealizacja.tags,
-      features: data.features ? data.features.split('\n').map((f: string) => f.trim()).filter(Boolean) : existingRealizacja.features,
-      keywords: data.keywords ? data.keywords.split('\n').map((k: string) => k.trim()).filter(Boolean) : existingRealizacja.keywords,
-      cloudinary: allImages.length > 0 ? {
-        images: allImages,
-        folderName: existingRealizacja.cloudinary?.folderName || slug,
-      } : existingRealizacja.cloudinary,
     };
 
-    if (data.testimonialContent && data.testimonialAuthor) {
-      updatedRealizacja.clientTestimonial = {
-        content: data.testimonialContent,
-        author: data.testimonialAuthor,
-      };
-    }
+    const updateResult = await updateRealizacja(slug, updateData);
 
-    // Save updated JSON
-    fs.writeFileSync(dataPath, JSON.stringify(updatedRealizacja, null, 2));
+    if (!updateResult.success) {
+      return NextResponse.json(
+        { error: 'Błąd podczas aktualizacji', details: updateResult.error },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
-      message: 'Realizacja została zaktualizowana pomyślnie',
+      message: 'Realizacja została zaktualizowana pomyślnie w bazie Supabase',
       slug,
       updatedImages: {
         added: uploadedImages.length,
         deleted: deleteImageIds.length,
-        total: allImages.length,
+        total: allGallery.length,
       },
+      realizacja: updateResult.data,
     });
 
   } catch (error) {
