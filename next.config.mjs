@@ -15,6 +15,16 @@ const nextConfig = {
     poweredByHeader: false,
     // Compress all responses
     compress: true,
+    // Configure external image domains
+    images: {
+        remotePatterns: [
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com',
+                pathname: '/**',
+            },
+        ],
+    },
 };
 
 export default withMDX(nextConfig);
