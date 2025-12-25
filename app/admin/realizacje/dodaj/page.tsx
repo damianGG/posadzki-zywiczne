@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Upload, X, Loader2, CheckCircle2, ImagePlus } from 'lucide-react';
+import { Upload, X, Loader2, CheckCircle2, ImagePlus, Sparkles } from 'lucide-react';
 import Image from 'next/image';
 import LoginForm from '@/components/admin/login-form';
 import GoogleDrivePicker from '@/components/admin/google-drive-picker';
@@ -64,6 +64,8 @@ export default function DodajRealizacjePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [aiError, setAiError] = useState('');
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -94,6 +96,66 @@ export default function DodajRealizacjePage() {
     setImages(prev => prev.filter((_, i) => i !== index));
     URL.revokeObjectURL(imagePreviews[index]);
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleGenerateWithAI = async () => {
+    setIsGeneratingAI(true);
+    setAiError('');
+
+    try {
+      // Validate minimum required fields
+      if (!formData.location || !formData.type) {
+        throw new Error('Wypełnij przynajmniej lokalizację i typ projektu aby wygenerować treść AI');
+      }
+
+      // Create FormData for AI generation
+      const aiFormData = new FormData();
+      aiFormData.append('location', formData.location);
+      aiFormData.append('type', formData.type);
+      aiFormData.append('category', formData.category);
+      if (formData.area) aiFormData.append('area', formData.area);
+      
+      // Add images if available (AI will analyze first image)
+      images.forEach((image) => {
+        aiFormData.append('images', image);
+      });
+
+      // Call AI generation API
+      const response = await fetch('/api/admin/generate-content', {
+        method: 'POST',
+        body: aiFormData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Błąd podczas generowania treści AI');
+      }
+
+      // Fill form with AI-generated content
+      const content = result.content;
+      setFormData(prev => ({
+        ...prev,
+        title: content.title || prev.title,
+        description: content.description || prev.description,
+        technology: content.technology || prev.technology,
+        color: content.color || prev.color,
+        duration: content.duration || prev.duration,
+        keywords: content.keywords || prev.keywords,
+        tags: content.tags || prev.tags,
+        features: content.features || prev.features,
+      }));
+
+      // Show success message
+      alert('✨ Treść została wygenerowana przez AI! Możesz ją teraz edytować przed zapisaniem.');
+
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : 'Nieznany błąd';
+      setAiError(errorMsg);
+      console.error('AI generation error:', error);
+    } finally {
+      setIsGeneratingAI(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -197,6 +259,54 @@ export default function DodajRealizacjePage() {
           </CardHeader>
           <CardContent className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* AI Generation Section */}
+              <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-700 rounded-lg p-6">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                      <Sparkles className="w-6 h-6 text-white" />
+                    </div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      ✨ Wygeneruj treść przez AI
+                    </h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
+                      Wypełnij tylko <strong>lokalizację</strong>, <strong>typ projektu</strong> i dodaj <strong>zdjęcia</strong>, 
+                      a AI wygeneruje profesjonalny opis, tytuł, słowa kluczowe i wszystkie metadane SEO!
+                    </p>
+                    <Button
+                      type="button"
+                      onClick={handleGenerateWithAI}
+                      disabled={isGeneratingAI || !formData.location || !formData.type}
+                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+                    >
+                      {isGeneratingAI ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Generuję treść AI...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Wygeneruj przez AI
+                        </>
+                      )}
+                    </Button>
+                    {aiError && (
+                      <div className="mt-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded text-sm text-red-600 dark:text-red-400">
+                        {aiError}
+                      </div>
+                    )}
+                    {!formData.location || !formData.type ? (
+                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        💡 Wypełnij lokalizację i typ projektu poniżej, aby odblokować generowanie AI
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+
               {/* Basic Information */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
