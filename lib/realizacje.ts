@@ -19,19 +19,32 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
   const category = categoryMap[data.project_type] || 'domy-mieszkania' as RealizacjaCategory;
 
   // Process images - extract URLs from database structure
-  const mainImage = data.images?.main || '';
+  // Database structure: { main: "url", gallery: [{url: "...", alt: "..."}] }
+  const mainImage = typeof data.images?.main === 'string' ? data.images.main : '';
+  
   const galleryImages = Array.isArray(data.images?.gallery) 
     ? data.images.gallery
         .map(img => {
           // Database stores images as objects: { url: string, alt?: string }
-          if (typeof img === 'string') {
-            return img; // fallback for string URLs
+          if (typeof img === 'object' && img !== null && 'url' in img) {
+            return img.url;
           }
-          // Extract URL from object
-          return (img as any)?.url || '';
+          // Fallback for string URLs
+          if (typeof img === 'string') {
+            return img;
+          }
+          return '';
         })
         .filter((url: string) => url && url.trim() !== '')
     : [];
+
+  // Use mainImage if available, otherwise use first gallery image, otherwise empty string
+  const finalMainImage = mainImage || (galleryImages.length > 0 ? galleryImages[0] : '');
+  
+  // If mainImage is same as first gallery image, don't duplicate it
+  const finalGallery = mainImage && galleryImages[0] === mainImage 
+    ? galleryImages.slice(1) 
+    : galleryImages;
 
   return {
     slug: data.slug,
@@ -42,8 +55,8 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
     date: data.created_at || new Date().toISOString(),
     tags: data.tags || [],
     images: {
-      main: mainImage || (galleryImages.length > 0 ? galleryImages[0] : ''),
-      gallery: galleryImages,
+      main: finalMainImage,
+      gallery: finalGallery,
     },
     details: {
       surface: data.surface_area || '',
