@@ -1,5 +1,45 @@
 import { Realizacja, RealizacjaCategory, RealizacjeMetadata } from '@/types/realizacje';
-import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB } from './supabase-realizacje';
+import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB, RealizacjaData } from './supabase-realizacje';
+
+/**
+ * Map RealizacjaData from Supabase to Realizacja type
+ */
+function mapToRealizacja(data: RealizacjaData): Realizacja {
+  // Map project_type to category
+  const categoryMap: Record<string, RealizacjaCategory> = {
+    'posadzka-w-garażu': 'garaze',
+    'posadzka-w-kuchni': 'kuchnie',
+    'posadzka-na-balkonie': 'balkony-tarasy',
+    'posadzka-na-tarasie': 'balkony-tarasy',
+    'posadzka-na-schodach': 'schody',
+    'posadzka-w-domu': 'domy-mieszkania',
+    'posadzka-w-mieszkaniu': 'domy-mieszkania',
+  };
+
+  const category = categoryMap[data.project_type] || 'domy-mieszkania' as RealizacjaCategory;
+
+  return {
+    slug: data.slug,
+    title: data.title,
+    description: data.description,
+    category,
+    location: data.location,
+    date: data.created_at || new Date().toISOString(),
+    tags: data.tags || [],
+    images: {
+      main: data.images?.main || (Array.isArray(data.images?.gallery) && data.images.gallery.length > 0 ? data.images.gallery[0].url : ''),
+      gallery: Array.isArray(data.images?.gallery) ? data.images.gallery.map(img => typeof img === 'string' ? img : img.url) : [],
+    },
+    details: {
+      surface: data.surface_area || '',
+      system: data.technology || '',
+      color: data.color,
+      duration: data.duration,
+    },
+    features: data.features || [],
+    keywords: data.keywords || [],
+  };
+}
 
 /**
  * Get all realizacje from Supabase database
@@ -17,7 +57,7 @@ export async function getAllRealizacje(): Promise<Realizacja[]> {
       return [];
     }
 
-    return result.data;
+    return result.data.map(mapToRealizacja);
   } catch (error) {
     console.error('Error loading realizacje:', error);
     return [];
@@ -85,7 +125,7 @@ export async function getRealizacjaBySlug(slug: string): Promise<Realizacja | nu
       return null;
     }
     
-    return result.data;
+    return mapToRealizacja(result.data);
   } catch (error) {
     console.error(`Error loading realizacja with slug ${slug}:`, error);
     return null;
