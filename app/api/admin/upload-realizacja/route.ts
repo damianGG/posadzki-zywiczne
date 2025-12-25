@@ -268,17 +268,37 @@ export async function POST(request: NextRequest) {
     // Save to data/realizacje/ directory (where the public page reads from)
     try {
       const dataDir = path.join(process.cwd(), 'data', 'realizacje');
+      console.log('Attempting to save to directory:', dataDir);
+      console.log('Directory exists:', existsSync(dataDir));
+      
       if (!existsSync(dataDir)) {
+        console.log('Creating directory...');
         await mkdir(dataDir, { recursive: true });
       }
       
       const jsonPath = path.join(dataDir, `${folderName}.json`);
+      console.log('Writing file to:', jsonPath);
       await writeFile(jsonPath, JSON.stringify(realizacjaData, null, 2));
       
-      console.log('Saved realizacja JSON to data/realizacje/:', jsonPath);
+      console.log('✅ Successfully saved realizacja JSON to:', jsonPath);
     } catch (saveError) {
-      console.error('Error saving realizacja JSON:', saveError);
-      throw new Error('Failed to save realizacja data');
+      console.error('❌ Error saving realizacja JSON:', saveError);
+      console.error('Error details:', {
+        message: saveError instanceof Error ? saveError.message : String(saveError),
+        code: (saveError as any)?.code,
+        errno: (saveError as any)?.errno,
+        path: (saveError as any)?.path,
+      });
+      
+      // Provide more specific error message
+      const errorMessage = saveError instanceof Error ? saveError.message : String(saveError);
+      if (errorMessage.includes('EACCES') || errorMessage.includes('permission')) {
+        throw new Error('Brak uprawnień do zapisu plików. Sprawdź uprawnienia katalogu data/realizacje/');
+      } else if (errorMessage.includes('EROFS') || errorMessage.includes('read-only')) {
+        throw new Error('System plików jest tylko do odczytu. Na produkcji Vercel użyj zewnętrznej bazy danych.');
+      } else {
+        throw new Error(`Nie udało się zapisać danych realizacji: ${errorMessage}`);
+      }
     }
 
     // Also save to old format for backward compatibility (optional)
