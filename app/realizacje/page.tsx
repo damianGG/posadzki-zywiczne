@@ -27,8 +27,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RealizacjePage() {
-  const allRealizacje = getAllRealizacje();
+export default async function RealizacjePage() {
+  const allRealizacje = await getAllRealizacje();
 
   return (
     <div className="w-full">

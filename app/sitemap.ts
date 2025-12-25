@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next"
 import { getAllPosts } from "@/lib/posts-json"
 import { getAllRealizacje } from "@/lib/realizacje"
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://posadzkizywiczne.com"
   const base = process.env.NEXT_PUBLIC_SITE_URL ?? "https://posadzkizywiczne.com"
 
@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   console.log("[v0] getAllPosts returned:", allPosts.length, "posts")
   console.log("[v0] First post:", allPosts[0])
 
-  const allRealizacje = getAllRealizacje()
+  const allRealizacje = await getAllRealizacje()
   console.log("[v0] getAllRealizacje returned:", allRealizacje.length, "realizacje")
 
   const posts = allPosts.map((post) => {

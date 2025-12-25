@@ -9,12 +9,12 @@ interface RealizacjePreviewSectionProps {
   limit?: number;
 }
 
-export default function RealizacjePreviewSection({
+export default async function RealizacjePreviewSection({
   title = "Nasze Najnowsze Realizacje",
   subtitle = "Zobacz, jak tworzymy piękne i trwałe posadzki dla naszych klientów",
   limit = 3
 }: RealizacjePreviewSectionProps) {
-  const realizacje = getLatestRealizacje(limit);
+  const realizacje = await getLatestRealizacje(limit);
 
   if (realizacje.length === 0) {
     return null;

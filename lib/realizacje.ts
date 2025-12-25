@@ -1,28 +1,23 @@
-import fs from 'fs';
-import path from 'path';
 import { Realizacja, RealizacjaCategory, RealizacjeMetadata } from '@/types/realizacje';
-
-const realizacjeDirectory = path.join(process.cwd(), 'data/realizacje');
+import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB } from './supabase-realizacje';
 
 /**
- * Get all realizacje from JSON files
+ * Get all realizacje from Supabase database
+ * This function is async and fetches from the database
  */
-export function getAllRealizacje(): Realizacja[] {
+export async function getAllRealizacje(): Promise<Realizacja[]> {
   try {
-    const fileNames = fs.readdirSync(realizacjeDirectory);
-    const realizacje = fileNames
-      .filter((fileName) => fileName.endsWith('.json'))
-      .map((fileName) => {
-        const filePath = path.join(realizacjeDirectory, fileName);
-        const fileContents = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(fileContents) as Realizacja;
-      })
-      .sort((a, b) => {
-        // Sort by date, newest first
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      });
+    const result = await listRealizacje({
+      orderBy: 'created_at',
+      orderDirection: 'desc',
+    });
 
-    return realizacje;
+    if (!result.success || !result.data) {
+      console.error('Error loading realizacje from database:', result.error);
+      return [];
+    }
+
+    return result.data;
   } catch (error) {
     console.error('Error loading realizacje:', error);
     return [];
@@ -32,16 +27,16 @@ export function getAllRealizacje(): Realizacja[] {
 /**
  * Get realizacje filtered by category
  */
-export function getRealizacjeByCategory(category: RealizacjaCategory): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
+export async function getRealizacjeByCategory(category: RealizacjaCategory): Promise<Realizacja[]> {
+  const allRealizacje = await getAllRealizacje();
   return allRealizacje.filter((realizacja) => realizacja.category === category);
 }
 
 /**
  * Search realizacje by tags, title, or description
  */
-export function searchRealizacje(query: string): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
+export async function searchRealizacje(query: string): Promise<Realizacja[]> {
+  const allRealizacje = await getAllRealizacje();
   const lowerQuery = query.toLowerCase();
   
   return allRealizacje.filter((realizacja) => {
@@ -58,8 +53,8 @@ export function searchRealizacje(query: string): Realizacja[] {
 /**
  * Get all unique tags from all realizacje
  */
-export function getAllTags(): string[] {
-  const allRealizacje = getAllRealizacje();
+export async function getAllTags(): Promise<string[]> {
+  const allRealizacje = await getAllRealizacje();
   const tagsSet = new Set<string>();
   
   allRealizacje.forEach((realizacja) => {
@@ -72,26 +67,25 @@ export function getAllTags(): string[] {
 /**
  * Get realizacje filtered by tag
  */
-export function getRealizacjeByTag(tag: string): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
+export async function getRealizacjeByTag(tag: string): Promise<Realizacja[]> {
+  const allRealizacje = await getAllRealizacje();
   return allRealizacje.filter((realizacja) => 
     realizacja.tags.some(t => t.toLowerCase() === tag.toLowerCase())
   );
 }
 
 /**
- * Get a single realizacja by slug
+ * Get a single realizacja by slug from Supabase
  */
-export function getRealizacjaBySlug(slug: string): Realizacja | null {
+export async function getRealizacjaBySlug(slug: string): Promise<Realizacja | null> {
   try {
-    const filePath = path.join(realizacjeDirectory, `${slug}.json`);
+    const result = await getRealizacjaBySlugFromDB(slug);
     
-    if (!fs.existsSync(filePath)) {
+    if (!result.success || !result.data) {
       return null;
     }
     
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents) as Realizacja;
+    return result.data;
   } catch (error) {
     console.error(`Error loading realizacja with slug ${slug}:`, error);
     return null;
@@ -101,8 +95,8 @@ export function getRealizacjaBySlug(slug: string): Realizacja | null {
 /**
  * Get metadata about realizacje
  */
-export function getRealizacjeMetadata(): RealizacjeMetadata {
-  const allRealizacje = getAllRealizacje();
+export async function getRealizacjeMetadata(): Promise<RealizacjeMetadata> {
+  const allRealizacje = await getAllRealizacje();
   
   const byCategory: Record<RealizacjaCategory, number> = {
     'schody': 0,
@@ -128,7 +122,7 @@ export { getCategoryDisplayName } from './realizacje-helpers';
 /**
  * Get latest realizacje (for homepage/previews)
  */
-export function getLatestRealizacje(limit: number = 3): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
+export async function getLatestRealizacje(limit: number = 3): Promise<Realizacja[]> {
+  const allRealizacje = await getAllRealizacje();
   return allRealizacje.slice(0, limit);
 }
