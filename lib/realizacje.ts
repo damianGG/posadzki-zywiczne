@@ -20,31 +20,49 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
 
   // Process images - extract URLs from database structure
   // Database structure: { main: "url", gallery: [{url: "...", alt: "..."}] }
-  const mainImage = typeof data.images?.main === 'string' ? data.images.main : '';
+  console.log('[Image Debug] Raw images data:', JSON.stringify(data.images, null, 2));
+  
+  const mainImage = typeof data.images?.main === 'string' && data.images.main.trim() !== '' 
+    ? data.images.main.trim() 
+    : '';
+  
+  console.log('[Image Debug] Main image extracted:', mainImage);
   
   const galleryImages = Array.isArray(data.images?.gallery) 
     ? data.images.gallery
-        .map(img => {
+        .map((img, index) => {
+          console.log(`[Image Debug] Gallery item ${index}:`, typeof img, img);
           // Database stores images as objects: { url: string, alt?: string }
           if (typeof img === 'object' && img !== null && 'url' in img) {
-            return img.url;
+            const url = typeof img.url === 'string' ? img.url.trim() : '';
+            console.log(`[Image Debug] Extracted URL from object:`, url);
+            return url;
           }
           // Fallback for string URLs
           if (typeof img === 'string') {
-            return img;
+            const url = img.trim();
+            console.log(`[Image Debug] Using string URL:`, url);
+            return url;
           }
+          console.log(`[Image Debug] Invalid image format, returning empty`);
           return '';
         })
         .filter((url: string) => url && url.trim() !== '')
     : [];
 
+  console.log('[Image Debug] Gallery images extracted:', galleryImages);
+
   // Use mainImage if available, otherwise use first gallery image, otherwise empty string
   const finalMainImage = mainImage || (galleryImages.length > 0 ? galleryImages[0] : '');
+  
+  console.log('[Image Debug] Final main image:', finalMainImage);
   
   // If mainImage is same as first gallery image, don't duplicate it
   const finalGallery = mainImage && galleryImages[0] === mainImage 
     ? galleryImages.slice(1) 
     : galleryImages;
+    
+  console.log('[Image Debug] Final gallery:', finalGallery);
 
   return {
     slug: data.slug,
