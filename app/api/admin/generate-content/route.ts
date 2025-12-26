@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 // Dynamic route - prevent static generation
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
+export const maxDuration = 60; // 60 seconds for Vercel Pro, 10s for Hobby
 
 // Initialize OpenAI client only if API key is available
 let openai: OpenAI | null = null;
@@ -62,13 +63,14 @@ export async function POST(request: NextRequest) {
                 {
                   type: 'image_url',
                   image_url: {
-                    url: `data:${mimeType};base64,${base64Image}`
+                    url: `data:${mimeType};base64,${base64Image}`,
+                    detail: 'low' // Use low detail for faster processing
                   }
                 }
               ]
             }
           ],
-          max_tokens: 500
+          max_tokens: 300 // Reduced from 500
         });
 
         imageAnalysis = visionResponse.choices[0]?.message?.content || '';
@@ -165,6 +167,29 @@ WAŻNE:
 
   } catch (error) {
     console.error('AI content generation error:', error);
+    
+    // Handle timeout errors specifically
+    if (error instanceof Error && error.message.includes('timeout')) {
+      return NextResponse.json(
+        { 
+          error: 'Przekroczono limit czasu generowania. Spróbuj ponownie z mniejszą ilością zdjęć lub bez nich.',
+          details: 'Function timeout - try with fewer or no images'
+        },
+        { status: 504 }
+      );
+    }
+    
+    // Handle JSON parsing errors
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { 
+          error: 'Błąd parsowania odpowiedzi AI. Spróbuj ponownie.',
+          details: 'AI returned invalid JSON'
+        },
+        { status: 500 }
+      );
+    }
+    
     return NextResponse.json(
       { 
         error: 'Błąd podczas generowania treści AI',
