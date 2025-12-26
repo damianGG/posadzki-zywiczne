@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 // Dynamic route - prevent static generation
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-export const maxDuration = 60; // 60 seconds for Vercel Pro, 10s for Hobby
+export const maxDuration = 10; // Default timeout - no image analysis needed
 
 // Initialize OpenAI client only if API key is available
 let openai: OpenAI | null = null;
@@ -24,11 +24,10 @@ export async function POST(request: NextRequest) {
     const type = formData.get('type') as string;
     const category = formData.get('category') as string;
     const area = formData.get('area') as string;
-    const images = formData.getAll('images') as File[];
 
-    if (!location || !type) {
+    if (!location || !type || !category) {
       return NextResponse.json(
-        { error: 'Lokalizacja i typ projektu są wymagane' },
+        { error: 'Lokalizacja, typ projektu i kategoria są wymagane do generowania treści AI' },
         { status: 400 }
       );
     }
@@ -40,47 +39,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Step 1: Analyze images using Vision API (if images provided)
-    let imageAnalysis = '';
-    if (images.length > 0) {
-      try {
-        // Convert first image to base64
-        const firstImage = images[0];
-        const arrayBuffer = await firstImage.arrayBuffer();
-        const base64Image = Buffer.from(arrayBuffer).toString('base64');
-        const mimeType = firstImage.type;
-
-        const visionResponse = await openai.chat.completions.create({
-          model: 'gpt-4o',
-          messages: [
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'text',
-                  text: 'Przeanalizuj to zdjęcie realizacji posadzki żywicznej. Opisz: kolor, wykończenie, rodzaj pomieszczenia, widoczne elementy, jakość wykonania. Odpowiedz po polsku, krótko i konkretnie.'
-                },
-                {
-                  type: 'image_url',
-                  image_url: {
-                    url: `data:${mimeType};base64,${base64Image}`,
-                    detail: 'low' // Use low detail for faster processing
-                  }
-                }
-              ]
-            }
-          ],
-          max_tokens: 300 // Reduced from 500
-        });
-
-        imageAnalysis = visionResponse.choices[0]?.message?.content || '';
-      } catch (error) {
-        console.error('Vision API error:', error);
-        // Continue without image analysis
-      }
-    }
-
-    // Step 2: Generate comprehensive content
+    // Generate comprehensive content based on text input only
     const categoryMap: Record<string, string> = {
       'domy-mieszkania': 'domy i mieszkania',
       'garaz-podziemny': 'garaże i parkingi podziemne',
@@ -101,7 +60,6 @@ PODSTAWOWE DANE:
 - Typ projektu: ${type} (${typeMap[type] || type})
 - Kategoria: ${category} (${categoryMap[category] || category})
 ${area ? `- Powierzchnia: ${area} m²` : ''}
-${imageAnalysis ? `\nANALIZA ZDJĘĆ:\n${imageAnalysis}` : ''}
 
 Wygeneruj JSON z następującymi polami (wszystkie po polsku, zoptymalizowane pod SEO):
 

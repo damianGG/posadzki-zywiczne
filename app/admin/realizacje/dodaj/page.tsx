@@ -104,8 +104,8 @@ export default function DodajRealizacjePage() {
 
     try {
       // Validate minimum required fields
-      if (!formData.location || !formData.type) {
-        throw new Error('Wypełnij przynajmniej lokalizację i typ projektu aby wygenerować treść AI');
+      if (!formData.location || !formData.type || !formData.category) {
+        throw new Error('Wypełnij lokalizację, typ projektu i kategorię aby wygenerować treść AI');
       }
 
       // Create FormData for AI generation
@@ -114,11 +114,6 @@ export default function DodajRealizacjePage() {
       aiFormData.append('type', formData.type);
       aiFormData.append('category', formData.category);
       if (formData.area) aiFormData.append('area', formData.area);
-      
-      // Add images if available (AI will analyze first image)
-      images.forEach((image) => {
-        aiFormData.append('images', image);
-      });
 
       // Call AI generation API
       const response = await fetch('/api/admin/generate-content', {
@@ -272,13 +267,13 @@ export default function DodajRealizacjePage() {
                       ✨ Wygeneruj treść przez AI
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                      Wypełnij tylko <strong>lokalizację</strong>, <strong>typ projektu</strong> i dodaj <strong>zdjęcia</strong>, 
+                      Wypełnij tylko <strong className="text-purple-600 dark:text-purple-400">lokalizację*</strong>, <strong className="text-purple-600 dark:text-purple-400">typ projektu*</strong> i <strong className="text-purple-600 dark:text-purple-400">kategorię*</strong>, 
                       a AI wygeneruje profesjonalny opis, tytuł, słowa kluczowe i wszystkie metadane SEO!
                     </p>
                     <Button
                       type="button"
                       onClick={handleGenerateWithAI}
-                      disabled={isGeneratingAI || !formData.location || !formData.type}
+                      disabled={isGeneratingAI || !formData.location || !formData.type || !formData.category}
                       className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
                     >
                       {isGeneratingAI ? (
@@ -298,9 +293,9 @@ export default function DodajRealizacjePage() {
                         {aiError}
                       </div>
                     )}
-                    {!formData.location || !formData.type ? (
+                    {!formData.location || !formData.type || !formData.category ? (
                       <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                        💡 Wypełnij lokalizację i typ projektu poniżej, aby odblokować generowanie AI
+                        💡 Wypełnij <strong>lokalizację</strong>, <strong>typ projektu</strong> i <strong>kategorię</strong> poniżej, aby odblokować generowanie AI
                       </p>
                     ) : null}
                   </div>
@@ -340,7 +335,9 @@ export default function DodajRealizacjePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="location">Lokalizacja</Label>
+                    <Label htmlFor="location">
+                      Lokalizacja <span className="text-purple-600 dark:text-purple-400 text-xs">(wymagane do AI)</span>
+                    </Label>
                     <Input
                       id="location"
                       value={formData.location}
@@ -364,7 +361,9 @@ export default function DodajRealizacjePage() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="category">Kategoria *</Label>
+                    <Label htmlFor="category">
+                      Kategoria <span className="text-red-600 dark:text-red-400">*</span> <span className="text-purple-600 dark:text-purple-400 text-xs">(wymagane do AI)</span>
+                    </Label>
                     <Select
                       value={formData.category}
                       onValueChange={(value) => handleInputChange('category', value)}
@@ -384,7 +383,9 @@ export default function DodajRealizacjePage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="type">Typ projektu *</Label>
+                    <Label htmlFor="type">
+                      Typ projektu <span className="text-red-600 dark:text-red-400">*</span> <span className="text-purple-600 dark:text-purple-400 text-xs">(wymagane do AI)</span>
+                    </Label>
                     <Select
                       value={formData.type}
                       onValueChange={(value) => handleInputChange('type', value)}
