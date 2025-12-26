@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Upload, X, Loader2, CheckCircle2, Trash2, ArrowLeft } from 'lucide-react';
+import { Upload, X, Loader2, CheckCircle2, Trash2, ArrowLeft, Star } from 'lucide-react';
 import Link from 'next/link';
 import GoogleDrivePicker from '@/components/admin/google-drive-picker';
 
@@ -34,6 +34,11 @@ interface ExistingImage {
   url: string;
   publicId: string;
   filename: string;
+}
+
+interface GalleryImage {
+  url: string;
+  alt?: string;
 }
 
 export default function EdytujRealizacjePage() {
@@ -90,22 +95,48 @@ export default function EdytujRealizacjePage() {
           title: r.title || '',
           description: r.description || '',
           location: r.location || '',
-          area: r.details?.surface || '',
-          technology: r.details?.system || '',
-          category: r.category || 'domy-mieszkania',
+          area: r.surface_area || '',
+          technology: r.technology || '',
+          category: r.project_type || 'domy-mieszkania',
           type: r.type || 'indywidualna',
-          color: r.details?.color || '',
-          duration: r.details?.duration || '',
+          color: r.color || '',
+          duration: r.duration || '',
           tags: r.tags?.join(', ') || '',
           features: r.features?.join('\n') || '',
           keywords: r.keywords?.join('\n') || '',
           testimonialContent: r.clientTestimonial?.content || '',
           testimonialAuthor: r.clientTestimonial?.author || '',
-          date: r.date || '',
+          date: r.date || r.created_at || '',
         });
 
-        if (r.cloudinary?.images) {
-          setExistingImages(r.cloudinary.images);
+        // Map images.gallery to existingImages format
+        if (r.images?.gallery && Array.isArray(r.images.gallery)) {
+          const mappedImages = r.images.gallery.map((img: GalleryImage, index: number) => {
+            // Extract publicId from Cloudinary URL
+            // URL format: https://res.cloudinary.com/[cloud]/image/upload/v[version]/[folder]/[publicId].[ext]
+            let publicId = `${slug}-image-${index}-${Date.now()}`;
+            if (img.url && img.url.includes('cloudinary.com')) {
+              try {
+                const urlParts = img.url.split('/');
+                const versionIndex = urlParts.findIndex((part: string) => part.startsWith('v'));
+                if (versionIndex >= 0 && versionIndex < urlParts.length - 1) {
+                  // Get everything after version
+                  const pathAfterVersion = urlParts.slice(versionIndex + 1).join('/');
+                  // Remove file extension
+                  publicId = pathAfterVersion.replace(/\.[^.]+$/, '');
+                }
+              } catch (e) {
+                console.warn('Could not extract publicId from URL:', img.url);
+              }
+            }
+            
+            return {
+              url: img.url || '',
+              publicId: publicId,
+              filename: img.alt || `image-${index}.jpg`,
+            };
+          });
+          setExistingImages(mappedImages);
         }
       } else {
         setSubmitError(data.error || 'Nie znaleziono realizacji');
@@ -124,6 +155,14 @@ export default function EdytujRealizacjePage() {
   const handleDeleteExistingImage = (publicId: string) => {
     setImagesToDelete(prev => [...prev, publicId]);
     setExistingImages(prev => prev.filter(img => img.publicId !== publicId));
+  };
+
+  const handleSetAsMainImage = (index: number) => {
+    setExistingImages(prev => {
+      const newImages = [...prev];
+      const [selectedImage] = newImages.splice(index, 1);
+      return [selectedImage, ...newImages];
+    });
   };
 
   const handleNewImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -149,6 +188,19 @@ export default function EdytujRealizacjePage() {
     setNewImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
+  const handleSetNewImageAsMain = (index: number) => {
+    setNewImages(prev => {
+      const newArr = [...prev];
+      const [selectedImage] = newArr.splice(index, 1);
+      return [selectedImage, ...newArr];
+    });
+    setNewImagePreviews(prev => {
+      const newArr = [...prev];
+      const [selectedPreview] = newArr.splice(index, 1);
+      return [selectedPreview, ...newArr];
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -168,17 +220,48 @@ export default function EdytujRealizacjePage() {
       uploadData.append('slug', slug);
       uploadData.append('imagesToDelete', JSON.stringify(imagesToDelete));
 
+      console.log('Submitting update with:', {
+        slug,
+        formData,
+        newImagesCount: newImages.length,
+        existingImagesCount: existingImages.length,
+        imagesToDeleteCount: imagesToDelete.length,
+      });
+
       const response = await fetch('/api/admin/update-realizacja', {
         method: 'PUT',
         body: uploadData,
       });
 
       const result = await response.json();
+      console.log('Update response:', { status: response.status, result });
 
       if (!response.ok) {
-        const errorMessage = result.details 
-          ? `${result.error}\n\n${result.details}\n\n${result.instructions || ''}`
-          : result.error || 'Błąd podczas aktualizacji realizacji';
+        // Build detailed error message
+        let errorMessage = result.error || 'Błąd podczas aktualizacji realizacji';
+        
+        if (result.details) {
+          errorMessage += `\n\nSzczegóły błędu:\n${result.details}`;
+        }
+        
+        if (result.debugInfo) {
+          errorMessage += `\n\nInformacje debugowania:`;
+          errorMessage += `\n- Slug: ${result.debugInfo.slug || 'brak'}`;
+          errorMessage += `\n- Liczba zdjęć: ${result.debugInfo.imageCount || 0}`;
+          
+          if (result.debugInfo.fields) {
+            errorMessage += `\n- Aktualizowane pola: ${result.debugInfo.fields.join(', ')}`;
+          }
+          
+          if (result.debugInfo.message) {
+            errorMessage += `\n- Komunikat błędu: ${result.debugInfo.message}`;
+          }
+        }
+        
+        if (result.instructions) {
+          errorMessage += `\n\n${result.instructions}`;
+        }
+        
         throw new Error(errorMessage);
       }
 
@@ -189,6 +272,7 @@ export default function EdytujRealizacjePage() {
       }, 2000);
 
     } catch (error) {
+      console.error('Submit error:', error);
       setSubmitError(error instanceof Error ? error.message : 'Wystąpił błąd');
     } finally {
       setIsSubmitting(false);
@@ -345,6 +429,9 @@ export default function EdytujRealizacjePage() {
               {existingImages.length > 0 && (
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Obecne zdjęcia</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Kliknij <Star className="w-3 h-3 inline" /> aby ustawić zdjęcie jako główne
+                  </p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {existingImages.map((image, index) => (
                       <div key={image.publicId} className="relative group">
@@ -353,17 +440,32 @@ export default function EdytujRealizacjePage() {
                           alt={`Zdjęcie ${index + 1}`}
                           className="w-full h-32 object-cover rounded-lg"
                         />
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="destructive"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleDeleteExistingImage(image.publicId)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="absolute top-2 right-2 flex gap-1">
+                          {index !== 0 && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity bg-yellow-500 hover:bg-yellow-600"
+                              onClick={() => handleSetAsMainImage(index)}
+                              title="Ustaw jako główne"
+                            >
+                              <Star className="w-4 h-4" />
+                            </Button>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="destructive"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleDeleteExistingImage(image.publicId)}
+                            title="Usuń zdjęcie"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                         {index === 0 && (
-                          <span className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                          <span className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-white" />
                             Główne
                           </span>
                         )}
@@ -412,26 +514,55 @@ export default function EdytujRealizacjePage() {
                 </div>
 
                 {newImagePreviews.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                    {newImagePreviews.map((preview, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={preview}
-                          alt={`Nowe ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg"
-                        />
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="destructive"
-                          className="absolute top-2 right-2"
-                          onClick={() => removeNewImage(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {existingImages.length === 0 
+                        ? 'Nowe zdjęcia - Kliknij ' 
+                        : 'Nowe zdjęcia - Kliknij '
+                      }
+                      <Star className="w-3 h-3 inline" /> aby ustawić jako główne
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                      {newImagePreviews.map((preview, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={preview}
+                            alt={`Nowe ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg"
+                          />
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            {existingImages.length === 0 && index !== 0 && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity bg-yellow-500 hover:bg-yellow-600"
+                                onClick={() => handleSetNewImageAsMain(index)}
+                                title="Ustaw jako główne"
+                              >
+                                <Star className="w-4 h-4" />
+                              </Button>
+                            )}
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="destructive"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => removeNewImage(index)}
+                              title="Usuń zdjęcie"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          {existingImages.length === 0 && index === 0 && (
+                            <span className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-white" />
+                              Główne
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
 
