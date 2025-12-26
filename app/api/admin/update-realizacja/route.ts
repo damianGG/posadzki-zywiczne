@@ -15,11 +15,13 @@ cloudinary.config({
 });
 
 export async function PUT(request: NextRequest) {
+  let slug: string | undefined;
+  
   try {
     // Parse form data
     const formData = await request.formData();
     const formDataJson = formData.get('formData') as string;
-    const slug = formData.get('slug') as string;
+    slug = formData.get('slug') as string;
     const imagesToDelete = formData.get('imagesToDelete') as string;
     
     if (!formDataJson || !slug) {
