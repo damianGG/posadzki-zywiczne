@@ -36,6 +36,11 @@ interface ExistingImage {
   filename: string;
 }
 
+interface GalleryImage {
+  url: string;
+  alt?: string;
+}
+
 export default function EdytujRealizacjePage() {
   const params = useParams();
   const router = useRouter();
@@ -106,15 +111,15 @@ export default function EdytujRealizacjePage() {
 
         // Map images.gallery to existingImages format
         if (r.images?.gallery && Array.isArray(r.images.gallery)) {
-          const mappedImages = r.images.gallery.map((img: any, index: number) => {
+          const mappedImages = r.images.gallery.map((img: GalleryImage, index: number) => {
             // Extract publicId from Cloudinary URL
             // URL format: https://res.cloudinary.com/[cloud]/image/upload/v[version]/[folder]/[publicId].[ext]
-            let publicId = `image-${index}`;
+            let publicId = `${slug}-image-${index}-${Date.now()}`;
             if (img.url && img.url.includes('cloudinary.com')) {
               try {
                 const urlParts = img.url.split('/');
                 const versionIndex = urlParts.findIndex((part: string) => part.startsWith('v'));
-                if (versionIndex > 0 && versionIndex < urlParts.length - 1) {
+                if (versionIndex >= 0 && versionIndex < urlParts.length - 1) {
                   // Get everything after version
                   const pathAfterVersion = urlParts.slice(versionIndex + 1).join('/');
                   // Remove file extension
