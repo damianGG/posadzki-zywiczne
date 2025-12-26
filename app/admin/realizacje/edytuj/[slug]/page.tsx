@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Upload, X, Loader2, CheckCircle2, Trash2, ArrowLeft } from 'lucide-react';
+import { Upload, X, Loader2, CheckCircle2, Trash2, ArrowLeft, Star } from 'lucide-react';
 import Link from 'next/link';
 import GoogleDrivePicker from '@/components/admin/google-drive-picker';
 
@@ -126,6 +126,14 @@ export default function EdytujRealizacjePage() {
     setExistingImages(prev => prev.filter(img => img.publicId !== publicId));
   };
 
+  const handleSetAsMainImage = (index: number) => {
+    setExistingImages(prev => {
+      const newImages = [...prev];
+      const [selectedImage] = newImages.splice(index, 1);
+      return [selectedImage, ...newImages];
+    });
+  };
+
   const handleNewImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
@@ -147,6 +155,19 @@ export default function EdytujRealizacjePage() {
     setNewImages(prev => prev.filter((_, i) => i !== index));
     URL.revokeObjectURL(newImagePreviews[index]);
     setNewImagePreviews(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const handleSetNewImageAsMain = (index: number) => {
+    setNewImages(prev => {
+      const newArr = [...prev];
+      const [selectedImage] = newArr.splice(index, 1);
+      return [selectedImage, ...newArr];
+    });
+    setNewImagePreviews(prev => {
+      const newArr = [...prev];
+      const [selectedPreview] = newArr.splice(index, 1);
+      return [selectedPreview, ...newArr];
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -345,6 +366,9 @@ export default function EdytujRealizacjePage() {
               {existingImages.length > 0 && (
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Obecne zdjęcia</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Kliknij <Star className="w-3 h-3 inline" /> aby ustawić zdjęcie jako główne
+                  </p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {existingImages.map((image, index) => (
                       <div key={image.publicId} className="relative group">
@@ -353,17 +377,32 @@ export default function EdytujRealizacjePage() {
                           alt={`Zdjęcie ${index + 1}`}
                           className="w-full h-32 object-cover rounded-lg"
                         />
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="destructive"
-                          className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => handleDeleteExistingImage(image.publicId)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="absolute top-2 right-2 flex gap-1">
+                          {index !== 0 && (
+                            <Button
+                              type="button"
+                              size="sm"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity bg-yellow-500 hover:bg-yellow-600"
+                              onClick={() => handleSetAsMainImage(index)}
+                              title="Ustaw jako główne"
+                            >
+                              <Star className="w-4 h-4" />
+                            </Button>
+                          )}
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="destructive"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity"
+                            onClick={() => handleDeleteExistingImage(image.publicId)}
+                            title="Usuń zdjęcie"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                         {index === 0 && (
-                          <span className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
+                          <span className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                            <Star className="w-3 h-3 fill-white" />
                             Główne
                           </span>
                         )}
@@ -412,26 +451,51 @@ export default function EdytujRealizacjePage() {
                 </div>
 
                 {newImagePreviews.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                    {newImagePreviews.map((preview, index) => (
-                      <div key={index} className="relative group">
-                        <img
-                          src={preview}
-                          alt={`Nowe ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg"
-                        />
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="destructive"
-                          className="absolute top-2 right-2"
-                          onClick={() => removeNewImage(index)}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
+                  <>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      Nowe zdjęcia {existingImages.length === 0 && '- Kliknij'} <Star className="w-3 h-3 inline" /> aby ustawić jako główne
+                    </p>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                      {newImagePreviews.map((preview, index) => (
+                        <div key={index} className="relative group">
+                          <img
+                            src={preview}
+                            alt={`Nowe ${index + 1}`}
+                            className="w-full h-32 object-cover rounded-lg"
+                          />
+                          <div className="absolute top-2 right-2 flex gap-1">
+                            {(existingImages.length === 0 && index !== 0) && (
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="opacity-0 group-hover:opacity-100 transition-opacity bg-yellow-500 hover:bg-yellow-600"
+                                onClick={() => handleSetNewImageAsMain(index)}
+                                title="Ustaw jako główne"
+                              >
+                                <Star className="w-4 h-4" />
+                              </Button>
+                            )}
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="destructive"
+                              className="opacity-0 group-hover:opacity-100 transition-opacity"
+                              onClick={() => removeNewImage(index)}
+                              title="Usuń zdjęcie"
+                            >
+                              <X className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          {existingImages.length === 0 && index === 0 && (
+                            <span className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-white" />
+                              Główne
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </>
                 )}
               </div>
 
