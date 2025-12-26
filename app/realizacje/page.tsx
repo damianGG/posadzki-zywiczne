@@ -5,6 +5,9 @@ import { Metadata } from 'next';
 import { Suspense } from 'react';
 import RealizacjeClient from './realizacje-client';
 
+// Revalidate every 60 seconds to show new realizacje
+export const revalidate = 60;
+
 export const metadata: Metadata = {
   title: 'Nasze Realizacje - Posadzki Żywiczne | Portfolio Projektów',
   description: 'Zobacz nasze najnowsze realizacje posadzek żywicznych w domach, garażach, na balkonach i tarasach. Profesjonalne wykonanie, gwarancja jakości.',
@@ -27,8 +30,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RealizacjePage() {
-  const allRealizacje = getAllRealizacje();
+export default async function RealizacjePage() {
+  const allRealizacje = await getAllRealizacje();
 
   return (
     <div className="w-full">

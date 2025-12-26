@@ -540,6 +540,7 @@ export default function KalkulatorPosadzki() {
         wybranapPosadzka,
         wybranyRodzajPowierzchniObj,
         wybranyKolorObj,
+        walidujWymiary,
     ])
 
     const handleDodatekChange = (dodatekId: string, checked: boolean) => {

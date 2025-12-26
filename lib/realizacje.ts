@@ -1,28 +1,112 @@
-import fs from 'fs';
-import path from 'path';
 import { Realizacja, RealizacjaCategory, RealizacjeMetadata } from '@/types/realizacje';
-
-const realizacjeDirectory = path.join(process.cwd(), 'data/realizacje');
+import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB, RealizacjaData } from './supabase-realizacje';
 
 /**
- * Get all realizacje from JSON files
+ * Map RealizacjaData from Supabase to Realizacja type
  */
-export function getAllRealizacje(): Realizacja[] {
-  try {
-    const fileNames = fs.readdirSync(realizacjeDirectory);
-    const realizacje = fileNames
-      .filter((fileName) => fileName.endsWith('.json'))
-      .map((fileName) => {
-        const filePath = path.join(realizacjeDirectory, fileName);
-        const fileContents = fs.readFileSync(filePath, 'utf8');
-        return JSON.parse(fileContents) as Realizacja;
-      })
-      .sort((a, b) => {
-        // Sort by date, newest first
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      });
+function mapToRealizacja(data: RealizacjaData): Realizacja {
+  // Map project_type to category
+  const categoryMap: Record<string, RealizacjaCategory> = {
+    'posadzka-w-garażu': 'garaze',
+    'posadzka-w-kuchni': 'kuchnie',
+    'posadzka-na-balkonie': 'balkony-tarasy',
+    'posadzka-na-tarasie': 'balkony-tarasy',
+    'posadzka-na-schodach': 'schody',
+    'posadzka-w-domu': 'domy-mieszkania',
+    'posadzka-w-mieszkaniu': 'domy-mieszkania',
+  };
 
-    return realizacje;
+  const category = categoryMap[data.project_type] || 'domy-mieszkania' as RealizacjaCategory;
+
+  // Process images - extract URLs from database structure
+  // Database structure: { main: "url", gallery: [{url: "...", alt: "..."}] }
+  console.log('[Image Debug] Raw images data:', JSON.stringify(data.images, null, 2));
+  
+  const mainImage = typeof data.images?.main === 'string' && data.images.main.trim() !== '' 
+    ? data.images.main.trim() 
+    : '';
+  
+  console.log('[Image Debug] Main image extracted:', mainImage);
+  
+  const galleryImages = Array.isArray(data.images?.gallery) 
+    ? data.images.gallery
+        .map((img: any, index: number) => {
+          console.log(`[Image Debug] Gallery item ${index}:`, typeof img, img);
+          
+          // Fallback for string URLs (check this first)
+          if (typeof img === 'string') {
+            const url = img.trim();
+            console.log(`[Image Debug] Using string URL:`, url);
+            return url;
+          }
+          
+          // Database stores images as objects: { url: string, alt?: string }
+          if (typeof img === 'object' && img !== null && 'url' in img) {
+            const url = typeof img.url === 'string' ? img.url.trim() : '';
+            console.log(`[Image Debug] Extracted URL from object:`, url);
+            return url;
+          }
+          
+          console.log(`[Image Debug] Invalid image format, returning empty`);
+          return '';
+        })
+        .filter((url: string) => url && url.trim() !== '')
+    : [];
+
+  console.log('[Image Debug] Gallery images extracted:', galleryImages);
+
+  // Use mainImage if available, otherwise use first gallery image, otherwise empty string
+  const finalMainImage = mainImage || (galleryImages.length > 0 ? galleryImages[0] : '');
+  
+  console.log('[Image Debug] Final main image:', finalMainImage);
+  
+  // If mainImage is same as first gallery image, don't duplicate it
+  const finalGallery = mainImage && galleryImages[0] === mainImage 
+    ? galleryImages.slice(1) 
+    : galleryImages;
+    
+  console.log('[Image Debug] Final gallery:', finalGallery);
+
+  return {
+    slug: data.slug,
+    title: data.title,
+    description: data.description,
+    category,
+    location: data.location,
+    date: data.created_at || new Date().toISOString(),
+    tags: data.tags || [],
+    images: {
+      main: finalMainImage,
+      gallery: finalGallery,
+    },
+    details: {
+      surface: data.surface_area || '',
+      system: data.technology || '',
+      color: data.color,
+      duration: data.duration,
+    },
+    features: data.features || [],
+    keywords: data.keywords || [],
+  };
+}
+
+/**
+ * Get all realizacje from Supabase database
+ * This function is async and fetches from the database
+ */
+export async function getAllRealizacje(): Promise<Realizacja[]> {
+  try {
+    const result = await listRealizacje({
+      orderBy: 'created_at',
+      orderDirection: 'desc',
+    });
+
+    if (!result.success || !result.data) {
+      console.error('Error loading realizacje from database:', result.error);
+      return [];
+    }
+
+    return result.data.map(mapToRealizacja);
   } catch (error) {
     console.error('Error loading realizacje:', error);
     return [];
@@ -32,16 +116,16 @@ export function getAllRealizacje(): Realizacja[] {
 /**
  * Get realizacje filtered by category
  */
-export function getRealizacjeByCategory(category: RealizacjaCategory): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
+export async function getRealizacjeByCategory(category: RealizacjaCategory): Promise<Realizacja[]> {
+  const allRealizacje = await getAllRealizacje();
   return allRealizacje.filter((realizacja) => realizacja.category === category);
 }
 
 /**
  * Search realizacje by tags, title, or description
  */
-export function searchRealizacje(query: string): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
+export async function searchRealizacje(query: string): Promise<Realizacja[]> {
+  const allRealizacje = await getAllRealizacje();
   const lowerQuery = query.toLowerCase();
   
   return allRealizacje.filter((realizacja) => {
@@ -58,8 +142,8 @@ export function searchRealizacje(query: string): Realizacja[] {
 /**
  * Get all unique tags from all realizacje
  */
-export function getAllTags(): string[] {
-  const allRealizacje = getAllRealizacje();
+export async function getAllTags(): Promise<string[]> {
+  const allRealizacje = await getAllRealizacje();
   const tagsSet = new Set<string>();
   
   allRealizacje.forEach((realizacja) => {
@@ -72,26 +156,25 @@ export function getAllTags(): string[] {
 /**
  * Get realizacje filtered by tag
  */
-export function getRealizacjeByTag(tag: string): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
+export async function getRealizacjeByTag(tag: string): Promise<Realizacja[]> {
+  const allRealizacje = await getAllRealizacje();
   return allRealizacje.filter((realizacja) => 
     realizacja.tags.some(t => t.toLowerCase() === tag.toLowerCase())
   );
 }
 
 /**
- * Get a single realizacja by slug
+ * Get a single realizacja by slug from Supabase
  */
-export function getRealizacjaBySlug(slug: string): Realizacja | null {
+export async function getRealizacjaBySlug(slug: string): Promise<Realizacja | null> {
   try {
-    const filePath = path.join(realizacjeDirectory, `${slug}.json`);
+    const result = await getRealizacjaBySlugFromDB(slug);
     
-    if (!fs.existsSync(filePath)) {
+    if (!result.success || !result.data) {
       return null;
     }
     
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(fileContents) as Realizacja;
+    return mapToRealizacja(result.data);
   } catch (error) {
     console.error(`Error loading realizacja with slug ${slug}:`, error);
     return null;
@@ -101,8 +184,8 @@ export function getRealizacjaBySlug(slug: string): Realizacja | null {
 /**
  * Get metadata about realizacje
  */
-export function getRealizacjeMetadata(): RealizacjeMetadata {
-  const allRealizacje = getAllRealizacje();
+export async function getRealizacjeMetadata(): Promise<RealizacjeMetadata> {
+  const allRealizacje = await getAllRealizacje();
   
   const byCategory: Record<RealizacjaCategory, number> = {
     'schody': 0,
@@ -128,7 +211,7 @@ export { getCategoryDisplayName } from './realizacje-helpers';
 /**
  * Get latest realizacje (for homepage/previews)
  */
-export function getLatestRealizacje(limit: number = 3): Realizacja[] {
-  const allRealizacje = getAllRealizacje();
+export async function getLatestRealizacje(limit: number = 3): Promise<Realizacja[]> {
+  const allRealizacje = await getAllRealizacje();
   return allRealizacje.slice(0, limit);
 }

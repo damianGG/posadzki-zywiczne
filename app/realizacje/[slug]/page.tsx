@@ -8,12 +8,15 @@ import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
 import { ImageGallery } from '@/components/ui/image-gallery';
 
+// Revalidate every 60 seconds to show new realizacje
+export const revalidate = 60;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
 export async function generateStaticParams() {
-  const realizacje = getAllRealizacje();
+  const realizacje = await getAllRealizacje();
   return realizacje.map((realizacja) => ({
     slug: realizacja.slug,
   }));
@@ -21,7 +24,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const realizacja = getRealizacjaBySlug(slug);
+  const realizacja = await getRealizacjaBySlug(slug);
 
   if (!realizacja) {
     return {
@@ -56,14 +59,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function RealizacjaDetailPage({ params }: Props) {
   const { slug } = await params;
-  const realizacja = getRealizacjaBySlug(slug);
+  const realizacja = await getRealizacjaBySlug(slug);
 
   if (!realizacja) {
     notFound();
   }
 
   // Get related projects from the same category
-  const allRealizacje = getAllRealizacje();
+  const allRealizacje = await getAllRealizacje();
   const relatedProjects = allRealizacje
     .filter(r => r.category === realizacja.category && r.slug !== realizacja.slug)
     .slice(0, 3);
