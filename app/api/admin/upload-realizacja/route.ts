@@ -201,10 +201,22 @@ export async function POST(request: NextRequest) {
           .filter((benefit: string) => benefit.length > 0)
       : features; // Use features as benefits if not provided separately
 
-    // Parse FAQ if provided
-    const faq = data.faq
-      ? JSON.parse(data.faq)
-      : [];
+    // Parse FAQ if provided - handle both string and already parsed array
+    let faq: Array<{ question: string; answer: string }> = [];
+    if (data.faq) {
+      try {
+        // If it's already an array, use it directly
+        if (Array.isArray(data.faq)) {
+          faq = data.faq;
+        } else if (typeof data.faq === 'string' && data.faq.trim()) {
+          // If it's a string, try to parse it
+          faq = JSON.parse(data.faq);
+        }
+      } catch (parseError) {
+        console.warn('Could not parse FAQ, using empty array:', parseError);
+        faq = [];
+      }
+    }
 
     // Create realizacja data for Supabase
     const realizacjaData: RealizacjaData = {
