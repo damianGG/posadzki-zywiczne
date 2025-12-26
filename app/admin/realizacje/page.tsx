@@ -110,7 +110,7 @@ export default function RealizacjeListPage() {
             <div className="flex gap-2 flex-wrap sm:flex-nowrap">
               <Link href="/admin/realizacje/dodaj" className="flex-1 sm:flex-none">
                 <Button className="w-full sm:w-auto bg-green-600 hover:bg-green-700">
-                  <Plus className="w-4 h-4 sm:mr-2" />
+                  <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Dodaj Nową</span>
                   <span className="sm:hidden">Dodaj</span>
                 </Button>
@@ -120,7 +120,7 @@ export default function RealizacjeListPage() {
                 variant="outline"
                 className="flex-1 sm:flex-none border-red-300 text-red-600 hover:bg-red-50"
               >
-                <LogOut className="w-4 h-4 sm:mr-2" />
+                <LogOut className="w-3.5 h-3.5 sm:w-4 sm:h-4 sm:mr-2" />
                 Wyloguj
               </Button>
             </div>
