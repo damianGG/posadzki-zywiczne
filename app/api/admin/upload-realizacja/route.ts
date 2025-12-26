@@ -218,10 +218,28 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Parse content sections if provided
+    let content: any = undefined;
+    if (data.content) {
+      try {
+        // If it's already an object, use it directly
+        if (typeof data.content === 'object') {
+          content = data.content;
+        } else if (typeof data.content === 'string' && data.content.trim()) {
+          // If it's a string, try to parse it
+          content = JSON.parse(data.content);
+        }
+      } catch (parseError) {
+        console.warn('Could not parse content sections, using undefined:', parseError);
+        content = undefined;
+      }
+    }
+
     // Create realizacja data for Supabase
     const realizacjaData: RealizacjaData = {
       slug: folderName,
       title: data.title,
+      h1: data.h1 || undefined,
       description: data.description,
       short_description: data.shortDescription || data.description.substring(0, 160),
       location: data.location || '',
@@ -245,6 +263,7 @@ export async function POST(request: NextRequest) {
         })),
       },
       faq,
+      content,
       cloudinary_folder: `realizacje/${folderName}`,
     };
 

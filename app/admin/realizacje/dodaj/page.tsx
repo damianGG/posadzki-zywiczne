@@ -14,6 +14,7 @@ import GoogleDrivePicker from '@/components/admin/google-drive-picker';
 
 interface FormData {
   title: string;
+  h1: string;
   description: string;
   aiPrompt: string; // Short description for AI content generation
   location: string;
@@ -27,6 +28,7 @@ interface FormData {
   features: string;
   keywords: string;
   faq: string; // FAQ section as JSON string
+  content: string; // Content sections as JSON string
   testimonialContent: string;
   testimonialAuthor: string;
 }
@@ -46,6 +48,7 @@ export default function DodajRealizacjePage() {
 
   const [formData, setFormData] = useState<FormData>({
     title: '',
+    h1: '',
     description: '',
     aiPrompt: '',
     location: '',
@@ -59,6 +62,7 @@ export default function DodajRealizacjePage() {
     features: '',
     keywords: '',
     faq: '',
+    content: '',
     testimonialContent: '',
     testimonialAuthor: '',
   });
@@ -137,7 +141,8 @@ export default function DodajRealizacjePage() {
       setFormData(prev => ({
         ...prev,
         title: content.title || prev.title,
-        description: content.description || prev.description,
+        h1: content.h1 || prev.h1,
+        description: content.intro || prev.description, // Use intro as description
         technology: content.technology || prev.technology,
         color: content.color || prev.color,
         duration: content.duration || prev.duration,
@@ -145,6 +150,7 @@ export default function DodajRealizacjePage() {
         tags: content.tags || prev.tags,
         features: content.features || prev.features,
         faq: content.faq || prev.faq,
+        content: content.content || prev.content,
       }));
 
       // Show success message
@@ -208,6 +214,7 @@ export default function DodajRealizacjePage() {
       setTimeout(() => {
         setFormData({
           title: '',
+          h1: '',
           description: '',
           aiPrompt: '',
           location: '',
@@ -221,6 +228,7 @@ export default function DodajRealizacjePage() {
           features: '',
           keywords: '',
           faq: '',
+          content: '',
           testimonialContent: '',
           testimonialAuthor: '',
         });
@@ -334,7 +342,7 @@ export default function DodajRealizacjePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="title">Tytuł realizacji *</Label>
+                  <Label htmlFor="title">Tytuł realizacji (SEO Title) *</Label>
                   <Input
                     id="title"
                     value={formData.title}
@@ -343,6 +351,23 @@ export default function DodajRealizacjePage() {
                     required
                     className="mt-1"
                   />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    ≤ 60 znaków, zawiera słowo kluczowe + benefit / lokalizację
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="h1">H1 Nagłówek (opcjonalnie)</Label>
+                  <Input
+                    id="h1"
+                    value={formData.h1}
+                    onChange={(e) => handleInputChange('h1', e.target.value)}
+                    placeholder="np. Profesjonalna Posadzka Garażowa w Warszawie"
+                    className="mt-1"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Zbliżony do Title, ale nie identyczny (50-65 znaków). Jeśli pusty, użyty zostanie Title.
+                  </p>
                 </div>
 
                 <div>
@@ -595,7 +620,33 @@ export default function DodajRealizacjePage() {
                     className="mt-1 font-mono text-sm"
                   />
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    💡 AI może wygenerować FAQ automatycznie, lub możesz wprowadzić własne w formacie JSON
+                    💡 AI może wygenerować FAQ automatycznie (min. 4-6 pytań), lub możesz wprowadzić własne w formacie JSON
+                  </p>
+                </div>
+              </div>
+
+              {/* SEO Content Sections */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Sekcje treści SEO (opcjonalnie - generowane przez AI)
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Te sekcje zostaną automatycznie wygenerowane przez AI. Możesz je edytować ręcznie w formacie JSON.
+                  Struktura: {`{"intro": "...", "whenToUse": "...", "advantages": "...", "disadvantages": "...", "execution": "...", "durability": "...", "pricing": "...", "commonMistakes": "...", "forWho": "...", "localService": "..."}`}
+                </p>
+
+                <div>
+                  <Label htmlFor="content">Sekcje treści (JSON)</Label>
+                  <Textarea
+                    id="content"
+                    value={formData.content}
+                    onChange={(e) => handleInputChange('content', e.target.value)}
+                    placeholder='{"intro": "Wprowadzenie...", "whenToUse": "Kiedy rozwiązanie ma sens...", ...}'
+                    rows={12}
+                    className="mt-1 font-mono text-sm"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    💡 AI automatycznie wygeneruje wszystkie sekcje treści zoptymalizowane pod SEO (900-1200 słów)
                   </p>
                 </div>
               </div>
