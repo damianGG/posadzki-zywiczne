@@ -121,8 +121,7 @@ export default function RealizacjeListPage() {
                 className="flex-1 sm:flex-none border-red-300 text-red-600 hover:bg-red-50"
               >
                 <LogOut className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Wyloguj</span>
-                <span className="sm:hidden">Wyloguj</span>
+                Wyloguj
               </Button>
             </div>
           </div>
