@@ -8,6 +8,9 @@ import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
 import { ImageGallery } from '@/components/ui/image-gallery';
 
+// Revalidate every 60 seconds to show new realizacje
+export const revalidate = 60;
+
 type Props = {
   params: Promise<{ slug: string }>;
 };
