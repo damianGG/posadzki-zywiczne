@@ -117,6 +117,7 @@ export async function PUT(request: NextRequest) {
       short_description: data.shortDescription || data.description.substring(0, 160),
       location: data.location || existingRealizacja.location,
       surface_area: data.area || existingRealizacja.surface_area,
+      project_type: data.category || existingRealizacja.project_type,
       technology: data.technology || existingRealizacja.technology,
       color: data.color || existingRealizacja.color,
       duration: data.duration || existingRealizacja.duration,
@@ -127,6 +128,7 @@ export async function PUT(request: NextRequest) {
       meta_description: data.metaDescription || existingRealizacja.meta_description,
       og_title: data.ogTitle || existingRealizacja.og_title,
       og_description: data.ogDescription || existingRealizacja.og_description,
+      cloudinary_folder: existingRealizacja.cloudinary_folder || `realizacje/${slug}`,
       images: {
         main: allGallery[0]?.url || existingRealizacja.images?.main,
         gallery: allGallery,
