@@ -90,22 +90,48 @@ export default function EdytujRealizacjePage() {
           title: r.title || '',
           description: r.description || '',
           location: r.location || '',
-          area: r.details?.surface || '',
-          technology: r.details?.system || '',
-          category: r.category || 'domy-mieszkania',
+          area: r.surface_area || '',
+          technology: r.technology || '',
+          category: r.project_type || 'domy-mieszkania',
           type: r.type || 'indywidualna',
-          color: r.details?.color || '',
-          duration: r.details?.duration || '',
+          color: r.color || '',
+          duration: r.duration || '',
           tags: r.tags?.join(', ') || '',
           features: r.features?.join('\n') || '',
           keywords: r.keywords?.join('\n') || '',
           testimonialContent: r.clientTestimonial?.content || '',
           testimonialAuthor: r.clientTestimonial?.author || '',
-          date: r.date || '',
+          date: r.date || r.created_at || '',
         });
 
-        if (r.cloudinary?.images) {
-          setExistingImages(r.cloudinary.images);
+        // Map images.gallery to existingImages format
+        if (r.images?.gallery && Array.isArray(r.images.gallery)) {
+          const mappedImages = r.images.gallery.map((img: any, index: number) => {
+            // Extract publicId from Cloudinary URL
+            // URL format: https://res.cloudinary.com/[cloud]/image/upload/v[version]/[folder]/[publicId].[ext]
+            let publicId = `image-${index}`;
+            if (img.url && img.url.includes('cloudinary.com')) {
+              try {
+                const urlParts = img.url.split('/');
+                const versionIndex = urlParts.findIndex((part: string) => part.startsWith('v'));
+                if (versionIndex > 0 && versionIndex < urlParts.length - 1) {
+                  // Get everything after version
+                  const pathAfterVersion = urlParts.slice(versionIndex + 1).join('/');
+                  // Remove file extension
+                  publicId = pathAfterVersion.replace(/\.[^.]+$/, '');
+                }
+              } catch (e) {
+                console.warn('Could not extract publicId from URL:', img.url);
+              }
+            }
+            
+            return {
+              url: img.url || '',
+              publicId: publicId,
+              filename: img.alt || `image-${index}.jpg`,
+            };
+          });
+          setExistingImages(mappedImages);
         }
       } else {
         setSubmitError(data.error || 'Nie znaleziono realizacji');
