@@ -138,8 +138,23 @@ export async function PUT(request: NextRequest) {
     const updateResult = await updateRealizacja(slug, updateData);
 
     if (!updateResult.success) {
+      console.error('Update failed:', {
+        slug,
+        error: updateResult.error,
+        updateData: JSON.stringify(updateData, null, 2),
+      });
+      
       return NextResponse.json(
-        { error: 'Błąd podczas aktualizacji', details: updateResult.error },
+        { 
+          error: 'Błąd podczas aktualizacji', 
+          details: updateResult.error,
+          debugInfo: {
+            slug,
+            hasImages: !!updateData.images,
+            imageCount: updateData.images?.gallery?.length || 0,
+            fields: Object.keys(updateData),
+          }
+        },
         { status: 500 }
       );
     }
@@ -158,10 +173,20 @@ export async function PUT(request: NextRequest) {
 
   } catch (error) {
     console.error('Error updating realizacja:', error);
+    
+    // Log more details for debugging
+    const errorDetails = {
+      message: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      slug,
+    };
+    console.error('Detailed error:', errorDetails);
+    
     return NextResponse.json(
       {
         error: 'Błąd podczas aktualizacji realizacji',
         details: error instanceof Error ? error.message : String(error),
+        debugInfo: errorDetails,
       },
       { status: 500 }
     );

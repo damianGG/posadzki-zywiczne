@@ -150,6 +150,18 @@ export async function updateRealizacja(slug: string, data: Partial<RealizacjaDat
       }
     });
 
+    console.log('Updating realizacja in Supabase:', {
+      slug,
+      fields: Object.keys(updateData),
+      updateDataSample: {
+        title: updateData.title,
+        project_type: updateData.project_type,
+        location: updateData.location,
+        hasImages: !!updateData.images,
+        imageCount: updateData.images?.gallery?.length || 0,
+      }
+    });
+
     const { data: result, error } = await supabase
       .from('realizacje')
       .update(updateData)
@@ -158,10 +170,29 @@ export async function updateRealizacja(slug: string, data: Partial<RealizacjaDat
       .single();
 
     if (error) {
-      console.error('Supabase update error:', error);
-      return { success: false, error: error.message };
+      console.error('Supabase update error:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code,
+      });
+      
+      // Return more detailed error message
+      let errorMessage = error.message;
+      if (error.details) {
+        errorMessage += ` | Details: ${error.details}`;
+      }
+      if (error.hint) {
+        errorMessage += ` | Hint: ${error.hint}`;
+      }
+      if (error.code) {
+        errorMessage += ` | Code: ${error.code}`;
+      }
+      
+      return { success: false, error: errorMessage };
     }
 
+    console.log('Supabase update successful');
     return { success: true, data: result };
   } catch (err) {
     console.error('Error updating realizacja:', err);

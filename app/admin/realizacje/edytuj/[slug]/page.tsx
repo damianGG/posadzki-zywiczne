@@ -220,17 +220,48 @@ export default function EdytujRealizacjePage() {
       uploadData.append('slug', slug);
       uploadData.append('imagesToDelete', JSON.stringify(imagesToDelete));
 
+      console.log('Submitting update with:', {
+        slug,
+        formData,
+        newImagesCount: newImages.length,
+        existingImagesCount: existingImages.length,
+        imagesToDeleteCount: imagesToDelete.length,
+      });
+
       const response = await fetch('/api/admin/update-realizacja', {
         method: 'PUT',
         body: uploadData,
       });
 
       const result = await response.json();
+      console.log('Update response:', { status: response.status, result });
 
       if (!response.ok) {
-        const errorMessage = result.details 
-          ? `${result.error}\n\n${result.details}\n\n${result.instructions || ''}`
-          : result.error || 'Błąd podczas aktualizacji realizacji';
+        // Build detailed error message
+        let errorMessage = result.error || 'Błąd podczas aktualizacji realizacji';
+        
+        if (result.details) {
+          errorMessage += `\n\nSzczegóły błędu:\n${result.details}`;
+        }
+        
+        if (result.debugInfo) {
+          errorMessage += `\n\nInformacje debugowania:`;
+          errorMessage += `\n- Slug: ${result.debugInfo.slug || 'brak'}`;
+          errorMessage += `\n- Liczba zdjęć: ${result.debugInfo.imageCount || 0}`;
+          
+          if (result.debugInfo.fields) {
+            errorMessage += `\n- Aktualizowane pola: ${result.debugInfo.fields.join(', ')}`;
+          }
+          
+          if (result.debugInfo.message) {
+            errorMessage += `\n- Komunikat błędu: ${result.debugInfo.message}`;
+          }
+        }
+        
+        if (result.instructions) {
+          errorMessage += `\n\n${result.instructions}`;
+        }
+        
         throw new Error(errorMessage);
       }
 
@@ -241,6 +272,7 @@ export default function EdytujRealizacjePage() {
       }, 2000);
 
     } catch (error) {
+      console.error('Submit error:', error);
       setSubmitError(error instanceof Error ? error.message : 'Wystąpił błąd');
     } finally {
       setIsSubmitting(false);
