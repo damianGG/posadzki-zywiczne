@@ -15,6 +15,7 @@ import GoogleDrivePicker from '@/components/admin/google-drive-picker';
 interface FormData {
   title: string;
   description: string;
+  aiPrompt: string; // Short description for AI content generation
   location: string;
   area: string;
   technology: string;
@@ -25,6 +26,7 @@ interface FormData {
   tags: string;
   features: string;
   keywords: string;
+  faq: string; // FAQ section as JSON string
   testimonialContent: string;
   testimonialAuthor: string;
 }
@@ -45,6 +47,7 @@ export default function DodajRealizacjePage() {
   const [formData, setFormData] = useState<FormData>({
     title: '',
     description: '',
+    aiPrompt: '',
     location: '',
     area: '',
     technology: '',
@@ -55,6 +58,7 @@ export default function DodajRealizacjePage() {
     tags: '',
     features: '',
     keywords: '',
+    faq: '',
     testimonialContent: '',
     testimonialAuthor: '',
   });
@@ -114,6 +118,7 @@ export default function DodajRealizacjePage() {
       aiFormData.append('type', formData.type);
       aiFormData.append('category', formData.category);
       if (formData.area) aiFormData.append('area', formData.area);
+      if (formData.aiPrompt) aiFormData.append('aiPrompt', formData.aiPrompt);
 
       // Call AI generation API
       const response = await fetch('/api/admin/generate-content', {
@@ -139,6 +144,7 @@ export default function DodajRealizacjePage() {
         keywords: content.keywords || prev.keywords,
         tags: content.tags || prev.tags,
         features: content.features || prev.features,
+        faq: content.faq || prev.faq,
       }));
 
       // Show success message
@@ -203,6 +209,7 @@ export default function DodajRealizacjePage() {
         setFormData({
           title: '',
           description: '',
+          aiPrompt: '',
           location: '',
           area: '',
           technology: '',
@@ -213,6 +220,7 @@ export default function DodajRealizacjePage() {
           tags: '',
           features: '',
           keywords: '',
+          faq: '',
           testimonialContent: '',
           testimonialAuthor: '',
         });
@@ -267,8 +275,8 @@ export default function DodajRealizacjePage() {
                       ✨ Wygeneruj treść przez AI
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                      Wypełnij tylko <strong className="text-purple-600 dark:text-purple-400">lokalizację*</strong>, <strong className="text-purple-600 dark:text-purple-400">typ projektu*</strong> i <strong className="text-purple-600 dark:text-purple-400">kategorię*</strong>, 
-                      a AI wygeneruje profesjonalny opis, tytuł, słowa kluczowe i wszystkie metadane SEO!
+                      Wypełnij <strong className="text-purple-600 dark:text-purple-400">lokalizację*</strong>, <strong className="text-purple-600 dark:text-purple-400">typ projektu*</strong>, <strong className="text-purple-600 dark:text-purple-400">kategorię*</strong> i opcjonalnie <strong className="text-purple-600 dark:text-purple-400">krótki opis dla AI</strong>, 
+                      a AI wygeneruje profesjonalny tytuł, opis, FAQ, słowa kluczowe i wszystkie metadane SEO!
                     </p>
                     <Button
                       type="button"
@@ -308,6 +316,23 @@ export default function DodajRealizacjePage() {
                   Podstawowe informacje
                 </h3>
                 
+                <div>
+                  <Label htmlFor="aiPrompt">
+                    Krótki opis dla AI <span className="text-purple-600 dark:text-purple-400 text-xs">(opcjonalnie - pomaga AI lepiej zrozumieć projekt)</span>
+                  </Label>
+                  <Textarea
+                    id="aiPrompt"
+                    value={formData.aiPrompt}
+                    onChange={(e) => handleInputChange('aiPrompt', e.target.value)}
+                    placeholder="np. Nowoczesny garaż w kolorze szarym z posypką kwarcową, bardzo wytrzymały i łatwy w utrzymaniu"
+                    rows={2}
+                    className="mt-1 border-purple-200 focus:border-purple-500 dark:border-purple-700"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    💡 Ten opis pomoże AI wygenerować bardziej precyzyjną treść artykułu
+                  </p>
+                </div>
+
                 <div>
                   <Label htmlFor="title">Tytuł realizacji *</Label>
                   <Input
@@ -557,6 +582,21 @@ export default function DodajRealizacjePage() {
                     rows={3}
                     className="mt-1"
                   />
+                </div>
+
+                <div>
+                  <Label htmlFor="faq">FAQ - Najczęściej zadawane pytania (JSON)</Label>
+                  <Textarea
+                    id="faq"
+                    value={formData.faq}
+                    onChange={(e) => handleInputChange('faq', e.target.value)}
+                    placeholder='[{"question": "Jak długo schnie posadzka?", "answer": "Posadzka schnie przez 24-48 godzin"}]'
+                    rows={6}
+                    className="mt-1 font-mono text-sm"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    💡 AI może wygenerować FAQ automatycznie, lub możesz wprowadzić własne w formacie JSON
+                  </p>
                 </div>
               </div>
 

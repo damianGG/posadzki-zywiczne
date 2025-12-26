@@ -24,6 +24,7 @@ export async function POST(request: NextRequest) {
     const type = formData.get('type') as string;
     const category = formData.get('category') as string;
     const area = formData.get('area') as string;
+    const aiPrompt = formData.get('aiPrompt') as string; // Optional short description for AI
 
     if (!location || !type || !category) {
       return NextResponse.json(
@@ -60,6 +61,7 @@ PODSTAWOWE DANE:
 - Typ projektu: ${type} (${typeMap[type] || type})
 - Kategoria: ${category} (${categoryMap[category] || category})
 ${area ? `- Powierzchnia: ${area} m²` : ''}
+${aiPrompt ? `\nDODATKOWY KONTEKST OD UŻYTKOWNIKA:\n${aiPrompt}\n\nUżyj tego opisu aby lepiej zrozumieć specyfikę projektu i wygenerować bardziej precyzyjną treść.` : ''}
 
 Wygeneruj JSON z następującymi polami (wszystkie po polsku, zoptymalizowane pod SEO):
 
@@ -117,6 +119,11 @@ WAŻNE:
     });
 
     const generatedContent = JSON.parse(completion.choices[0]?.message?.content || '{}');
+    
+    // Convert FAQ array to JSON string if present
+    if (generatedContent.faq && Array.isArray(generatedContent.faq)) {
+      generatedContent.faq = JSON.stringify(generatedContent.faq, null, 2);
+    }
 
     return NextResponse.json({
       success: true,
