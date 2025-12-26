@@ -453,7 +453,11 @@ export default function EdytujRealizacjePage() {
                 {newImagePreviews.length > 0 && (
                   <>
                     <p className="text-sm text-gray-600 dark:text-gray-300">
-                      Nowe zdjęcia {existingImages.length === 0 && '- Kliknij'} <Star className="w-3 h-3 inline" /> aby ustawić jako główne
+                      {existingImages.length === 0 
+                        ? 'Nowe zdjęcia - Kliknij ' 
+                        : 'Nowe zdjęcia - Kliknij '
+                      }
+                      <Star className="w-3 h-3 inline" /> aby ustawić jako główne
                     </p>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                       {newImagePreviews.map((preview, index) => (
@@ -464,7 +468,7 @@ export default function EdytujRealizacjePage() {
                             className="w-full h-32 object-cover rounded-lg"
                           />
                           <div className="absolute top-2 right-2 flex gap-1">
-                            {(existingImages.length === 0 && index !== 0) && (
+                            {existingImages.length === 0 && index !== 0 && (
                               <Button
                                 type="button"
                                 size="sm"
