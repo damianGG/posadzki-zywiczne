@@ -11,6 +11,7 @@ import { Upload, X, Loader2, CheckCircle2, ImagePlus, Sparkles } from 'lucide-re
 import Image from 'next/image';
 import LoginForm from '@/components/admin/login-form';
 import GoogleDrivePicker from '@/components/admin/google-drive-picker';
+import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
 
 interface FormData {
   title: string;
@@ -67,7 +68,9 @@ export default function DodajRealizacjePage() {
     testimonialAuthor: '',
   });
 
+  // Change from File[] to store Cloudinary URLs directly
   const [images, setImages] = useState<File[]>([]);
+  const [cloudinaryImages, setCloudinaryImages] = useState<Array<{url: string; publicId: string}>>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
@@ -77,6 +80,18 @@ export default function DodajRealizacjePage() {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle Cloudinary direct uploads
+  const handleCloudinaryUpload = (results: Array<{url: string; publicId: string}>) => {
+    const newImages = [...cloudinaryImages, ...results];
+    setCloudinaryImages(newImages);
+    
+    // Add preview URLs
+    const newPreviews = results.map(img => img.url);
+    setImagePreviews(prev => [...prev, ...newPreviews]);
+    
+    alert(`✅ Przesłano ${results.length} zdjęć do Cloudinary!`);
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -119,8 +134,19 @@ export default function DodajRealizacjePage() {
   };
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-    URL.revokeObjectURL(imagePreviews[index]);
+    // Remove from both local files and Cloudinary URLs
+    const cloudinaryCount = cloudinaryImages.length;
+    
+    if (index < cloudinaryCount) {
+      // Removing a Cloudinary image
+      setCloudinaryImages(prev => prev.filter((_, i) => i !== index));
+    } else {
+      // Removing a local file
+      const localIndex = index - cloudinaryCount;
+      setImages(prev => prev.filter((_, i) => i !== localIndex));
+      URL.revokeObjectURL(imagePreviews[index]);
+    }
+    
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -216,26 +242,48 @@ export default function DodajRealizacjePage() {
         throw new Error('Tytuł i opis są wymagane');
       }
 
-      if (images.length === 0) {
+      if (images.length === 0 && cloudinaryImages.length === 0) {
         throw new Error('Dodaj co najmniej jedno zdjęcie');
       }
 
-      // Create FormData for file upload
-      const uploadData = new FormData();
-      
-      // Add images
-      images.forEach((image, index) => {
-        uploadData.append('images', image);
-      });
+      let response;
 
-      // Add form data
-      uploadData.append('formData', JSON.stringify(formData));
+      // New way: If using Cloudinary direct upload, send only URLs
+      if (cloudinaryImages.length > 0) {
+        const realizacjaData = {
+          ...formData,
+          cloudinaryImages: cloudinaryImages.map(img => ({
+            url: img.url,
+            publicId: img.publicId,
+            alt: `${formData.title} - ${formData.location || 'realizacja'}`,
+          })),
+        };
 
-      // Submit to API
-      const response = await fetch('/api/admin/upload-realizacja', {
-        method: 'POST',
-        body: uploadData,
-      });
+        response = await fetch('/api/admin/create-realizacja-cloudinary', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(realizacjaData),
+        });
+      } 
+      // Old way: Upload files through Vercel (limited to 4MB total)
+      else {
+        const uploadData = new FormData();
+        
+        // Add images
+        images.forEach((image, index) => {
+          uploadData.append('images', image);
+        });
+
+        // Add form data
+        uploadData.append('formData', JSON.stringify(formData));
+
+        response = await fetch('/api/admin/upload-realizacja', {
+          method: 'POST',
+          body: uploadData,
+        });
+      }
 
       const result = await response.json();
 
@@ -272,6 +320,7 @@ export default function DodajRealizacjePage() {
           testimonialAuthor: '',
         });
         setImages([]);
+        setCloudinaryImages([]);
         setImagePreviews([]);
         setSubmitSuccess(false);
       }, 3000);
@@ -542,7 +591,14 @@ export default function DodajRealizacjePage() {
                   Zdjęcia *
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Cloudinary Upload Widget - RECOMMENDED */}
+                  <CloudinaryUploadWidget
+                    onUploadComplete={handleCloudinaryUpload}
+                    maxFiles={20}
+                    disabled={isSubmitting}
+                  />
+
                   {/* Local file upload */}
                   <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
                     <input
@@ -562,7 +618,7 @@ export default function DodajRealizacjePage() {
                         Z urządzenia
                       </span>
                       <span className="text-xs text-gray-500">
-                        Kliknij aby wybrać
+                        (max 4MB)
                       </span>
                     </label>
                   </div>
@@ -580,18 +636,24 @@ export default function DodajRealizacjePage() {
                   Pierwsze zdjęcie będzie zdjęciem głównym
                 </p>
                 
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3">
+                  <p className="text-xs text-blue-800 dark:text-blue-200">
+                    💡 <strong>Zalecane: Cloudinary Upload</strong> - Bezpośrednie przesyłanie bez limitów Vercel (do 10MB na zdjęcie, 20 zdjęć).
+                  </p>
+                </div>
+                
                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3">
                   <p className="text-xs text-amber-800 dark:text-amber-200">
-                    📏 <strong>Limity rozmiaru:</strong> Max 2MB na zdjęcie, max 4MB łącznie (wszystkie zdjęcia). 
-                    Zalecane: kompresja zdjęć przed przesłaniem.
+                    ⚠️ <strong>Upload z urządzenia:</strong> Max 2MB na zdjęcie, max 4MB łącznie (ograniczenie Vercel).
                   </p>
                 </div>
 
                 {imagePreviews.length > 0 && (
                   <>
                     <div className="text-xs text-gray-600 dark:text-gray-400 text-center">
-                      Przesłane: {imagePreviews.length} {imagePreviews.length === 1 ? 'zdjęcie' : 'zdjęcia'} 
-                      ({(images.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(2)}MB / 4MB)
+                      Przesłane: {imagePreviews.length} {imagePreviews.length === 1 ? 'zdjęcie' : 'zdjęcia'}
+                      {cloudinaryImages.length > 0 && ` (${cloudinaryImages.length} z Cloudinary${images.length > 0 ? `, ${images.length} lokalnie` : ''})`}
+                      {images.length > 0 && cloudinaryImages.length === 0 && ` (${(images.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(2)}MB / 4MB)`}
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     {imagePreviews.map((preview, index) => (
