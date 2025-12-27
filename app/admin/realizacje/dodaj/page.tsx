@@ -478,6 +478,16 @@ export default function DodajRealizacjePage() {
             {currentStep === 1 ? (
               // STEP 1: Content Generation
               <form onSubmit={handleCreateDraft} className="space-y-6">
+              {draftSlug && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    ℹ️ <strong>Draft już istnieje!</strong> Slug: <code className="bg-white dark:bg-gray-800 px-2 py-1 rounded">{draftSlug}</code>
+                  </p>
+                  <p className="text-xs text-blue-700 dark:text-blue-300 mt-2">
+                    Możesz edytować treść lub przejść do Kroku 2, aby dodać zdjęcia.
+                  </p>
+                </div>
+              )}
               {/* AI Generation Section */}
               <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-700 rounded-lg p-6">
                 <div className="flex items-start gap-4">
@@ -707,20 +717,32 @@ export default function DodajRealizacjePage() {
 
               {/* Submit Button for Step 1 */}
               <div className="flex gap-4">
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || !formData.title || !formData.description}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Tworzenie draftu...
-                    </>
-                  ) : (
-                    'Utwórz draft i przejdź do dodawania zdjęć →'
-                  )}
-                </Button>
+                {draftSlug ? (
+                  // If draft already exists, allow moving to Step 2
+                  <Button
+                    type="button"
+                    onClick={() => setCurrentStep(2)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3"
+                  >
+                    Przejdź do dodawania zdjęć →
+                  </Button>
+                ) : (
+                  // If no draft, create one
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || !formData.title || !formData.description}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Tworzenie draftu...
+                      </>
+                    ) : (
+                      'Utwórz draft i przejdź do dodawania zdjęć →'
+                    )}
+                  </Button>
+                )}
               </div>
 
               {submitError && (
