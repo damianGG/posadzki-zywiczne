@@ -77,6 +77,11 @@ export default function DodajRealizacjePage() {
   const [submitError, setSubmitError] = useState('');
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [aiError, setAiError] = useState('');
+  
+  // Two-step process states
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1); // Step 1: Content, Step 2: Images
+  const [draftSlug, setDraftSlug] = useState<string>(''); // Slug from Step 1
+  const [cloudinaryFolder, setCloudinaryFolder] = useState<string>(''); // Folder for images
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -230,6 +235,97 @@ export default function DodajRealizacjePage() {
     }
   };
 
+  // Step 1: Create draft with content (no images)
+  const handleCreateDraft = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+
+    try {
+      // Validate required fields for Step 1
+      if (!formData.title || !formData.description) {
+        throw new Error('Tytuł i opis są wymagane');
+      }
+
+      const response = await fetch('/api/admin/create-draft-realizacja', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Błąd podczas tworzenia draftu');
+      }
+
+      // Success! Move to Step 2
+      setDraftSlug(result.slug);
+      setCloudinaryFolder(result.cloudinaryFolder);
+      setCurrentStep(2);
+      setSubmitSuccess(false); // Reset for next step
+      
+      console.log('✅ Draft created:', result.slug, 'Folder:', result.cloudinaryFolder);
+
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Wystąpił błąd');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Step 2: Add images to the draft
+  const handleAddImages = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+
+    try {
+      // Validate images
+      if (cloudinaryImages.length === 0) {
+        throw new Error('Dodaj co najmniej jedno zdjęcie');
+      }
+
+      const response = await fetch('/api/admin/add-images-to-realizacja', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          slug: draftSlug,
+          cloudinaryImages: cloudinaryImages.map(img => ({
+            url: img.url,
+            publicId: img.publicId,
+            alt: `${formData.title} - ${formData.location || 'realizacja'}`,
+          })),
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Błąd podczas dodawania zdjęć');
+      }
+
+      setSubmitSuccess(true);
+      
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        window.location.reload(); // Refresh to start fresh
+      }, 3000);
+
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Wystąpił błąd');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Legacy: Old single-step submit (for file uploads)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -351,13 +447,37 @@ export default function DodajRealizacjePage() {
       <div className="max-w-3xl mx-auto">
         <Card className="shadow-lg">
           <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
-            <CardTitle className="text-2xl md:text-3xl">Dodaj Nową Realizację</CardTitle>
+            <CardTitle className="text-2xl md:text-3xl">
+              {currentStep === 1 ? 'Dodaj Nową Realizację - Krok 1: Treść' : 'Dodaj Nową Realizację - Krok 2: Zdjęcia'}
+            </CardTitle>
             <CardDescription className="text-blue-50">
-              Wypełnij formularz i dodaj zdjęcia swojego projektu
+              {currentStep === 1 
+                ? 'Wygeneruj treść AI i utwórz realizację' 
+                : `Dodaj zdjęcia do folderu: ${cloudinaryFolder}`
+              }
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Step Indicator */}
+            <div className="mb-6 flex items-center justify-center gap-4">
+              <div className={`flex items-center gap-2 ${currentStep === 1 ? 'text-blue-600 font-semibold' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
+                  1
+                </div>
+                <span>Treść</span>
+              </div>
+              <div className="h-0.5 w-16 bg-gray-300"></div>
+              <div className={`flex items-center gap-2 ${currentStep === 2 ? 'text-blue-600 font-semibold' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 2 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
+                  2
+                </div>
+                <span>Zdjęcia</span>
+              </div>
+            </div>
+
+            {currentStep === 1 ? (
+              // STEP 1: Content Generation
+              <form onSubmit={handleCreateDraft} className="space-y-6">
               {/* AI Generation Section */}
               <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-700 rounded-lg p-6">
                 <div className="flex items-start gap-4">
@@ -585,51 +705,58 @@ export default function DodajRealizacjePage() {
                 </div>
               </div>
 
-              {/* Images */}
+              {/* Submit Button for Step 1 */}
+              <div className="flex gap-4">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || !formData.title || !formData.description}
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Tworzenie draftu...
+                    </>
+                  ) : (
+                    'Utwórz draft i przejdź do dodawania zdjęć →'
+                  )}
+                </Button>
+              </div>
+
+              {submitError && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                  <p className="text-sm text-red-600 dark:text-red-400 whitespace-pre-wrap">
+                    {submitError}
+                  </p>
+                </div>
+              )}
+            </form>
+            ) : (
+              // STEP 2: Image Upload
+              <form onSubmit={handleAddImages} className="space-y-6">
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-green-800 dark:text-green-200">
+                    ✅ <strong>Draft utworzony!</strong> Slug: <code className="bg-white dark:bg-gray-800 px-2 py-1 rounded">{draftSlug}</code>
+                  </p>
+                  <p className="text-xs text-green-700 dark:text-green-300 mt-2">
+                    Teraz dodaj zdjęcia. Zostaną przesłane do folderu: <code className="bg-white dark:bg-gray-800 px-1 rounded">{cloudinaryFolder}</code>
+                  </p>
+                </div>
+
+              {/* Images Section - Step 2 */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Zdjęcia *
                 </h3>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Cloudinary Upload Widget - RECOMMENDED */}
+                  {/* Cloudinary Upload Widget - RECOMMENDED - with specific folder */}
                   <CloudinaryUploadWidget
                     onUploadComplete={handleCloudinaryUpload}
                     maxFiles={20}
                     disabled={isSubmitting}
+                    folder={cloudinaryFolder}
                   />
-
-                  {/* Local file upload */}
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                    <input
-                      type="file"
-                      id="images"
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageSelect}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="images"
-                      className="cursor-pointer flex flex-col items-center space-y-2"
-                    >
-                      <ImagePlus className="w-12 h-12 text-gray-400" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Z urządzenia
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        (max 4MB)
-                      </span>
-                    </label>
-                  </div>
-
-                  {/* Google Drive picker */}
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex items-center justify-center">
-                    <GoogleDrivePicker
-                      onFilesPicked={handleGoogleDriveFiles}
-                      disabled={isSubmitting}
-                    />
-                  </div>
                 </div>
 
                 <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
@@ -638,13 +765,10 @@ export default function DodajRealizacjePage() {
                 
                 <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3">
                   <p className="text-xs text-blue-800 dark:text-blue-200">
-                    💡 <strong>Zalecane: Cloudinary Upload</strong> - Bezpośrednie przesyłanie bez limitów Vercel (do 10MB na zdjęcie, 20 zdjęć).
+                    ☁️ <strong>Cloudinary Upload</strong> - Zdjęcia zostaną przesłane bezpośrednio do folderu: <code className="bg-white dark:bg-gray-800 px-1 rounded text-xs">{cloudinaryFolder}</code>
                   </p>
-                </div>
-                
-                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3">
-                  <p className="text-xs text-amber-800 dark:text-amber-200">
-                    ⚠️ <strong>Upload z urządzenia:</strong> Max 2MB na zdjęcie, max 4MB łącznie (ograniczenie Vercel).
+                  <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                    Możesz przesłać do 20 zdjęć, każde do 10MB.
                   </p>
                 </div>
 
@@ -798,42 +922,53 @@ export default function DodajRealizacjePage() {
                 </div>
               </div>
 
-              {/* Submit */}
-              <div className="pt-6 border-t">
-                {submitError && (
-                  <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-800 dark:text-red-200">
-                    <div className="font-semibold mb-2">Błąd</div>
-                    <pre className="whitespace-pre-wrap text-sm font-mono">{submitError}</pre>
-                  </div>
-                )}
-
-                {submitSuccess && (
-                  <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-800 dark:text-green-200 flex items-center">
-                    <CheckCircle2 className="w-5 h-5 mr-2" />
-                    Realizacja została pomyślnie dodana!
-                  </div>
-                )}
-
+              {/* Submit Button for Step 2 */}
+              <div className="flex gap-4">
+                <Button
+                  type="button"
+                  onClick={() => setCurrentStep(1)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  ← Wróć do edycji treści
+                </Button>
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                  size="lg"
+                  disabled={isSubmitting || cloudinaryImages.length === 0}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Dodawanie...
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Zapisywanie zdjęć...
                     </>
                   ) : (
                     <>
-                      <Upload className="w-4 h-4 mr-2" />
-                      Dodaj Realizację
+                      <CheckCircle2 className="w-5 h-5 mr-2" />
+                      Zakończ i zapisz realizację
                     </>
                   )}
                 </Button>
               </div>
+
+              {submitError && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                  <p className="text-sm text-red-600 dark:text-red-400 whitespace-pre-wrap">
+                    {submitError}
+                  </p>
+                </div>
+              )}
+
+              {submitSuccess && (
+                <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg flex items-center">
+                  <CheckCircle2 className="w-5 h-5 mr-2 text-green-600 dark:text-green-400" />
+                  <p className="text-sm text-green-600 dark:text-green-400">
+                    ✅ Realizacja została pomyślnie dodana z {cloudinaryImages.length} zdjęciami!
+                  </p>
+                </div>
+              )}
             </form>
+            )}
           </CardContent>
         </Card>
       </div>

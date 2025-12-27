@@ -17,6 +17,7 @@ interface CloudinaryUploadWidgetProps {
   onUploadComplete: (results: CloudinaryUploadResult[]) => void;
   maxFiles?: number;
   disabled?: boolean;
+  folder?: string; // Optional specific folder for this upload
 }
 
 declare global {
@@ -29,6 +30,7 @@ export default function CloudinaryUploadWidget({
   onUploadComplete,
   maxFiles = 10,
   disabled = false,
+  folder = 'realizacje', // Default folder, can be overridden
 }: CloudinaryUploadWidgetProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isScriptLoaded, setIsScriptLoaded] = useState(false);
@@ -80,7 +82,7 @@ export default function CloudinaryUploadWidget({
           maxImageWidth: 4000,
           maxImageHeight: 4000,
           cropping: false,
-          folder: 'realizacje',
+          folder: folder, // Use the folder prop (can be specific to realizacja)
           sources: ['local', 'url', 'camera'],
           showAdvancedOptions: false,
           showPoweredBy: false,
