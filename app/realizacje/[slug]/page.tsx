@@ -227,25 +227,6 @@ export default async function RealizacjaDetailPage({ params }: Props) {
                 </ul>
               </div>
 
-              {/* Gallery thumbnails - now part of ImageGallery component */}
-              {realizacja.images.gallery.length > 0 && (
-                <div className="mb-12">
-                  <h2 className="text-2xl font-bold mb-6">Więcej zdjęć</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {realizacja.images.gallery.map((image, index) => (
-                      <div key={index} className="relative aspect-square rounded-lg overflow-hidden shadow-md">
-                        <Image
-                          src={image}
-                          alt={`${realizacja.title} - zdjęcie ${index + 1}`}
-                          fill
-                          className="object-cover hover:scale-105 transition-transform duration-300"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* SEO Content Sections */}
               
               {/* When to Use */}
