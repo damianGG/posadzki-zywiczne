@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 // Dynamic route - prevent static generation
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-export const maxDuration = 10; // Default timeout - no image analysis needed
+export const maxDuration = 60; // Increased timeout for comprehensive AI content generation (900-1200 words)
 
 // Initialize OpenAI client only if API key is available
 let openai: OpenAI | null = null;

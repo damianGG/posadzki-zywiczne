@@ -130,7 +130,16 @@ export default function DodajRealizacjePage() {
         body: aiFormData,
       });
 
-      const result = await response.json();
+      // Handle non-JSON responses (like 504 Gateway Timeout HTML pages)
+      let result;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        // Non-JSON response (likely an error page)
+        const text = await response.text();
+        throw new Error(`Serwer zwrócił błąd: ${response.status} ${response.statusText}. ${text.substring(0, 100)}...`);
+      }
 
       if (!response.ok) {
         throw new Error(result.error || 'Błąd podczas generowania treści AI');
@@ -157,7 +166,19 @@ export default function DodajRealizacjePage() {
       alert('✨ Treść została wygenerowana przez AI! Możesz ją teraz edytować przed zapisaniem.');
 
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Nieznany błąd';
+      let errorMsg = 'Nieznany błąd';
+      
+      if (error instanceof Error) {
+        errorMsg = error.message;
+        
+        // Add helpful context for common errors
+        if (error.message.includes('504') || error.message.includes('Gateway Timeout')) {
+          errorMsg = 'Przekroczono limit czasu generowania (timeout). AI generuje dużo treści (900-1200 słów), co może zająć do 60 sekund. Spróbuj ponownie za chwilę.';
+        } else if (error.message.includes('Failed to fetch')) {
+          errorMsg = 'Błąd połączenia z serwerem. Sprawdź połączenie internetowe i spróbuj ponownie.';
+        }
+      }
+      
       setAiError(errorMsg);
       console.error('AI generation error:', error);
     } finally {
@@ -286,6 +307,9 @@ export default function DodajRealizacjePage() {
                       Wypełnij <strong className="text-purple-600 dark:text-purple-400">lokalizację*</strong>, <strong className="text-purple-600 dark:text-purple-400">typ projektu*</strong>, <strong className="text-purple-600 dark:text-purple-400">kategorię*</strong> i opcjonalnie <strong className="text-purple-600 dark:text-purple-400">krótki opis dla AI</strong>, 
                       a AI wygeneruje profesjonalny tytuł, opis, FAQ, słowa kluczowe i wszystkie metadane SEO!
                     </p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mb-4">
+                      ⏱️ Generowanie treści zajmuje 30-60 sekund. Proszę czekać...
+                    </p>
                     <Button
                       type="button"
                       onClick={handleGenerateWithAI}
@@ -295,7 +319,7 @@ export default function DodajRealizacjePage() {
                       {isGeneratingAI ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Generuję treść AI...
+                          Generuję treść AI (może potrwać do 60s)...
                         </>
                       ) : (
                         <>
