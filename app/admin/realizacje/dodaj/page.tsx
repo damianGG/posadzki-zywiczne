@@ -91,8 +91,26 @@ export default function DodajRealizacjePage() {
   };
 
   const addImages = (files: File[]) => {
-    // Add new images to existing ones
+    // Validate file sizes
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB per file
+    const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 4MB total (leaving 0.5MB for JSON data)
+    
+    const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+    if (oversizedFiles.length > 0) {
+      const fileNames = oversizedFiles.map(f => `${f.name} (${(f.size / 1024 / 1024).toFixed(2)}MB)`).join(', ');
+      alert(`⚠️ Następujące pliki są za duże (max 2MB na plik):\n${fileNames}\n\nProszę zmniejszyć rozmiar zdjęć przed przesłaniem.`);
+      return;
+    }
+    
+    // Check total size including existing images
     const newImages = [...images, ...files];
+    const totalSize = newImages.reduce((sum, file) => sum + file.size, 0);
+    
+    if (totalSize > MAX_TOTAL_SIZE) {
+      alert(`⚠️ Łączny rozmiar wszystkich zdjęć przekracza 4MB.\n\nObecnie: ${(totalSize / 1024 / 1024).toFixed(2)}MB\nMaksymalnie: 4MB\n\nProszę zmniejszyć liczbę lub rozmiar zdjęć.`);
+      return;
+    }
+    
     setImages(newImages);
 
     // Create previews
@@ -561,9 +579,21 @@ export default function DodajRealizacjePage() {
                 <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                   Pierwsze zdjęcie będzie zdjęciem głównym
                 </p>
+                
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg p-3">
+                  <p className="text-xs text-amber-800 dark:text-amber-200">
+                    📏 <strong>Limity rozmiaru:</strong> Max 2MB na zdjęcie, max 4MB łącznie (wszystkie zdjęcia). 
+                    Zalecane: kompresja zdjęć przed przesłaniem.
+                  </p>
+                </div>
 
                 {imagePreviews.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                  <>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 text-center">
+                      Przesłane: {imagePreviews.length} {imagePreviews.length === 1 ? 'zdjęcie' : 'zdjęcia'} 
+                      ({(images.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(2)}MB / 4MB)
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     {imagePreviews.map((preview, index) => (
                       <div key={index} className="relative group">
                         <div className="relative aspect-square rounded-lg overflow-hidden">
@@ -589,6 +619,7 @@ export default function DodajRealizacjePage() {
                       </div>
                     ))}
                   </div>
+                  </>
                 )}
               </div>
 

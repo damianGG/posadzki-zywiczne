@@ -9,6 +9,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { createRealizacja, RealizacjaData } from '@/lib/supabase-realizacje';
 
+// Configure route for larger payloads and longer execution
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+export const maxDuration = 60; // Allow up to 60 seconds for multiple image uploads
+
 // Configure Cloudinary
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
