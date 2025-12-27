@@ -70,6 +70,7 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
   return {
     slug: data.slug,
     title: data.title,
+    h1: data.h1,
     description: data.description,
     category,
     location: data.location,
@@ -87,6 +88,8 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
     },
     features: data.features || [],
     keywords: data.keywords || [],
+    content: data.content,
+    faq: data.faq,
   };
 }
 

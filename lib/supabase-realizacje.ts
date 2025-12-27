@@ -10,6 +10,7 @@ export interface RealizacjaData {
   id?: string;
   slug: string;
   title: string;
+  h1?: string; // H1 heading (similar to title but not identical)
   description: string;
   short_description?: string;
   location: string;
@@ -36,6 +37,21 @@ export interface RealizacjaData {
     question: string;
     answer: string;
   }>;
+  
+  // SEO-optimized content sections
+  content?: {
+    intro?: string; // 3-5 sentences introduction
+    whenToUse?: string; // When the solution makes sense
+    advantages?: string; // Benefits of the solution
+    disadvantages?: string; // Limitations and drawbacks
+    execution?: string; // Step-by-step execution
+    durability?: string; // Durability and resistance
+    pricing?: string; // Price ranges and factors
+    commonMistakes?: string; // Common mistakes to avoid
+    forWho?: string; // For whom this solution is/isn't
+    localService?: string; // Service locations (local SEO)
+  };
+  
   cloudinary_folder?: string;
   created_at?: string;
   updated_at?: string;
@@ -93,6 +109,7 @@ export async function createRealizacja(data: RealizacjaData): Promise<{ success:
       .insert({
         slug: data.slug,
         title: data.title,
+        h1: data.h1,
         description: data.description,
         short_description: data.short_description,
         location: data.location,
@@ -110,6 +127,7 @@ export async function createRealizacja(data: RealizacjaData): Promise<{ success:
         og_description: data.og_description,
         images: data.images,
         faq: data.faq || [],
+        content: data.content,
         cloudinary_folder: data.cloudinary_folder,
       })
       .select()

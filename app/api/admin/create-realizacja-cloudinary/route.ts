@@ -1,25 +1,17 @@
 /**
- * API Route: /api/admin/upload-realizacja
+ * API Route: /api/admin/create-realizacja-cloudinary
  * 
- * Handles uploading new realizacja with images using Cloudinary
- * Works in both development and production environments
+ * Handles creating realizacja with Cloudinary URLs (no file upload)
+ * Images are already uploaded directly to Cloudinary from the client
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { v2 as cloudinary } from 'cloudinary';
 import { createRealizacja, RealizacjaData } from '@/lib/supabase-realizacje';
 
-// Configure route for larger payloads and longer execution
+// Configure route
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-export const maxDuration = 60; // Allow up to 60 seconds for multiple image uploads
-
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+export const maxDuration = 30; // Shorter timeout since we're not uploading files
 
 // Helper function to generate slug from title
 function generateSlugFromTitle(title: string): string {
@@ -75,30 +67,8 @@ function sanitizeString(str: string): string {
 
 export async function POST(request: NextRequest) {
   try {
-    // Check Cloudinary configuration
-    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
-      return NextResponse.json(
-        { 
-          error: 'Cloudinary nie jest skonfigurowany',
-          details: 'Brak zmiennych środowiskowych Cloudinary. Dodaj CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY i CLOUDINARY_API_SECRET w ustawieniach środowiska.',
-          instructions: 'Skonfiguruj zmienne środowiskowe w Vercel lub lokalnie w pliku .env'
-        },
-        { status: 500 }
-      );
-    }
-
-    // Parse form data
-    const formData = await request.formData();
-    const formDataJson = formData.get('formData') as string;
-    
-    if (!formDataJson) {
-      return NextResponse.json(
-        { error: 'Brak danych formularza' },
-        { status: 400 }
-      );
-    }
-
-    const data = JSON.parse(formDataJson);
+    // Parse JSON body
+    const data = await request.json();
     
     // Validate required fields
     if (!data.title || !data.description) {
@@ -108,10 +78,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get images
-    const images = formData.getAll('images') as File[];
-    
-    if (images.length === 0) {
+    if (!data.cloudinaryImages || data.cloudinaryImages.length === 0) {
       return NextResponse.json(
         { error: 'Dodaj co najmniej jedno zdjęcie' },
         { status: 400 }
@@ -128,51 +95,7 @@ export async function POST(request: NextRequest) {
     // Create folder name: [miasto]-[slug]-[typ]
     const folderName = `${location}-${baseSlug}-${folderType}`;
     
-    // Upload images to Cloudinary
-    console.log(`Uploading ${images.length} images to Cloudinary...`);
-    const uploadedImages: { url: string; publicId: string; filename: string }[] = [];
-    
-    for (let i = 0; i < images.length; i++) {
-      const image = images[i];
-      const bytes = await image.arrayBuffer();
-      const buffer = Buffer.from(bytes);
-      
-      // Generate filename - sanitize extension
-      const nameParts = image.name.split('.');
-      const extension = nameParts.length > 1 
-        ? nameParts.pop()?.toLowerCase().replace(/[^a-z0-9]/g, '') || 'jpg'
-        : 'jpg';
-      // Ensure extension is valid image format
-      const validExtensions = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
-      const safeExtension = validExtensions.includes(extension) ? extension : 'jpg';
-      
-      const filename = i === 0 ? `0-glowne` : `${i}`;
-      const publicId = `realizacje/${folderName}/${filename}`;
-      
-      // Upload to Cloudinary
-      const result = await new Promise<any>((resolve, reject) => {
-        cloudinary.uploader.upload_stream(
-          {
-            folder: `realizacje/${folderName}`,
-            public_id: filename,
-            resource_type: 'image',
-            format: safeExtension,
-          },
-          (error, result) => {
-            if (error) reject(error);
-            else resolve(result);
-          }
-        ).end(buffer);
-      });
-      
-      uploadedImages.push({
-        url: result.secure_url,
-        publicId: result.public_id,
-        filename: `${filename}.${safeExtension}`,
-      });
-      
-      console.log(`Uploaded image ${i + 1}/${images.length}: ${result.secure_url}`);
-    }
+    console.log(`Creating realizacja with ${data.cloudinaryImages.length} Cloudinary images...`);
 
     // Parse tags (comma-separated)
     const tags = data.tags
@@ -204,17 +127,15 @@ export async function POST(request: NextRequest) {
           .split('\n')
           .map((benefit: string) => benefit.trim())
           .filter((benefit: string) => benefit.length > 0)
-      : features; // Use features as benefits if not provided separately
+      : features;
 
-    // Parse FAQ if provided - handle both string and already parsed array
+    // Parse FAQ if provided
     let faq: Array<{ question: string; answer: string }> = [];
     if (data.faq) {
       try {
-        // If it's already an array, use it directly
         if (Array.isArray(data.faq)) {
           faq = data.faq;
         } else if (typeof data.faq === 'string' && data.faq.trim()) {
-          // If it's a string, try to parse it
           faq = JSON.parse(data.faq);
         }
       } catch (parseError) {
@@ -227,11 +148,9 @@ export async function POST(request: NextRequest) {
     let content: any = undefined;
     if (data.content) {
       try {
-        // If it's already an object, use it directly
         if (typeof data.content === 'object') {
           content = data.content;
         } else if (typeof data.content === 'string' && data.content.trim()) {
-          // If it's a string, try to parse it
           content = JSON.parse(data.content);
         }
       } catch (parseError) {
@@ -261,10 +180,10 @@ export async function POST(request: NextRequest) {
       og_title: data.ogTitle || data.title,
       og_description: data.ogDescription || data.description.substring(0, 200),
       images: {
-        main: uploadedImages[0]?.url || '',
-        gallery: uploadedImages.map(img => ({
+        main: data.cloudinaryImages[0]?.url || '',
+        gallery: data.cloudinaryImages.map((img: any) => ({
           url: img.url,
-          alt: `${data.title} - ${data.location || 'realizacja'}`,
+          alt: img.alt || `${data.title} - ${data.location || 'realizacja'}`,
         })),
       },
       faq,
@@ -278,14 +197,6 @@ export async function POST(request: NextRequest) {
     
     if (!supabaseResult.success) {
       console.error('❌ Error saving to Supabase:', supabaseResult.error);
-      // Clean up uploaded Cloudinary images if database save fails
-      for (const img of uploadedImages) {
-        try {
-          await cloudinary.uploader.destroy(img.publicId);
-        } catch (cleanupError) {
-          console.error('Error cleaning up image:', img.publicId, cleanupError);
-        }
-      }
       throw new Error(`Nie udało się zapisać do bazy danych: ${supabaseResult.error}`);
     }
 
@@ -294,30 +205,22 @@ export async function POST(request: NextRequest) {
     // Return success response
     return NextResponse.json({
       success: true,
-      message: 'Realizacja została dodana pomyślnie! Dane zapisane w bazie Supabase, zdjęcia w Cloudinary.',
+      message: 'Realizacja została dodana pomyślnie! Zdjęcia już w Cloudinary, dane w bazie Supabase.',
       folderName,
       slug: folderName,
-      images: uploadedImages.map(img => img.url),
+      images: data.cloudinaryImages.map((img: any) => img.url),
       cloudinaryFolder: `realizacje/${folderName}`,
       realizacja: supabaseResult.data,
     });
 
   } catch (error) {
-    console.error('Error uploading realizacja:', error);
+    console.error('Error creating realizacja:', error);
     return NextResponse.json(
-      {
-        error: 'Błąd serwera podczas dodawania realizacji',
-        details: error instanceof Error ? error.message : String(error),
+      { 
+        error: 'Błąd podczas dodawania realizacji',
+        details: error instanceof Error ? error.message : 'Unknown error'
       },
       { status: 500 }
     );
   }
-}
-
-export async function GET(request: NextRequest) {
-  return NextResponse.json({
-    message: 'Użyj metody POST aby dodać nową realizację',
-    info: 'Endpoint do dodawania realizacji przez formularz webowy z Cloudinary',
-    cloudinaryConfigured: !!(process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET),
-  });
 }

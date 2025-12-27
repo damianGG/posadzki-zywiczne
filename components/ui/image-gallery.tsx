@@ -100,6 +100,50 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
         )}
       </div>
 
+      {/* Thumbnail Gallery - visible below main image */}
+      {allImages.length > 1 && (
+        <div className="mt-4">
+          {/* Desktop: grid layout */}
+          <div className="hidden md:grid grid-cols-4 lg:grid-cols-5 gap-3">
+            {allImages.slice(1).map((image, index) => (
+              <div
+                key={index}
+                className="relative aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer group"
+                onClick={() => openGallery(index + 1)}
+              >
+                <Image
+                  src={image}
+                  alt={`${title} - miniatura ${index + 2}`}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-110"
+                  sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile: horizontal scroll */}
+          <div className="md:hidden flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
+            {allImages.slice(1).map((image, index) => (
+              <div
+                key={index}
+                className="relative w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden shadow-md cursor-pointer snap-start"
+                onClick={() => openGallery(index + 1)}
+              >
+                <Image
+                  src={image}
+                  alt={`${title} - miniatura ${index + 2}`}
+                  fill
+                  className="object-cover"
+                  sizes="128px"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Lightbox Modal */}
       {isOpen && (
         <div 

@@ -2,6 +2,9 @@
   "functions": {
     "app/api/admin/generate-content/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/admin/upload-realizacja/route.ts": {
+      "maxDuration": 60
     }
   }
 }

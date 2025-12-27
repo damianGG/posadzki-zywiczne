@@ -11,9 +11,11 @@ import { Upload, X, Loader2, CheckCircle2, ImagePlus, Sparkles } from 'lucide-re
 import Image from 'next/image';
 import LoginForm from '@/components/admin/login-form';
 import GoogleDrivePicker from '@/components/admin/google-drive-picker';
+import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
 
 interface FormData {
   title: string;
+  h1: string;
   description: string;
   aiPrompt: string; // Short description for AI content generation
   location: string;
@@ -27,6 +29,7 @@ interface FormData {
   features: string;
   keywords: string;
   faq: string; // FAQ section as JSON string
+  content: string; // Content sections as JSON string
   testimonialContent: string;
   testimonialAuthor: string;
 }
@@ -46,6 +49,7 @@ export default function DodajRealizacjePage() {
 
   const [formData, setFormData] = useState<FormData>({
     title: '',
+    h1: '',
     description: '',
     aiPrompt: '',
     location: '',
@@ -59,20 +63,40 @@ export default function DodajRealizacjePage() {
     features: '',
     keywords: '',
     faq: '',
+    content: '',
     testimonialContent: '',
     testimonialAuthor: '',
   });
 
+  // Change from File[] to store Cloudinary URLs directly
   const [images, setImages] = useState<File[]>([]);
+  const [cloudinaryImages, setCloudinaryImages] = useState<Array<{url: string; publicId: string}>>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [aiError, setAiError] = useState('');
+  
+  // Two-step process states
+  const [currentStep, setCurrentStep] = useState<1 | 2>(1); // Step 1: Content, Step 2: Images
+  const [draftSlug, setDraftSlug] = useState<string>(''); // Slug from Step 1
+  const [cloudinaryFolder, setCloudinaryFolder] = useState<string>(''); // Folder for images
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  // Handle Cloudinary direct uploads
+  const handleCloudinaryUpload = (results: Array<{url: string; publicId: string}>) => {
+    const newImages = [...cloudinaryImages, ...results];
+    setCloudinaryImages(newImages);
+    
+    // Add preview URLs
+    const newPreviews = results.map(img => img.url);
+    setImagePreviews(prev => [...prev, ...newPreviews]);
+    
+    alert(`✅ Przesłano ${results.length} zdjęć do Cloudinary!`);
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,8 +111,26 @@ export default function DodajRealizacjePage() {
   };
 
   const addImages = (files: File[]) => {
-    // Add new images to existing ones
+    // Validate file sizes
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB per file
+    const MAX_TOTAL_SIZE = 4 * 1024 * 1024; // 4MB total (leaving 0.5MB for JSON data)
+    
+    const oversizedFiles = files.filter(file => file.size > MAX_FILE_SIZE);
+    if (oversizedFiles.length > 0) {
+      const fileNames = oversizedFiles.map(f => `${f.name} (${(f.size / 1024 / 1024).toFixed(2)}MB)`).join(', ');
+      alert(`⚠️ Następujące pliki są za duże (max 2MB na plik):\n${fileNames}\n\nProszę zmniejszyć rozmiar zdjęć przed przesłaniem.`);
+      return;
+    }
+    
+    // Check total size including existing images
     const newImages = [...images, ...files];
+    const totalSize = newImages.reduce((sum, file) => sum + file.size, 0);
+    
+    if (totalSize > MAX_TOTAL_SIZE) {
+      alert(`⚠️ Łączny rozmiar wszystkich zdjęć przekracza 4MB.\n\nObecnie: ${(totalSize / 1024 / 1024).toFixed(2)}MB\nMaksymalnie: 4MB\n\nProszę zmniejszyć liczbę lub rozmiar zdjęć.`);
+      return;
+    }
+    
     setImages(newImages);
 
     // Create previews
@@ -97,8 +139,19 @@ export default function DodajRealizacjePage() {
   };
 
   const removeImage = (index: number) => {
-    setImages(prev => prev.filter((_, i) => i !== index));
-    URL.revokeObjectURL(imagePreviews[index]);
+    // Remove from both local files and Cloudinary URLs
+    const cloudinaryCount = cloudinaryImages.length;
+    
+    if (index < cloudinaryCount) {
+      // Removing a Cloudinary image
+      setCloudinaryImages(prev => prev.filter((_, i) => i !== index));
+    } else {
+      // Removing a local file
+      const localIndex = index - cloudinaryCount;
+      setImages(prev => prev.filter((_, i) => i !== localIndex));
+      URL.revokeObjectURL(imagePreviews[index]);
+    }
+    
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
@@ -126,7 +179,16 @@ export default function DodajRealizacjePage() {
         body: aiFormData,
       });
 
-      const result = await response.json();
+      // Handle non-JSON responses (like 504 Gateway Timeout HTML pages)
+      let result;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        // Non-JSON response (likely an error page)
+        const text = await response.text();
+        throw new Error(`Serwer zwrócił błąd: ${response.status} ${response.statusText}. ${text.substring(0, 100)}...`);
+      }
 
       if (!response.ok) {
         throw new Error(result.error || 'Błąd podczas generowania treści AI');
@@ -137,7 +199,8 @@ export default function DodajRealizacjePage() {
       setFormData(prev => ({
         ...prev,
         title: content.title || prev.title,
-        description: content.description || prev.description,
+        h1: content.h1 || prev.h1,
+        description: content.intro || prev.description, // Use intro as description
         technology: content.technology || prev.technology,
         color: content.color || prev.color,
         duration: content.duration || prev.duration,
@@ -145,13 +208,26 @@ export default function DodajRealizacjePage() {
         tags: content.tags || prev.tags,
         features: content.features || prev.features,
         faq: content.faq || prev.faq,
+        content: content.content || prev.content,
       }));
 
       // Show success message
       alert('✨ Treść została wygenerowana przez AI! Możesz ją teraz edytować przed zapisaniem.');
 
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : 'Nieznany błąd';
+      let errorMsg = 'Nieznany błąd';
+      
+      if (error instanceof Error) {
+        errorMsg = error.message;
+        
+        // Add helpful context for common errors
+        if (error.message.includes('504') || error.message.includes('Gateway Timeout')) {
+          errorMsg = 'Przekroczono limit czasu generowania (timeout). AI generuje dużo treści (900-1200 słów), co może zająć do 60 sekund. Spróbuj ponownie za chwilę.';
+        } else if (error.message.includes('Failed to fetch')) {
+          errorMsg = 'Błąd połączenia z serwerem. Sprawdź połączenie internetowe i spróbuj ponownie.';
+        }
+      }
+      
       setAiError(errorMsg);
       console.error('AI generation error:', error);
     } finally {
@@ -159,6 +235,97 @@ export default function DodajRealizacjePage() {
     }
   };
 
+  // Step 1: Create draft with content (no images)
+  const handleCreateDraft = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+
+    try {
+      // Validate required fields for Step 1
+      if (!formData.title || !formData.description) {
+        throw new Error('Tytuł i opis są wymagane');
+      }
+
+      const response = await fetch('/api/admin/create-draft-realizacja', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Błąd podczas tworzenia draftu');
+      }
+
+      // Success! Move to Step 2
+      setDraftSlug(result.slug);
+      setCloudinaryFolder(result.cloudinaryFolder);
+      setCurrentStep(2);
+      setSubmitSuccess(false); // Reset for next step
+      
+      console.log('✅ Draft created:', result.slug, 'Folder:', result.cloudinaryFolder);
+
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Wystąpił błąd');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Step 2: Add images to the draft
+  const handleAddImages = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError('');
+    setSubmitSuccess(false);
+
+    try {
+      // Validate images
+      if (cloudinaryImages.length === 0) {
+        throw new Error('Dodaj co najmniej jedno zdjęcie');
+      }
+
+      const response = await fetch('/api/admin/add-images-to-realizacja', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          slug: draftSlug,
+          cloudinaryImages: cloudinaryImages.map(img => ({
+            url: img.url,
+            publicId: img.publicId,
+            alt: `${formData.title} - ${formData.location || 'realizacja'}`,
+          })),
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Błąd podczas dodawania zdjęć');
+      }
+
+      setSubmitSuccess(true);
+      
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        window.location.reload(); // Refresh to start fresh
+      }, 3000);
+
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : 'Wystąpił błąd');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Legacy: Old single-step submit (for file uploads)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -171,26 +338,48 @@ export default function DodajRealizacjePage() {
         throw new Error('Tytuł i opis są wymagane');
       }
 
-      if (images.length === 0) {
+      if (images.length === 0 && cloudinaryImages.length === 0) {
         throw new Error('Dodaj co najmniej jedno zdjęcie');
       }
 
-      // Create FormData for file upload
-      const uploadData = new FormData();
-      
-      // Add images
-      images.forEach((image, index) => {
-        uploadData.append('images', image);
-      });
+      let response;
 
-      // Add form data
-      uploadData.append('formData', JSON.stringify(formData));
+      // New way: If using Cloudinary direct upload, send only URLs
+      if (cloudinaryImages.length > 0) {
+        const realizacjaData = {
+          ...formData,
+          cloudinaryImages: cloudinaryImages.map(img => ({
+            url: img.url,
+            publicId: img.publicId,
+            alt: `${formData.title} - ${formData.location || 'realizacja'}`,
+          })),
+        };
 
-      // Submit to API
-      const response = await fetch('/api/admin/upload-realizacja', {
-        method: 'POST',
-        body: uploadData,
-      });
+        response = await fetch('/api/admin/create-realizacja-cloudinary', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(realizacjaData),
+        });
+      } 
+      // Old way: Upload files through Vercel (limited to 4MB total)
+      else {
+        const uploadData = new FormData();
+        
+        // Add images
+        images.forEach((image, index) => {
+          uploadData.append('images', image);
+        });
+
+        // Add form data
+        uploadData.append('formData', JSON.stringify(formData));
+
+        response = await fetch('/api/admin/upload-realizacja', {
+          method: 'POST',
+          body: uploadData,
+        });
+      }
 
       const result = await response.json();
 
@@ -208,6 +397,7 @@ export default function DodajRealizacjePage() {
       setTimeout(() => {
         setFormData({
           title: '',
+          h1: '',
           description: '',
           aiPrompt: '',
           location: '',
@@ -221,10 +411,12 @@ export default function DodajRealizacjePage() {
           features: '',
           keywords: '',
           faq: '',
+          content: '',
           testimonialContent: '',
           testimonialAuthor: '',
         });
         setImages([]);
+        setCloudinaryImages([]);
         setImagePreviews([]);
         setSubmitSuccess(false);
       }, 3000);
@@ -255,13 +447,47 @@ export default function DodajRealizacjePage() {
       <div className="max-w-3xl mx-auto">
         <Card className="shadow-lg">
           <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-t-lg">
-            <CardTitle className="text-2xl md:text-3xl">Dodaj Nową Realizację</CardTitle>
+            <CardTitle className="text-2xl md:text-3xl">
+              {currentStep === 1 ? 'Dodaj Nową Realizację - Krok 1: Treść' : 'Dodaj Nową Realizację - Krok 2: Zdjęcia'}
+            </CardTitle>
             <CardDescription className="text-blue-50">
-              Wypełnij formularz i dodaj zdjęcia swojego projektu
+              {currentStep === 1 
+                ? 'Wygeneruj treść AI i utwórz realizację' 
+                : `Dodaj zdjęcia do folderu: ${cloudinaryFolder}`
+              }
             </CardDescription>
           </CardHeader>
           <CardContent className="p-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Step Indicator */}
+            <div className="mb-6 flex items-center justify-center gap-4">
+              <div className={`flex items-center gap-2 ${currentStep === 1 ? 'text-blue-600 font-semibold' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
+                  1
+                </div>
+                <span>Treść</span>
+              </div>
+              <div className="h-0.5 w-16 bg-gray-300"></div>
+              <div className={`flex items-center gap-2 ${currentStep === 2 ? 'text-blue-600 font-semibold' : 'text-gray-400'}`}>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${currentStep === 2 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-600'}`}>
+                  2
+                </div>
+                <span>Zdjęcia</span>
+              </div>
+            </div>
+
+            {currentStep === 1 ? (
+              // STEP 1: Content Generation
+              <form onSubmit={handleCreateDraft} className="space-y-6">
+              {draftSlug && (
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                    ℹ️ <strong>Draft już istnieje!</strong> Slug: <code className="bg-white dark:bg-gray-800 px-2 py-1 rounded">{draftSlug}</code>
+                  </p>
+                  <p className="text-xs text-blue-700 dark:text-blue-300 mt-2">
+                    Możesz edytować treść lub przejść do Kroku 2, aby dodać zdjęcia.
+                  </p>
+                </div>
+              )}
               {/* AI Generation Section */}
               <div className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-700 rounded-lg p-6">
                 <div className="flex items-start gap-4">
@@ -278,6 +504,9 @@ export default function DodajRealizacjePage() {
                       Wypełnij <strong className="text-purple-600 dark:text-purple-400">lokalizację*</strong>, <strong className="text-purple-600 dark:text-purple-400">typ projektu*</strong>, <strong className="text-purple-600 dark:text-purple-400">kategorię*</strong> i opcjonalnie <strong className="text-purple-600 dark:text-purple-400">krótki opis dla AI</strong>, 
                       a AI wygeneruje profesjonalny tytuł, opis, FAQ, słowa kluczowe i wszystkie metadane SEO!
                     </p>
+                    <p className="text-xs text-amber-600 dark:text-amber-400 mb-4">
+                      ⏱️ Generowanie treści zajmuje 30-60 sekund. Proszę czekać...
+                    </p>
                     <Button
                       type="button"
                       onClick={handleGenerateWithAI}
@@ -287,7 +516,7 @@ export default function DodajRealizacjePage() {
                       {isGeneratingAI ? (
                         <>
                           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Generuję treść AI...
+                          Generuję treść AI (może potrwać do 60s)...
                         </>
                       ) : (
                         <>
@@ -334,7 +563,7 @@ export default function DodajRealizacjePage() {
                 </div>
 
                 <div>
-                  <Label htmlFor="title">Tytuł realizacji *</Label>
+                  <Label htmlFor="title">Tytuł realizacji (SEO Title) *</Label>
                   <Input
                     id="title"
                     value={formData.title}
@@ -343,6 +572,23 @@ export default function DodajRealizacjePage() {
                     required
                     className="mt-1"
                   />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    ≤ 60 znaków, zawiera słowo kluczowe + benefit / lokalizację
+                  </p>
+                </div>
+
+                <div>
+                  <Label htmlFor="h1">H1 Nagłówek (opcjonalnie)</Label>
+                  <Input
+                    id="h1"
+                    value={formData.h1}
+                    onChange={(e) => handleInputChange('h1', e.target.value)}
+                    placeholder="np. Profesjonalna Posadzka Garażowa w Warszawie"
+                    className="mt-1"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Zbliżony do Title, ale nie identyczny (50-65 znaków). Jeśli pusty, użyty zostanie Title.
+                  </p>
                 </div>
 
                 <div>
@@ -469,52 +715,93 @@ export default function DodajRealizacjePage() {
                 </div>
               </div>
 
-              {/* Images */}
+              {/* Submit Button for Step 1 */}
+              <div className="flex gap-4">
+                {draftSlug ? (
+                  // If draft already exists, allow moving to Step 2
+                  <Button
+                    type="button"
+                    onClick={() => setCurrentStep(2)}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3"
+                  >
+                    Przejdź do dodawania zdjęć →
+                  </Button>
+                ) : (
+                  // If no draft, create one
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || !formData.title || !formData.description}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Tworzenie draftu...
+                      </>
+                    ) : (
+                      'Utwórz draft i przejdź do dodawania zdjęć →'
+                    )}
+                  </Button>
+                )}
+              </div>
+
+              {submitError && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                  <p className="text-sm text-red-600 dark:text-red-400 whitespace-pre-wrap">
+                    {submitError}
+                  </p>
+                </div>
+              )}
+            </form>
+            ) : (
+              // STEP 2: Image Upload
+              <form onSubmit={handleAddImages} className="space-y-6">
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-green-800 dark:text-green-200">
+                    ✅ <strong>Draft utworzony!</strong> Slug: <code className="bg-white dark:bg-gray-800 px-2 py-1 rounded">{draftSlug}</code>
+                  </p>
+                  <p className="text-xs text-green-700 dark:text-green-300 mt-2">
+                    Teraz dodaj zdjęcia. Zostaną przesłane do folderu: <code className="bg-white dark:bg-gray-800 px-1 rounded">{cloudinaryFolder}</code>
+                  </p>
+                </div>
+
+              {/* Images Section - Step 2 */}
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Zdjęcia *
                 </h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Local file upload */}
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center hover:border-blue-500 transition-colors">
-                    <input
-                      type="file"
-                      id="images"
-                      multiple
-                      accept="image/*"
-                      onChange={handleImageSelect}
-                      className="hidden"
-                    />
-                    <label
-                      htmlFor="images"
-                      className="cursor-pointer flex flex-col items-center space-y-2"
-                    >
-                      <ImagePlus className="w-12 h-12 text-gray-400" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        Z urządzenia
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        Kliknij aby wybrać
-                      </span>
-                    </label>
-                  </div>
-
-                  {/* Google Drive picker */}
-                  <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 flex items-center justify-center">
-                    <GoogleDrivePicker
-                      onFilesPicked={handleGoogleDriveFiles}
-                      disabled={isSubmitting}
-                    />
-                  </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Cloudinary Upload Widget - RECOMMENDED - with specific folder */}
+                  <CloudinaryUploadWidget
+                    onUploadComplete={handleCloudinaryUpload}
+                    maxFiles={20}
+                    disabled={isSubmitting}
+                    folder={cloudinaryFolder}
+                  />
                 </div>
 
                 <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                   Pierwsze zdjęcie będzie zdjęciem głównym
                 </p>
+                
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg p-3">
+                  <p className="text-xs text-blue-800 dark:text-blue-200">
+                    ☁️ <strong>Cloudinary Upload</strong> - Zdjęcia zostaną przesłane bezpośrednio do folderu: <code className="bg-white dark:bg-gray-800 px-1 rounded text-xs">{cloudinaryFolder}</code>
+                  </p>
+                  <p className="text-xs text-blue-700 dark:text-blue-300 mt-1">
+                    Możesz przesłać do 20 zdjęć, każde do 10MB.
+                  </p>
+                </div>
 
                 {imagePreviews.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                  <>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 text-center">
+                      Przesłane: {imagePreviews.length} {imagePreviews.length === 1 ? 'zdjęcie' : 'zdjęcia'}
+                      {cloudinaryImages.length > 0 && ` (${cloudinaryImages.length} z Cloudinary${images.length > 0 ? `, ${images.length} lokalnie` : ''})`}
+                      {images.length > 0 && cloudinaryImages.length === 0 && ` (${(images.reduce((sum, file) => sum + file.size, 0) / 1024 / 1024).toFixed(2)}MB / 4MB)`}
+                    </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
                     {imagePreviews.map((preview, index) => (
                       <div key={index} className="relative group">
                         <div className="relative aspect-square rounded-lg overflow-hidden">
@@ -540,6 +827,7 @@ export default function DodajRealizacjePage() {
                       </div>
                     ))}
                   </div>
+                  </>
                 )}
               </div>
 
@@ -595,7 +883,33 @@ export default function DodajRealizacjePage() {
                     className="mt-1 font-mono text-sm"
                   />
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    💡 AI może wygenerować FAQ automatycznie, lub możesz wprowadzić własne w formacie JSON
+                    💡 AI może wygenerować FAQ automatycznie (min. 4-6 pytań), lub możesz wprowadzić własne w formacie JSON
+                  </p>
+                </div>
+              </div>
+
+              {/* SEO Content Sections */}
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Sekcje treści SEO (opcjonalnie - generowane przez AI)
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Te sekcje zostaną automatycznie wygenerowane przez AI. Możesz je edytować ręcznie w formacie JSON.
+                  Struktura: {`{"intro": "...", "whenToUse": "...", "advantages": "...", "disadvantages": "...", "execution": "...", "durability": "...", "pricing": "...", "commonMistakes": "...", "forWho": "...", "localService": "..."}`}
+                </p>
+
+                <div>
+                  <Label htmlFor="content">Sekcje treści (JSON)</Label>
+                  <Textarea
+                    id="content"
+                    value={formData.content}
+                    onChange={(e) => handleInputChange('content', e.target.value)}
+                    placeholder='{"intro": "Wprowadzenie...", "whenToUse": "Kiedy rozwiązanie ma sens...", ...}'
+                    rows={12}
+                    className="mt-1 font-mono text-sm"
+                  />
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    💡 AI automatycznie wygeneruje wszystkie sekcje treści zoptymalizowane pod SEO (900-1200 słów)
                   </p>
                 </div>
               </div>
@@ -630,42 +944,53 @@ export default function DodajRealizacjePage() {
                 </div>
               </div>
 
-              {/* Submit */}
-              <div className="pt-6 border-t">
-                {submitError && (
-                  <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-800 dark:text-red-200">
-                    <div className="font-semibold mb-2">Błąd</div>
-                    <pre className="whitespace-pre-wrap text-sm font-mono">{submitError}</pre>
-                  </div>
-                )}
-
-                {submitSuccess && (
-                  <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg text-green-800 dark:text-green-200 flex items-center">
-                    <CheckCircle2 className="w-5 h-5 mr-2" />
-                    Realizacja została pomyślnie dodana!
-                  </div>
-                )}
-
+              {/* Submit Button for Step 2 */}
+              <div className="flex gap-4">
+                <Button
+                  type="button"
+                  onClick={() => setCurrentStep(1)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  ← Wróć do edycji treści
+                </Button>
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                  size="lg"
+                  disabled={isSubmitting || cloudinaryImages.length === 0}
+                  className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3"
                 >
                   {isSubmitting ? (
                     <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Dodawanie...
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Zapisywanie zdjęć...
                     </>
                   ) : (
                     <>
-                      <Upload className="w-4 h-4 mr-2" />
-                      Dodaj Realizację
+                      <CheckCircle2 className="w-5 h-5 mr-2" />
+                      Zakończ i zapisz realizację
                     </>
                   )}
                 </Button>
               </div>
+
+              {submitError && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+                  <p className="text-sm text-red-600 dark:text-red-400 whitespace-pre-wrap">
+                    {submitError}
+                  </p>
+                </div>
+              )}
+
+              {submitSuccess && (
+                <div className="p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg flex items-center">
+                  <CheckCircle2 className="w-5 h-5 mr-2 text-green-600 dark:text-green-400" />
+                  <p className="text-sm text-green-600 dark:text-green-400">
+                    ✅ Realizacja została pomyślnie dodana z {cloudinaryImages.length} zdjęciami!
+                  </p>
+                </div>
+              )}
             </form>
+            )}
           </CardContent>
         </Card>
       </div>

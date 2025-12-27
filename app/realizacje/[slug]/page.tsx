@@ -125,7 +125,7 @@ export default async function RealizacjaDetailPage({ params }: Props) {
               </Badge>
               
               <h1 className="text-3xl lg:text-5xl font-bold tracking-tight mb-6">
-                {realizacja.title}
+                {realizacja.h1 || realizacja.title}
               </h1>
 
               <div className="flex flex-wrap gap-6 text-gray-600 mb-8">
@@ -153,9 +153,16 @@ export default async function RealizacjaDetailPage({ params }: Props) {
                 ))}
               </div>
 
-              <p className="text-xl text-gray-700 leading-relaxed">
-                {realizacja.description}
-              </p>
+              {/* Intro Section - SEO optimized */}
+              {realizacja.content?.intro ? (
+                <div className="text-xl text-gray-700 leading-relaxed mb-6">
+                  {realizacja.content.intro}
+                </div>
+              ) : (
+                <p className="text-xl text-gray-700 leading-relaxed">
+                  {realizacja.description}
+                </p>
+              )}
             </div>
           </div>
         </section>
@@ -220,21 +227,113 @@ export default async function RealizacjaDetailPage({ params }: Props) {
                 </ul>
               </div>
 
-              {/* Gallery thumbnails - now part of ImageGallery component */}
-              {realizacja.images.gallery.length > 0 && (
+              {/* SEO Content Sections */}
+              
+              {/* When to Use */}
+              {realizacja.content?.whenToUse && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Kiedy to rozwiązanie ma sens</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.whenToUse}
+                  </div>
+                </div>
+              )}
+
+              {/* Advantages */}
+              {realizacja.content?.advantages && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Zalety rozwiązania</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.advantages}
+                  </div>
+                </div>
+              )}
+
+              {/* Disadvantages */}
+              {realizacja.content?.disadvantages && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Wady i ograniczenia</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.disadvantages}
+                  </div>
+                </div>
+              )}
+
+              {/* Execution */}
+              {realizacja.content?.execution && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Wykonanie krok po kroku</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.execution}
+                  </div>
+                </div>
+              )}
+
+              {/* Durability */}
+              {realizacja.content?.durability && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Trwałość i odporność</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.durability}
+                  </div>
+                </div>
+              )}
+
+              {/* Pricing */}
+              {realizacja.content?.pricing && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Cena – widełki i czynniki wpływające</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.pricing}
+                  </div>
+                </div>
+              )}
+
+              {/* Common Mistakes */}
+              {realizacja.content?.commonMistakes && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Najczęstsze błędy i czego unikać</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.commonMistakes}
+                  </div>
+                </div>
+              )}
+
+              {/* FAQ Section - Enhanced */}
+              {realizacja.faq && realizacja.faq.length > 0 && (
                 <div className="mb-12">
-                  <h2 className="text-2xl font-bold mb-6">Więcej zdjęć</h2>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {realizacja.images.gallery.map((image, index) => (
-                      <div key={index} className="relative aspect-square rounded-lg overflow-hidden shadow-md">
-                        <Image
-                          src={image}
-                          alt={`${realizacja.title} - zdjęcie ${index + 1}`}
-                          fill
-                          className="object-cover hover:scale-105 transition-transform duration-300"
-                        />
+                  <h2 className="text-2xl font-bold mb-6">Najczęściej zadawane pytania (FAQ)</h2>
+                  <div className="space-y-6">
+                    {realizacja.faq.map((item, index) => (
+                      <div key={index} className="bg-gray-50 p-6 rounded-lg">
+                        <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                          {item.question}
+                        </h3>
+                        <p className="text-gray-700 whitespace-pre-line">
+                          {item.answer}
+                        </p>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* For Who */}
+              {realizacja.content?.forWho && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Dla kogo to rozwiązanie</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.forWho}
+                  </div>
+                </div>
+              )}
+
+              {/* Local Service */}
+              {realizacja.content?.localService && (
+                <div className="mb-12 prose prose-lg max-w-none">
+                  <h2 className="text-2xl font-bold mb-4">Lokalizacja usług</h2>
+                  <div className="text-gray-700 whitespace-pre-line">
+                    {realizacja.content.localService}
                   </div>
                 </div>
               )}

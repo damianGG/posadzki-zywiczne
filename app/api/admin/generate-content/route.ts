@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 // Dynamic route - prevent static generation
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
-export const maxDuration = 10; // Default timeout - no image analysis needed
+export const maxDuration = 60; // Increased timeout for comprehensive AI content generation (900-1200 words)
 
 // Initialize OpenAI client only if API key is available
 let openai: OpenAI | null = null;
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       'komercyjna': 'komercyjna'
     };
 
-    const prompt = `Jesteś ekspertem SEO i copywriterem specjalizującym się w posadzkach żywicznych. Wygeneruj kompletny, profesjonalny opis realizacji na podstawie tych informacji:
+    const prompt = `Jesteś ekspertem SEO i copywriterem specjalizującym się w posadzkach żywicznych. Wygeneruj kompletny, profesjonalny opis realizacji zoptymalizowany pod SEO, zgodnie z najlepszymi praktykami Google.
 
 PODSTAWOWE DANE:
 - Lokalizacja: ${location}
@@ -63,25 +63,59 @@ PODSTAWOWE DANE:
 ${area ? `- Powierzchnia: ${area} m²` : ''}
 ${aiPrompt ? `\nDODATKOWY KONTEKST OD UŻYTKOWNIKA:\n${aiPrompt}\n\nUżyj tego opisu aby lepiej zrozumieć specyfikę projektu i wygenerować bardziej precyzyjną treść.` : ''}
 
-Wygeneruj JSON z następującymi polami (wszystkie po polsku, zoptymalizowane pod SEO):
+WYMAGANIA SEO:
+1. Jedno główne słowo kluczowe (1 artykuł = 1 fraza)
+2. Title SEO (≤ 60 znaków, fraza + benefit / lokalizacja)
+3. H1 (zbliżony do Title, ale nie identyczny)
+4. Długość całkowita: min. 900-1200 słów
+5. Naturalne użycie fraz long-tail
+6. Bez keyword stuffing
+7. Zoptymalizowane pod warunki polskie
+
+Wygeneruj JSON z następującymi polami (wszystkie po polsku):
 
 {
-  "title": "SEO-friendly tytuł (50-60 znaków, zawiera lokalizację i typ posadzki)",
-  "description": "Szczegółowy opis realizacji (300-500 słów): wprowadzenie, zakres prac, użyte technologie, efekt końcowy, korzyści dla klienta. Naturalny styl, profesjonalny język, słowa kluczowe wplecione naturalnie.",
+  "title": "SEO-friendly tytuł (50-60 znaków, zawiera lokalizację i typ posadzki + benefit)",
+  "h1": "H1 nagłówek (zbliżony do title, ale nie identyczny, 50-65 znaków)",
+  "mainKeyword": "Główne słowo kluczowe dla tego artykułu",
+  
+  "intro": "Krótki wstęp (3-5 zdań, 200-300 słów). Wprowadzenie do realizacji. Użyj głównej frazy dokładnie 1x. Naturalny, angażujący styl.",
+  
+  "whenToUse": "Sekcja 'Kiedy to rozwiązanie ma sens' (150-200 słów). Opisz problemy klienta, które rozwiązuje ta posadzka. Kiedy warto ją zastosować? Jakie są typowe scenariusze użycia?",
+  
+  "advantages": "Sekcja 'Zalety rozwiązania' (200-250 słów). Szczegółowo opisz korzyści i zalety tego typu posadzki. Co zyskuje klient? Dlaczego to dobre rozwiązanie?",
+  
+  "disadvantages": "Sekcja 'Wady i ograniczenia' (100-150 słów). Uczciwie opisz wady i ograniczenia. Kiedy to rozwiązanie może nie być najlepsze? Co należy wziąć pod uwagę?",
+  
+  "execution": "Sekcja 'Wykonanie krok po kroku' (200-250 słów). Opisz proces wykonania posadzki krok po kroku. Od przygotowania podłoża po wykończenie. Bądź konkretny i techniczny.",
+  
+  "durability": "Sekcja 'Trwałość i odporność' (150-200 słów). Opisz trwałość w warunkach polskich (zmiany temperatury, wilgoć, mróz). Na co jest odporna ta posadzka? Jak długo wytrzyma?",
+  
+  "pricing": "Sekcja 'Cena – widełki + czynniki wpływające' (150-200 słów). Podaj orientacyjne widełki cenowe za m². Opisz czynniki wpływające na cenę (powierzchnia, stan podłoża, technologia, lokalizacja). Nie podawaj konkretnych cen, tylko zakresy.",
+  
+  "commonMistakes": "Sekcja 'Najczęstsze błędy / czego unikać' (150-200 słów). Opisz typowe błędy przy wykonywaniu tego typu posadzek. Czego unikać? Co może pójść nie tak?",
+  
+  "forWho": "Sekcja 'Dla kogo to rozwiązanie, a dla kogo nie' (150-200 słów). Dla kogo ta posadzka jest idealna? Dla kogo może nie być odpowiednia? Bądź konkretny i pomocny.",
+  
+  "localService": "Sekcja 'Lokalizacja usług' (100-150 słów). Opisz obszar świadczenia usług z naciskiem na ${location} i okolice. Wymień konkretne miasta/dzielnice. Lokalny SEO - użyj nazw miejscowości.",
+  
   "technology": "Nazwa konkretnej technologii/systemu użytego do posadzki (np. 'Epoksyd z posypką kwarcową', 'Poliuretan dekoracyjny')",
   "color": "Konkretny kolor/odcień (np. 'Szary RAL 7037', 'Biały perłowy', 'Betonowy szary')",
   "duration": "Czas realizacji (np. '3 dni', '1 tydzień', '2 tygodnie')",
-  "keywords": "10-15 słów kluczowych separated by comma (lokalne SEO, warianty fraz, long-tail)",
-  "tags": "5-7 tagów oddzielonych przecinkiem (krótkie, konkretne)",
-  "features": "5-8 wypunktowanych cech/zalet projektu, każda w nowej linii z prefixem '- '. Konkretne korzyści (np. '- Odporna na chemikalia', '- Antypoślizgowa powierzchnia')",
-  "metaDescription": "Meta opis dla Google (150-160 znaków, zawiera CTA)",
+  
+  "keywords": "15-20 słów kluczowych separated by comma (lokalne SEO, warianty fraz, long-tail keywords)",
+  "tags": "7-10 tagów oddzielonych przecinkiem (krótkie, konkretne)",
+  "features": "8-10 wypunktowanych cech/zalet projektu, każda w nowej linii z prefixem '- '. Konkretne korzyści (np. '- Odporna na chemikalia\\n- Antypoślizgowa powierzchnia')",
+  
+  "metaDescription": "Meta opis dla Google (150-160 znaków, zawiera CTA i główną frazę)",
   "ogTitle": "Tytuł dla social media (55-60 znaków, bardziej chwytliwy niż title)",
   "ogDescription": "Opis dla social media (130-150 znaków, bardziej emocjonalny)",
-  "altText": "Alt text dla głównego zdjęcia (krótki, opisowy, zawiera słowa kluczowe)",
+  "altText": "Alt text dla głównego zdjęcia (krótki, opisowy, zawiera słowa kluczowe i lokalizację)",
+  
   "faq": [
     {
       "question": "Pytanie 1 dotyczące tego typu posadzki/projektu",
-      "answer": "Szczegółowa odpowiedź (2-3 zdania)"
+      "answer": "Szczegółowa odpowiedź (3-4 zdania, konkretna i pomocna)"
     },
     {
       "question": "Pytanie 2",
@@ -90,16 +124,31 @@ Wygeneruj JSON z następującymi polami (wszystkie po polsku, zoptymalizowane po
     {
       "question": "Pytanie 3",
       "answer": "Odpowiedź"
+    },
+    {
+      "question": "Pytanie 4",
+      "answer": "Odpowiedź"
+    },
+    {
+      "question": "Pytanie 5",
+      "answer": "Odpowiedź"
+    },
+    {
+      "question": "Pytanie 6",
+      "answer": "Odpowiedź"
     }
   ]
 }
 
 WAŻNE:
+- Całkowita długość wszystkich sekcji content: min. 900-1200 słów
 - Używaj prawdziwych nazw technologii posadzek żywicznych (epoksydowe, poliuretanowe, etc.)
 - Optymalizuj pod lokalne SEO (użyj nazwy miasta ${location})
 - Pisz naturalnie, unikaj keyword stuffing
-- Bądź konkretny i profesjonalny
+- Bądź konkretny, profesjonalny i pomocny
 - Wszystkie teksty po polsku z polskimi znakami
+- FAQ: minimum 4-6 pytań klientów (wygeneruj 6 dla lepszego SEO)
+- Każda sekcja content powinna być rzeczowa i wartościowa
 - Zwróć tylko czysty JSON, bez markdown`;
 
     const completion = await openai.chat.completions.create({
@@ -120,10 +169,27 @@ WAŻNE:
 
     const generatedContent = JSON.parse(completion.choices[0]?.message?.content || '{}');
     
+    // Structure content sections
+    const contentSections = {
+      intro: generatedContent.intro,
+      whenToUse: generatedContent.whenToUse,
+      advantages: generatedContent.advantages,
+      disadvantages: generatedContent.disadvantages,
+      execution: generatedContent.execution,
+      durability: generatedContent.durability,
+      pricing: generatedContent.pricing,
+      commonMistakes: generatedContent.commonMistakes,
+      forWho: generatedContent.forWho,
+      localService: generatedContent.localService,
+    };
+    
     // Convert FAQ array to JSON string if present
     if (generatedContent.faq && Array.isArray(generatedContent.faq)) {
       generatedContent.faq = JSON.stringify(generatedContent.faq, null, 2);
     }
+    
+    // Add content sections to response
+    generatedContent.content = JSON.stringify(contentSections, null, 2);
 
     return NextResponse.json({
       success: true,
