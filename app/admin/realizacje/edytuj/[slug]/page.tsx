@@ -11,9 +11,11 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Upload, X, Loader2, CheckCircle2, Trash2, ArrowLeft, Star } from 'lucide-react';
 import Link from 'next/link';
 import GoogleDrivePicker from '@/components/admin/google-drive-picker';
+import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
 
 interface FormData {
   title: string;
+  h1: string;
   description: string;
   location: string;
   area: string;
@@ -25,6 +27,8 @@ interface FormData {
   tags: string;
   features: string;
   keywords: string;
+  faq: string;
+  content: string;
   testimonialContent: string;
   testimonialAuthor: string;
   date: string;
@@ -50,6 +54,7 @@ export default function EdytujRealizacjePage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     title: '',
+    h1: '',
     description: '',
     location: '',
     area: '',
@@ -61,6 +66,8 @@ export default function EdytujRealizacjePage() {
     tags: '',
     features: '',
     keywords: '',
+    faq: '',
+    content: '',
     testimonialContent: '',
     testimonialAuthor: '',
     date: '',
@@ -69,10 +76,12 @@ export default function EdytujRealizacjePage() {
   const [existingImages, setExistingImages] = useState<ExistingImage[]>([]);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [newImages, setNewImages] = useState<File[]>([]);
+  const [cloudinaryImages, setCloudinaryImages] = useState<Array<{url: string; publicId: string}>>([]);
   const [newImagePreviews, setNewImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [cloudinaryFolder, setCloudinaryFolder] = useState<string>(''); // For Cloudinary widget
 
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
@@ -93,6 +102,7 @@ export default function EdytujRealizacjePage() {
         const r = data.realizacja;
         setFormData({
           title: r.title || '',
+          h1: r.h1 || '',
           description: r.description || '',
           location: r.location || '',
           area: r.surface_area || '',
@@ -104,10 +114,15 @@ export default function EdytujRealizacjePage() {
           tags: r.tags?.join(', ') || '',
           features: r.features?.join('\n') || '',
           keywords: r.keywords?.join('\n') || '',
+          faq: r.faq ? JSON.stringify(r.faq, null, 2) : '',
+          content: r.content ? JSON.stringify(r.content, null, 2) : '',
           testimonialContent: r.clientTestimonial?.content || '',
           testimonialAuthor: r.clientTestimonial?.author || '',
           date: r.date || r.created_at || '',
         });
+        
+        // Set cloudinary folder from slug
+        setCloudinaryFolder(`realizacje/${slug}`);
 
         // Map images.gallery to existingImages format
         if (r.images?.gallery && Array.isArray(r.images.gallery)) {
@@ -175,6 +190,18 @@ export default function EdytujRealizacjePage() {
   const handleGoogleDriveFiles = (files: File[]) => {
     addNewImages(files);
   };
+  
+  // Handle Cloudinary direct uploads
+  const handleCloudinaryUpload = (results: Array<{url: string; publicId: string}>) => {
+    const newCloudinaryImages = [...cloudinaryImages, ...results];
+    setCloudinaryImages(newCloudinaryImages);
+    
+    // Add preview URLs
+    const newPreviews = results.map(img => img.url);
+    setNewImagePreviews(prev => [...prev, ...newPreviews]);
+    
+    alert(`✅ Przesłano ${results.length} zdjęć do Cloudinary!`);
+  };
 
   const addNewImages = (files: File[]) => {
     setNewImages(prev => [...prev, ...files]);
@@ -219,11 +246,13 @@ export default function EdytujRealizacjePage() {
       uploadData.append('formData', JSON.stringify(formData));
       uploadData.append('slug', slug);
       uploadData.append('imagesToDelete', JSON.stringify(imagesToDelete));
+      uploadData.append('cloudinaryImages', JSON.stringify(cloudinaryImages));
 
       console.log('Submitting update with:', {
         slug,
         formData,
         newImagesCount: newImages.length,
+        cloudinaryImagesCount: cloudinaryImages.length,
         existingImagesCount: existingImages.length,
         imagesToDeleteCount: imagesToDelete.length,
       });
@@ -313,7 +342,7 @@ export default function EdytujRealizacjePage() {
                 <h3 className="font-semibold text-lg">Podstawowe informacje</h3>
                 
                 <div>
-                  <Label htmlFor="title">Tytuł realizacji *</Label>
+                  <Label htmlFor="title">Tytuł realizacji (Title SEO, ≤60 znaków) *</Label>
                   <Input
                     id="title"
                     value={formData.title}
@@ -321,6 +350,18 @@ export default function EdytujRealizacjePage() {
                     placeholder="np. Posadzka żywiczna w garażu - Warszawa"
                     required
                   />
+                  <p className="text-xs text-gray-500 mt-1">{formData.title.length}/60 znaków</p>
+                </div>
+
+                <div>
+                  <Label htmlFor="h1">Nagłówek H1 (50-65 znaków, różny od Title)</Label>
+                  <Input
+                    id="h1"
+                    value={formData.h1}
+                    onChange={(e) => handleInputChange('h1', e.target.value)}
+                    placeholder="np. Profesjonalna Posadzka Garażowa - Warszawa"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">{formData.h1.length}/65 znaków</p>
                 </div>
 
                 <div>
@@ -479,7 +520,21 @@ export default function EdytujRealizacjePage() {
               <div className="space-y-4">
                 <h3 className="font-semibold text-lg">Dodaj nowe zdjęcia</h3>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Cloudinary upload - RECOMMENDED */}
+                  <div className="border-2 border-dashed border-blue-300 dark:border-blue-600 rounded-lg p-6 bg-blue-50 dark:bg-blue-900/10">
+                    <div className="flex flex-col items-center">
+                      <CloudinaryUploadWidget
+                        onUploadComplete={handleCloudinaryUpload}
+                        folder={cloudinaryFolder}
+                        disabled={isSubmitting}
+                      />
+                      <span className="text-xs text-blue-600 dark:text-blue-400 mt-2 text-center">
+                        ☁️ Zalecane (bez limitów)
+                      </span>
+                    </div>
+                  </div>
+                
                   {/* Local file upload */}
                   <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6">
                     <input
@@ -499,7 +554,7 @@ export default function EdytujRealizacjePage() {
                         Z urządzenia
                       </span>
                       <span className="text-xs text-gray-500">
-                        Kliknij aby wybrać
+                        Max 4MB łącznie
                       </span>
                     </label>
                   </div>
@@ -600,6 +655,32 @@ export default function EdytujRealizacjePage() {
                     placeholder="Każde słowo w nowej linii"
                     rows={3}
                   />
+                </div>
+                
+                <div>
+                  <Label htmlFor="content">Treść SEO (JSON, 10 sekcji)</Label>
+                  <Textarea
+                    id="content"
+                    value={formData.content}
+                    onChange={(e) => handleInputChange('content', e.target.value)}
+                    placeholder='{"intro": "...", "whenToUse": "...", ...}'
+                    rows={6}
+                    className="font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Format JSON z sekcjami: intro, whenToUse, advantages, disadvantages, execution, durability, pricing, commonMistakes, forWho, localService</p>
+                </div>
+                
+                <div>
+                  <Label htmlFor="faq">FAQ (JSON, min 4-6 pytań)</Label>
+                  <Textarea
+                    id="faq"
+                    value={formData.faq}
+                    onChange={(e) => handleInputChange('faq', e.target.value)}
+                    placeholder='[{"question": "...", "answer": "..."}, ...]'
+                    rows={6}
+                    className="font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Format JSON: tablica obiektów z polami question i answer</p>
                 </div>
               </div>
 
