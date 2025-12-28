@@ -16,16 +16,26 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   
-  // Detect if device is mobile
+  // Detect if device is mobile using matchMedia for better performance
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    
+    const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      setIsMobile(e.matches);
     };
     
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
+    // Set initial value
+    handleChange(mediaQuery);
     
-    return () => window.removeEventListener('resize', checkMobile);
+    // Listen for changes (modern browsers)
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
+    }
   }, []);
   
   // Combine main image with gallery images, filter out empty strings and duplicates
