@@ -154,9 +154,9 @@ async function publishToGoogleBusiness(post: any): Promise<{ success: boolean; u
 
     // Initialize Google API client
     const oauth2Client = new google.auth.OAuth2(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI
+      process.env.GOOGLE_BUSINESS_CLIENT_ID,
+      process.env.GOOGLE_BUSINESS_CLIENT_SECRET,
+      process.env.GOOGLE_BUSINESS_REDIRECT_URI
     );
 
     oauth2Client.setCredentials({
@@ -225,9 +225,9 @@ async function publishToGoogleBusiness(post: any): Promise<{ success: boolean; u
 async function refreshGoogleToken(tokenData: any): Promise<{ success: boolean; access_token?: string; error?: string }> {
   try {
     const oauth2Client = new google.auth.OAuth2(
-      process.env.GOOGLE_CLIENT_ID,
-      process.env.GOOGLE_CLIENT_SECRET,
-      process.env.GOOGLE_REDIRECT_URI
+      process.env.GOOGLE_BUSINESS_CLIENT_ID,
+      process.env.GOOGLE_BUSINESS_CLIENT_SECRET,
+      process.env.GOOGLE_BUSINESS_REDIRECT_URI
     );
 
     oauth2Client.setCredentials({
