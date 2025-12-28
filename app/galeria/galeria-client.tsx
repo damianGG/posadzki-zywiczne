@@ -162,24 +162,37 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     if (!viewer) return;
 
     let touchStartY = 0;
-    let startDragOffset = 0;
+    let hasMoved = false;
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
-      startDragOffset = dragOffset;
-      setIsDragging(true);
+      hasMoved = false;
+      // Don't set isDragging here - wait for actual movement
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (!isDragging) return;
       e.preventDefault(); // Prevent page scroll
       const currentY = e.touches[0].clientY;
       const diff = currentY - touchStartY;
-      // Apply drag with some resistance for better feel
-      setDragOffset(startDragOffset + diff * 0.8);
+      
+      // Only start dragging if moved more than 5px (prevents accidental drags)
+      if (!hasMoved && Math.abs(diff) > 5) {
+        hasMoved = true;
+        setIsDragging(true);
+      }
+      
+      if (hasMoved) {
+        // Apply drag with some resistance for better feel
+        setDragOffset(diff * 0.8);
+      }
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
+      if (!hasMoved) {
+        // No movement, just a tap
+        return;
+      }
+      
       setIsDragging(false);
       const swipeDistance = dragOffset;
       
@@ -187,17 +200,20 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
       const threshold = window.innerHeight * 0.3;
       
       if (Math.abs(swipeDistance) > threshold) {
+        // Swipe direction: positive dragOffset = finger moved down (previous)
+        //                  negative dragOffset = finger moved up (next)
         if (swipeDistance < 0) {
-          // Swiped up - show next
+          // Swiped up - show next (increase slide number)
           goToNext();
         } else {
-          // Swiped down - show previous
+          // Swiped down - show previous (decrease slide number)
           goToPrevious();
         }
       }
       
       // Reset drag offset
       setDragOffset(0);
+      hasMoved = false;
     };
 
     viewer.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -209,7 +225,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
       viewer.removeEventListener('touchmove', handleTouchMove);
       viewer.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isOpen, isMobile, goToNext, goToPrevious, dragOffset, isDragging]);
+  }, [isOpen, isMobile, goToNext, goToPrevious, dragOffset]);
 
   // Preload adjacent images for smoother transitions
   // Preload up to 5 images ahead and 1 behind for optimal experience
