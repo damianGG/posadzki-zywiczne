@@ -10,6 +10,26 @@ export interface CloudinaryLoaderParams {
 }
 
 /**
+ * Helper function to parse Cloudinary URLs
+ * Returns null if not a valid Cloudinary upload URL
+ */
+function parseCloudinaryUrl(src: string): { baseUrl: string; imagePath: string } | null {
+  if (!src.includes('res.cloudinary.com')) {
+    return null;
+  }
+
+  const urlParts = src.split('/upload/');
+  if (urlParts.length !== 2) {
+    return null;
+  }
+
+  return {
+    baseUrl: urlParts[0],
+    imagePath: urlParts[1]
+  };
+}
+
+/**
  * Helper function to build quality transformations
  */
 function buildQualityTransformations(quality?: number): string[] {
@@ -30,17 +50,9 @@ function buildQualityTransformations(quality?: number): string[] {
  * Only applies transformations to Cloudinary URLs
  */
 export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoaderParams): string {
-  // If it's not a Cloudinary URL, return as-is
-  if (!src.includes('res.cloudinary.com')) {
-    return src;
-  }
-
-  // Parse the Cloudinary URL
-  // Format: https://res.cloudinary.com/cloud_name/image/upload/...
-  const urlParts = src.split('/upload/');
+  const parsedUrl = parseCloudinaryUrl(src);
   
-  if (urlParts.length !== 2) {
-    // Not a standard Cloudinary upload URL, return as-is
+  if (!parsedUrl) {
     return src;
   }
 
@@ -63,7 +75,7 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
   const transformString = transformations.join(',');
   
   // Rebuild the URL with transformations
-  return `${urlParts[0]}/upload/${transformString}/${urlParts[1]}`;
+  return `${parsedUrl.baseUrl}/upload/${transformString}/${parsedUrl.imagePath}`;
 }
 
 /**
@@ -86,12 +98,9 @@ export function getOptimizedCloudinaryUrl(
     format?: 'auto' | 'webp' | 'avif' | 'jpg' | 'png';
   } = {}
 ): string {
-  if (!isCloudinaryUrl(src)) {
-    return src;
-  }
-
-  const urlParts = src.split('/upload/');
-  if (urlParts.length !== 2) {
+  const parsedUrl = parseCloudinaryUrl(src);
+  
+  if (!parsedUrl) {
     return src;
   }
 
@@ -116,5 +125,5 @@ export function getOptimizedCloudinaryUrl(
   transformations.push('dpr_auto');
 
   const transformString = transformations.join(',');
-  return `${urlParts[0]}/upload/${transformString}/${urlParts[1]}`;
+  return `${parsedUrl.baseUrl}/upload/${transformString}/${parsedUrl.imagePath}`;
 }

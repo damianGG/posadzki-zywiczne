@@ -224,27 +224,32 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
           {/* Thumbnails - hidden on mobile for better viewing experience */}
           {allImages.length > 1 && (
             <div className="hidden md:flex absolute bottom-4 left-1/2 transform -translate-x-1/2 gap-2 overflow-x-auto max-w-full px-4">
-              {allImages.map((image, index) => (
-                <button
-                  key={index}
-                  className={`relative w-16 h-16 rounded overflow-hidden flex-shrink-0 ${
-                    index === currentIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-100'
-                  } transition-opacity`}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setCurrentIndex(index);
-                  }}
-                >
-                  <Image
-                    src={image}
-                    alt={`Miniatura ${index + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="64px"
-                    quality={80}
-                  />
-                </button>
-              ))}
+              {allImages.map((image, index) => {
+                const useCloudinary = isCloudinaryUrl(image);
+                return (
+                  <button
+                    key={index}
+                    className={`relative w-16 h-16 rounded overflow-hidden flex-shrink-0 ${
+                      index === currentIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-100'
+                    } transition-opacity`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setCurrentIndex(index);
+                    }}
+                  >
+                    <Image
+                      src={image}
+                      alt={`Miniatura ${index + 1}`}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                      quality={80}
+                      loader={useCloudinary ? cloudinaryLoader : undefined}
+                      unoptimized={!useCloudinary}
+                    />
+                  </button>
+                );
+              })}
             </div>
           )}
         </div>
