@@ -96,6 +96,7 @@ export function getOptimizedCloudinaryUrl(
     quality?: number;
     crop?: 'fill' | 'fit' | 'scale' | 'limit';
     format?: 'auto' | 'webp' | 'avif' | 'jpg' | 'png';
+    dpr?: 'auto' | number | false;
   } = {}
 ): string {
   const parsedUrl = parseCloudinaryUrl(src);
@@ -121,8 +122,14 @@ export function getOptimizedCloudinaryUrl(
     transformations.push(`f_${options.format}`);
   }
 
-  // DPR auto for retina displays
-  transformations.push('dpr_auto');
+  // DPR transformation (default: auto for retina displays)
+  if (options.dpr !== false) {
+    if (options.dpr === 'auto' || options.dpr === undefined) {
+      transformations.push('dpr_auto');
+    } else if (typeof options.dpr === 'number') {
+      transformations.push(`dpr_${options.dpr}`);
+    }
+  }
 
   const transformString = transformations.join(',');
   return `${parsedUrl.baseUrl}/upload/${transformString}/${parsedUrl.imagePath}`;

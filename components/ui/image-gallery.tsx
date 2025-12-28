@@ -21,6 +21,11 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
     return [...new Set(combined)].filter(Boolean);
   }, [mainImage, images]);
 
+  // Pre-compute which images are Cloudinary URLs to avoid repeated checks
+  const imageCloudinaryStatus = useMemo(() => {
+    return allImages.map(img => isCloudinaryUrl(img));
+  }, [allImages]);
+
   const openGallery = (index: number) => {
     if (allImages.length === 0) return;
     setCurrentIndex(index);
@@ -188,23 +193,16 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
             className="relative w-full h-full mx-0 px-12 md:max-w-5xl md:max-h-[80vh] md:mx-16 md:px-0"
             onClick={(e) => e.stopPropagation()}
           >
-            {(() => {
-              const currentImageUrl = allImages[currentIndex];
-              const useCloudinary = isCloudinaryUrl(currentImageUrl);
-              
-              return (
-                <Image
-                  src={currentImageUrl}
-                  alt={`${title} - zdjęcie ${currentIndex + 1}`}
-                  fill
-                  className="object-contain"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
-                  quality={95}
-                  loader={useCloudinary ? cloudinaryLoader : undefined}
-                  unoptimized={!useCloudinary}
-                />
-              );
-            })()}
+            <Image
+              src={allImages[currentIndex]}
+              alt={`${title} - zdjęcie ${currentIndex + 1}`}
+              fill
+              className="object-contain"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
+              quality={95}
+              loader={imageCloudinaryStatus[currentIndex] ? cloudinaryLoader : undefined}
+              unoptimized={!imageCloudinaryStatus[currentIndex]}
+            />
           </div>
 
           {/* Next button */}
@@ -224,32 +222,29 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
           {/* Thumbnails - hidden on mobile for better viewing experience */}
           {allImages.length > 1 && (
             <div className="hidden md:flex absolute bottom-4 left-1/2 transform -translate-x-1/2 gap-2 overflow-x-auto max-w-full px-4">
-              {allImages.map((image, index) => {
-                const useCloudinary = isCloudinaryUrl(image);
-                return (
-                  <button
-                    key={index}
-                    className={`relative w-16 h-16 rounded overflow-hidden flex-shrink-0 ${
-                      index === currentIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-100'
-                    } transition-opacity`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setCurrentIndex(index);
-                    }}
-                  >
-                    <Image
-                      src={image}
-                      alt={`Miniatura ${index + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="64px"
-                      quality={80}
-                      loader={useCloudinary ? cloudinaryLoader : undefined}
-                      unoptimized={!useCloudinary}
-                    />
-                  </button>
-                );
-              })}
+              {allImages.map((image, index) => (
+                <button
+                  key={index}
+                  className={`relative w-16 h-16 rounded overflow-hidden flex-shrink-0 ${
+                    index === currentIndex ? 'ring-2 ring-white' : 'opacity-60 hover:opacity-100'
+                  } transition-opacity`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCurrentIndex(index);
+                  }}
+                >
+                  <Image
+                    src={image}
+                    alt={`Miniatura ${index + 1}`}
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                    quality={80}
+                    loader={imageCloudinaryStatus[index] ? cloudinaryLoader : undefined}
+                    unoptimized={!imageCloudinaryStatus[index]}
+                  />
+                </button>
+              ))}
             </div>
           )}
         </div>
