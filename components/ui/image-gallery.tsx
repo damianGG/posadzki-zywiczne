@@ -90,6 +90,8 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           priority
+          quality={95}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
         />
         {allImages.length > 1 && (
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
@@ -117,6 +119,7 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                  quality={85}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
               </div>
@@ -137,6 +140,7 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
                   fill
                   className="object-cover"
                   sizes="128px"
+                  quality={85}
                 />
               </div>
             ))}
@@ -188,7 +192,8 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
               alt={`${title} - zdjęcie ${currentIndex + 1}`}
               fill
               className="object-contain"
-              sizes="(max-width: 1200px) 100vw, 1200px"
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
+              quality={95}
             />
           </div>
 
@@ -226,6 +231,7 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
                     fill
                     className="object-cover"
                     sizes="64px"
+                    quality={80}
                   />
                 </button>
               ))}
