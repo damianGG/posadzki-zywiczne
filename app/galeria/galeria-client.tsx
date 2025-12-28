@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import Image from 'next/image';
+import NextImage from 'next/image';
 import Link from 'next/link';
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 import { getCategoryDisplayName } from '@/lib/realizacje-helpers';
@@ -194,7 +194,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
                 className="relative aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer group"
                 onClick={() => openGallery(index)}
               >
-                <Image
+                <NextImage
                   src={image.url}
                   alt={image.realizacjaTitle}
                   fill
@@ -292,7 +292,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
                 }}
                 className="absolute inset-0"
               >
-                <Image
+                <NextImage
                   src={currentImage.url}
                   alt={currentImage.realizacjaTitle}
                   fill
