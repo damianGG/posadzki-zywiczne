@@ -33,6 +33,23 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     return images.map(img => isCloudinaryUrl(img.url));
   }, [images]);
 
+  // Generate tiny blur placeholder for Cloudinary images
+  const getBlurDataURL = useCallback((url: string, isCloudinary: boolean) => {
+    if (!isCloudinary) return undefined;
+    
+    // Generate a tiny 10px wide blurred version for placeholder
+    try {
+      const loader = cloudinaryLoader({
+        src: url,
+        width: 10,
+        quality: 10
+      });
+      return loader;
+    } catch {
+      return undefined;
+    }
+  }, []);
+
   // Detect if device is mobile
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 767px)');
@@ -201,6 +218,9 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                   quality={75}
+                  loading={index < 8 ? "eager" : "lazy"}
+                  placeholder={imageCloudinaryStatus[index] ? "blur" : "empty"}
+                  blurDataURL={getBlurDataURL(image.url, imageCloudinaryStatus[index])}
                   loader={imageCloudinaryStatus[index] ? cloudinaryLoader : undefined}
                   unoptimized={!imageCloudinaryStatus[index]}
                 />
