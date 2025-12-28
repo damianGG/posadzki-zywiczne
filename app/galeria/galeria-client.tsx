@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
@@ -44,6 +44,9 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   const [showSwipeHint, setShowSwipeHint] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
+  
+  // Ref for the fullscreen viewer container
+  const viewerRef = useRef<HTMLDivElement>(null);
 
   // Pre-compute which images are Cloudinary URLs to avoid repeated checks
   const imageCloudinaryStatus = useMemo(() => {
@@ -154,6 +157,9 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   // Handle touch swipe for mobile with continuous preview
   useEffect(() => {
     if (!isOpen || !isMobile) return;
+    
+    const viewer = viewerRef.current;
+    if (!viewer) return;
 
     let touchStartY = 0;
     let startDragOffset = 0;
@@ -166,6 +172,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
 
     const handleTouchMove = (e: TouchEvent) => {
       if (!isDragging) return;
+      e.preventDefault(); // Prevent page scroll
       const currentY = e.touches[0].clientY;
       const diff = currentY - touchStartY;
       // Apply drag with some resistance for better feel
@@ -193,14 +200,14 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
       setDragOffset(0);
     };
 
-    window.addEventListener('touchstart', handleTouchStart, { passive: true });
-    window.addEventListener('touchmove', handleTouchMove, { passive: true });
-    window.addEventListener('touchend', handleTouchEnd, { passive: true });
+    viewer.addEventListener('touchstart', handleTouchStart, { passive: true });
+    viewer.addEventListener('touchmove', handleTouchMove, { passive: false });
+    viewer.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
-      window.removeEventListener('touchstart', handleTouchStart);
-      window.removeEventListener('touchmove', handleTouchMove);
-      window.removeEventListener('touchend', handleTouchEnd);
+      viewer.removeEventListener('touchstart', handleTouchStart);
+      viewer.removeEventListener('touchmove', handleTouchMove);
+      viewer.removeEventListener('touchend', handleTouchEnd);
     };
   }, [isOpen, isMobile, goToNext, goToPrevious, dragOffset, isDragging]);
 
@@ -298,6 +305,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
       {/* Fullscreen Viewer - Vertical Scroll (TikTok style) */}
       {isOpen && (
         <div 
+          ref={viewerRef}
           className="fixed inset-0 z-50 bg-black flex items-center justify-center"
           onClick={closeGallery}
         >
