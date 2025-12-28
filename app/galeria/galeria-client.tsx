@@ -182,7 +182,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
         >
           {/* Close button */}
           <button
-            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-20"
+            className="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-20 bg-black/50 backdrop-blur-sm p-2 rounded-full"
             onClick={closeGallery}
             aria-label="Zamknij galerię"
           >
@@ -190,18 +190,18 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
           </button>
 
           {/* Image counter */}
-          <div className="absolute top-4 left-4 text-white text-sm md:text-base z-20">
+          <div className="absolute top-4 left-4 text-white text-sm md:text-base z-20 bg-black/50 backdrop-blur-sm px-3 py-2 rounded-lg">
             {currentIndex + 1} / {images.length}
           </div>
 
           {/* Image info - bottom left */}
-          <div className="absolute bottom-4 left-4 text-white z-20 max-w-xs md:max-w-md">
+          <div className="absolute bottom-4 left-4 right-4 md:right-auto text-white z-20 max-w-xs md:max-w-md bg-black/50 backdrop-blur-sm p-3 rounded-lg">
             <Link 
               href={`/realizacje/${currentImage.realizacjaSlug}`}
               className="hover:underline"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-sm md:text-base font-semibold mb-1">
+              <h3 className="text-sm md:text-base font-semibold mb-2">
                 {currentImage.realizacjaTitle}
               </h3>
             </Link>
@@ -212,14 +212,14 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
 
           {/* Previous/Up button */}
           <button
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[60%] md:top-4 md:left-1/2 md:transform md:-translate-x-1/2 md:translate-y-0 text-white hover:text-gray-300 transition-colors z-20 p-2 hover:bg-white/10 rounded-full"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[calc(50%+100px)] md:top-8 md:left-1/2 md:transform md:-translate-x-1/2 md:translate-y-0 text-white hover:text-gray-300 transition-colors z-20 p-3 hover:bg-white/20 rounded-full backdrop-blur-sm"
             onClick={(e) => {
               e.stopPropagation();
               goToPrevious();
             }}
             aria-label="Poprzednie zdjęcie"
           >
-            <ChevronUp className="w-6 h-6 md:w-8 md:h-8" />
+            <ChevronUp className="w-8 h-8 md:w-8 md:h-8" />
           </button>
 
           {/* Current image */}
@@ -231,7 +231,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
               src={currentImage.url}
               alt={currentImage.realizacjaTitle}
               fill
-              className="object-contain md:object-contain"
+              className={isMobile ? "object-cover" : "object-contain"}
               sizes="100vw"
               quality={95}
               priority
@@ -240,14 +240,14 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
 
           {/* Next/Down button */}
           <button
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-[60%] md:bottom-4 md:left-1/2 md:top-auto md:transform md:-translate-x-1/2 md:translate-y-0 text-white hover:text-gray-300 transition-colors z-20 p-2 hover:bg-white/10 rounded-full"
+            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-[calc(50%+100px)] md:bottom-8 md:left-1/2 md:top-auto md:transform md:-translate-x-1/2 md:translate-y-0 text-white hover:text-gray-300 transition-colors z-20 p-3 hover:bg-white/20 rounded-full backdrop-blur-sm"
             onClick={(e) => {
               e.stopPropagation();
               goToNext();
             }}
             aria-label="Następne zdjęcie"
           >
-            <ChevronDown className="w-6 h-6 md:w-8 md:h-8" />
+            <ChevronDown className="w-8 h-8 md:w-8 md:h-8" />
           </button>
         </div>
       )}
