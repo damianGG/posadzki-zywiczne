@@ -139,13 +139,19 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     if (!isOpen) return;
 
     const preloadImage = (index: number) => {
-      if (index < 0 || index >= images.length) return;
+      // Handle wrap-around for circular navigation
+      let wrappedIndex = index;
+      if (index < 0) {
+        wrappedIndex = images.length - 1;
+      } else if (index >= images.length) {
+        wrappedIndex = 0;
+      }
       
-      const img = new window.Image();
-      const imageUrl = images[index].url;
+      const img = new Image();
+      const imageUrl = images[wrappedIndex].url;
       
       // Use Cloudinary loader for optimization if applicable
-      if (imageCloudinaryStatus[index]) {
+      if (imageCloudinaryStatus[wrappedIndex]) {
         const loader = isMobile ? cloudinaryLoaderMobile : cloudinaryLoader;
         img.src = loader({ 
           src: imageUrl, 
@@ -157,8 +163,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
       }
     };
 
-    // Preload current, next, and previous images
-    preloadImage(currentIndex);
+    // Preload next and previous images (current is already loaded with priority)
     preloadImage(currentIndex + 1);
     preloadImage(currentIndex - 1);
   }, [currentIndex, isOpen, images, imageCloudinaryStatus, isMobile]);
@@ -294,7 +299,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
                   className={isMobile ? "object-cover" : "object-contain"}
                   sizes="100vw"
                   quality={80}
-                  priority={currentIndex === 0}
+                  priority
                   loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
                   unoptimized={!imageCloudinaryStatus[currentIndex]}
                 />
