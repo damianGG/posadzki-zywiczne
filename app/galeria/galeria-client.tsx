@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 import { getCategoryDisplayName } from '@/lib/realizacje-helpers';
 import { Badge } from '@/components/ui/badge';
-import { motion, AnimatePresence } from 'framer-motion';
 import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib/cloudinary-loader';
 
 import { RealizacjaCategory } from '@/types/realizacje';
@@ -26,7 +25,6 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [direction, setDirection] = useState(0); // Track swipe direction for animation
 
   // Pre-compute which images are Cloudinary URLs to avoid repeated checks
   const imageCloudinaryStatus = useMemo(() => {
@@ -74,12 +72,10 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   };
 
   const goToPrevious = useCallback(() => {
-    setDirection(-1);
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   }, [images.length]);
 
   const goToNext = useCallback(() => {
-    setDirection(1);
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   }, [images.length]);
 
@@ -285,46 +281,23 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
             <ChevronUp className="w-8 h-8 md:w-8 md:h-8" />
           </button>
 
-          {/* Current image with TikTok-style animation */}
+          {/* Current image - instant transitions without animations */}
           <div 
-            className="relative w-full h-full overflow-hidden"
+            className="relative w-full h-full"
             onClick={(e) => e.stopPropagation()}
           >
-            <AnimatePresence initial={false} custom={direction} mode="wait">
-              <motion.div
-                key={currentIndex}
-                custom={direction}
-                initial={{ 
-                  y: direction > 0 ? '100%' : '-100%',
-                  opacity: 0
-                }}
-                animate={{ 
-                  y: 0,
-                  opacity: 1
-                }}
-                exit={{ 
-                  y: direction > 0 ? '-100%' : '100%',
-                  opacity: 0
-                }}
-                transition={{
-                  y: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 }
-                }}
-                className="absolute inset-0"
-              >
-                <NextImage
-                  src={currentImage.url}
-                  alt={currentImage.realizacjaTitle}
-                  fill
-                  className={isMobile ? "object-cover" : "object-contain"}
-                  sizes="100vw"
-                  quality={80}
-                  priority
-                  loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
-                  unoptimized={!imageCloudinaryStatus[currentIndex]}
-                />
-              </motion.div>
-            </AnimatePresence>
+            <NextImage
+              key={currentIndex}
+              src={currentImage.url}
+              alt={currentImage.realizacjaTitle}
+              fill
+              className={isMobile ? "object-cover" : "object-contain"}
+              sizes="100vw"
+              quality={80}
+              priority
+              loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
+              unoptimized={!imageCloudinaryStatus[currentIndex]}
+            />
           </div>
 
           {/* Next/Down button */}
