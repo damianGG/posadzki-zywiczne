@@ -42,6 +42,8 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Pre-compute which images are Cloudinary URLs to avoid repeated checks
   const imageCloudinaryStatus = useMemo(() => {
@@ -149,24 +151,36 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     };
   }, [isOpen]);
 
-  // Handle touch swipe for mobile
+  // Handle touch swipe for mobile with continuous preview
   useEffect(() => {
     if (!isOpen || !isMobile) return;
 
     let touchStartY = 0;
-    let touchEndY = 0;
+    let startDragOffset = 0;
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
+      startDragOffset = dragOffset;
+      setIsDragging(true);
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+      const currentY = e.touches[0].clientY;
+      const diff = currentY - touchStartY;
+      // Apply drag with some resistance for better feel
+      setDragOffset(startDragOffset + diff * 0.8);
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      touchEndY = e.changedTouches[0].clientY;
-      const swipeDistance = touchStartY - touchEndY;
+      setIsDragging(false);
+      const swipeDistance = dragOffset;
       
-      // Minimum swipe distance of 50px
-      if (Math.abs(swipeDistance) > 50) {
-        if (swipeDistance > 0) {
+      // Threshold for switching images (30% of screen height)
+      const threshold = window.innerHeight * 0.3;
+      
+      if (Math.abs(swipeDistance) > threshold) {
+        if (swipeDistance < 0) {
           // Swiped up - show next
           goToNext();
         } else {
@@ -174,18 +188,24 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
           goToPrevious();
         }
       }
+      
+      // Reset drag offset
+      setDragOffset(0);
     };
 
-    window.addEventListener('touchstart', handleTouchStart);
-    window.addEventListener('touchend', handleTouchEnd);
+    window.addEventListener('touchstart', handleTouchStart, { passive: true });
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
+    window.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
       window.removeEventListener('touchstart', handleTouchStart);
+      window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isOpen, isMobile, goToNext, goToPrevious]);
+  }, [isOpen, isMobile, goToNext, goToPrevious, dragOffset, isDragging]);
 
   // Preload adjacent images for smoother transitions
+  // Preload up to 5 images ahead and 1 behind for optimal experience
   useEffect(() => {
     if (!isOpen) return;
 
@@ -214,9 +234,13 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
       }
     };
 
-    // Preload next and previous images (current is already loaded with priority)
-    preloadImage(currentIndex + 1);
+    // Preload previous image
     preloadImage(currentIndex - 1);
+    
+    // Preload next 5 images for seamless scrolling
+    for (let i = 1; i <= 5; i++) {
+      preloadImage(currentIndex + i);
+    }
   }, [currentIndex, isOpen, images, imageCloudinaryStatus, isMobile]);
 
   if (images.length === 0) {
@@ -325,23 +349,63 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
             </div>
           )}
 
-          {/* Current image - instant transitions without animations */}
+          {/* Continuous scroll container - shows current and adjacent images */}
           <div 
-            className="relative w-full h-full"
+            className="relative w-full h-full overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <NextImage
-              key={currentIndex}
-              src={currentImage.url}
-              alt={currentImage.realizacjaTitle}
-              fill
-              className={isMobile ? "object-cover" : "object-contain"}
-              sizes="100vw"
-              quality={80}
-              priority
-              loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
-              unoptimized={!imageCloudinaryStatus[currentIndex]}
-            />
+            <div 
+              className="absolute w-full"
+              style={{
+                height: '300%',
+                top: '-100%',
+                transform: `translateY(${dragOffset}px)`,
+                transition: isDragging ? 'none' : 'transform 0.3s ease-out'
+              }}
+            >
+              {/* Previous image */}
+              <div className="absolute top-0 left-0 w-full h-1/3">
+                <NextImage
+                  src={images[(currentIndex - 1 + images.length) % images.length].url}
+                  alt={images[(currentIndex - 1 + images.length) % images.length].realizacjaTitle}
+                  fill
+                  className={isMobile ? "object-cover" : "object-contain"}
+                  sizes="100vw"
+                  quality={80}
+                  loader={imageCloudinaryStatus[(currentIndex - 1 + images.length) % images.length] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
+                  unoptimized={!imageCloudinaryStatus[(currentIndex - 1 + images.length) % images.length]}
+                />
+              </div>
+
+              {/* Current image */}
+              <div className="absolute top-1/3 left-0 w-full h-1/3">
+                <NextImage
+                  src={currentImage.url}
+                  alt={currentImage.realizacjaTitle}
+                  fill
+                  className={isMobile ? "object-cover" : "object-contain"}
+                  sizes="100vw"
+                  quality={80}
+                  priority
+                  loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
+                  unoptimized={!imageCloudinaryStatus[currentIndex]}
+                />
+              </div>
+
+              {/* Next image */}
+              <div className="absolute top-2/3 left-0 w-full h-1/3">
+                <NextImage
+                  src={images[(currentIndex + 1) % images.length].url}
+                  alt={images[(currentIndex + 1) % images.length].realizacjaTitle}
+                  fill
+                  className={isMobile ? "object-cover" : "object-contain"}
+                  sizes="100vw"
+                  quality={80}
+                  loader={imageCloudinaryStatus[(currentIndex + 1) % images.length] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
+                  unoptimized={!imageCloudinaryStatus[(currentIndex + 1) % images.length]}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
