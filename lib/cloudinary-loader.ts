@@ -10,6 +10,22 @@ export interface CloudinaryLoaderParams {
 }
 
 /**
+ * Helper function to build quality transformations
+ */
+function buildQualityTransformations(quality?: number): string[] {
+  const transformations: string[] = [];
+  
+  if (quality) {
+    transformations.push(`q_${quality}`);
+  } else {
+    // Use auto quality for best results
+    transformations.push('q_auto:best');
+  }
+  
+  return transformations;
+}
+
+/**
  * Default Cloudinary loader function for Next.js Image component
  * Only applies transformations to Cloudinary URLs
  */
@@ -34,13 +50,8 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
   // Width transformation for responsive images
   transformations.push(`w_${width}`);
   
-  // Quality transformation (if specified)
-  if (quality) {
-    transformations.push(`q_${quality}`);
-  } else {
-    // Use auto quality for best results
-    transformations.push('q_auto:best');
-  }
+  // Quality transformations
+  transformations.push(...buildQualityTransformations(quality));
   
   // Auto format (WebP/AVIF when supported by browser)
   transformations.push('f_auto');
@@ -88,7 +99,10 @@ export function getOptimizedCloudinaryUrl(
 
   if (options.width) transformations.push(`w_${options.width}`);
   if (options.height) transformations.push(`h_${options.height}`);
-  if (options.quality) transformations.push(`q_${options.quality}`);
+  
+  // Use shared quality transformation logic
+  transformations.push(...buildQualityTransformations(options.quality));
+  
   if (options.crop) transformations.push(`c_${options.crop}`);
   
   // Format handling
@@ -96,11 +110,6 @@ export function getOptimizedCloudinaryUrl(
     transformations.push('f_auto');
   } else if (options.format) {
     transformations.push(`f_${options.format}`);
-  }
-
-  // Default to auto quality if not specified
-  if (!options.quality) {
-    transformations.push('q_auto:best');
   }
 
   // DPR auto for retina displays

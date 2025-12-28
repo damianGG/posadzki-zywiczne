@@ -185,19 +185,26 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
 
           {/* Current image */}
           <div 
-            className="relative w-full h-full md:max-w-5xl md:max-h-[80vh] mx-0 md:mx-16 px-12 md:px-0"
+            className="relative w-full h-full mx-0 px-12 md:max-w-5xl md:max-h-[80vh] md:mx-16 md:px-0"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              src={allImages[currentIndex]}
-              alt={`${title} - zdjęcie ${currentIndex + 1}`}
-              fill
-              className="object-contain"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
-              quality={95}
-              loader={isCloudinaryUrl(allImages[currentIndex]) ? cloudinaryLoader : undefined}
-              unoptimized={!isCloudinaryUrl(allImages[currentIndex])}
-            />
+            {(() => {
+              const currentImageUrl = allImages[currentIndex];
+              const useCloudinary = isCloudinaryUrl(currentImageUrl);
+              
+              return (
+                <Image
+                  src={currentImageUrl}
+                  alt={`${title} - zdjęcie ${currentIndex + 1}`}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
+                  quality={95}
+                  loader={useCloudinary ? cloudinaryLoader : undefined}
+                  unoptimized={!useCloudinary}
+                />
+              );
+            })()}
           </div>
 
           {/* Next button */}
