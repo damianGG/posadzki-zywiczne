@@ -10,6 +10,22 @@ import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib
 
 import { RealizacjaCategory } from '@/types/realizacje';
 
+// Cookie helper functions
+const getCookie = (name: string): string | null => {
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
+  return null;
+};
+
+const setCookie = (name: string, value: string, days: number = 365) => {
+  if (typeof document === 'undefined') return;
+  const expires = new Date();
+  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+};
+
 interface GalleryImage {
   url: string;
   realizacjaTitle: string;
@@ -25,6 +41,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [showSwipeHint, setShowSwipeHint] = useState(false);
 
   // Pre-compute which images are Cloudinary URLs to avoid repeated checks
   const imageCloudinaryStatus = useMemo(() => {
@@ -62,6 +79,22 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  // Check if user has seen swipe hint before
+  useEffect(() => {
+    if (isOpen) {
+      const hasSeenHint = getCookie('gallery_swipe_hint_seen');
+      if (!hasSeenHint) {
+        setShowSwipeHint(true);
+        // Auto-hide after 3 seconds
+        const timer = setTimeout(() => {
+          setShowSwipeHint(false);
+          setCookie('gallery_swipe_hint_seen', 'true', 365);
+        }, 3000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isOpen]);
+
   const openGallery = (index: number) => {
     setCurrentIndex(index);
     setIsOpen(true);
@@ -69,6 +102,11 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
 
   const closeGallery = () => {
     setIsOpen(false);
+  };
+
+  const dismissSwipeHint = () => {
+    setShowSwipeHint(false);
+    setCookie('gallery_swipe_hint_seen', 'true', 365);
   };
 
   const goToPrevious = useCallback(() => {
@@ -269,17 +307,23 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
             </Badge>
           </div>
 
-          {/* Previous/Up button */}
-          <button
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-[calc(50%+100px)] md:top-8 md:left-1/2 md:transform md:-translate-x-1/2 md:translate-y-0 text-white hover:text-gray-300 transition-colors z-20 p-3 hover:bg-white/20 rounded-full backdrop-blur-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              goToPrevious();
-            }}
-            aria-label="Poprzednie zdjęcie"
-          >
-            <ChevronUp className="w-8 h-8 md:w-8 md:h-8" />
-          </button>
+          {/* Swipe hint overlay - shown on first visit */}
+          {showSwipeHint && (
+            <div 
+              className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm"
+              onClick={dismissSwipeHint}
+            >
+              <div className="text-center text-white px-6">
+                <div className="mb-4">
+                  <ChevronUp className="w-12 h-12 mx-auto mb-2 animate-bounce" />
+                  <p className="text-lg font-semibold mb-2">Przesuń w górę lub w dół</p>
+                  <p className="text-sm opacity-80">aby przeglądać zdjęcia</p>
+                  <ChevronDown className="w-12 h-12 mx-auto mt-2 animate-bounce" style={{ animationDelay: '0.5s' }} />
+                </div>
+                <p className="text-xs opacity-60 mt-6">Kliknij aby zamknąć</p>
+              </div>
+            </div>
+          )}
 
           {/* Current image - instant transitions without animations */}
           <div 
@@ -299,18 +343,6 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
               unoptimized={!imageCloudinaryStatus[currentIndex]}
             />
           </div>
-
-          {/* Next/Down button */}
-          <button
-            className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-[calc(50%+100px)] md:bottom-8 md:left-1/2 md:top-auto md:transform md:-translate-x-1/2 md:translate-y-0 text-white hover:text-gray-300 transition-colors z-20 p-3 hover:bg-white/20 rounded-full backdrop-blur-sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              goToNext();
-            }}
-            aria-label="Następne zdjęcie"
-          >
-            <ChevronDown className="w-8 h-8 md:w-8 md:h-8" />
-          </button>
         </div>
       )}
     </>
