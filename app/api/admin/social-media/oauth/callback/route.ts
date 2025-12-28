@@ -35,16 +35,21 @@ export async function GET(request: NextRequest) {
     oauth2Client.setCredentials(tokens);
 
     // Get account info
-    const mybusiness = google.mybusiness({ version: 'v4', auth: oauth2Client });
+    // Note: Google My Business API v4 is deprecated, using v1 business information API
     let accountId = 'unknown';
     let accountName = 'Unknown';
 
     try {
-      const accounts = await mybusiness.accounts.list();
+      const mybusinessaccountmanagement = google.mybusinessaccountmanagement({
+        version: 'v1',
+        auth: oauth2Client,
+      });
+      
+      const accounts = await mybusinessaccountmanagement.accounts.list();
       if (accounts.data.accounts && accounts.data.accounts.length > 0) {
         const account = accounts.data.accounts[0];
         accountId = account.name?.split('/')[1] || 'unknown';
-        accountName = account.accountName || 'Unknown';
+        accountName = account.accountName || account.name || 'Unknown';
       }
     } catch (accountError) {
       console.error('Error fetching account info:', accountError);
