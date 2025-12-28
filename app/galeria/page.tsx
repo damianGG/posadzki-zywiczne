@@ -4,6 +4,7 @@ import { CTA2 } from '@/blocks/cta/cta2';
 import { Metadata } from 'next';
 import { Suspense } from 'react';
 import GaleriaClient from './galeria-client';
+import { RealizacjaCategory } from '@/types/realizacje';
 
 // Revalidate every 60 seconds to show new images
 export const revalidate = 60;
@@ -34,7 +35,7 @@ interface GalleryImage {
   url: string;
   realizacjaTitle: string;
   realizacjaSlug: string;
-  category: string;
+  category: RealizacjaCategory;
 }
 
 export default async function GaleriaPage() {

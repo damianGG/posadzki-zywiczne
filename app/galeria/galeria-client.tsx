@@ -7,11 +7,13 @@ import { X, ChevronUp, ChevronDown } from 'lucide-react';
 import { getCategoryDisplayName } from '@/lib/realizacje-helpers';
 import { Badge } from '@/components/ui/badge';
 
+import { RealizacjaCategory } from '@/types/realizacje';
+
 interface GalleryImage {
   url: string;
   realizacjaTitle: string;
   realizacjaSlug: string;
-  category: string;
+  category: RealizacjaCategory;
 }
 
 interface GaleriaClientProps {
@@ -33,13 +35,8 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     
     handleChange(mediaQuery);
     
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    } else {
-      mediaQuery.addListener(handleChange);
-      return () => mediaQuery.removeListener(handleChange);
-    }
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
   const openGallery = (index: number) => {
@@ -164,7 +161,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-end p-3">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <Badge className="text-xs">
-                      {getCategoryDisplayName(image.category as any)}
+                      {getCategoryDisplayName(image.category)}
                     </Badge>
                   </div>
                 </div>
@@ -206,7 +203,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
               </h3>
             </Link>
             <Badge className="text-xs">
-              {getCategoryDisplayName(currentImage.category as any)}
+              {getCategoryDisplayName(currentImage.category)}
             </Badge>
           </div>
 
