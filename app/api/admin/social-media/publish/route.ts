@@ -193,8 +193,8 @@ async function publishToGoogleBusiness(post: any, accountId?: string): Promise<{
     });
 
     // Get account locations
-    const accountId = tokenData.platform_user_id;
-    const locationId = post.platform_metadata?.location_id || accountId;
+    const platformAccountId = tokenData.platform_user_id;
+    const locationId = post.platform_metadata?.location_id || platformAccountId;
 
     // Create the post using Business Profile API
     const mybusinessbusinessinformation = google.mybusinessbusinessinformation({
