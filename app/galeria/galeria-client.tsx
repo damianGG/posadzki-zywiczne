@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { X, ChevronUp, ChevronDown } from 'lucide-react';
 import { getCategoryDisplayName } from '@/lib/realizacje-helpers';
 import { Badge } from '@/components/ui/badge';
+import { motion, AnimatePresence } from 'framer-motion';
+import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib/cloudinary-loader';
 
 import { RealizacjaCategory } from '@/types/realizacje';
 
@@ -24,6 +26,12 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [direction, setDirection] = useState(0); // Track swipe direction for animation
+
+  // Pre-compute which images are Cloudinary URLs to avoid repeated checks
+  const imageCloudinaryStatus = useMemo(() => {
+    return images.map(img => isCloudinaryUrl(img.url));
+  }, [images]);
 
   // Detect if device is mobile
   useEffect(() => {
@@ -49,10 +57,12 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   };
 
   const goToPrevious = useCallback(() => {
+    setDirection(-1);
     setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
   }, [images.length]);
 
   const goToNext = useCallback(() => {
+    setDirection(1);
     setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   }, [images.length]);
 
@@ -124,6 +134,35 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     };
   }, [isOpen, isMobile, goToNext, goToPrevious]);
 
+  // Preload adjacent images for smoother transitions
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const preloadImage = (index: number) => {
+      if (index < 0 || index >= images.length) return;
+      
+      const img = new window.Image();
+      const imageUrl = images[index].url;
+      
+      // Use Cloudinary loader for optimization if applicable
+      if (imageCloudinaryStatus[index]) {
+        const loader = isMobile ? cloudinaryLoaderMobile : cloudinaryLoader;
+        img.src = loader({ 
+          src: imageUrl, 
+          width: isMobile ? 800 : 1920,
+          quality: 80 
+        });
+      } else {
+        img.src = imageUrl;
+      }
+    };
+
+    // Preload current, next, and previous images
+    preloadImage(currentIndex);
+    preloadImage(currentIndex + 1);
+    preloadImage(currentIndex - 1);
+  }, [currentIndex, isOpen, images, imageCloudinaryStatus, isMobile]);
+
   if (images.length === 0) {
     return (
       <section className="w-full py-16">
@@ -156,7 +195,9 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                  quality={85}
+                  quality={75}
+                  loader={imageCloudinaryStatus[index] ? cloudinaryLoader : undefined}
+                  unoptimized={!imageCloudinaryStatus[index]}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors duration-300 flex items-end p-3">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -219,20 +260,46 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
             <ChevronUp className="w-8 h-8 md:w-8 md:h-8" />
           </button>
 
-          {/* Current image */}
+          {/* Current image with TikTok-style animation */}
           <div 
-            className="relative w-full h-full"
+            className="relative w-full h-full overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              src={currentImage.url}
-              alt={currentImage.realizacjaTitle}
-              fill
-              className={isMobile ? "object-cover" : "object-contain"}
-              sizes="100vw"
-              quality={95}
-              priority
-            />
+            <AnimatePresence initial={false} custom={direction} mode="wait">
+              <motion.div
+                key={currentIndex}
+                custom={direction}
+                initial={{ 
+                  y: direction > 0 ? '100%' : '-100%',
+                  opacity: 0
+                }}
+                animate={{ 
+                  y: 0,
+                  opacity: 1
+                }}
+                exit={{ 
+                  y: direction > 0 ? '-100%' : '100%',
+                  opacity: 0
+                }}
+                transition={{
+                  y: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 }
+                }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src={currentImage.url}
+                  alt={currentImage.realizacjaTitle}
+                  fill
+                  className={isMobile ? "object-cover" : "object-contain"}
+                  sizes="100vw"
+                  quality={80}
+                  priority={currentIndex === 0}
+                  loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
+                  unoptimized={!imageCloudinaryStatus[currentIndex]}
+                />
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           {/* Next/Down button */}
