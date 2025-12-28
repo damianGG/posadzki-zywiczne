@@ -14,7 +14,8 @@ export interface CloudinaryLoaderParams {
  * Returns null if not a valid Cloudinary upload URL
  */
 function parseCloudinaryUrl(src: string): { baseUrl: string; imagePath: string } | null {
-  if (!src.includes('res.cloudinary.com')) {
+  // More strict validation: must start with https://res.cloudinary.com
+  if (!src.startsWith('https://res.cloudinary.com/')) {
     return null;
   }
 
@@ -80,9 +81,10 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
 
 /**
  * Helper function to check if a URL is a Cloudinary URL
+ * Uses strict validation to prevent URL manipulation attacks
  */
 export function isCloudinaryUrl(url: string): boolean {
-  return url.includes('res.cloudinary.com');
+  return url.startsWith('https://res.cloudinary.com/');
 }
 
 /**
