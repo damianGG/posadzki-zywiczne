@@ -10,11 +10,11 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const { id } = params;
+    const { id } = await context.params;
 
     const { data: post, error } = await supabase
       .from('social_media_posts')
@@ -49,11 +49,11 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const { id } = params;
+    const { id } = await context.params;
     const body = await request.json();
 
     const {
@@ -118,11 +118,11 @@ export async function PUT(
  */
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const { id } = params;
+    const { id } = await context.params;
 
     const { error } = await supabase
       .from('social_media_posts')
