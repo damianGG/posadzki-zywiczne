@@ -7,13 +7,13 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 
 /**
  * POST /api/admin/social-media/publish
- * Publish a social media post to the specified platform
+ * Publish a social media post to the specified platform(s)
  */
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const body = await request.json();
-    const { post_id } = body;
+    const { post_id, target_accounts } = body;
 
     if (!post_id) {
       return NextResponse.json(
@@ -44,71 +44,92 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Publish based on platform
-    let publishResult;
-    switch (post.platform) {
-      case 'google_business':
-        publishResult = await publishToGoogleBusiness(post);
-        break;
-      case 'instagram':
-        publishResult = await publishToInstagram(post);
-        break;
-      case 'facebook':
-        publishResult = await publishToFacebook(post);
-        break;
-      case 'tiktok':
-        publishResult = await publishToTikTok(post);
-        break;
-      case 'pinterest':
-        publishResult = await publishToPinterest(post);
-        break;
-      case 'linkedin':
-        publishResult = await publishToLinkedIn(post);
-        break;
-      default:
-        return NextResponse.json(
-          { success: false, error: `Platform ${post.platform} is not supported` },
-          { status: 400 }
-        );
+    // Get target accounts (from request or from post data)
+    const accountIds = target_accounts || post.target_accounts || [];
+    
+    if (accountIds.length === 0) {
+      // Fallback to all accounts if none specified
+      const { data: tokens } = await supabase
+        .from('oauth_tokens')
+        .select('id')
+        .eq('platform', post.platform);
+      
+      if (tokens && tokens.length > 0) {
+        accountIds.push(...tokens.map((t: any) => t.id));
+      }
     }
 
-    if (!publishResult.success) {
-      // Update post with error
-      await supabase
-        .from('social_media_posts')
-        .update({
-          status: 'failed',
-          error_message: publishResult.error,
-        })
-        .eq('id', post_id);
-
-      return NextResponse.json({
-        success: false,
-        error: publishResult.error,
-      }, { status: 500 });
+    if (accountIds.length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'No accounts available for publishing' },
+        { status: 400 }
+      );
     }
 
-    // Update post as published
-    const { data: updatedPost, error: updateError } = await supabase
+    // Publish to multiple accounts
+    const publishResults: any[] = [];
+    let hasError = false;
+    let errorMessage = '';
+
+    for (const accountId of accountIds) {
+      let publishResult;
+      switch (post.platform) {
+        case 'google_business':
+          publishResult = await publishToGoogleBusiness(post, accountId);
+          break;
+        case 'instagram':
+          publishResult = await publishToInstagram(post, accountId);
+          break;
+        case 'facebook':
+          publishResult = await publishToFacebook(post, accountId);
+          break;
+        case 'tiktok':
+          publishResult = await publishToTikTok(post, accountId);
+          break;
+        case 'pinterest':
+          publishResult = await publishToPinterest(post, accountId);
+          break;
+        case 'linkedin':
+          publishResult = await publishToLinkedIn(post, accountId);
+          break;
+        default:
+          return NextResponse.json(
+            { success: false, error: `Platform ${post.platform} is not supported` },
+            { status: 400 }
+          );
+      }
+
+      publishResults.push({
+        account_id: accountId,
+        ...publishResult,
+      });
+
+      if (!publishResult.success) {
+        hasError = true;
+        errorMessage += `Account ${accountId}: ${publishResult.error}; `;
+      }
+    }
+
+    // Update post status based on results
+    const allSucceeded = publishResults.every(r => r.success);
+    const allFailed = publishResults.every(r => !r.success);
+
+    await supabase
       .from('social_media_posts')
       .update({
-        status: 'published',
-        published_at: new Date().toISOString(),
-        published_url: publishResult.url,
-        error_message: null,
+        status: allSucceeded ? 'published' : (allFailed ? 'failed' : 'published'),
+        published_at: allSucceeded ? new Date().toISOString() : null,
+        published_url: publishResults.find(r => r.success)?.url || null,
+        error_message: hasError ? errorMessage : null,
       })
-      .eq('id', post_id)
-      .select()
-      .single();
-
-    if (updateError) {
-      console.error('Error updating post status:', updateError);
-    }
+      .eq('id', post_id);
 
     return NextResponse.json({
-      success: true,
-      post: updatedPost,
-      published_url: publishResult.url,
+      success: !allFailed,
+      results: publishResults,
+      message: allSucceeded 
+        ? `Published to ${accountIds.length} account(s)`
+        : `Published to ${publishResults.filter(r => r.success).length}/${accountIds.length} account(s)`,
     });
   } catch (error) {
     console.error('Error in POST /api/admin/social-media/publish:', error);
@@ -122,16 +143,23 @@ export async function POST(request: NextRequest) {
 /**
  * Publish to Google Business Profile
  */
-async function publishToGoogleBusiness(post: any): Promise<{ success: boolean; url?: string; error?: string }> {
+async function publishToGoogleBusiness(post: any, accountId?: string): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Fetch OAuth token for Google Business
-    const { data: tokenData, error: tokenError } = await supabase
+    // Fetch OAuth token for Google Business (specific account if provided)
+    let query = supabase
       .from('oauth_tokens')
       .select('*')
-      .eq('platform', 'google_business')
-      .single();
+      .eq('platform', 'google_business');
+    
+    if (accountId) {
+      query = query.eq('id', accountId);
+    }
+
+    const { data: tokenData, error: tokenError } = accountId
+      ? await query.maybeSingle()
+      : await query.single();
 
     if (tokenError || !tokenData) {
       return {
@@ -263,35 +291,35 @@ async function refreshGoogleToken(tokenData: any): Promise<{ success: boolean; a
  * Placeholder functions for other platforms
  * These will be implemented in future phases
  */
-async function publishToInstagram(post: any): Promise<{ success: boolean; url?: string; error?: string }> {
+async function publishToInstagram(post: any, accountId?: string): Promise<{ success: boolean; url?: string; error?: string }> {
   return {
     success: false,
     error: 'Instagram publishing not yet implemented',
   };
 }
 
-async function publishToFacebook(post: any): Promise<{ success: boolean; url?: string; error?: string }> {
+async function publishToFacebook(post: any, accountId?: string): Promise<{ success: boolean; url?: string; error?: string }> {
   return {
     success: false,
     error: 'Facebook publishing not yet implemented',
   };
 }
 
-async function publishToTikTok(post: any): Promise<{ success: boolean; url?: string; error?: string }> {
+async function publishToTikTok(post: any, accountId?: string): Promise<{ success: boolean; url?: string; error?: string }> {
   return {
     success: false,
     error: 'TikTok publishing not yet implemented',
   };
 }
 
-async function publishToPinterest(post: any): Promise<{ success: boolean; url?: string; error?: string }> {
+async function publishToPinterest(post: any, accountId?: string): Promise<{ success: boolean; url?: string; error?: string }> {
   return {
     success: false,
     error: 'Pinterest publishing not yet implemented',
   };
 }
 
-async function publishToLinkedIn(post: any): Promise<{ success: boolean; url?: string; error?: string }> {
+async function publishToLinkedIn(post: any, accountId?: string): Promise<{ success: boolean; url?: string; error?: string }> {
   return {
     success: false,
     error: 'LinkedIn publishing not yet implemented',

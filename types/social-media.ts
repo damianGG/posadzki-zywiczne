@@ -90,6 +90,16 @@ export type PlatformMetadata =
   | PinterestMetadata 
   | LinkedInMetadata;
 
+// OAuth Account Interface
+export interface OAuthAccount {
+  id: string;
+  platform: SocialMediaPlatform;
+  account_id: string;
+  account_name: string;
+  email: string;
+  connected_at: string;
+}
+
 // Main social media post interface
 export interface SocialMediaPost {
   id: string;
@@ -98,6 +108,9 @@ export interface SocialMediaPost {
   // Platform identification
   platform: SocialMediaPlatform;
   post_type: PostType;
+  
+  // Selected accounts for multi-account publishing
+  target_accounts?: string[]; // Array of oauth_token IDs
   
   // Post content
   title?: string;

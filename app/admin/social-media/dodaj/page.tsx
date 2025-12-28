@@ -4,8 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { ArrowLeft, Sparkles, Save } from 'lucide-react';
+import { ArrowLeft, Sparkles, Save, Building2, CheckCircle2 } from 'lucide-react';
 import Link from 'next/link';
+import type { OAuthAccount } from '@/types/social-media';
 
 const PLATFORMS = [
   { value: 'google_business', label: 'Google Business', maxLength: 1500 },
@@ -25,6 +26,8 @@ export default function AddSocialMediaPostPage() {
   const [loading, setLoading] = useState(false);
   const [aiLoading, setAiLoading] = useState(false);
   const [realizacje, setRealizacje] = useState<any[]>([]);
+  const [accounts, setAccounts] = useState<OAuthAccount[]>([]);
+  const [selectedAccounts, setSelectedAccounts] = useState<string[]>([]);
   
   // Form state
   const [platform, setPlatform] = useState('google_business');
@@ -50,7 +53,14 @@ export default function AddSocialMediaPostPage() {
     }
     setIsAuthenticated(true);
     fetchRealizacje();
+    fetchAccounts();
   }, [router]);
+
+  useEffect(() => {
+    // Fetch accounts when platform changes
+    fetchAccounts();
+    setSelectedAccounts([]); // Reset selection
+  }, [platform]);
 
   const fetchRealizacje = async () => {
     try {
@@ -62,6 +72,28 @@ export default function AddSocialMediaPostPage() {
     } catch (err) {
       console.error('Failed to fetch realizacje', err);
     }
+  };
+
+  const fetchAccounts = async () => {
+    try {
+      const response = await fetch(`/api/admin/social-media/oauth/accounts?platform=${platform}`);
+      const data = await response.json();
+      if (response.ok) {
+        setAccounts(data.accounts || []);
+        // Auto-select all accounts by default
+        setSelectedAccounts((data.accounts || []).map((acc: OAuthAccount) => acc.id));
+      }
+    } catch (err) {
+      console.error('Failed to fetch accounts', err);
+    }
+  };
+
+  const toggleAccountSelection = (accountId: string) => {
+    setSelectedAccounts(prev => 
+      prev.includes(accountId)
+        ? prev.filter(id => id !== accountId)
+        : [...prev, accountId]
+    );
   };
 
   const handleGenerateAI = async () => {
@@ -102,6 +134,11 @@ export default function AddSocialMediaPostPage() {
       return;
     }
 
+    if (selectedAccounts.length === 0) {
+      alert('Wybierz co najmniej jedno konto do publikacji');
+      return;
+    }
+
     setLoading(true);
     try {
       // Build platform metadata
@@ -124,6 +161,7 @@ export default function AddSocialMediaPostPage() {
           content,
           realizacja_id: realizacjaId || undefined,
           platform_metadata: platformMetadata,
+          target_accounts: selectedAccounts,
           status: 'draft',
         }),
       });
@@ -141,13 +179,17 @@ export default function AddSocialMediaPostPage() {
         const publishResponse = await fetch('/api/admin/social-media/publish', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ post_id: createData.post.id }),
+          body: JSON.stringify({ 
+            post_id: createData.post.id,
+            target_accounts: selectedAccounts,
+          }),
         });
 
         const publishData = await publishResponse.json();
 
         if (publishResponse.ok) {
-          alert('Post został opublikowany pomyślnie! ✅');
+          const accountCount = selectedAccounts.length;
+          alert(`Post został opublikowany na ${accountCount} ${accountCount === 1 ? 'konto' : 'kont'}! ✅`);
           router.push('/admin/social-media');
         } else {
           alert(`Post utworzony, ale publikacja nie powiodła się: ${publishData.error}`);
@@ -361,6 +403,84 @@ export default function AddSocialMediaPostPage() {
             </div>
           )}
         </Card>
+
+        {/* Account Selection Section */}
+        {accounts.length > 0 && (
+          <Card className="p-4 sm:p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-blue-600" />
+              Wybierz Wizytówki ({selectedAccounts.length}/{accounts.length})
+            </h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+              Zaznacz wizytówki, na których chcesz opublikować ten post
+            </p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {accounts.map((account) => (
+                <div
+                  key={account.id}
+                  onClick={() => toggleAccountSelection(account.id)}
+                  className={`
+                    relative p-4 border-2 rounded-lg cursor-pointer transition-all
+                    ${selectedAccounts.includes(account.id)
+                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      : 'border-gray-300 bg-white dark:bg-gray-800 hover:border-gray-400'
+                    }
+                  `}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
+                        {account.account_name}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                        {account.email}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        Połączono: {new Date(account.connected_at).toLocaleDateString('pl-PL')}
+                      </p>
+                    </div>
+                    <div>
+                      {selectedAccounts.includes(account.id) && (
+                        <CheckCircle2 className="w-6 h-6 text-blue-600" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {accounts.length > 1 && (
+              <div className="mt-4 flex gap-2">
+                <Button
+                  onClick={() => setSelectedAccounts(accounts.map(a => a.id))}
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                >
+                  Zaznacz wszystkie
+                </Button>
+                <Button
+                  onClick={() => setSelectedAccounts([])}
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                >
+                  Odznacz wszystkie
+                </Button>
+              </div>
+            )}
+          </Card>
+        )}
+
+        {accounts.length === 0 && (
+          <Card className="p-4 sm:p-6 mb-6 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-300">
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              ⚠️ Brak połączonych kont {platform === 'google_business' ? 'Google Business' : platform}. 
+              Połącz konto przed utworzeniem posta.
+            </p>
+          </Card>
+        )}
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3">
