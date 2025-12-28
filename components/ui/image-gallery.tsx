@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib/cloudinary-loader';
 
 interface ImageGalleryProps {
   images: string[];
@@ -13,12 +14,40 @@ interface ImageGalleryProps {
 export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect if device is mobile using matchMedia for better performance
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    
+    const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
+      setIsMobile(e.matches);
+    };
+    
+    // Set initial value
+    handleChange(mediaQuery);
+    
+    // Listen for changes (modern browsers)
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    } else {
+      // Fallback for older browsers
+      mediaQuery.addListener(handleChange);
+      return () => mediaQuery.removeListener(handleChange);
+    }
+  }, []);
   
   // Combine main image with gallery images, filter out empty strings and duplicates
   const allImages = useMemo(() => {
     const combined = mainImage ? [mainImage, ...images] : images;
     return [...new Set(combined)].filter(Boolean);
   }, [mainImage, images]);
+
+  // Pre-compute which images are Cloudinary URLs to avoid repeated checks
+  const imageCloudinaryStatus = useMemo(() => {
+    return allImages.map(img => isCloudinaryUrl(img));
+  }, [allImages]);
 
   const openGallery = (index: number) => {
     if (allImages.length === 0) return;
@@ -90,6 +119,8 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
           fill
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           priority
+          quality={95}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1200px"
         />
         {allImages.length > 1 && (
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
@@ -117,6 +148,7 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
                   fill
                   className="object-cover transition-transform duration-300 group-hover:scale-110"
                   sizes="(max-width: 768px) 50vw, (max-width: 1024px) 25vw, 20vw"
+                  quality={85}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
               </div>
@@ -137,6 +169,7 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
                   fill
                   className="object-cover"
                   sizes="128px"
+                  quality={85}
                 />
               </div>
             ))}
@@ -156,59 +189,62 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
             onClick={closeGallery}
             aria-label="Zamknij galerię"
           >
-            <X className="w-8 h-8" />
+            <X className="w-6 h-6 md:w-8 md:h-8" />
           </button>
 
           {/* Image counter */}
-          <div className="absolute top-4 left-4 text-white text-sm">
+          <div className="absolute top-4 left-4 text-white text-sm md:text-base z-10">
             {currentIndex + 1} / {allImages.length}
           </div>
 
           {/* Previous button */}
           {allImages.length > 1 && (
             <button
-              className="absolute left-4 text-white hover:text-gray-300 transition-colors z-10 p-2 hover:bg-white/10 rounded-full"
+              className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 p-2 hover:bg-white/10 rounded-full"
               onClick={(e) => {
                 e.stopPropagation();
                 goToPrevious();
               }}
               aria-label="Poprzednie zdjęcie"
             >
-              <ChevronLeft className="w-8 h-8" />
+              <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
             </button>
           )}
 
           {/* Current image */}
           <div 
-            className="relative w-full h-full max-w-5xl max-h-[80vh] mx-16"
+            className="relative w-full h-full mx-0 px-12 md:max-w-5xl md:max-h-[80vh] md:mx-16 md:px-0"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
               src={allImages[currentIndex]}
               alt={`${title} - zdjęcie ${currentIndex + 1}`}
               fill
-              className="object-contain"
-              sizes="(max-width: 1200px) 100vw, 1200px"
+              className={isMobile ? "object-cover" : "object-contain"}
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
+              quality={95}
+              loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
+              unoptimized={!imageCloudinaryStatus[currentIndex]}
             />
           </div>
 
           {/* Next button */}
           {allImages.length > 1 && (
             <button
-              className="absolute right-4 text-white hover:text-gray-300 transition-colors z-10 p-2 hover:bg-white/10 rounded-full"
+              className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10 p-2 hover:bg-white/10 rounded-full"
               onClick={(e) => {
                 e.stopPropagation();
                 goToNext();
               }}
               aria-label="Następne zdjęcie"
             >
-              <ChevronRight className="w-8 h-8" />
+              <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
             </button>
           )}
 
-          {/* Thumbnails */}
+          {/* Thumbnails - hidden on mobile for better viewing experience */}
           {allImages.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 overflow-x-auto max-w-full px-4">
+            <div className="hidden md:flex absolute bottom-4 left-1/2 transform -translate-x-1/2 gap-2 overflow-x-auto max-w-full px-4">
               {allImages.map((image, index) => (
                 <button
                   key={index}
@@ -226,6 +262,9 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
                     fill
                     className="object-cover"
                     sizes="64px"
+                    quality={80}
+                    loader={imageCloudinaryStatus[index] ? cloudinaryLoader : undefined}
+                    unoptimized={!imageCloudinaryStatus[index]}
                   />
                 </button>
               ))}
