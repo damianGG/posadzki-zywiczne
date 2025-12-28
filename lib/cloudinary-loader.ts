@@ -80,6 +80,50 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
 }
 
 /**
+ * Mobile-optimized Cloudinary loader that prioritizes full height
+ * Uses portrait aspect ratio and crop to fill for better mobile viewing
+ */
+export function cloudinaryLoaderMobile({ src, width, quality }: CloudinaryLoaderParams): string {
+  const parsedUrl = parseCloudinaryUrl(src);
+  
+  if (!parsedUrl) {
+    return src;
+  }
+
+  // Build transformation string optimized for mobile portrait viewing
+  const transformations: string[] = [];
+  
+  // Width constraint
+  transformations.push(`w_${width}`);
+  
+  // Height constraint - use aspect ratio that fills mobile screen vertically
+  // Most mobile screens are around 16:9 or taller, so use ~1.5:1 aspect ratio (portrait)
+  const height = Math.round(width * 1.5); // 3:2 portrait aspect ratio
+  transformations.push(`h_${height}`);
+  
+  // Crop to fill - ensures image fills the space even if cropping is needed
+  transformations.push('c_fill');
+  
+  // Gravity auto - intelligently focuses on the most important part of the image
+  transformations.push('g_auto');
+  
+  // Quality transformations
+  transformations.push(...buildQualityTransformations(quality));
+  
+  // Auto format (WebP/AVIF when supported by browser)
+  transformations.push('f_auto');
+  
+  // DPR auto for retina displays
+  transformations.push('dpr_auto');
+  
+  // Combine transformations
+  const transformString = transformations.join(',');
+  
+  // Rebuild the URL with transformations
+  return `${parsedUrl.baseUrl}/upload/${transformString}/${parsedUrl.imagePath}`;
+}
+
+/**
  * Helper function to check if a URL is a Cloudinary URL
  * Uses strict validation to prevent URL manipulation attacks
  */
@@ -99,6 +143,7 @@ export function getOptimizedCloudinaryUrl(
     crop?: 'fill' | 'fit' | 'scale' | 'limit';
     format?: 'auto' | 'webp' | 'avif' | 'jpg' | 'png';
     dpr?: 'auto' | number | false;
+    gravity?: 'auto' | 'face' | 'faces' | 'center';
   } = {}
 ): string {
   const parsedUrl = parseCloudinaryUrl(src);
@@ -116,6 +161,7 @@ export function getOptimizedCloudinaryUrl(
   transformations.push(...buildQualityTransformations(options.quality));
   
   if (options.crop) transformations.push(`c_${options.crop}`);
+  if (options.gravity) transformations.push(`g_${options.gravity}`);
   
   // Format handling
   if (options.format === 'auto') {

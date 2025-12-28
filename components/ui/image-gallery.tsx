@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import cloudinaryLoader, { isCloudinaryUrl } from '@/lib/cloudinary-loader';
+import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib/cloudinary-loader';
 
 interface ImageGalleryProps {
   images: string[];
@@ -14,6 +14,19 @@ interface ImageGalleryProps {
 export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect if device is mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
   
   // Combine main image with gallery images, filter out empty strings and duplicates
   const allImages = useMemo(() => {
@@ -197,10 +210,10 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
               src={allImages[currentIndex]}
               alt={`${title} - zdjęcie ${currentIndex + 1}`}
               fill
-              className="object-contain"
+              className={isMobile ? "object-cover" : "object-contain"}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
               quality={95}
-              loader={imageCloudinaryStatus[currentIndex] ? cloudinaryLoader : undefined}
+              loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
               unoptimized={!imageCloudinaryStatus[currentIndex]}
             />
           </div>
