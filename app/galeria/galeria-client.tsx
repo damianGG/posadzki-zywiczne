@@ -42,8 +42,6 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(false);
-  const [dragOffset, setDragOffset] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
   
   // Ref for the fullscreen viewer container
   const viewerRef = useRef<HTMLDivElement>(null);
@@ -154,7 +152,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     };
   }, [isOpen]);
 
-  // Handle touch swipe for mobile with continuous preview
+  // Handle touch swipe for mobile - simple swipe detection without preview
   useEffect(() => {
     if (!isOpen || !isMobile) return;
     
@@ -162,70 +160,40 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     if (!viewer) return;
 
     let touchStartY = 0;
-    let hasMoved = false;
+    let touchStartX = 0;
 
     const handleTouchStart = (e: TouchEvent) => {
       touchStartY = e.touches[0].clientY;
-      hasMoved = false;
-      // Don't set isDragging here - wait for actual movement
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      e.preventDefault(); // Prevent page scroll
-      const currentY = e.touches[0].clientY;
-      const diff = currentY - touchStartY;
-      
-      // Only start dragging if moved more than 5px (prevents accidental drags)
-      if (!hasMoved && Math.abs(diff) > 5) {
-        hasMoved = true;
-        setIsDragging(true);
-      }
-      
-      if (hasMoved) {
-        // Apply drag with some resistance for better feel
-        setDragOffset(diff * 0.8);
-      }
+      touchStartX = e.touches[0].clientX;
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (!hasMoved) {
-        // No movement, just a tap
-        return;
-      }
+      const touchEndY = e.changedTouches[0].clientY;
+      const touchEndX = e.changedTouches[0].clientX;
       
-      setIsDragging(false);
-      const swipeDistance = dragOffset;
+      const deltaY = touchStartY - touchEndY;
+      const deltaX = touchStartX - touchEndX;
       
-      // Threshold for switching images (30% of screen height)
-      const threshold = window.innerHeight * 0.3;
-      
-      if (Math.abs(swipeDistance) > threshold) {
-        // Swipe direction: positive dragOffset = finger moved down (previous)
-        //                  negative dragOffset = finger moved up (next)
-        if (swipeDistance < 0) {
-          // Swiped up - show next (increase slide number)
+      // Ensure vertical swipe is dominant (not horizontal)
+      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 50) {
+        if (deltaY > 0) {
+          // Swiped up - next image (increase slide number)
           goToNext();
         } else {
-          // Swiped down - show previous (decrease slide number)
+          // Swiped down - previous image (decrease slide number)
           goToPrevious();
         }
       }
-      
-      // Reset drag offset
-      setDragOffset(0);
-      hasMoved = false;
     };
 
     viewer.addEventListener('touchstart', handleTouchStart, { passive: true });
-    viewer.addEventListener('touchmove', handleTouchMove, { passive: false });
     viewer.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
       viewer.removeEventListener('touchstart', handleTouchStart);
-      viewer.removeEventListener('touchmove', handleTouchMove);
       viewer.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isOpen, isMobile, goToNext, goToPrevious, dragOffset]);
+  }, [isOpen, isMobile, goToNext, goToPrevious]);
 
   // Preload adjacent images for smoother transitions
   // Preload up to 5 images ahead and 1 behind for optimal experience
@@ -373,63 +341,22 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
             </div>
           )}
 
-          {/* Continuous scroll container - shows current and adjacent images */}
+          {/* Simple image viewer - no animations, instant transitions */}
           <div 
-            className="relative w-full h-full overflow-hidden"
+            className="relative w-full h-full"
             onClick={(e) => e.stopPropagation()}
           >
-            <div 
-              className="absolute w-full"
-              style={{
-                height: '300%',
-                top: '-100%',
-                transform: `translateY(${dragOffset}px)`,
-                transition: isDragging ? 'none' : 'transform 0.3s ease-out'
-              }}
-            >
-              {/* Previous image */}
-              <div className="absolute top-0 left-0 w-full h-1/3">
-                <NextImage
-                  src={images[(currentIndex - 1 + images.length) % images.length].url}
-                  alt={images[(currentIndex - 1 + images.length) % images.length].realizacjaTitle}
-                  fill
-                  className={isMobile ? "object-cover" : "object-contain"}
-                  sizes="100vw"
-                  quality={80}
-                  loader={imageCloudinaryStatus[(currentIndex - 1 + images.length) % images.length] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
-                  unoptimized={!imageCloudinaryStatus[(currentIndex - 1 + images.length) % images.length]}
-                />
-              </div>
-
-              {/* Current image */}
-              <div className="absolute top-1/3 left-0 w-full h-1/3">
-                <NextImage
-                  src={currentImage.url}
-                  alt={currentImage.realizacjaTitle}
-                  fill
-                  className={isMobile ? "object-cover" : "object-contain"}
-                  sizes="100vw"
-                  quality={80}
-                  priority
-                  loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
-                  unoptimized={!imageCloudinaryStatus[currentIndex]}
-                />
-              </div>
-
-              {/* Next image */}
-              <div className="absolute top-2/3 left-0 w-full h-1/3">
-                <NextImage
-                  src={images[(currentIndex + 1) % images.length].url}
-                  alt={images[(currentIndex + 1) % images.length].realizacjaTitle}
-                  fill
-                  className={isMobile ? "object-cover" : "object-contain"}
-                  sizes="100vw"
-                  quality={80}
-                  loader={imageCloudinaryStatus[(currentIndex + 1) % images.length] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
-                  unoptimized={!imageCloudinaryStatus[(currentIndex + 1) % images.length]}
-                />
-              </div>
-            </div>
+            <NextImage
+              src={currentImage.url}
+              alt={currentImage.realizacjaTitle}
+              fill
+              className={isMobile ? "object-cover" : "object-contain"}
+              sizes="100vw"
+              quality={80}
+              priority
+              loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
+              unoptimized={!imageCloudinaryStatus[currentIndex]}
+            />
           </div>
         </div>
       )}
