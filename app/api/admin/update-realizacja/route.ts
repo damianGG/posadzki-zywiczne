@@ -14,6 +14,20 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Helper function to determine project type from category
+// Returns the full project type name that matches the expected format in realizacje.ts
+function getProjectTypeFromCategory(category: string): string {
+  const categoryMap: Record<string, string> = {
+    'domy-mieszkania': 'posadzka-w-mieszkaniu',
+    'balkony-tarasy': 'posadzka-na-tarasie',
+    'garaze': 'posadzka-w-garażu',
+    'kuchnie': 'posadzka-w-kuchni',
+    'pomieszczenia-czyste': 'posadzka-w-gastronomii',
+    'schody': 'posadzka-na-schodach',
+  };
+  return categoryMap[category] || 'posadzka-w-mieszkaniu';
+}
+
 export async function PUT(request: NextRequest) {
   let slug: string | undefined;
   
@@ -119,7 +133,7 @@ export async function PUT(request: NextRequest) {
       short_description: data.shortDescription || data.description.substring(0, 160),
       location: data.location || existingRealizacja.location,
       surface_area: data.area || existingRealizacja.surface_area,
-      project_type: data.category || existingRealizacja.project_type,
+      project_type: data.category ? getProjectTypeFromCategory(data.category) : existingRealizacja.project_type,
       technology: data.technology || existingRealizacja.technology,
       color: data.color || existingRealizacja.color,
       duration: data.duration || existingRealizacja.duration,

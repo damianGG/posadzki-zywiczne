@@ -34,7 +34,21 @@ function generateSlugFromTitle(title: string): string {
     .substring(0, 60);
 }
 
-// Helper function to determine folder type from category
+// Helper function to determine project type from category
+// Returns the full project type name that matches the expected format in realizacje.ts
+function getProjectTypeFromCategory(category: string): string {
+  const categoryMap: Record<string, string> = {
+    'domy-mieszkania': 'posadzka-w-mieszkaniu',
+    'balkony-tarasy': 'posadzka-na-tarasie',
+    'garaze': 'posadzka-w-garażu',
+    'kuchnie': 'posadzka-w-kuchni',
+    'pomieszczenia-czyste': 'posadzka-w-gastronomii',
+    'schody': 'posadzka-na-schodach',
+  };
+  return categoryMap[category] || 'posadzka-w-mieszkaniu';
+}
+
+// Helper function to determine folder type from category (for folder names only)
 function getFolderTypeFromCategory(category: string): string {
   const categoryMap: Record<string, string> = {
     'domy-mieszkania': 'mieszkanie',
@@ -88,6 +102,7 @@ export async function POST(request: NextRequest) {
     // Generate slug and folder name
     const baseSlug = generateSlugFromTitle(data.title);
     const folderType = getFolderTypeFromCategory(data.category);
+    const projectType = getProjectTypeFromCategory(data.category);
     const location = data.location 
       ? sanitizeString(data.location.split(',')[0]) 
       : 'polska';
@@ -95,7 +110,7 @@ export async function POST(request: NextRequest) {
     // Create folder name: [miasto]-[slug]-[typ]
     const folderName = `${location}-${baseSlug}-${folderType}`;
     
-    console.log(`Creating realizacja with ${data.cloudinaryImages.length} Cloudinary images...`);
+    console.log(`Creating realizacja with ${data.cloudinaryImages.length} Cloudinary images, project_type: ${projectType}...`);
 
     // Parse tags (comma-separated)
     const tags = data.tags
@@ -168,7 +183,7 @@ export async function POST(request: NextRequest) {
       short_description: data.shortDescription || data.description.substring(0, 160),
       location: data.location || '',
       surface_area: data.area || '',
-      project_type: folderType,
+      project_type: projectType,
       technology: data.technology || '',
       color: data.color || '',
       duration: data.duration || '',

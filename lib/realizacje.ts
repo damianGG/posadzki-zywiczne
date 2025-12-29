@@ -7,6 +7,7 @@ import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB, Reali
 function mapToRealizacja(data: RealizacjaData): Realizacja {
   // Map project_type to category
   const categoryMap: Record<string, RealizacjaCategory> = {
+    // Full format (new, correct format)
     'posadzka-w-garażu': 'garaze',
     'posadzka-w-kuchni': 'kuchnie',
     'posadzka-na-balkonie': 'balkony-tarasy',
@@ -14,6 +15,15 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
     'posadzka-na-schodach': 'schody',
     'posadzka-w-domu': 'domy-mieszkania',
     'posadzka-w-mieszkaniu': 'domy-mieszkania',
+    'posadzka-w-gastronomii': 'pomieszczenia-czyste',
+    // Short format (old, for backward compatibility)
+    'garaz': 'garaze',
+    'kuchnia': 'kuchnie',
+    'taras': 'balkony-tarasy',
+    'balkon': 'balkony-tarasy',
+    'schody': 'schody',
+    'mieszkanie': 'domy-mieszkania',
+    'gastronomia': 'pomieszczenia-czyste',
   };
 
   const category = categoryMap[data.project_type] || 'domy-mieszkania' as RealizacjaCategory;
