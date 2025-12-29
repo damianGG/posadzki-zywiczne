@@ -43,6 +43,11 @@ export const Header2 = () => {
             description: "",
         },
         {
+            title: "Galeria",
+            href: "/galeria",
+            description: "",
+        },
+        {
             title: "Balkony i Tarasy",
             href: "/posadzki-zywiczne-na-balkony",
             description: "",
@@ -121,8 +126,13 @@ export const Header2 = () => {
                                 <NavigationMenuItem key={item.title} className="relative" onMouseLeave={() => setHoveredSubItem(null)}>
                                     {item.href ? (
                                         <Link href={item.href} passHref>
-                                            <Button variant="ghost" size="sm" className="text-sm">
+                                            <Button variant="ghost" size="sm" className="text-sm relative">
                                                 {item.title}
+                                                {(item.title === "Galeria" || item.title === "Realizacje") && (
+                                                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                                                        NEW
+                                                    </span>
+                                                )}
                                             </Button>
                                         </Link>
                                     ) : (
@@ -220,10 +230,17 @@ export const Header2 = () => {
                         <div key={item.title}>
                             <Link
                                 href={item.href ?? "#"}
-                                className="flex justify-between items-center py-2"
+                                className="flex justify-between items-center py-2 relative"
                                 onClick={() => setOpen(false)}
                             >
-                                <span className="text-base font-medium">{item.title}</span>
+                                <span className="text-base font-medium flex items-center gap-2">
+                                    {item.title}
+                                    {(item.title === "Galeria" || item.title === "Realizacje") && (
+                                        <span className="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
+                                            NEW
+                                        </span>
+                                    )}
+                                </span>
                                 <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
                             </Link>
                         </div>

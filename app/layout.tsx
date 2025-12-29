@@ -65,6 +65,10 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <head>
+        {/* Resource hints for faster image loading */}
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
+        
         {/* Structured Data for SEO */}
         <Script
           id="organization-schema"
