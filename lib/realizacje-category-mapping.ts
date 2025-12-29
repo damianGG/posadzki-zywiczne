@@ -10,6 +10,10 @@
  * @param category - The category selected in the form (e.g., 'garaze', 'schody', 'domy-mieszkania')
  * @returns The full project type name for database storage (e.g., 'posadzka-w-garażu', 'posadzka-na-schodach')
  * 
+ * Note: 'balkony-tarasy' uses 'posadzka-na-tarasie' as the canonical form.
+ * Both 'balkon' and 'taras' map to the same category 'balkony-tarasy', and 'taras' (terrace)
+ * is chosen as more general. The backward compatibility mapping in realizacje.ts handles both.
+ * 
  * @example
  * getProjectTypeFromCategory('garaze') // returns 'posadzka-w-garażu'
  * getProjectTypeFromCategory('schody') // returns 'posadzka-na-schodach'
