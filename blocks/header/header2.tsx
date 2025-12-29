@@ -128,7 +128,7 @@ export const Header2 = () => {
                                         <Link href={item.href} passHref>
                                             <Button variant="ghost" size="sm" className="text-sm relative">
                                                 {item.title}
-                                                {item.title === "Galeria" && (
+                                                {(item.title === "Galeria" || item.title === "Realizacje") && (
                                                     <span className="absolute -top-1 -right-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
                                                         NEW
                                                     </span>
@@ -235,7 +235,7 @@ export const Header2 = () => {
                             >
                                 <span className="text-base font-medium flex items-center gap-2">
                                     {item.title}
-                                    {item.title === "Galeria" && (
+                                    {(item.title === "Galeria" || item.title === "Realizacje") && (
                                         <span className="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
                                             NEW
                                         </span>
