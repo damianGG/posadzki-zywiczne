@@ -14,7 +14,7 @@ interface RealizacjeClientProps {
   realizacje: Realizacja[];
 }
 
-const categories: RealizacjaCategory[] = ['schody', 'garaze', 'kuchnie', 'balkony-tarasy', 'domy-mieszkania'];
+const categories: RealizacjaCategory[] = ['schody', 'garaze', 'kuchnie', 'balkony-tarasy', 'domy-mieszkania', 'pomieszczenia-czyste'];
 
 export default function RealizacjeClient({ realizacje }: RealizacjeClientProps) {
   const router = useRouter();

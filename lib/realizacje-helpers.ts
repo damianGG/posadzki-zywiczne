@@ -10,6 +10,7 @@ export function getCategoryDisplayName(category: RealizacjaCategory): string {
     'kuchnie': 'Kuchnie',
     'balkony-tarasy': 'Balkony i Tarasy',
     'domy-mieszkania': 'Domy i Mieszkania',
+    'pomieszczenia-czyste': 'Pomieszczenia Czyste',
   };
   
   return names[category];

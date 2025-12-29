@@ -206,6 +206,7 @@ export async function getRealizacjeMetadata(): Promise<RealizacjeMetadata> {
     'kuchnie': 0,
     'balkony-tarasy': 0,
     'domy-mieszkania': 0,
+    'pomieszczenia-czyste': 0,
   };
 
   allRealizacje.forEach((realizacja) => {
