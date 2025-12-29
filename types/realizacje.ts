@@ -1,4 +1,4 @@
-export type RealizacjaCategory = 'schody' | 'garaze' | 'kuchnie' | 'balkony-tarasy' | 'domy-mieszkania';
+export type RealizacjaCategory = 'schody' | 'garaze' | 'kuchnie' | 'balkony-tarasy' | 'domy-mieszkania' | 'pomieszczenia-czyste';
 
 export interface Realizacja {
   slug: string;

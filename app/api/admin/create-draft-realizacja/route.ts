@@ -1,12 +1,6 @@
-/**
- * API Route: /api/admin/create-draft-realizacja
- * 
- * Step 1: Create draft realizacja with AI-generated content (without images)
- * Returns the slug/folder name to be used for Cloudinary uploads
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { createRealizacja, RealizacjaData } from '@/lib/supabase-realizacje';
+import { getProjectTypeFromCategory, getFolderTypeFromCategory } from '@/lib/realizacje-category-mapping';
 
 // Configure route
 export const dynamic = 'force-dynamic';
@@ -32,19 +26,6 @@ function generateSlugFromTitle(title: string): string {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
     .substring(0, 60);
-}
-
-// Helper function to determine folder type from category
-function getFolderTypeFromCategory(category: string): string {
-  const categoryMap: Record<string, string> = {
-    'domy-mieszkania': 'mieszkanie',
-    'balkony-tarasy': 'taras',
-    'garaze': 'garaz',
-    'kuchnie': 'kuchnia',
-    'pomieszczenia-czyste': 'gastronomia',
-    'schody': 'schody',
-  };
-  return categoryMap[category] || 'mieszkanie';
 }
 
 // Sanitize location string
@@ -81,6 +62,7 @@ export async function POST(request: NextRequest) {
     // Generate slug and folder name
     const baseSlug = generateSlugFromTitle(data.title);
     const folderType = getFolderTypeFromCategory(data.category);
+    const projectType = getProjectTypeFromCategory(data.category);
     const location = data.location 
       ? sanitizeString(data.location.split(',')[0]) 
       : 'polska';
@@ -89,7 +71,7 @@ export async function POST(request: NextRequest) {
     const folderName = `${location}-${baseSlug}-${folderType}`;
     const cloudinaryFolder = `realizacje/${folderName}`;
     
-    console.log(`Creating draft realizacja with slug: ${folderName}`);
+    console.log(`Creating draft realizacja with slug: ${folderName}, project_type: ${projectType}`);
 
     // Parse tags (comma-separated)
     const tags = data.tags
@@ -162,7 +144,7 @@ export async function POST(request: NextRequest) {
       short_description: data.shortDescription || data.description.substring(0, 160),
       location: data.location || '',
       surface_area: data.area || '',
-      project_type: folderType,
+      project_type: projectType,
       technology: data.technology || '',
       color: data.color || '',
       duration: data.duration || '',

@@ -6,14 +6,25 @@ import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB, Reali
  */
 function mapToRealizacja(data: RealizacjaData): Realizacja {
   // Map project_type to category
+  // Includes backward compatibility for old short format
   const categoryMap: Record<string, RealizacjaCategory> = {
+    // Full format (new, correct format)
     'posadzka-w-garażu': 'garaze',
     'posadzka-w-kuchni': 'kuchnie',
-    'posadzka-na-balkonie': 'balkony-tarasy',
+    'posadzka-na-balkonie': 'balkony-tarasy', // both balkon and taras map to same category
     'posadzka-na-tarasie': 'balkony-tarasy',
     'posadzka-na-schodach': 'schody',
     'posadzka-w-domu': 'domy-mieszkania',
     'posadzka-w-mieszkaniu': 'domy-mieszkania',
+    'posadzka-w-gastronomii': 'pomieszczenia-czyste', // clean rooms include gastronomy/food service
+    // Short format (old, for backward compatibility with existing records)
+    'garaz': 'garaze',
+    'kuchnia': 'kuchnie',
+    'taras': 'balkony-tarasy',
+    'balkon': 'balkony-tarasy',
+    'schody': 'schody',
+    'mieszkanie': 'domy-mieszkania',
+    'gastronomia': 'pomieszczenia-czyste',
   };
 
   const category = categoryMap[data.project_type] || 'domy-mieszkania' as RealizacjaCategory;
@@ -196,6 +207,7 @@ export async function getRealizacjeMetadata(): Promise<RealizacjeMetadata> {
     'kuchnie': 0,
     'balkony-tarasy': 0,
     'domy-mieszkania': 0,
+    'pomieszczenia-czyste': 0,
   };
 
   allRealizacje.forEach((realizacja) => {

@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { updateRealizacja, getRealizacjaBySlug } from '@/lib/supabase-realizacje';
+import { getProjectTypeFromCategory } from '@/lib/realizacje-category-mapping';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -119,7 +120,7 @@ export async function PUT(request: NextRequest) {
       short_description: data.shortDescription || data.description.substring(0, 160),
       location: data.location || existingRealizacja.location,
       surface_area: data.area || existingRealizacja.surface_area,
-      project_type: data.category || existingRealizacja.project_type,
+      project_type: data.category ? getProjectTypeFromCategory(data.category) : existingRealizacja.project_type,
       technology: data.technology || existingRealizacja.technology,
       color: data.color || existingRealizacja.color,
       duration: data.duration || existingRealizacja.duration,
