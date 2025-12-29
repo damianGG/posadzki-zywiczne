@@ -1,12 +1,6 @@
-/**
- * API Route: /api/admin/create-realizacja-cloudinary
- * 
- * Handles creating realizacja with Cloudinary URLs (no file upload)
- * Images are already uploaded directly to Cloudinary from the client
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { createRealizacja, RealizacjaData } from '@/lib/supabase-realizacje';
+import { getProjectTypeFromCategory, getFolderTypeFromCategory } from '@/lib/realizacje-category-mapping';
 
 // Configure route
 export const dynamic = 'force-dynamic';
@@ -32,33 +26,6 @@ function generateSlugFromTitle(title: string): string {
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
     .substring(0, 60);
-}
-
-// Helper function to determine project type from category
-// Returns the full project type name that matches the expected format in realizacje.ts
-function getProjectTypeFromCategory(category: string): string {
-  const categoryMap: Record<string, string> = {
-    'domy-mieszkania': 'posadzka-w-mieszkaniu',
-    'balkony-tarasy': 'posadzka-na-tarasie',
-    'garaze': 'posadzka-w-garażu',
-    'kuchnie': 'posadzka-w-kuchni',
-    'pomieszczenia-czyste': 'posadzka-w-gastronomii',
-    'schody': 'posadzka-na-schodach',
-  };
-  return categoryMap[category] || 'posadzka-w-mieszkaniu';
-}
-
-// Helper function to determine folder type from category (for folder names only)
-function getFolderTypeFromCategory(category: string): string {
-  const categoryMap: Record<string, string> = {
-    'domy-mieszkania': 'mieszkanie',
-    'balkony-tarasy': 'taras',
-    'garaze': 'garaz',
-    'kuchnie': 'kuchnia',
-    'pomieszczenia-czyste': 'gastronomia',
-    'schody': 'schody',
-  };
-  return categoryMap[category] || 'mieszkanie';
 }
 
 // Sanitize location string

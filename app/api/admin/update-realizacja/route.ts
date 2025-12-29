@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { updateRealizacja, getRealizacjaBySlug } from '@/lib/supabase-realizacje';
+import { getProjectTypeFromCategory } from '@/lib/realizacje-category-mapping';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -13,20 +14,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
-// Helper function to determine project type from category
-// Returns the full project type name that matches the expected format in realizacje.ts
-function getProjectTypeFromCategory(category: string): string {
-  const categoryMap: Record<string, string> = {
-    'domy-mieszkania': 'posadzka-w-mieszkaniu',
-    'balkony-tarasy': 'posadzka-na-tarasie',
-    'garaze': 'posadzka-w-garażu',
-    'kuchnie': 'posadzka-w-kuchni',
-    'pomieszczenia-czyste': 'posadzka-w-gastronomii',
-    'schody': 'posadzka-na-schodach',
-  };
-  return categoryMap[category] || 'posadzka-w-mieszkaniu';
-}
 
 export async function PUT(request: NextRequest) {
   let slug: string | undefined;
