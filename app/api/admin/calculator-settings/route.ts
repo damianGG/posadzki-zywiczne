@@ -10,6 +10,11 @@ import {
   updateService,
   updateRoomType,
   updateConcreteState,
+  createSurfaceType,
+  createColor,
+  createService,
+  createRoomType,
+  createConcreteState,
 } from "@/lib/supabase-calculator"
 
 // GET - Fetch all calculator settings
@@ -119,5 +124,47 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     console.error("Error updating calculator settings:", error)
     return NextResponse.json({ error: "Failed to update calculator settings" }, { status: 500 })
+  }
+}
+
+// POST - Create new calculator settings
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { type, data } = body
+
+    if (!type || !data) {
+      return NextResponse.json({ error: "Missing required fields" }, { status: 400 })
+    }
+
+    let result
+    switch (type) {
+      case "surface-type":
+        result = await createSurfaceType(data)
+        break
+      case "color":
+        result = await createColor(data)
+        break
+      case "service":
+        result = await createService(data)
+        break
+      case "room-type":
+        result = await createRoomType(data)
+        break
+      case "concrete-state":
+        result = await createConcreteState(data)
+        break
+      default:
+        return NextResponse.json({ error: "Invalid type" }, { status: 400 })
+    }
+
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 500 })
+    }
+
+    return NextResponse.json({ success: true, data: result.data })
+  } catch (error) {
+    console.error("Error creating calculator settings:", error)
+    return NextResponse.json({ error: "Failed to create calculator settings" }, { status: 500 })
   }
 }

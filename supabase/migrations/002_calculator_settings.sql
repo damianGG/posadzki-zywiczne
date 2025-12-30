@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS calculator_surface_types (
   name TEXT NOT NULL,
   description TEXT NOT NULL,
   price_per_m2 NUMERIC NOT NULL,
+  price_ranges JSONB DEFAULT '[]'::jsonb, -- Array of {min_m2, max_m2, price_per_m2}
   image_url TEXT,
   properties JSONB DEFAULT '[]'::jsonb,
   display_order INTEGER DEFAULT 0,
@@ -70,6 +71,7 @@ CREATE TABLE IF NOT EXISTS calculator_concrete_states (
   name TEXT NOT NULL,
   description TEXT NOT NULL,
   additional_price NUMERIC DEFAULT 0,
+  show_price_in_label BOOLEAN DEFAULT false, -- Whether to show "+25 zł" in label
   display_order INTEGER DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
@@ -129,9 +131,9 @@ INSERT INTO calculator_room_types (room_id, name, description, icon, is_availabl
 ON CONFLICT (room_id) DO NOTHING;
 
 -- Insert default concrete states
-INSERT INTO calculator_concrete_states (state_id, name, description, additional_price, display_order) VALUES
-('nowa-wylewka', 'Nowa wylewka betonowa', 'Świeża wylewka betonowa - wymaga jedynie gruntowania', 0, 1),
-('plytki', 'Płytki ceramiczne', 'Istniejące płytki - wymagają usunięcia i przygotowania podłoża', 25, 2)
+INSERT INTO calculator_concrete_states (state_id, name, description, additional_price, show_price_in_label, display_order) VALUES
+('nowa-wylewka', 'Nowa wylewka betonowa', 'Świeża wylewka betonowa - wymaga jedynie gruntowania', 0, false, 1),
+('plytki', 'Płytki ceramiczne', 'Istniejące płytki - wymagają usunięcia i przygotowania podłoża', 25, false, 2)
 ON CONFLICT (state_id) DO NOTHING;
 
 -- Add RLS policies (allow public read, admin write)

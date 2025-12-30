@@ -18,6 +18,11 @@ interface SurfaceType {
   name: string;
   description: string;
   price_per_m2: number;
+  price_ranges?: Array<{
+    min_m2: number;
+    max_m2: number | null;
+    price_per_m2: number;
+  }>;
   image_url?: string;
   properties?: string[];
   display_order: number;
@@ -68,6 +73,7 @@ interface ConcreteState {
   name: string;
   description: string;
   additional_price: number;
+  show_price_in_label?: boolean;
   display_order: number;
 }
 
@@ -85,6 +91,9 @@ export default function CalculatorAdminPage() {
   const [concreteStates, setConcreteStates] = useState<ConcreteState[]>([]);
   
   const [activeTab, setActiveTab] = useState<'surface-types' | 'colors' | 'services' | 'rooms' | 'concrete'>('surface-types');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [createType, setCreateType] = useState<string>('');
+  const [newItem, setNewItem] = useState<any>({});
 
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
@@ -137,14 +146,87 @@ export default function CalculatorAdminPage() {
       setMessage({ type: 'success', text: 'Zapisano pomyślnie' });
       setTimeout(() => setMessage(null), 3000);
 
-      // Refresh data
-      await fetchAllSettings();
+      // Update local state instead of reloading
+      if (data.data) {
+        switch (type) {
+          case 'surface-type':
+            setSurfaceTypes(prev => prev.map(item => item.type_id === id ? data.data : item));
+            break;
+          case 'color':
+            setColors(prev => prev.map(item => item.color_id === id ? data.data : item));
+            break;
+          case 'service':
+            setServices(prev => prev.map(item => item.service_id === id ? data.data : item));
+            break;
+          case 'room-type':
+            setRoomTypes(prev => prev.map(item => item.room_id === id ? data.data : item));
+            break;
+          case 'concrete-state':
+            setConcreteStates(prev => prev.map(item => item.state_id === id ? data.data : item));
+            break;
+        }
+      }
     } catch (error) {
       console.error('Error saving:', error);
       setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Błąd zapisu' });
     } finally {
       setSaving(false);
     }
+  };
+
+  const createNewItem = async () => {
+    try {
+      setSaving(true);
+      const response = await fetch('/api/admin/calculator-settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ type: createType, data: newItem }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error || 'Błąd tworzenia');
+      }
+
+      setMessage({ type: 'success', text: 'Utworzono pomyślnie' });
+      setTimeout(() => setMessage(null), 3000);
+
+      // Add to local state
+      if (data.data) {
+        switch (createType) {
+          case 'surface-type':
+            setSurfaceTypes(prev => [...prev, data.data]);
+            break;
+          case 'color':
+            setColors(prev => [...prev, data.data]);
+            break;
+          case 'service':
+            setServices(prev => [...prev, data.data]);
+            break;
+          case 'room-type':
+            setRoomTypes(prev => [...prev, data.data]);
+            break;
+          case 'concrete-state':
+            setConcreteStates(prev => [...prev, data.data]);
+            break;
+        }
+      }
+
+      setShowCreateModal(false);
+      setNewItem({});
+    } catch (error) {
+      console.error('Error creating:', error);
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Błąd tworzenia' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const openCreateModal = (type: string) => {
+    setCreateType(type);
+    setNewItem({});
+    setShowCreateModal(true);
   };
 
   if (!isAuthenticated || loading) {
@@ -209,6 +291,12 @@ export default function CalculatorAdminPage() {
         {/* Surface Types */}
         {activeTab === 'surface-types' && (
           <div className="space-y-4">
+            <div className="flex justify-end mb-4">
+              <Button onClick={() => openCreateModal('surface-type')} className="gap-2">
+                <Save className="w-4 h-4" />
+                Dodaj nową powierzchnię
+              </Button>
+            </div>
             {surfaceTypes.map((surface) => (
               <Card key={surface.id}>
                 <CardHeader>
@@ -298,6 +386,12 @@ export default function CalculatorAdminPage() {
         {/* Colors */}
         {activeTab === 'colors' && (
           <div className="space-y-4">
+            <div className="flex justify-end mb-4">
+              <Button onClick={() => openCreateModal('color')} className="gap-2">
+                <Save className="w-4 h-4" />
+                Dodaj nowy kolor
+              </Button>
+            </div>
             {colors.map((color) => (
               <Card key={color.id}>
                 <CardHeader>
@@ -392,7 +486,15 @@ export default function CalculatorAdminPage() {
         {/* Services */}
         {activeTab === 'services' && (
           <div className="space-y-4">
-            {services.map((service) => (
+            <div className="flex justify-end mb-4">
+              <Button onClick={() => openCreateModal('service')} className="gap-2">
+                <Save className="w-4 h-4" />
+                Dodaj nową usługę
+              </Button>
+            </div>
+            {services
+              .filter(service => service.category === 'przygotowanie' || service.category === 'wykończenie' || service.category === 'logistyka')
+              .map((service) => (
               <Card key={service.id}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
@@ -591,6 +693,12 @@ export default function CalculatorAdminPage() {
         {/* Concrete States */}
         {activeTab === 'concrete' && (
           <div className="space-y-4">
+            <div className="flex justify-end mb-4">
+              <Button onClick={() => openCreateModal('concrete-state')} className="gap-2">
+                <Save className="w-4 h-4" />
+                Dodaj nowy stan podłoża
+              </Button>
+            </div>
             {concreteStates.map((state) => (
               <Card key={state.id}>
                 <CardHeader>
@@ -640,6 +748,16 @@ export default function CalculatorAdminPage() {
                       }}
                       onBlur={(e) => updateSetting('concrete-state', state.state_id, { description: e.target.value })}
                     />
+                  </div>
+                  <div className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg">
+                    <Switch
+                      id={`show-price-${state.id}`}
+                      checked={state.show_price_in_label || false}
+                      onCheckedChange={(checked) => updateSetting('concrete-state', state.state_id, { show_price_in_label: checked })}
+                    />
+                    <Label htmlFor={`show-price-${state.id}`} className="cursor-pointer">
+                      Pokaż cenę w etykiecie (np. "+25 zł")
+                    </Label>
                   </div>
                 </CardContent>
               </Card>

@@ -12,6 +12,11 @@ export interface SurfaceType {
   name: string;
   description: string;
   price_per_m2: number;
+  price_ranges?: Array<{
+    min_m2: number;
+    max_m2: number | null; // null means infinity
+    price_per_m2: number;
+  }>;
   image_url?: string;
   properties?: string[];
   display_order?: number;
@@ -62,6 +67,7 @@ export interface ConcreteState {
   name: string;
   description: string;
   additional_price: number;
+  show_price_in_label?: boolean;
   display_order?: number;
 }
 
@@ -250,4 +256,76 @@ export async function updateConcreteState(state_id: string, updates: Partial<Con
 
   if (error) return { success: false, error: error.message };
   return { success: true, data };
+}
+
+// ========== Create Functions ==========
+
+export async function createSurfaceType(data: SurfaceType) {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return { success: false, error: 'Supabase not configured' };
+
+  const { data: result, error } = await supabase
+    .from('calculator_surface_types')
+    .insert(data)
+    .select()
+    .single();
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data: result };
+}
+
+export async function createColor(data: ColorOption) {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return { success: false, error: 'Supabase not configured' };
+
+  const { data: result, error } = await supabase
+    .from('calculator_colors')
+    .insert(data)
+    .select()
+    .single();
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data: result };
+}
+
+export async function createService(data: Service) {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return { success: false, error: 'Supabase not configured' };
+
+  const { data: result, error } = await supabase
+    .from('calculator_services')
+    .insert(data)
+    .select()
+    .single();
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data: result };
+}
+
+export async function createRoomType(data: RoomType) {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return { success: false, error: 'Supabase not configured' };
+
+  const { data: result, error } = await supabase
+    .from('calculator_room_types')
+    .insert(data)
+    .select()
+    .single();
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data: result };
+}
+
+export async function createConcreteState(data: ConcreteState) {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return { success: false, error: 'Supabase not configured' };
+
+  const { data: result, error } = await supabase
+    .from('calculator_concrete_states')
+    .insert(data)
+    .select()
+    .single();
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data: result };
 }
