@@ -31,6 +31,9 @@ import jsPDF from "jspdf"
 import Image from "next/image"
 import confetti from "canvas-confetti"
 
+// Constants
+const PLACEHOLDER_IMAGE = "/placeholder.svg"
+
 interface RodzajPowierzchniOption {
     id: string
     nazwa: string
@@ -116,7 +119,7 @@ const rodzajePowierzchni: RodzajPowierzchniOption[] = [
         nazwa: "Podstawowa lekko chropowata",
         opis: "Powierzchnia z kruszywem kwarcowym zapewniająca dobrą przyczepność",
         cenaZaM2: 200,
-        zdjecie: "/placeholder.svg?height=80&width=80&text=Podstawowa+Chropowata",
+        zdjecie: `${PLACEHOLDER_IMAGE}?height=80&width=80&text=Podstawowa+Chropowata`,
         wlasciwosci: ["Kruszywo kwarcowe", "Lekko chropowata", "Dobra przyczepność", "Standardowa odporność"],
     },
     {
@@ -124,7 +127,7 @@ const rodzajePowierzchni: RodzajPowierzchniOption[] = [
         nazwa: "Z posypką z płatków akrylowych",
         opis: "Dekoracyjna powierzchnia z kolorowymi płatkami akrylowymi",
         cenaZaM2: 230,
-        zdjecie: "/placeholder.svg?height=80&width=80&text=Płatki+Akrylowe",
+        zdjecie: `${PLACEHOLDER_IMAGE}?height=80&width=80&text=Płatki+Akrylowe`,
         wlasciwosci: ["Płatki akrylowe", "Efekt dekoracyjny", "Zwiększona estetyka", "Dobra odporność"],
     },
     {
@@ -132,7 +135,7 @@ const rodzajePowierzchni: RodzajPowierzchniOption[] = [
         nazwa: "Zacierana mechanicznie",
         opis: "Gładka powierzchnia zacierana mechanicznie dla najwyższej jakości",
         cenaZaM2: 260,
-        zdjecie: "/placeholder.svg?height=80&width=80&text=Zacierana+Mechanicznie",
+        zdjecie: `${PLACEHOLDER_IMAGE}?height=80&width=80&text=Zacierana+Mechanicznie`,
         wlasciwosci: ["Zacierana mechanicznie", "Gładka powierzchnia", "Najwyższa jakość", "Maksymalna odporność"],
     },
 ]
@@ -143,24 +146,24 @@ const koloryRAL: KolorOption[] = [
         nazwa: "RAL 7035 - Szary jasny",
         kodRAL: "RAL 7035",
         cenaDodatkowa: 0,
-        zdjecie: "/placeholder.svg?height=80&width=80&text=RAL7035",
-        podglad: "/placeholder.svg?height=400&width=600&text=RAL7035+Podgląd+Posadzki",
+        zdjecie: `${PLACEHOLDER_IMAGE}?height=80&width=80&text=RAL7035`,
+        podglad: `${PLACEHOLDER_IMAGE}?height=400&width=600&text=RAL7035+Podgląd+Posadzki`,
     },
     {
         id: "ral7040",
         nazwa: "RAL 7040 - Szary okno",
         kodRAL: "RAL 7040",
         cenaDodatkowa: 0,
-        zdjecie: "/placeholder.svg?height=80&width=80&text=RAL7040",
-        podglad: "/placeholder.svg?height=400&width=600&text=RAL7040+Podgląd+Posadzki",
+        zdjecie: `${PLACEHOLDER_IMAGE}?height=80&width=80&text=RAL7040`,
+        podglad: `${PLACEHOLDER_IMAGE}?height=400&width=600&text=RAL7040+Podgląd+Posadzki`,
     },
     {
         id: "ral7035posypka",
         nazwa: "RAL 7035 z posypką",
         kodRAL: "RAL 7035",
         cenaDodatkowa: 50,
-        zdjecie: "/placeholder.svg?height=80&width=80&text=RAL7035+Posypka",
-        podglad: "/placeholder.svg?height=400&width=600&text=RAL7035+Posypka+Podgląd",
+        zdjecie: `${PLACEHOLDER_IMAGE}?height=80&width=80&text=RAL7035+Posypka`,
+        podglad: `${PLACEHOLDER_IMAGE}?height=400&width=600&text=RAL7035+Posypka+Podgląd`,
     },
 ]
 
@@ -1441,7 +1444,7 @@ export default function KalkulatorPosadzki() {
                                                             <div className="flex flex-col sm:flex-row items-start sm:items-start gap-3">
                                                                 <div className="relative w-full h-32 sm:w-16 sm:h-16 rounded border overflow-hidden flex-shrink-0">
                                                                     <Image
-                                                                        src={rodzaj.zdjecie || "/placeholder.svg"}
+                                                                        src={rodzaj.zdjecie || PLACEHOLDER_IMAGE}
                                                                         alt={rodzaj.nazwa}
                                                                         fill
                                                                         className="object-cover transition-transform duration-300 hover:scale-110"
@@ -1567,7 +1570,7 @@ export default function KalkulatorPosadzki() {
                                                             <div className="flex items-center gap-3">
                                                                 <div className="relative w-12 h-12 rounded border overflow-hidden flex-shrink-0">
                                                                     <Image
-                                                                        src={kolor.zdjecie || "/placeholder.svg"}
+                                                                        src={kolor.zdjecie || PLACEHOLDER_IMAGE}
                                                                         alt={kolor.nazwa}
                                                                         fill
                                                                         className="object-cover transition-transform duration-300 hover:scale-110"
@@ -1671,7 +1674,7 @@ export default function KalkulatorPosadzki() {
                                                                     {dodatek.zdjecie && (
                                                                         <div className="relative w-12 h-12 rounded border overflow-hidden flex-shrink-0">
                                                                             <Image
-                                                                                src={dodatek.zdjecie || "/placeholder.svg"}
+                                                                                src={dodatek.zdjecie || PLACEHOLDER_IMAGE}
                                                                                 alt={dodatek.nazwa}
                                                                                 fill
                                                                                 className="object-cover"
@@ -1873,7 +1876,7 @@ export default function KalkulatorPosadzki() {
                                     <div className="h-full flex flex-col animate-in fade-in slide-in-from-right-4 duration-700">
                                         <div className="flex-1 relative rounded-lg overflow-hidden border-2 border-gray-200 min-h-[200px] sm:min-h-[300px] lg:min-h-[400px] group">
                                             <Image
-                                                src={wybranyKolorObj.podglad || "/placeholder.svg"}
+                                                src={wybranyKolorObj.podglad || PLACEHOLDER_IMAGE}
                                                 alt={`Podgląd ${wybranyKolorObj.nazwa}`}
                                                 fill
                                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
