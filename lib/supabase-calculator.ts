@@ -44,6 +44,7 @@ export interface Service {
   price_per_m2?: number;
   price_per_mb?: number;
   price_fixed?: number;
+  is_included_in_floor_price?: boolean;
   image_url?: string;
   is_mandatory?: boolean;
   is_default?: boolean;

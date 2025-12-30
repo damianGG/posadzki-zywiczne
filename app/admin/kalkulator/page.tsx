@@ -50,6 +50,7 @@ interface Service {
   price_per_m2?: number;
   price_per_mb?: number;
   price_fixed?: number;
+  is_included_in_floor_price?: boolean;
   image_url?: string;
   is_mandatory: boolean;
   is_default: boolean;
@@ -612,6 +613,22 @@ export default function CalculatorAdminPage() {
                         />
                       </div>
                     )}
+                  </div>
+                  <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <Switch
+                      checked={service.is_included_in_floor_price || false}
+                      onCheckedChange={(checked) => {
+                        const updated = services.map((s) =>
+                          s.id === service.id ? { ...s, is_included_in_floor_price: checked } : s
+                        );
+                        setServices(updated);
+                        updateSetting('service', service.service_id, { is_included_in_floor_price: checked });
+                      }}
+                      disabled={saving}
+                    />
+                    <Label className="cursor-pointer">
+                      Usługa w cenie posadzki (zamiast wyświetlania ceny, pokaże &quot;w cenie posadzki&quot;)
+                    </Label>
                   </div>
                   <div>
                     <Label>URL zdjęcia</Label>

@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS calculator_services (
   price_per_m2 NUMERIC,
   price_per_mb NUMERIC,
   price_fixed NUMERIC,
+  is_included_in_floor_price BOOLEAN DEFAULT false, -- If true, shows "w cenie posadzki" instead of price
   image_url TEXT,
   is_mandatory BOOLEAN DEFAULT false,
   is_default BOOLEAN DEFAULT false,

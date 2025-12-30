@@ -186,6 +186,7 @@ const dodatkiUslugi = [
         domyslnie: true,
         zdjecie: "/images/gruntowanie.jpg",
         obowiazkowy: true,
+        wCeniePosadzki: false,
     },
     {
         id: "cokol",
@@ -196,6 +197,7 @@ const dodatkiUslugi = [
         domyslnie: true,
         zdjecie: "/images/cokol.jpg",
         obowiazkowy: true,
+        wCeniePosadzki: false,
     },
     {
         id: "uszczelnienie",
@@ -206,6 +208,7 @@ const dodatkiUslugi = [
         domyslnie: true,
         zdjecie: "/images/uszczelnienie.jpg",
         obowiazkowy: true,
+        wCeniePosadzki: false,
     },
     {
         id: "dylatacje",
@@ -215,6 +218,7 @@ const dodatkiUslugi = [
         kategoria: "wykończenie",
         domyslnie: false,
         zdjecie: "/images/dylatacje.jpg",
+        wCeniePosadzki: false,
     },
     {
         id: "podklad",
@@ -224,6 +228,7 @@ const dodatkiUslugi = [
         kategoria: "przygotowanie",
         domyslnie: false,
         zdjecie: "/images/podklad.jpg",
+        wCeniePosadzki: false,
     },
     {
         id: "szlifowanie",
@@ -233,6 +238,7 @@ const dodatkiUslugi = [
         kategoria: "przygotowanie",
         domyslnie: false,
         zdjecie: "/images/szlifowanie.jpg",
+        wCeniePosadzki: false,
     },
     {
         id: "naprawa-ubytków",
@@ -242,6 +248,7 @@ const dodatkiUslugi = [
         kategoria: "przygotowanie",
         domyslnie: false,
         zdjecie: "/images/naprawa.jpg",
+        wCeniePosadzki: false,
     },
     {
         id: "warstwa-ochronna",
@@ -251,6 +258,7 @@ const dodatkiUslugi = [
         kategoria: "ochrona",
         domyslnie: false,
         zdjecie: "/images/warstwa-ochronna.jpg",
+        wCeniePosadzki: false,
     },
     {
         id: "antypoślizgowa",
@@ -260,6 +268,7 @@ const dodatkiUslugi = [
         kategoria: "ochrona",
         domyslnie: false,
         zdjecie: "/images/antypoślizgowa.jpg",
+        wCeniePosadzki: false,
     },
     {
         id: "transport",
@@ -269,6 +278,7 @@ const dodatkiUslugi = [
         kategoria: "logistyka",
         domyslnie: false,
         zdjecie: "/images/transport.jpg",
+        wCeniePosadzki: false,
     },
     {
         id: "demontaz",
@@ -278,6 +288,7 @@ const dodatkiUslugi = [
         kategoria: "przygotowanie",
         domyslnie: false,
         zdjecie: "/images/demontaz.jpg",
+        wCeniePosadzki: false,
     },
     {
         id: "sprzatanie",
@@ -287,6 +298,7 @@ const dodatkiUslugi = [
         kategoria: "wykończenie",
         domyslnie: false,
         zdjecie: "/images/sprzatanie.jpg",
+        wCeniePosadzki: false,
     },
 ]
 
@@ -631,7 +643,7 @@ export default function KalkulatorPosadzki() {
             // Dodaj koszty dodatków
             wybraneDodatki.forEach((dodatekId) => {
                 const dodatek = dodatkiUslugi.find((d) => d.id === dodatekId)
-                if (dodatek) {
+                if (dodatek && !dodatek.wCeniePosadzki) {
                     if (dodatek.cenaZaM2) {
                         koszt += pow * dodatek.cenaZaM2
                     } else if (dodatek.cenaZaMb && obwod) {
@@ -835,28 +847,47 @@ export default function KalkulatorPosadzki() {
             let cenaJedn = 0
             let wartosc = 0
 
-            if (dodatek.cenaZaM2) {
+            if (dodatek.wCeniePosadzki) {
+                // Service included in floor price
+                doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
+                doc.text("-", 80, yPosition)
+                doc.text("-", 110, yPosition)
+                doc.text("w cenie posadzki", 140, yPosition)
+                doc.text("0.00 zl", 170, yPosition)
+            } else if (dodatek.cenaZaM2) {
                 ilosc = powierzchnia
                 jednostka = "m²"
                 cenaJedn = dodatek.cenaZaM2
                 wartosc = powierzchnia * dodatek.cenaZaM2
+                
+                doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
+                doc.text(ilosc.toFixed(2), 80, yPosition)
+                doc.text(jednostka, 110, yPosition)
+                doc.text(`${cenaJedn.toFixed(2)} zl`, 140, yPosition)
+                doc.text(`${wartosc.toFixed(2)} zl`, 170, yPosition)
             } else if (dodatek.cenaZaMb && obwod) {
                 ilosc = Number.parseFloat(obwod)
                 jednostka = "mb"
                 cenaJedn = dodatek.cenaZaMb
                 wartosc = ilosc * dodatek.cenaZaMb
+                
+                doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
+                doc.text(ilosc.toFixed(2), 80, yPosition)
+                doc.text(jednostka, 110, yPosition)
+                doc.text(`${cenaJedn.toFixed(2)} zl`, 140, yPosition)
+                doc.text(`${wartosc.toFixed(2)} zl`, 170, yPosition)
             } else if (dodatek.cenaStala) {
                 ilosc = 1
                 jednostka = "kpl"
                 cenaJedn = dodatek.cenaStala
                 wartosc = dodatek.cenaStala
+                
+                doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
+                doc.text(ilosc.toFixed(2), 80, yPosition)
+                doc.text(jednostka, 110, yPosition)
+                doc.text(`${cenaJedn.toFixed(2)} zl`, 140, yPosition)
+                doc.text(`${wartosc.toFixed(2)} zl`, 170, yPosition)
             }
-
-            doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
-            doc.text(ilosc.toFixed(2), 80, yPosition)
-            doc.text(jednostka, 110, yPosition)
-            doc.text(`${cenaJedn.toFixed(2)} zl`, 140, yPosition)
-            doc.text(`${wartosc.toFixed(2)} zl`, 170, yPosition)
             yPosition += 8
         })
 
@@ -1712,9 +1743,15 @@ export default function KalkulatorPosadzki() {
                                                                             className={`text-sm font-semibold transition-colors duration-300 ml-6 inline-block mt-1 ${!moznaWybracDodatki ? "text-gray-400" : "text-green-600"
                                                                                 }`}
                                                                         >
-                                                                            {dodatek.cenaZaM2 && `${dodatek.cenaZaM2} zł/m²`}
-                                                                            {dodatek.cenaZaMb && `${dodatek.cenaZaMb} zł/mb`}
-                                                                            {dodatek.cenaStala && `${dodatek.cenaStala} zł`}
+                                                                            {dodatek.wCeniePosadzki ? (
+                                                                                <span className="text-blue-600 italic">w cenie posadzki</span>
+                                                                            ) : (
+                                                                                <>
+                                                                                    {dodatek.cenaZaM2 && `${dodatek.cenaZaM2} zł/m²`}
+                                                                                    {dodatek.cenaZaMb && `${dodatek.cenaZaMb} zł/mb`}
+                                                                                    {dodatek.cenaStala && `${dodatek.cenaStala} zł`}
+                                                                                </>
+                                                                            )}
                                                                         </span>
                                                                     </div>
                                                                 </div>
