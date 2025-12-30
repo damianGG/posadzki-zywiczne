@@ -5,6 +5,12 @@
     },
     "app/api/admin/upload-realizacja/route.ts": {
       "maxDuration": 60
+    },
+    "app/api/send-pdf/route.ts": {
+      "maxDuration": 60
+    },
+    "app/api/generate-code/route.ts": {
+      "maxDuration": 60
     }
   }
 }
