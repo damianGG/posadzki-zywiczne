@@ -774,7 +774,7 @@ export default function CalculatorAdminPage() {
                       onCheckedChange={(checked) => updateSetting('concrete-state', state.state_id, { show_price_in_label: checked })}
                     />
                     <Label htmlFor={`show-price-${state.id}`} className="cursor-pointer">
-                      Pokaż cenę w etykiecie (np. "+25 zł")
+                      Pokaż cenę w etykiecie (np. &quot;+25 zł&quot;)
                     </Label>
                   </div>
                 </CardContent>

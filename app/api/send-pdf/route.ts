@@ -14,14 +14,6 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (!process.env.ADMIN_EMAIL) {
-      console.error("ADMIN_EMAIL is not configured in .env")
-      return NextResponse.json(
-        { success: false, message: "Email administratora nie jest skonfigurowany." },
-        { status: 500 }
-      )
-    }
-
     // Validate input data
     if (!email || !pdfData || !kosztorysData) {
       return NextResponse.json(
@@ -30,7 +22,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log("Sending email to:", email, "and admin:", process.env.ADMIN_EMAIL)
+    console.log("Sending email to:", email, process.env.ADMIN_EMAIL ? `and admin: ${process.env.ADMIN_EMAIL}` : "(no admin email configured)")
 
     // Konfiguracja transportera email (przykład z Gmail)
     const transporter = nodemailer.createTransporter({
@@ -59,9 +51,15 @@ export async function POST(request: NextRequest) {
     // Konwersja base64 PDF do buffera
     const pdfBuffer = Buffer.from(pdfData.split(",")[1], "base64")
 
+    // Build recipient list - always include customer, optionally include admin
+    const recipients = [email]
+    if (process.env.ADMIN_EMAIL) {
+      recipients.push(process.env.ADMIN_EMAIL)
+    }
+
     const mailOptions = {
       from: process.env.EMAIL_USER,
-      to: [process.env.ADMIN_EMAIL, email], // Wyślij do admina i klienta
+      to: recipients,
       subject: `Kosztorys posadzki żywicznej - ${kosztorysData.numer}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -102,7 +100,8 @@ export async function POST(request: NextRequest) {
 
     await transporter.sendMail(mailOptions)
 
-    console.log("Email sent successfully to:", email, "and", process.env.ADMIN_EMAIL)
+    const adminInfo = process.env.ADMIN_EMAIL ? ` and ${process.env.ADMIN_EMAIL}` : ""
+    console.log(`Email sent successfully to: ${email}${adminInfo}`)
 
     return NextResponse.json({ success: true, message: "Email wysłany pomyślnie" })
   } catch (error) {
@@ -114,7 +113,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message: `Błąd wysyłania emaila: ${errorMessage}. Sprawdź konfigurację EMAIL_USER, EMAIL_PASS i ADMIN_EMAIL w .env`,
+        message: `Błąd wysyłania emaila: ${errorMessage}. Sprawdź konfigurację EMAIL_USER i EMAIL_PASS w .env`,
       },
       { status: 500 }
     )
