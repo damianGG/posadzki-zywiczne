@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 
 async function sendPDFEmail(email: string, pdfData: string, kosztorysData: any): Promise<void> {
-  const transporter = nodemailer.createTransporter({
+  const transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
       user: process.env.EMAIL_USER,
