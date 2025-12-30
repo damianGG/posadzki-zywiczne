@@ -5,6 +5,33 @@ export async function POST(request: NextRequest) {
   try {
     const { email, pdfData, kosztorysData } = await request.json()
 
+    // Validate environment variables
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.error("Email configuration missing. Set EMAIL_USER and EMAIL_PASS in .env")
+      return NextResponse.json(
+        { success: false, message: "Email nie jest skonfigurowany. Skontaktuj się z administratorem." },
+        { status: 500 }
+      )
+    }
+
+    if (!process.env.ADMIN_EMAIL) {
+      console.error("ADMIN_EMAIL is not configured in .env")
+      return NextResponse.json(
+        { success: false, message: "Email administratora nie jest skonfigurowany." },
+        { status: 500 }
+      )
+    }
+
+    // Validate input data
+    if (!email || !pdfData || !kosztorysData) {
+      return NextResponse.json(
+        { success: false, message: "Brakujące dane wymagane do wysłania emaila" },
+        { status: 400 }
+      )
+    }
+
+    console.log("Sending email to:", email, "and admin:", process.env.ADMIN_EMAIL)
+
     // Konfiguracja transportera email (przykład z Gmail)
     const transporter = nodemailer.createTransporter({
       service: "gmail",
@@ -13,6 +40,21 @@ export async function POST(request: NextRequest) {
         pass: process.env.EMAIL_PASS, // Hasło aplikacji Gmail
       },
     })
+
+    // Verify transporter configuration
+    try {
+      await transporter.verify()
+      console.log("Email transporter verified successfully")
+    } catch (verifyError) {
+      console.error("Email transporter verification failed:", verifyError)
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Błąd konfiguracji email. Sprawdź EMAIL_USER i EMAIL_PASS w .env",
+        },
+        { status: 500 }
+      )
+    }
 
     // Konwersja base64 PDF do buffera
     const pdfBuffer = Buffer.from(pdfData.split(",")[1], "base64")
@@ -60,9 +102,21 @@ export async function POST(request: NextRequest) {
 
     await transporter.sendMail(mailOptions)
 
+    console.log("Email sent successfully to:", email, "and", process.env.ADMIN_EMAIL)
+
     return NextResponse.json({ success: true, message: "Email wysłany pomyślnie" })
   } catch (error) {
     console.error("Błąd wysyłania emaila:", error)
-    return NextResponse.json({ success: false, message: "Błąd wysyłania emaila" }, { status: 500 })
+    
+    // Provide more detailed error message
+    const errorMessage = error instanceof Error ? error.message : "Nieznany błąd"
+    
+    return NextResponse.json(
+      {
+        success: false,
+        message: `Błąd wysyłania emaila: ${errorMessage}. Sprawdź konfigurację EMAIL_USER, EMAIL_PASS i ADMIN_EMAIL w .env`,
+      },
+      { status: 500 }
+    )
   }
 }
