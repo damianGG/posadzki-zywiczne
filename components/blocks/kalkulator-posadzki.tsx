@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -523,10 +523,11 @@ export default function KalkulatorPosadzki() {
         if (wybraneDodatki.length === 0 && obowiazkowe.length > 0) {
             setWybraneDodatki(obowiazkowe)
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     // Walidacja wymiarów
-    const walidujWymiary = (dlugosc: string, szerokosc: string, powierzchniaBezp: string) => {
+    const walidujWymiary = useCallback((dlugosc: string, szerokosc: string, powierzchniaBezp: string) => {
         const errors: string[] = []
 
         if (trybWymiarow === "wymiary") {
@@ -564,7 +565,7 @@ export default function KalkulatorPosadzki() {
         }
 
         return errors
-    }
+    }, [trybWymiarow])
 
     // Sprawdzanie kroków
     const rodzajPomieszczeniaJestWybrany = rodzajPomieszczenia !== ""
