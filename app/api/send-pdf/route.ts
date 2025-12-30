@@ -5,6 +5,11 @@ export async function POST(request: NextRequest) {
   try {
     const { email, pdfData, kosztorysData } = await request.json()
 
+    console.log("=== Email Send Request ===")
+    console.log("Customer email:", email)
+    console.log("PDF data length:", pdfData?.length || 0)
+    console.log("Quote data:", kosztorysData)
+
     // Validate environment variables
     if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
       console.error("Email configuration missing. Set EMAIL_USER and EMAIL_PASS in .env")
@@ -16,6 +21,7 @@ export async function POST(request: NextRequest) {
 
     // Validate input data
     if (!email || !pdfData || !kosztorysData) {
+      console.error("Missing required data:", { hasEmail: !!email, hasPdfData: !!pdfData, hasKosztorysData: !!kosztorysData })
       return NextResponse.json(
         { success: false, message: "Brakujące dane wymagane do wysłania emaila" },
         { status: 400 }
@@ -35,14 +41,16 @@ export async function POST(request: NextRequest) {
 
     // Verify transporter configuration
     try {
+      console.log("Verifying email transporter...")
       await transporter.verify()
       console.log("Email transporter verified successfully")
     } catch (verifyError) {
       console.error("Email transporter verification failed:", verifyError)
+      const errorMsg = verifyError instanceof Error ? verifyError.message : "Unknown verification error"
       return NextResponse.json(
         {
           success: false,
-          message: "Błąd konfiguracji email. Sprawdź EMAIL_USER i EMAIL_PASS w .env",
+          message: `Błąd konfiguracji email: ${errorMsg}. Sprawdź EMAIL_USER i EMAIL_PASS w .env`,
         },
         { status: 500 }
       )
@@ -98,17 +106,21 @@ export async function POST(request: NextRequest) {
       ],
     }
 
+    console.log("Attempting to send email...")
     await transporter.sendMail(mailOptions)
 
     const adminInfo = process.env.ADMIN_EMAIL ? ` and ${process.env.ADMIN_EMAIL}` : ""
     console.log(`Email sent successfully to: ${email}${adminInfo}`)
+    console.log("=== Email Send Complete ===")
 
     return NextResponse.json({ success: true, message: "Email wysłany pomyślnie" })
   } catch (error) {
+    console.error("=== Email Send Error ===")
     console.error("Błąd wysyłania emaila:", error)
     
     // Provide more detailed error message
     const errorMessage = error instanceof Error ? error.message : "Nieznany błąd"
+    console.error("Error message:", errorMessage)
     
     return NextResponse.json(
       {

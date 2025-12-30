@@ -927,11 +927,14 @@ export default function KalkulatorPosadzki() {
                     setShowEmailInput(false)
                     setUserEmail("")
                 } else {
-                    alert("Błąd wysyłania emaila. Spróbuj ponownie.")
+                    const errorMsg = result.message || "Błąd wysyłania emaila. Spróbuj ponownie."
+                    console.error("Email send failed:", errorMsg)
+                    alert(`Błąd wysyłania emaila: ${errorMsg}`)
                 }
             } catch (error) {
                 console.error("Błąd wysyłania emaila:", error)
-                alert("Błąd wysyłania emaila. Spróbuj ponownie.")
+                const errorMsg = error instanceof Error ? error.message : "Nieznany błąd"
+                alert(`Błąd wysyłania emaila: ${errorMsg}. Sprawdź połączenie z internetem i spróbuj ponownie.`)
             }
         } else {
             // Zapisz PDF lokalnie
@@ -1218,7 +1221,7 @@ export default function KalkulatorPosadzki() {
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     {/* Toggle trybu wprowadzania */}
-                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-gray-50 rounded-lg gap-2">
                                         <div className="flex items-center gap-2">
                                             <ToggleLeft
                                                 className={`h-5 w-5 ${trybWymiarow === "wymiary" ? "text-blue-600" : "text-gray-400"}`}
@@ -1767,7 +1770,7 @@ export default function KalkulatorPosadzki() {
                         )}
 
                         {/* Przyciski akcji */}
-                        <div className="space-y-3 sticky bottom-4 sm:static bg-white sm:bg-transparent p-4 sm:p-0 -mx-4 sm:mx-0 border-t sm:border-t-0 shadow-lg sm:shadow-none">
+                        <div className="space-y-3">
                             <Button
                                 onClick={resetKalkulator}
                                 variant="outline"
