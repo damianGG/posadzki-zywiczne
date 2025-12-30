@@ -719,24 +719,38 @@ export default function KalkulatorPosadzki() {
 
         const doc = new jsPDF()
         const pageWidth = doc.internal.pageSize.width
-        let yPosition = 20
+        const pageHeight = doc.internal.pageSize.height
+        let yPosition = 15
 
         // Unikalny numer kosztorysu
         const numerKosztorysu = `PZ-${Date.now().toString().slice(-6)}`
         const dataKosztorysu = new Date().toLocaleDateString("pl-PL")
 
-        // Nagłówek
-        doc.setFontSize(20)
+        // Logo i nazwa firmy (górny nagłówek)
+        doc.setFillColor(41, 128, 185) // Niebieski pasek
+        doc.rect(0, 0, pageWidth, 30, 'F')
+        
+        doc.setTextColor(255, 255, 255) // Biały tekst
+        doc.setFontSize(24)
         doc.setFont("helvetica", "bold")
-        doc.text(formatTextForPDF("KOSZTORYS POSADZKI ZYWICZNEJ"), pageWidth / 2, yPosition, { align: "center" })
-
-        yPosition += 15
-        doc.setFontSize(12)
+        doc.text("POSADZKI ZYWICZNE", pageWidth / 2, 15, { align: "center" })
+        
+        doc.setFontSize(10)
         doc.setFont("helvetica", "normal")
-        doc.text(`Data: ${dataKosztorysu}`, pageWidth - 20, yPosition, { align: "right" })
-        doc.text(`Nr kosztorysu: ${numerKosztorysu}`, 20, yPosition)
+        doc.text("Profesjonalne posadzki zywiczne dla domu i biznesu", pageWidth / 2, 23, { align: "center" })
 
-        yPosition += 20
+        yPosition = 40
+        doc.setTextColor(0, 0, 0) // Czarny tekst dla reszty dokumentu
+
+        // Numer kosztorysu i data
+        doc.setFontSize(12)
+        doc.setFont("helvetica", "bold")
+        doc.text(formatTextForPDF("KOSZTORYS"), 20, yPosition)
+        doc.setFont("helvetica", "normal")
+        doc.text(`Nr: ${numerKosztorysu}`, 20, yPosition + 6)
+        doc.text(`Data: ${dataKosztorysu}`, 20, yPosition + 12)
+
+        yPosition += 25
 
         // Dane pomieszczenia
         doc.setFontSize(14)
@@ -910,17 +924,60 @@ export default function KalkulatorPosadzki() {
 
         yPosition += 20
 
-        // Stopka
+        // Firma i kontakt w kolorowym footer
+        if (yPosition > pageHeight - 60) {
+            doc.addPage()
+            yPosition = 20
+        }
+
+        // Footer z informacjami o firmie
+        const footerY = pageHeight - 55
+        
+        doc.setFillColor(245, 245, 245) // Szare tło
+        doc.rect(0, footerY - 5, pageWidth, 55, 'F')
+        
+        doc.setFontSize(12)
+        doc.setFont("helvetica", "bold")
+        doc.setTextColor(41, 128, 185)
+        doc.text(formatTextForPDF("O FIRMIE"), 20, footerY + 5)
+        
         doc.setFontSize(9)
+        doc.setFont("helvetica", "normal")
+        doc.setTextColor(50, 50, 50)
+        doc.text(formatTextForPDF("Posadzki Zywiczne - Profesjonalne posadzki epoksydowe"), 20, footerY + 12)
+        doc.text(formatTextForPDF("Specjalizujemy sie w wykonywaniu posadzek zywicznych"), 20, footerY + 17)
+        doc.text(formatTextForPDF("dla garaży, piwnicy domow i przestrzeni komercyjnych."), 20, footerY + 22)
+        
+        doc.setFontSize(10)
+        doc.setFont("helvetica", "bold")
+        doc.setTextColor(41, 128, 185)
+        doc.text(formatTextForPDF("KONTAKT"), 20, footerY + 32)
+        
+        doc.setFontSize(9)
+        doc.setFont("helvetica", "normal")
+        doc.setTextColor(50, 50, 50)
+        doc.text(formatTextForPDF("Web: posadzkizywiczne.com"), 20, footerY + 38)
+        doc.text(formatTextForPDF("Instagram: @posadzkizywiczne"), 20, footerY + 43)
+        
+        doc.setFontSize(10)
+        doc.setFont("helvetica", "bold")
+        doc.setTextColor(41, 128, 185)
+        doc.text(formatTextForPDF("REALIZACJE"), 120, footerY + 32)
+        
+        doc.setFontSize(9)
+        doc.setFont("helvetica", "normal")
+        doc.setTextColor(50, 50, 50)
+        doc.text(formatTextForPDF("Zobacz nasze realizacje na:"), 120, footerY + 38)
+        doc.text(formatTextForPDF("posadzkizywiczne.com/realizacje"), 120, footerY + 43)
+
+        // Stopka z disclaimerem
+        doc.setFontSize(8)
         doc.setFont("helvetica", "italic")
-        doc.text(formatTextForPDF("Kosztorys posadzki zywicznej - wygenerowany automatycznie"), pageWidth / 2, yPosition, {
-            align: "center",
-        })
-        yPosition += 5
+        doc.setTextColor(100, 100, 100)
         doc.text(
-            formatTextForPDF("Ceny moga ulec zmianie. Prosimy o kontakt w celu potwierdzenia aktualnych cen."),
+            formatTextForPDF("Kosztorys wygenerowany automatycznie. Ceny moga ulec zmianie. Prosimy o kontakt w celu potwierdzenia."),
             pageWidth / 2,
-            yPosition,
+            pageHeight - 10,
             { align: "center" },
         )
 

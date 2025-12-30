@@ -1,6 +1,13 @@
 -- Calculator Settings Table for managing floor calculator configuration
 -- This allows admins to dynamically update prices, images, and descriptions
 
+-- IMPORTANT: After running this migration in Supabase SQL Editor:
+-- 1. Go to Table Editor
+-- 2. Select the 'calculator_services' table
+-- 3. Click on any column header to refresh the schema cache
+-- OR simply refresh the Supabase Dashboard page
+-- This ensures the new 'is_included_in_floor_price' column is visible
+
 -- Create calculator_surface_types table
 CREATE TABLE IF NOT EXISTS calculator_surface_types (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

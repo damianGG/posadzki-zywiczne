@@ -558,63 +558,7 @@ export default function CalculatorAdminPage() {
                       onBlur={(e) => updateSetting('service', service.service_id, { description: e.target.value })}
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {service.price_per_m2 !== undefined && service.price_per_m2 !== null && (
-                      <div>
-                        <Label>Cena za m² (zł)</Label>
-                        <Input
-                          type="number"
-                          value={service.price_per_m2}
-                          onChange={(e) => {
-                            const updated = services.map((s) =>
-                              s.id === service.id ? { ...s, price_per_m2: Number(e.target.value) } : s
-                            );
-                            setServices(updated);
-                          }}
-                          onBlur={(e) =>
-                            updateSetting('service', service.service_id, { price_per_m2: Number(e.target.value) })
-                          }
-                        />
-                      </div>
-                    )}
-                    {service.price_per_mb !== undefined && service.price_per_mb !== null && (
-                      <div>
-                        <Label>Cena za mb (zł)</Label>
-                        <Input
-                          type="number"
-                          value={service.price_per_mb}
-                          onChange={(e) => {
-                            const updated = services.map((s) =>
-                              s.id === service.id ? { ...s, price_per_mb: Number(e.target.value) } : s
-                            );
-                            setServices(updated);
-                          }}
-                          onBlur={(e) =>
-                            updateSetting('service', service.service_id, { price_per_mb: Number(e.target.value) })
-                          }
-                        />
-                      </div>
-                    )}
-                    {service.price_fixed !== undefined && service.price_fixed !== null && (
-                      <div>
-                        <Label>Cena stała (zł)</Label>
-                        <Input
-                          type="number"
-                          value={service.price_fixed}
-                          onChange={(e) => {
-                            const updated = services.map((s) =>
-                              s.id === service.id ? { ...s, price_fixed: Number(e.target.value) } : s
-                            );
-                            setServices(updated);
-                          }}
-                          onBlur={(e) =>
-                            updateSetting('service', service.service_id, { price_fixed: Number(e.target.value) })
-                          }
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-lg border border-blue-200 mb-4">
                     <Switch
                       checked={service.is_included_in_floor_price || false}
                       onCheckedChange={(checked) => {
@@ -630,6 +574,69 @@ export default function CalculatorAdminPage() {
                       Usługa w cenie posadzki (zamiast wyświetlania ceny, pokaże &quot;w cenie posadzki&quot;)
                     </Label>
                   </div>
+                  {!service.is_included_in_floor_price && (
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {service.price_per_m2 !== undefined && service.price_per_m2 !== null && (
+                        <div>
+                          <Label>Cena za m² (zł)</Label>
+                          <Input
+                            type="number"
+                            value={service.price_per_m2}
+                            onChange={(e) => {
+                              const updated = services.map((s) =>
+                                s.id === service.id ? { ...s, price_per_m2: Number(e.target.value) } : s
+                              );
+                              setServices(updated);
+                            }}
+                            onBlur={(e) =>
+                              updateSetting('service', service.service_id, { price_per_m2: Number(e.target.value) })
+                            }
+                          />
+                        </div>
+                      )}
+                      {service.price_per_mb !== undefined && service.price_per_mb !== null && (
+                        <div>
+                          <Label>Cena za mb (zł)</Label>
+                          <Input
+                            type="number"
+                            value={service.price_per_mb}
+                            onChange={(e) => {
+                              const updated = services.map((s) =>
+                                s.id === service.id ? { ...s, price_per_mb: Number(e.target.value) } : s
+                              );
+                              setServices(updated);
+                            }}
+                            onBlur={(e) =>
+                              updateSetting('service', service.service_id, { price_per_mb: Number(e.target.value) })
+                            }
+                          />
+                        </div>
+                      )}
+                      {service.price_fixed !== undefined && service.price_fixed !== null && (
+                        <div>
+                          <Label>Cena stała (zł)</Label>
+                          <Input
+                            type="number"
+                            value={service.price_fixed}
+                            onChange={(e) => {
+                              const updated = services.map((s) =>
+                                s.id === service.id ? { ...s, price_fixed: Number(e.target.value) } : s
+                              );
+                              setServices(updated);
+                            }}
+                            onBlur={(e) =>
+                              updateSetting('service', service.service_id, { price_fixed: Number(e.target.value) })
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {service.is_included_in_floor_price && (
+                    <div className="p-4 bg-blue-50 border border-blue-200 rounded text-sm text-blue-700">
+                      ℹ️ Usługa wliczona w cenę posadzki - nie wymaga ustawienia ceny
+                    </div>
+                  )}
                   <div>
                     <Label>URL zdjęcia</Label>
                     <div className="flex gap-2">
