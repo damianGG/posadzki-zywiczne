@@ -136,6 +136,9 @@ INSERT INTO calculator_concrete_states (state_id, name, description, additional_
 ('plytki', 'Płytki ceramiczne', 'Istniejące płytki - wymagają usunięcia i przygotowania podłoża', 25, false, 2)
 ON CONFLICT (state_id) DO NOTHING;
 
+-- Disable services in 'ochrona' category by default
+UPDATE calculator_services SET is_active = false WHERE category = 'ochrona';
+
 -- Add RLS policies (allow public read, admin write)
 ALTER TABLE calculator_surface_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE calculator_colors ENABLE ROW LEVEL SECURITY;

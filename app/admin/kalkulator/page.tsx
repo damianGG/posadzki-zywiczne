@@ -298,10 +298,15 @@ export default function CalculatorAdminPage() {
               </Button>
             </div>
             {surfaceTypes.map((surface) => (
-              <Card key={surface.id}>
+              <Card key={surface.id} className={!surface.is_active ? 'opacity-60 bg-gray-50' : ''}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <span>{surface.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span>{surface.name}</span>
+                      {!surface.is_active && (
+                        <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Wyłączone</span>
+                      )}
+                    </div>
                     <Switch
                       checked={surface.is_active}
                       onCheckedChange={(checked) =>
@@ -393,10 +398,15 @@ export default function CalculatorAdminPage() {
               </Button>
             </div>
             {colors.map((color) => (
-              <Card key={color.id}>
+              <Card key={color.id} className={!color.is_active ? 'opacity-60 bg-gray-50' : ''}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <span>{color.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span>{color.name}</span>
+                      {!color.is_active && (
+                        <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Wyłączone</span>
+                      )}
+                    </div>
                     <Switch
                       checked={color.is_active}
                       onCheckedChange={(checked) => updateSetting('color', color.color_id, { is_active: checked })}
@@ -495,13 +505,16 @@ export default function CalculatorAdminPage() {
             {services
               .filter(service => service.category === 'przygotowanie' || service.category === 'wykończenie' || service.category === 'logistyka')
               .map((service) => (
-              <Card key={service.id}>
+              <Card key={service.id} className={!service.is_active ? 'opacity-60 bg-gray-50' : ''}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <span>{service.name}</span>
                       {service.is_mandatory && (
                         <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">Obowiązkowe</span>
+                      )}
+                      {!service.is_active && (
+                        <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Wyłączone</span>
                       )}
                     </div>
                     <Switch
@@ -631,10 +644,15 @@ export default function CalculatorAdminPage() {
         {activeTab === 'rooms' && (
           <div className="space-y-4">
             {roomTypes.map((room) => (
-              <Card key={room.id}>
+              <Card key={room.id} className={!room.is_available ? 'opacity-60 bg-gray-50' : ''}>
                 <CardHeader>
                   <CardTitle className="flex items-center justify-between">
-                    <span>{room.icon} {room.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span>{room.icon} {room.name}</span>
+                      {!room.is_available && (
+                        <span className="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded">Niedostępne</span>
+                      )}
+                    </div>
                     <Switch
                       checked={room.is_available}
                       onCheckedChange={(checked) => updateSetting('room-type', room.room_id, { is_available: checked })}
