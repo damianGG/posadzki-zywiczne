@@ -79,6 +79,16 @@ interface ConcreteState {
   display_order: number;
 }
 
+interface StepConfig {
+  id: string;
+  step_id: string;
+  step_name: string;
+  description?: string;
+  is_visible: boolean;
+  display_order: number;
+  can_be_hidden: boolean;
+}
+
 export default function CalculatorAdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -91,8 +101,9 @@ export default function CalculatorAdminPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
   const [concreteStates, setConcreteStates] = useState<ConcreteState[]>([]);
+  const [stepConfigs, setStepConfigs] = useState<StepConfig[]>([]);
   
-  const [activeTab, setActiveTab] = useState<'surface-types' | 'colors' | 'services' | 'rooms' | 'concrete'>('surface-types');
+  const [activeTab, setActiveTab] = useState<'surface-types' | 'colors' | 'services' | 'rooms' | 'concrete' | 'steps'>('surface-types');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [createType, setCreateType] = useState<string>('');
   const [newItem, setNewItem] = useState<any>({});
@@ -122,6 +133,7 @@ export default function CalculatorAdminPage() {
       setServices(data.services || []);
       setRoomTypes(data.roomTypes || []);
       setConcreteStates(data.concreteStates || []);
+      setStepConfigs(data.stepConfigs || []);
     } catch (error) {
       console.error('Error fetching settings:', error);
       setMessage({ type: 'error', text: 'Błąd wczytywania ustawień' });
@@ -165,6 +177,9 @@ export default function CalculatorAdminPage() {
             break;
           case 'concrete-state':
             setConcreteStates(prev => prev.map(item => item.state_id === id ? data.data : item));
+            break;
+          case 'step-config':
+            setStepConfigs(prev => prev.map(item => item.step_id === id ? data.data : item));
             break;
         }
       }
@@ -267,13 +282,14 @@ export default function CalculatorAdminPage() {
 
         {/* Manual Tab Navigation */}
         <div className="bg-white rounded-lg shadow-sm p-2 mb-6">
-          <div className="grid grid-cols-5 gap-2">
+          <div className="grid grid-cols-6 gap-2">
             {[
               { key: 'surface-types', label: 'Powierzchnie' },
               { key: 'colors', label: 'Kolory' },
               { key: 'services', label: 'Usługi' },
               { key: 'rooms', label: 'Pomieszczenia' },
               { key: 'concrete', label: 'Stan betonu' },
+              { key: 'steps', label: 'Widoczność kroków' },
             ].map((tab) => (
               <button
                 key={tab.key}
@@ -945,6 +961,72 @@ export default function CalculatorAdminPage() {
                       Pokaż cenę w etykiecie (np. &quot;+25 zł&quot;)
                     </Label>
                   </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Step Visibility Configuration */}
+        {activeTab === 'steps' && (
+          <div className="space-y-4">
+            <Alert>
+              <AlertDescription>
+                Możesz ukryć niektóre kroki kalkulatora przed klientami. Ukryte kroki będą automatycznie pomijane, a domyślne wartości zostaną użyte.
+              </AlertDescription>
+            </Alert>
+            
+            {stepConfigs.map((step) => (
+              <Card key={step.id} className={`transition-opacity ${!step.is_visible && step.can_be_hidden ? 'opacity-60' : ''}`}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        {step.step_name}
+                        {step.is_visible ? (
+                          <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">Widoczny</span>
+                        ) : (
+                          <span className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full">Ukryty</span>
+                        )}
+                      </CardTitle>
+                      {step.description && (
+                        <p className="text-sm text-gray-600 mt-1">{step.description}</p>
+                      )}
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      {step.can_be_hidden ? (
+                        <>
+                          <Label htmlFor={`step-visible-${step.id}`} className="text-sm font-medium">
+                            {step.is_visible ? 'Widoczny' : 'Ukryty'}
+                          </Label>
+                          <Switch
+                            id={`step-visible-${step.id}`}
+                            checked={step.is_visible}
+                            onCheckedChange={(checked) => updateSetting('step-config', step.step_id, { is_visible: checked })}
+                          />
+                        </>
+                      ) : (
+                        <span className="text-xs text-gray-500 italic">Krok obowiązkowy</span>
+                      )}
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  {!step.can_be_hidden && (
+                    <Alert className="bg-blue-50 border-blue-200">
+                      <AlertCircle className="h-4 w-4 text-blue-600" />
+                      <AlertDescription className="text-blue-700">
+                        Ten krok jest wymagany i nie może być ukryty.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  {!step.is_visible && step.can_be_hidden && (
+                    <Alert className="bg-gray-50 border-gray-200">
+                      <AlertDescription className="text-gray-700">
+                        Krok jest ukryty przed klientami. W kalkulatorze będzie automatycznie pomijany.
+                      </AlertDescription>
+                    </Alert>
+                  )}
                 </CardContent>
               </Card>
             ))}

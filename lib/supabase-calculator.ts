@@ -72,6 +72,16 @@ export interface ConcreteState {
   display_order?: number;
 }
 
+export interface StepConfig {
+  id?: string;
+  step_id: string;
+  step_name: string;
+  description?: string;
+  is_visible: boolean;
+  display_order?: number;
+  can_be_hidden?: boolean;
+}
+
 /**
  * Get Supabase client with service role key
  */
@@ -329,4 +339,34 @@ export async function createConcreteState(data: ConcreteState) {
 
   if (error) return { success: false, error: error.message };
   return { success: true, data: result };
+}
+
+// ========== Step Config ==========
+
+export async function getAllStepConfigs() {
+  const supabase = getSupabasePublic();
+  if (!supabase) return { success: false, error: 'Supabase not configured' };
+
+  const { data, error } = await supabase
+    .from('calculator_step_config')
+    .select('*')
+    .order('display_order');
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data };
+}
+
+export async function updateStepConfig(step_id: string, updates: Partial<StepConfig>) {
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return { success: false, error: 'Supabase not configured' };
+
+  const { data, error } = await supabase
+    .from('calculator_step_config')
+    .update({ ...updates, updated_at: new Date().toISOString() })
+    .eq('step_id', step_id)
+    .select()
+    .single();
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data };
 }

@@ -5,11 +5,13 @@ import {
   getAllServices,
   getAllRoomTypes,
   getAllConcreteStates,
+  getAllStepConfigs,
   updateSurfaceType,
   updateColor,
   updateService,
   updateRoomType,
   updateConcreteState,
+  updateStepConfig,
   createSurfaceType,
   createColor,
   createService,
@@ -63,13 +65,22 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ data: result.data })
     }
 
+    if (type === "step-config") {
+      const result = await getAllStepConfigs()
+      if (!result.success) {
+        return NextResponse.json({ error: result.error }, { status: 500 })
+      }
+      return NextResponse.json({ data: result.data })
+    }
+
     // Get all settings
-    const [surfaceTypes, colors, services, roomTypes, concreteStates] = await Promise.all([
+    const [surfaceTypes, colors, services, roomTypes, concreteStates, stepConfigs] = await Promise.all([
       getAllSurfaceTypes(),
       getAllColors(),
       getAllServices(),
       getAllRoomTypes(),
       getAllConcreteStates(),
+      getAllStepConfigs(),
     ])
 
     return NextResponse.json({
@@ -78,6 +89,7 @@ export async function GET(request: NextRequest) {
       services: services.data || [],
       roomTypes: roomTypes.data || [],
       concreteStates: concreteStates.data || [],
+      stepConfigs: stepConfigs.data || [],
     })
   } catch (error) {
     console.error("Error fetching calculator settings:", error)
@@ -111,6 +123,9 @@ export async function PUT(request: NextRequest) {
         break
       case "concrete-state":
         result = await updateConcreteState(id, updates)
+        break
+      case "step-config":
+        result = await updateStepConfig(id, updates)
         break
       default:
         return NextResponse.json({ error: "Invalid type" }, { status: 400 })

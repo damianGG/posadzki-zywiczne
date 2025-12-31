@@ -147,12 +147,36 @@ ON CONFLICT (state_id) DO NOTHING;
 -- Disable services in 'ochrona' category by default
 UPDATE calculator_services SET is_active = false WHERE category = 'ochrona';
 
+-- Create calculator_step_config table for controlling step visibility
+CREATE TABLE IF NOT EXISTS calculator_step_config (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  step_id TEXT UNIQUE NOT NULL,
+  step_name TEXT NOT NULL,
+  description TEXT,
+  is_visible BOOLEAN DEFAULT true,
+  display_order INTEGER DEFAULT 0,
+  can_be_hidden BOOLEAN DEFAULT true, -- Some steps are mandatory
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Create index for step config
+CREATE INDEX IF NOT EXISTS idx_step_config_order ON calculator_step_config(display_order);
+
+-- Insert default step configurations
+INSERT INTO calculator_step_config (step_id, step_name, description, is_visible, display_order, can_be_hidden) VALUES
+('concrete_state', 'Stan betonu', 'Wybór stanu betonu (nowa wylewka/płytki) - widoczny tylko dla garaży/piwnic', true, 2, true),
+('services', 'Usługi dodatkowe', 'Wybór dodatkowych usług (szlifowanie, naprawa, transport, itp.)', true, 6, true),
+('colors', 'Kolory', 'Wybór koloru RAL dla posadzki', true, 5, true)
+ON CONFLICT (step_id) DO NOTHING;
+
 -- Add RLS policies (allow public read, admin write)
 ALTER TABLE calculator_surface_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE calculator_colors ENABLE ROW LEVEL SECURITY;
 ALTER TABLE calculator_services ENABLE ROW LEVEL SECURITY;
 ALTER TABLE calculator_room_types ENABLE ROW LEVEL SECURITY;
 ALTER TABLE calculator_concrete_states ENABLE ROW LEVEL SECURITY;
+ALTER TABLE calculator_step_config ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for public read access
 CREATE POLICY "Allow public read access to surface types" ON calculator_surface_types FOR SELECT USING (is_active = true);
@@ -160,5 +184,6 @@ CREATE POLICY "Allow public read access to colors" ON calculator_colors FOR SELE
 CREATE POLICY "Allow public read access to services" ON calculator_services FOR SELECT USING (is_active = true);
 CREATE POLICY "Allow public read access to room types" ON calculator_room_types FOR SELECT USING (is_available = true OR is_available = false);
 CREATE POLICY "Allow public read access to concrete states" ON calculator_concrete_states FOR SELECT USING (true);
+CREATE POLICY "Allow public read access to step config" ON calculator_step_config FOR SELECT USING (true);
 
 -- Note: Admin write access should be handled through service role key in backend API
