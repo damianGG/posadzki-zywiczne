@@ -531,8 +531,8 @@ export default function KalkulatorPosadzki() {
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
-    const [loadedRodzajePowierzchni, setLoadedRodzajePowierzchni] = useState<RodzajPowierzchniOption[]>(rodzajePowierzchni)
-    const [loadedKolory, setLoadedKolory] = useState<KolorOption[]>(koloryRAL)
+    const [loadedRodzajePowierzchni, setLoadedRodzajePowierzchni] = useState<RodzajPowierzchniOption[]>([])
+    const [loadedKolory, setLoadedKolory] = useState<KolorOption[]>([])
     const [isLoadingConfig, setIsLoadingConfig] = useState(true)
 
     // Create dynamic posadzka object with loaded data
@@ -563,16 +563,31 @@ export default function KalkulatorPosadzki() {
                     if (data.surfaceTypes && data.surfaceTypes.length > 0) {
                         const transformedSurfaces = data.surfaceTypes
                             .filter((s: any) => s.is_active)
-                            .map((s: any) => ({
-                                id: s.id,
-                                nazwa: s.name,
-                                opis: s.description || '',
-                                cenaZaM2: s.price_per_m2 || 0,
-                                price_ranges: s.price_ranges || [],
-                                zdjecie: s.image_url || PLACEHOLDER_IMAGE,
-                                wlasciwosci: s.properties ? JSON.parse(s.properties) : [],
-                            }))
+                            .map((s: any) => {
+                                // Parse properties if it's a string, otherwise use as-is
+                                let properties = []
+                                try {
+                                    properties = typeof s.properties === 'string' 
+                                        ? JSON.parse(s.properties) 
+                                        : (Array.isArray(s.properties) ? s.properties : [])
+                                } catch (e) {
+                                    console.error('Error parsing properties:', e)
+                                }
+                                
+                                return {
+                                    id: s.id,
+                                    nazwa: s.name,
+                                    opis: s.description || '',
+                                    cenaZaM2: s.price_per_m2 || 0,
+                                    price_ranges: s.price_ranges || [],
+                                    zdjecie: s.image_url || PLACEHOLDER_IMAGE,
+                                    wlasciwosci: properties,
+                                }
+                            })
                         setLoadedRodzajePowierzchni(transformedSurfaces)
+                    } else {
+                        // Fallback to hardcoded data if no data from API
+                        setLoadedRodzajePowierzchni(rodzajePowierzchni)
                     }
                     
                     // Transform colors data
@@ -588,10 +603,20 @@ export default function KalkulatorPosadzki() {
                                 podglad: c.preview_url || PLACEHOLDER_IMAGE,
                             }))
                         setLoadedKolory(transformedColors)
+                    } else {
+                        // Fallback to hardcoded data if no data from API
+                        setLoadedKolory(koloryRAL)
                     }
+                } else {
+                    // Fallback to hardcoded data if API fails
+                    setLoadedRodzajePowierzchni(rodzajePowierzchni)
+                    setLoadedKolory(koloryRAL)
                 }
             } catch (error) {
                 console.error('Error loading calculator config:', error)
+                // Fallback to hardcoded data on error
+                setLoadedRodzajePowierzchni(rodzajePowierzchni)
+                setLoadedKolory(koloryRAL)
             } finally {
                 setIsLoadingConfig(false)
             }
