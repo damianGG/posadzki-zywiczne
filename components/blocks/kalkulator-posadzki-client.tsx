@@ -598,15 +598,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
     
-    const [loadedRodzajePowierzchni] = useState<RodzajPowierzchniOption[]>(transformedSurfaces)
-    const [loadedKolory] = useState<KolorOption[]>(transformedColors)
-
     // Create dynamic posadzka object with loaded data
     const wybranapPosadzka = {
         id: "zywica",
         nazwa: "Posadzka żywiczna",
-        rodzajePowierzchni: loadedRodzajePowierzchni,
-        kolory: loadedKolory,
+        rodzajePowierzchni: transformedSurfaces,
+        kolory: transformedColors,
     }
     
     const wybranyRodzajPowierzchniObj = wybranapPosadzka?.rodzajePowierzchni.find(
