@@ -22,6 +22,7 @@ interface SurfaceType {
     min_m2: number;
     max_m2: number | null;
     price_per_m2: number;
+    is_flat_rate?: boolean;
   }>;
   image_url?: string;
   properties?: string[];
@@ -382,6 +383,149 @@ export default function CalculatorAdminPage() {
                         </div>
                       )}
                     </div>
+                  </div>
+                  
+                  {/* Price Ranges Section */}
+                  <div className="mt-6 pt-6 border-t">
+                    <div className="mb-4">
+                      <h4 className="font-semibold text-sm mb-2">Zakresy cenowe (wg m²)</h4>
+                      <p className="text-xs text-gray-600 mb-4">
+                        Określ różne ceny w zależności od wielkości projektu. Np. do 25m² ryczałt 5000 zł, 25-35m² = 200 zł/m², pow. 35m² = 180 zł/m²
+                      </p>
+                    </div>
+                    
+                    {surface.price_ranges && surface.price_ranges.length > 0 ? (
+                      <div className="space-y-3">
+                        {surface.price_ranges.map((range, idx) => (
+                          <div key={idx} className="flex gap-2 items-end p-3 bg-gray-50 rounded">
+                            <div className="flex-1">
+                              <Label className="text-xs">Od (m²)</Label>
+                              <Input
+                                type="number"
+                                value={range.min_m2}
+                                onChange={(e) => {
+                                  const updated = surfaceTypes.map((s) => {
+                                    if (s.id === surface.id) {
+                                      const newRanges = [...(s.price_ranges || [])];
+                                      newRanges[idx] = { ...range, min_m2: Number(e.target.value) };
+                                      return { ...s, price_ranges: newRanges };
+                                    }
+                                    return s;
+                                  });
+                                  setSurfaceTypes(updated);
+                                }}
+                                onBlur={() => updateSetting('surface-type', surface.type_id, { price_ranges: surface.price_ranges })}
+                                className="h-9"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <Label className="text-xs">Do (m²)</Label>
+                              <Input
+                                type="number"
+                                value={range.max_m2 ?? ''}
+                                onChange={(e) => {
+                                  const updated = surfaceTypes.map((s) => {
+                                    if (s.id === surface.id) {
+                                      const newRanges = [...(s.price_ranges || [])];
+                                      newRanges[idx] = { ...range, max_m2: e.target.value ? Number(e.target.value) : null };
+                                      return { ...s, price_ranges: newRanges };
+                                    }
+                                    return s;
+                                  });
+                                  setSurfaceTypes(updated);
+                                }}
+                                onBlur={() => updateSetting('surface-type', surface.type_id, { price_ranges: surface.price_ranges })}
+                                placeholder="Puste = bez limitu"
+                                className="h-9"
+                              />
+                            </div>
+                            <div className="flex-1">
+                              <Label className="text-xs flex items-center gap-1">
+                                <Switch
+                                  checked={range.is_flat_rate || false}
+                                  onCheckedChange={(checked) => {
+                                    const updated = surfaceTypes.map((s) => {
+                                      if (s.id === surface.id) {
+                                        const newRanges = [...(s.price_ranges || [])];
+                                        newRanges[idx] = { ...range, is_flat_rate: checked };
+                                        return { ...s, price_ranges: newRanges };
+                                      }
+                                      return s;
+                                    });
+                                    setSurfaceTypes(updated);
+                                    updateSetting('surface-type', surface.type_id, { price_ranges: updated.find(s => s.id === surface.id)?.price_ranges });
+                                  }}
+                                  className="scale-75"
+                                />
+                                <span>{range.is_flat_rate ? 'Ryczałt' : 'Za m²'}</span>
+                              </Label>
+                              <Input
+                                type="number"
+                                value={range.price_per_m2}
+                                onChange={(e) => {
+                                  const updated = surfaceTypes.map((s) => {
+                                    if (s.id === surface.id) {
+                                      const newRanges = [...(s.price_ranges || [])];
+                                      newRanges[idx] = { ...range, price_per_m2: Number(e.target.value) };
+                                      return { ...s, price_ranges: newRanges };
+                                    }
+                                    return s;
+                                  });
+                                  setSurfaceTypes(updated);
+                                }}
+                                onBlur={() => updateSetting('surface-type', surface.type_id, { price_ranges: surface.price_ranges })}
+                                placeholder={range.is_flat_rate ? "Kwota ryczałtu" : "Cena za m²"}
+                                className="h-9"
+                              />
+                            </div>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => {
+                                const updated = surfaceTypes.map((s) => {
+                                  if (s.id === surface.id) {
+                                    const newRanges = [...(s.price_ranges || [])];
+                                    newRanges.splice(idx, 1);
+                                    return { ...s, price_ranges: newRanges };
+                                  }
+                                  return s;
+                                });
+                                setSurfaceTypes(updated);
+                                updateSetting('surface-type', surface.type_id, { price_ranges: updated.find(s => s.id === surface.id)?.price_ranges });
+                              }}
+                              className="h-9"
+                            >
+                              ✕
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 italic">Brak zdefiniowanych zakresów - używana będzie cena bazowa</p>
+                    )}
+                    
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const updated = surfaceTypes.map((s) => {
+                          if (s.id === surface.id) {
+                            const newRange = {
+                              min_m2: 0,
+                              max_m2: null,
+                              price_per_m2: surface.price_per_m2,
+                              is_flat_rate: false
+                            };
+                            return { ...s, price_ranges: [...(s.price_ranges || []), newRange] };
+                          }
+                          return s;
+                        });
+                        setSurfaceTypes(updated);
+                      }}
+                      className="mt-3"
+                    >
+                      + Dodaj zakres cenowy
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

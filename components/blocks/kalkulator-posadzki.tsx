@@ -34,11 +34,19 @@ import confetti from "canvas-confetti"
 // Constants
 const PLACEHOLDER_IMAGE = "/placeholder.svg"
 
+interface PriceRange {
+    min_m2: number
+    max_m2: number | null
+    price_per_m2: number
+    is_flat_rate?: boolean
+}
+
 interface RodzajPowierzchniOption {
     id: string
     nazwa: string
     opis: string
     cenaZaM2: number
+    price_ranges?: PriceRange[]
     zdjecie: string
     wlasciwosci: string[]
 }
@@ -633,7 +641,36 @@ export default function KalkulatorPosadzki() {
         }
 
         if (pow > 0 && wybranapPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && errors.length === 0) {
-            let koszt = pow * (wybranyRodzajPowierzchniObj.cenaZaM2 + wybranyKolorObj.cenaDodatkowa)
+            // Calculate base cost using price ranges if available
+            let baseCost = 0
+            
+            // Check if price ranges are defined and find applicable range
+            if (wybranyRodzajPowierzchniObj.price_ranges && wybranyRodzajPowierzchniObj.price_ranges.length > 0) {
+                const applicableRange = wybranyRodzajPowierzchniObj.price_ranges.find(range => {
+                    const minMatch = pow >= range.min_m2
+                    const maxMatch = range.max_m2 === null || pow <= range.max_m2
+                    return minMatch && maxMatch
+                })
+                
+                if (applicableRange) {
+                    if (applicableRange.is_flat_rate) {
+                        // Flat rate pricing (ryczałt)
+                        baseCost = applicableRange.price_per_m2 // Actually flat amount, not per m2
+                    } else {
+                        // Per m² pricing
+                        baseCost = pow * applicableRange.price_per_m2
+                    }
+                } else {
+                    // No matching range, use base price
+                    baseCost = pow * wybranyRodzajPowierzchniObj.cenaZaM2
+                }
+            } else {
+                // No price ranges defined, use base price
+                baseCost = pow * wybranyRodzajPowierzchniObj.cenaZaM2
+            }
+            
+            // Add color additional cost (always per m²)
+            let koszt = baseCost + (pow * wybranyKolorObj.cenaDodatkowa)
 
             // Dodaj koszt za stan betonu
             if (wybranyStanBetonuObj && wybranyStanBetonuObj.cenaDodatkowa > 0) {
@@ -1544,8 +1581,7 @@ export default function KalkulatorPosadzki() {
                                                                 <div className="flex-1 min-w-0 w-full">
                                                                     <h3 className="font-medium text-sm mb-1">{rodzaj.nazwa}</h3>
                                                                     <p className="text-xs text-gray-600 mb-2">{rodzaj.opis}</p>
-                                                                    <div className="flex items-center justify-between">
-                                                                        <p className="text-lg font-bold text-green-600">{rodzaj.cenaZaM2} zł/m²</p>
+                                                                    <div className="flex items-center justify-end">
                                                                         <div
                                                                             className={`
                                         w-4 h-4 rounded-full border-2 transition-all duration-300
