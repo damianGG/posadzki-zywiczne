@@ -1625,7 +1625,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-3">
-                                        {loadedRodzajePowierzchni.map((rodzaj, index) => (
+                                        {transformedSurfaces.map((rodzaj, index) => (
                                             <TooltipProvider key={rodzaj.id}>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
