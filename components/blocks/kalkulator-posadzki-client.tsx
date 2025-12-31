@@ -522,14 +522,21 @@ interface KalkulatorPosadzkiClientProps {
 }
 
 export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosadzkiClientProps) {
+    // Track if we're using fallback data
+    const [usingFallbackData, setUsingFallbackData] = React.useState(false)
+    
     // Transform server data to component format early to prevent errors
     const transformedSurfaces = React.useMemo(() => {
         if (!initialData?.surfaceTypes || initialData.surfaceTypes.length === 0) {
+            if (process.env.NODE_ENV === 'development') {
+                console.warn('Using fallback surface types - Supabase data not available')
+            }
+            setUsingFallbackData(true)
             return rodzajePowierzchni
         }
         
         try {
-            return initialData.surfaceTypes
+            const transformed = initialData.surfaceTypes
                 .filter((s: any) => s.is_active)
                 .map((s: any) => {
                     let properties = []
@@ -552,30 +559,56 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         wlasciwosci: properties,
                     }
                 })
+            
+            if (transformed.length === 0) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn('No active surface types found - using fallback data')
+                }
+                setUsingFallbackData(true)
+                return rodzajePowierzchni
+            }
+            
+            return transformed
         } catch (error) {
             console.error('Error transforming surfaces:', error)
+            setUsingFallbackData(true)
             return rodzajePowierzchni
         }
     }, [initialData])
     
     const transformedColors = React.useMemo(() => {
         if (!initialData?.colors || initialData.colors.length === 0) {
+            if (process.env.NODE_ENV === 'development') {
+                console.warn('Using fallback colors - Supabase data not available')
+            }
+            setUsingFallbackData(true)
             return koloryRAL
         }
         
         try {
-            return initialData.colors
+            const transformed = initialData.colors
                 .filter((c: any) => c.is_active)
                 .map((c: any) => ({
                     id: String(c.id || ''),
                     nazwa: c.name || 'Bez nazwy',
                     kodRAL: c.ral_code || '',
                     cenaDodatkowa: Number(c.additional_price) || 0,
-                    zdjecie: c.image_url || PLACEHOLDER_IMAGE,
+                    zdjecie: c.thumbnail_url || c.image_url || PLACEHOLDER_IMAGE,
                     podglad: c.preview_url || PLACEHOLDER_IMAGE,
                 }))
+            
+            if (transformed.length === 0) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn('No active colors found - using fallback data')
+                }
+                setUsingFallbackData(true)
+                return koloryRAL
+            }
+            
+            return transformed
         } catch (error) {
             console.error('Error transforming colors:', error)
+            setUsingFallbackData(true)
             return koloryRAL
         }
     }, [initialData])
@@ -1186,6 +1219,20 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
             {/* Pasek postępu */}
             <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+
+            {/* Info message if using fallback data */}
+            {usingFallbackData && (
+                <div className="bg-blue-50 border-b border-blue-200">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+                        <Alert className="bg-blue-100 border-blue-300">
+                            <AlertDescription className="text-blue-800 text-sm">
+                                <strong>Informacja:</strong> Kalkulator korzysta z domyślnych danych. 
+                                Wszystkie funkcje działają poprawnie.
+                            </AlertDescription>
+                        </Alert>
+                    </div>
+                </div>
+            )}
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
                 <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-8 min-h-[600px]">
