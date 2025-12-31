@@ -1,4 +1,5 @@
 import KalkulatorPosadzkiClient from "./kalkulator-posadzki-client"
+import { getAllSurfaceTypes, getAllColors, getAllServices } from "@/lib/supabase-calculator"
 
 interface CalculatorData {
     surfaceTypes: any[]
@@ -8,24 +9,27 @@ interface CalculatorData {
 
 async function getCalculatorConfig(): Promise<CalculatorData> {
     try {
-        // Fetch from API in server component
-        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-        const response = await fetch(`${baseUrl}/api/admin/calculator-settings`, {
-            cache: 'no-store', // Don't cache to always get fresh data
-        })
+        // Fetch directly from Supabase in server component (no HTTP request needed)
+        const [surfaceTypesResult, colorsResult, servicesResult] = await Promise.all([
+            getAllSurfaceTypes(),
+            getAllColors(),
+            getAllServices()
+        ])
         
-        if (response.ok) {
-            return await response.json()
+        return {
+            surfaceTypes: surfaceTypesResult.success ? surfaceTypesResult.data || [] : [],
+            colors: colorsResult.success ? colorsResult.data || [] : [],
+            services: servicesResult.success ? servicesResult.data || [] : []
         }
     } catch (error) {
         console.error('Error loading calculator config:', error)
-    }
-    
-    // Return empty data structure if fetch fails
-    return {
-        surfaceTypes: [],
-        colors: [],
-        services: []
+        
+        // Return empty data structure if fetch fails
+        return {
+            surfaceTypes: [],
+            colors: [],
+            services: []
+        }
     }
 }
 
