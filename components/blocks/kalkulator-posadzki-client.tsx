@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState, useEffect, useCallback } from "react"
+import React, { useState, useEffect, useCallback, useMemo } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -524,6 +522,64 @@ interface KalkulatorPosadzkiClientProps {
 }
 
 export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosadzkiClientProps) {
+    // Transform server data to component format early to prevent errors
+    const transformedSurfaces = React.useMemo(() => {
+        if (!initialData?.surfaceTypes || initialData.surfaceTypes.length === 0) {
+            return rodzajePowierzchni
+        }
+        
+        try {
+            return initialData.surfaceTypes
+                .filter((s: any) => s.is_active)
+                .map((s: any) => {
+                    let properties = []
+                    try {
+                        properties = typeof s.properties === 'string' 
+                            ? JSON.parse(s.properties) 
+                            : (Array.isArray(s.properties) ? s.properties : [])
+                    } catch (e) {
+                        console.error('Error parsing properties for surface:', s.id, e)
+                        properties = []
+                    }
+                    
+                    return {
+                        id: String(s.id || ''),
+                        nazwa: s.name || 'Bez nazwy',
+                        opis: s.description || '',
+                        cenaZaM2: Number(s.price_per_m2) || 0,
+                        price_ranges: Array.isArray(s.price_ranges) ? s.price_ranges : [],
+                        zdjecie: s.image_url || PLACEHOLDER_IMAGE,
+                        wlasciwosci: properties,
+                    }
+                })
+        } catch (error) {
+            console.error('Error transforming surfaces:', error)
+            return rodzajePowierzchni
+        }
+    }, [initialData])
+    
+    const transformedColors = React.useMemo(() => {
+        if (!initialData?.colors || initialData.colors.length === 0) {
+            return koloryRAL
+        }
+        
+        try {
+            return initialData.colors
+                .filter((c: any) => c.is_active)
+                .map((c: any) => ({
+                    id: String(c.id || ''),
+                    nazwa: c.name || 'Bez nazwy',
+                    kodRAL: c.ral_code || '',
+                    cenaDodatkowa: Number(c.additional_price) || 0,
+                    zdjecie: c.image_url || PLACEHOLDER_IMAGE,
+                    podglad: c.preview_url || PLACEHOLDER_IMAGE,
+                }))
+        } catch (error) {
+            console.error('Error transforming colors:', error)
+            return koloryRAL
+        }
+    }, [initialData])
+    
     const [rodzajPomieszczenia, setRodzajPomieszczenia] = useState<string>("")
     const [stanBetonu, setStanBetonu] = useState<string>("")
     const [wymiary, setWymiary] = useState({ dlugosc: "", szerokosc: "" })
@@ -541,45 +597,6 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
-    
-    // Transform server data to component format
-    const transformedSurfaces = initialData.surfaceTypes && initialData.surfaceTypes.length > 0
-        ? initialData.surfaceTypes
-            .filter((s: any) => s.is_active)
-            .map((s: any) => {
-                let properties = []
-                try {
-                    properties = typeof s.properties === 'string' 
-                        ? JSON.parse(s.properties) 
-                        : (Array.isArray(s.properties) ? s.properties : [])
-                } catch (e) {
-                    console.error('Error parsing properties:', e)
-                }
-                
-                return {
-                    id: s.id,
-                    nazwa: s.name,
-                    opis: s.description || '',
-                    cenaZaM2: s.price_per_m2 || 0,
-                    price_ranges: s.price_ranges || [],
-                    zdjecie: s.image_url || PLACEHOLDER_IMAGE,
-                    wlasciwosci: properties,
-                }
-            })
-        : rodzajePowierzchni
-    
-    const transformedColors = initialData.colors && initialData.colors.length > 0
-        ? initialData.colors
-            .filter((c: any) => c.is_active)
-            .map((c: any) => ({
-                id: c.id,
-                nazwa: c.name,
-                kodRAL: c.ral_code || '',
-                cenaDodatkowa: c.additional_price || 0,
-                zdjecie: c.image_url || PLACEHOLDER_IMAGE,
-                podglad: c.preview_url || PLACEHOLDER_IMAGE,
-            }))
-        : koloryRAL
     
     const [loadedRodzajePowierzchni] = useState<RodzajPowierzchniOption[]>(transformedSurfaces)
     const [loadedKolory] = useState<KolorOption[]>(transformedColors)
