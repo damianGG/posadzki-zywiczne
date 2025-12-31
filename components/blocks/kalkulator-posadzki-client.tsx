@@ -1146,7 +1146,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     }
 
     // Grupowanie dodatków według kategorii
-    const dodatkiPodleKategorii = dodatkiUslugi.reduce(
+    const dodatkiPodleKategorii = (Array.isArray(dodatkiUslugi) ? dodatkiUslugi : []).reduce(
         (acc, dodatek) => {
             const kategoria = dodatek.kategoria || "inne"
             if (!acc[kategoria]) {
@@ -1228,7 +1228,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                     )}
                                 </CardHeader>
                                 <CardContent className="space-y-3">
-                                    {rodzajePomieszczen.map((pomieszczenie, index) => (
+                                    {(Array.isArray(rodzajePomieszczen) ? rodzajePomieszczen : []).map((pomieszczenie, index) => (
                                         <div
                                             key={pomieszczenie.id}
                                             className={`
@@ -1328,7 +1328,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         )}
                                     </CardHeader>
                                     <CardContent className="space-y-3">
-                                        {stanyBetonu.map((stan, index) => (
+                                        {(Array.isArray(stanyBetonu) ? stanyBetonu : []).map((stan, index) => (
                                             <div
                                                 key={stan.id}
                                                 className={`
@@ -1625,7 +1625,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-3">
-                                        {transformedSurfaces.map((rodzaj, index) => (
+                                        {(Array.isArray(transformedSurfaces) ? transformedSurfaces : []).map((rodzaj, index) => (
                                             <TooltipProvider key={rodzaj.id}>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
@@ -1750,7 +1750,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-3">
-                                        {koloryRAL.map((kolor, index) => (
+                                        {(Array.isArray(koloryRAL) ? koloryRAL : []).map((kolor, index) => (
                                             <TooltipProvider key={kolor.id}>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
