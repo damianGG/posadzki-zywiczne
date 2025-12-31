@@ -531,14 +531,74 @@ export default function KalkulatorPosadzki() {
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
+    const [loadedRodzajePowierzchni, setLoadedRodzajePowierzchni] = useState<RodzajPowierzchniOption[]>(rodzajePowierzchni)
+    const [loadedKolory, setLoadedKolory] = useState<KolorOption[]>(koloryRAL)
+    const [isLoadingConfig, setIsLoadingConfig] = useState(true)
 
-    const wybranapPosadzka = rodzajePosadzek.find((p) => p.id === wybranyRodzaj)
+    // Create dynamic posadzka object with loaded data
+    const wybranapPosadzka = {
+        id: "zywica",
+        nazwa: "Posadzka żywiczna",
+        rodzajePowierzchni: loadedRodzajePowierzchni,
+        kolory: loadedKolory,
+    }
+    
     const wybranyRodzajPowierzchniObj = wybranapPosadzka?.rodzajePowierzchni.find(
         (r) => r.id === wybranyRodzajPowierzchni,
     )
     const wybranyKolorObj = wybranapPosadzka?.kolory.find((k) => k.id === wybranyKolor)
     const wybraneRodzajPomieszczenieObj = rodzajePomieszczen.find((p) => p.id === rodzajPomieszczenia)
     const wybranyStanBetonuObj = stanyBetonu.find((s) => s.id === stanBetonu)
+
+    // Load calculator configuration from Supabase
+    useEffect(() => {
+        async function loadConfig() {
+            try {
+                setIsLoadingConfig(true)
+                const response = await fetch('/api/admin/calculator-settings')
+                if (response.ok) {
+                    const data = await response.json()
+                    
+                    // Transform surface types data
+                    if (data.surfaceTypes && data.surfaceTypes.length > 0) {
+                        const transformedSurfaces = data.surfaceTypes
+                            .filter((s: any) => s.is_active)
+                            .map((s: any) => ({
+                                id: s.id,
+                                nazwa: s.name,
+                                opis: s.description || '',
+                                cenaZaM2: s.price_per_m2 || 0,
+                                price_ranges: s.price_ranges || [],
+                                zdjecie: s.image_url || PLACEHOLDER_IMAGE,
+                                wlasciwosci: s.properties ? JSON.parse(s.properties) : [],
+                            }))
+                        setLoadedRodzajePowierzchni(transformedSurfaces)
+                    }
+                    
+                    // Transform colors data
+                    if (data.colors && data.colors.length > 0) {
+                        const transformedColors = data.colors
+                            .filter((c: any) => c.is_active)
+                            .map((c: any) => ({
+                                id: c.id,
+                                nazwa: c.name,
+                                kodRAL: c.ral_code || '',
+                                cenaDodatkowa: c.additional_price || 0,
+                                zdjecie: c.image_url || PLACEHOLDER_IMAGE,
+                                podglad: c.preview_url || PLACEHOLDER_IMAGE,
+                            }))
+                        setLoadedKolory(transformedColors)
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading calculator config:', error)
+            } finally {
+                setIsLoadingConfig(false)
+            }
+        }
+        
+        loadConfig()
+    }, [])
 
     // Initialize mandatory services on first render
     useEffect(() => {
@@ -1551,8 +1611,13 @@ export default function KalkulatorPosadzki() {
                                     )}
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    <div className="space-y-3">
-                                        {rodzajePowierzchni.map((rodzaj, index) => (
+                                    {isLoadingConfig ? (
+                                        <div className="text-center py-8 text-gray-500">
+                                            Ładowanie konfiguracji...
+                                        </div>
+                                    ) : (
+                                        <div className="space-y-3">
+                                            {loadedRodzajePowierzchni.map((rodzaj, index) => (
                                             <TooltipProvider key={rodzaj.id}>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
@@ -1619,6 +1684,7 @@ export default function KalkulatorPosadzki() {
                                             </TooltipProvider>
                                         ))}
                                     </div>
+                                )}
                                 </CardContent>
                             </Card>
                         </div>
