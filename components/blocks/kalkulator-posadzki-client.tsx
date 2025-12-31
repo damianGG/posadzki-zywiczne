@@ -522,17 +522,13 @@ interface KalkulatorPosadzkiClientProps {
 }
 
 export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosadzkiClientProps) {
-    // Track if we're using fallback data
-    const [usingFallbackData, setUsingFallbackData] = React.useState(false)
-    
     // Transform server data to component format early to prevent errors
     const transformedSurfaces = React.useMemo(() => {
         if (!initialData?.surfaceTypes || initialData.surfaceTypes.length === 0) {
             if (process.env.NODE_ENV === 'development') {
                 console.warn('Using fallback surface types - Supabase data not available')
             }
-            setUsingFallbackData(true)
-            return rodzajePowierzchni
+            return { data: rodzajePowierzchni, isFallback: true }
         }
         
         try {
@@ -564,15 +560,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 if (process.env.NODE_ENV === 'development') {
                     console.warn('No active surface types found - using fallback data')
                 }
-                setUsingFallbackData(true)
-                return rodzajePowierzchni
+                return { data: rodzajePowierzchni, isFallback: true }
             }
             
-            return transformed
+            return { data: transformed, isFallback: false }
         } catch (error) {
             console.error('Error transforming surfaces:', error)
-            setUsingFallbackData(true)
-            return rodzajePowierzchni
+            return { data: rodzajePowierzchni, isFallback: true }
         }
     }, [initialData])
     
@@ -581,8 +575,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             if (process.env.NODE_ENV === 'development') {
                 console.warn('Using fallback colors - Supabase data not available')
             }
-            setUsingFallbackData(true)
-            return koloryRAL
+            return { data: koloryRAL, isFallback: true }
         }
         
         try {
@@ -601,17 +594,18 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 if (process.env.NODE_ENV === 'development') {
                     console.warn('No active colors found - using fallback data')
                 }
-                setUsingFallbackData(true)
-                return koloryRAL
+                return { data: koloryRAL, isFallback: true }
             }
             
-            return transformed
+            return { data: transformed, isFallback: false }
         } catch (error) {
             console.error('Error transforming colors:', error)
-            setUsingFallbackData(true)
-            return koloryRAL
+            return { data: koloryRAL, isFallback: true }
         }
     }, [initialData])
+    
+    // Derive fallback status from transformed data
+    const usingFallbackData = transformedSurfaces.isFallback || transformedColors.isFallback
     
     const [rodzajPomieszczenia, setRodzajPomieszczenia] = useState<string>("")
     const [stanBetonu, setStanBetonu] = useState<string>("")
@@ -635,9 +629,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const wybranapPosadzka = useMemo(() => ({
         id: "zywica",
         nazwa: "Posadzka żywiczna",
-        rodzajePowierzchni: transformedSurfaces,
-        kolory: transformedColors,
-    }), [transformedSurfaces, transformedColors])
+        rodzajePowierzchni: transformedSurfaces.data,
+        kolory: transformedColors.data,
+    }), [transformedSurfaces.data, transformedColors.data])
     
     const wybranyRodzajPowierzchniObj = wybranapPosadzka?.rodzajePowierzchni.find(
         (r) => r.id === wybranyRodzajPowierzchni,
@@ -1672,7 +1666,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-3">
-                                        {(Array.isArray(transformedSurfaces) ? transformedSurfaces : []).map((rodzaj, index) => (
+                                        {(Array.isArray(transformedSurfaces.data) ? transformedSurfaces.data : []).map((rodzaj, index) => (
                                             <TooltipProvider key={rodzaj.id}>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
