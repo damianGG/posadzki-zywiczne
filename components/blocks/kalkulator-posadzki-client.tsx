@@ -2119,7 +2119,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                 <div className="mt-3 sm:mt-4 pt-3 sm:pt-4 border-t">
                                                     <span className="font-medium text-gray-700 text-sm">Właściwości powierzchni:</span>
                                                     <div className="flex flex-wrap gap-1 sm:gap-2 mt-2">
-                                                        {wybranyRodzajPowierzchniObj.wlasciwosci.map((wlasciwosc, idx) => (
+                                                        {(wybranyRodzajPowierzchniObj.wlasciwosci || []).map((wlasciwosc, idx) => (
                                                             <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
                                                                 {wlasciwosc}
                                                             </span>
