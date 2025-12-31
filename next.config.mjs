@@ -8,6 +8,7 @@ const nextConfig = {
     pageExtensions: ['ts', 'tsx', 'mdx'],
     experimental: { 
         mdxRs: true,
+        serverComponentsExternalPackages: ['nodemailer'],
     },
     // Optimize for production builds
     reactStrictMode: true,

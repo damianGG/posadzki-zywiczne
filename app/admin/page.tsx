@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Image, Share2, ArrowRight } from 'lucide-react';
+import { Image, Share2, ArrowRight, Calculator } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminPage() {
@@ -69,6 +69,24 @@ export default function AdminPage() {
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Twórz i publikuj posty na Google Business, Instagram, Facebook i innych platformach z pomocą AI.
+              </p>
+            </Card>
+          </Link>
+
+          {/* Calculator Card */}
+          <Link href="/admin/kalkulator">
+            <Card className="p-6 hover:shadow-xl transition-all cursor-pointer group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-green-100 dark:bg-green-900/30 rounded-lg group-hover:bg-green-200 transition-colors">
+                  <Calculator className="w-6 h-6 text-green-600 dark:text-green-400" />
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-green-600 transition-colors" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Kalkulator Posadzek
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Zarządzaj cenami, opisami i zdjęciami dla kalkulatora posadzek żywicznych.
               </p>
             </Card>
           </Link>
