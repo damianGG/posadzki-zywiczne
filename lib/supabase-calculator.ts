@@ -86,7 +86,7 @@ export interface StepConfig {
  * Get Supabase client with service role key
  */
 export function getSupabaseAdmin(): SupabaseClient | null {
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !supabaseServiceKey) {
@@ -106,7 +106,7 @@ export function getSupabaseAdmin(): SupabaseClient | null {
  * Get public Supabase client
  */
 export function getSupabasePublic(): SupabaseClient | null {
-  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
