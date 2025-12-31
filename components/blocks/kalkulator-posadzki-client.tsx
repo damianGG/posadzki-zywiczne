@@ -1229,6 +1229,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 </div>
             )}
 
+            {/* Main content with extra bottom padding on mobile for sticky bottom bar (128px to accommodate bar height) */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pb-32 lg:pb-8">
                 <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-8 min-h-[600px]">
                     {/* Panel opcji - na mobile pełna szerokość, na lg 1/3 ekranu */}
@@ -2192,7 +2193,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 </div>
             </div>
             
-            {/* Sticky bottom bar for mobile - shows summary and action buttons */}
+            {/* Sticky bottom bar for mobile - z-50 to stay above main content but below modals/dialogs */}
             {powierzchnia > 0 && wybranapPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
                 <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-green-500 shadow-2xl z-50 animate-in slide-in-from-bottom-4 duration-500">
                     <div className="px-4 py-3">
@@ -2207,7 +2208,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 <span>•</span>
                                 <span>{(kosztCalkowity / powierzchnia).toFixed(2)} zł/m²</span>
                                 <span>•</span>
-                                <span className="truncate max-w-[100px]">{wybranyKolorObj.kodRAL}</span>
+                                <span className="truncate flex-shrink-0 min-w-0">{wybranyKolorObj.kodRAL}</span>
                             </div>
                         </div>
                         
