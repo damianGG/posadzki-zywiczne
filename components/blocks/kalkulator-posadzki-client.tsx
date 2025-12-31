@@ -1679,7 +1679,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                         <div className="space-y-1">
                                                             <p className="text-xs font-medium">Właściwości:</p>
                                                             <ul className="text-xs text-gray-600 space-y-1">
-                                                                {rodzaj.wlasciwosci.map((wlasciwosc, idx) => (
+                                                                {(rodzaj.wlasciwosci || []).map((wlasciwosc, idx) => (
                                                                     <li key={idx} className="flex items-center gap-1">
                                                                         <span className="w-1 h-1 bg-blue-500 rounded-full"></span>
                                                                         {wlasciwosc}
