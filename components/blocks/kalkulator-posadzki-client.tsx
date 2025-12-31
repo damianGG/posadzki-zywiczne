@@ -586,6 +586,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     nazwa: c.name || 'Bez nazwy',
                     kodRAL: c.ral_code || '',
                     cenaDodatkowa: Number(c.additional_price) || 0,
+                    // Prioritize thumbnail_url (correct field from Supabase schema) with image_url as fallback
                     zdjecie: c.thumbnail_url || c.image_url || PLACEHOLDER_IMAGE,
                     podglad: c.preview_url || PLACEHOLDER_IMAGE,
                 }))
@@ -631,7 +632,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         nazwa: "Posadzka żywiczna",
         rodzajePowierzchni: transformedSurfaces.data,
         kolory: transformedColors.data,
-    }), [transformedSurfaces.data, transformedColors.data])
+    }), [transformedSurfaces, transformedColors])
     
     const wybranyRodzajPowierzchniObj = wybranapPosadzka?.rodzajePowierzchni.find(
         (r) => r.id === wybranyRodzajPowierzchni,
