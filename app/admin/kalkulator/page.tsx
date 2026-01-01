@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +12,15 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Calculator, Save, RefreshCw, AlertCircle, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
-import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
+
+// Dynamic import for CloudinaryUploadWidget to reduce initial bundle size
+const CloudinaryUploadWidget = dynamic(
+  () => import('@/components/admin/cloudinary-upload-widget'),
+  { 
+    ssr: false,
+    loading: () => <div className="text-sm text-gray-500">Ładowanie...</div>
+  }
+);
 
 interface SurfaceType {
   id: string;
@@ -109,17 +118,7 @@ export default function CalculatorAdminPage() {
   const [createType, setCreateType] = useState<string>('');
   const [newItem, setNewItem] = useState<any>({});
 
-  useEffect(() => {
-    const token = sessionStorage.getItem('admin_token');
-    if (!token) {
-      router.push('/admin/realizacje/dodaj');
-      return;
-    }
-    setIsAuthenticated(true);
-    fetchAllSettings();
-  }, [router]);
-
-  const fetchAllSettings = async () => {
+  const fetchAllSettings = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch('/api/admin/calculator-settings');
@@ -141,7 +140,17 @@ export default function CalculatorAdminPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('admin_token');
+    if (!token) {
+      router.push('/admin/realizacje/dodaj');
+      return;
+    }
+    setIsAuthenticated(true);
+    fetchAllSettings();
+  }, [router, fetchAllSettings]);
 
   const updateSetting = async (type: string, id: string, updates: any) => {
     try {
@@ -397,7 +406,14 @@ export default function CalculatorAdminPage() {
                         />
                         {surface.image_url && (
                           <div className="relative w-16 h-16 border rounded flex-shrink-0">
-                            <Image src={surface.image_url} alt={surface.name} fill className="object-cover rounded" />
+                            <Image 
+                              src={surface.image_url} 
+                              alt={surface.name} 
+                              fill 
+                              className="object-cover rounded"
+                              sizes="64px"
+                              unoptimized={surface.image_url.startsWith('http') && !surface.image_url.includes('cloudinary')}
+                            />
                           </div>
                         )}
                       </div>
@@ -866,7 +882,14 @@ export default function CalculatorAdminPage() {
                         />
                         {service.image_url && (
                           <div className="relative w-16 h-16 border rounded flex-shrink-0">
-                            <Image src={service.image_url} alt={service.name} fill className="object-cover rounded" />
+                            <Image 
+                              src={service.image_url} 
+                              alt={service.name} 
+                              fill 
+                              className="object-cover rounded"
+                              sizes="64px"
+                              unoptimized={service.image_url.startsWith('http') && !service.image_url.includes('cloudinary')}
+                            />
                           </div>
                         )}
                       </div>
