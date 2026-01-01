@@ -11,6 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Calculator, Save, RefreshCw, AlertCircle, CheckCircle2, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
+import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
 
 interface SurfaceType {
   id: string;
@@ -380,24 +381,41 @@ export default function CalculatorAdminPage() {
                     />
                   </div>
                   <div>
-                    <Label>URL zdjęcia</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={surface.image_url || ''}
-                        onChange={(e) => {
-                          const updated = surfaceTypes.map((s) =>
-                            s.id === surface.id ? { ...s, image_url: e.target.value } : s
-                          );
-                          setSurfaceTypes(updated);
+                    <Label>Zdjęcie</Label>
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        <Input
+                          value={surface.image_url || ''}
+                          onChange={(e) => {
+                            const updated = surfaceTypes.map((s) =>
+                              s.id === surface.id ? { ...s, image_url: e.target.value } : s
+                            );
+                            setSurfaceTypes(updated);
+                          }}
+                          onBlur={(e) => updateSetting('surface-type', surface.type_id, { image_url: e.target.value })}
+                          placeholder="/images/... lub URL z Cloudinary"
+                        />
+                        {surface.image_url && (
+                          <div className="relative w-16 h-16 border rounded flex-shrink-0">
+                            <Image src={surface.image_url} alt={surface.name} fill className="object-cover rounded" />
+                          </div>
+                        )}
+                      </div>
+                      <CloudinaryUploadWidget
+                        onUploadComplete={(results) => {
+                          if (results.length > 0) {
+                            const url = results[0].url;
+                            const updated = surfaceTypes.map((s) =>
+                              s.id === surface.id ? { ...s, image_url: url } : s
+                            );
+                            setSurfaceTypes(updated);
+                            updateSetting('surface-type', surface.type_id, { image_url: url });
+                          }
                         }}
-                        onBlur={(e) => updateSetting('surface-type', surface.type_id, { image_url: e.target.value })}
-                        placeholder="/images/..."
+                        maxFiles={1}
+                        disabled={saving}
+                        folder="kalkulator/surface-types"
                       />
-                      {surface.image_url && (
-                        <div className="relative w-16 h-16 border rounded">
-                          <Image src={surface.image_url} alt={surface.name} fill className="object-cover rounded" />
-                        </div>
-                      )}
                     </div>
                   </div>
                   
@@ -621,31 +639,65 @@ export default function CalculatorAdminPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label>Miniatura (thumbnail_url)</Label>
-                      <Input
-                        value={color.thumbnail_url || ''}
-                        onChange={(e) => {
-                          const updated = colors.map((c) =>
-                            c.id === color.id ? { ...c, thumbnail_url: e.target.value } : c
-                          );
-                          setColors(updated);
-                        }}
-                        onBlur={(e) => updateSetting('color', color.color_id, { thumbnail_url: e.target.value })}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-3">
+                        <Input
+                          value={color.thumbnail_url || ''}
+                          onChange={(e) => {
+                            const updated = colors.map((c) =>
+                              c.id === color.id ? { ...c, thumbnail_url: e.target.value } : c
+                            );
+                            setColors(updated);
+                          }}
+                          onBlur={(e) => updateSetting('color', color.color_id, { thumbnail_url: e.target.value })}
+                          placeholder="/images/... lub URL z Cloudinary"
+                        />
+                        <CloudinaryUploadWidget
+                          onUploadComplete={(results) => {
+                            if (results.length > 0) {
+                              const url = results[0].url;
+                              const updated = colors.map((c) =>
+                                c.id === color.id ? { ...c, thumbnail_url: url } : c
+                              );
+                              setColors(updated);
+                              updateSetting('color', color.color_id, { thumbnail_url: url });
+                            }
+                          }}
+                          maxFiles={1}
+                          disabled={saving}
+                          folder="kalkulator/colors"
+                        />
+                      </div>
                     </div>
                     <div>
                       <Label>Podgląd (preview_url)</Label>
-                      <Input
-                        value={color.preview_url || ''}
-                        onChange={(e) => {
-                          const updated = colors.map((c) =>
-                            c.id === color.id ? { ...c, preview_url: e.target.value } : c
-                          );
-                          setColors(updated);
-                        }}
-                        onBlur={(e) => updateSetting('color', color.color_id, { preview_url: e.target.value })}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-3">
+                        <Input
+                          value={color.preview_url || ''}
+                          onChange={(e) => {
+                            const updated = colors.map((c) =>
+                              c.id === color.id ? { ...c, preview_url: e.target.value } : c
+                            );
+                            setColors(updated);
+                          }}
+                          onBlur={(e) => updateSetting('color', color.color_id, { preview_url: e.target.value })}
+                          placeholder="/images/... lub URL z Cloudinary"
+                        />
+                        <CloudinaryUploadWidget
+                          onUploadComplete={(results) => {
+                            if (results.length > 0) {
+                              const url = results[0].url;
+                              const updated = colors.map((c) =>
+                                c.id === color.id ? { ...c, preview_url: url } : c
+                              );
+                              setColors(updated);
+                              updateSetting('color', color.color_id, { preview_url: url });
+                            }
+                          }}
+                          maxFiles={1}
+                          disabled={saving}
+                          folder="kalkulator/colors"
+                        />
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -798,24 +850,41 @@ export default function CalculatorAdminPage() {
                     </div>
                   )}
                   <div>
-                    <Label>URL zdjęcia</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={service.image_url || ''}
-                        onChange={(e) => {
-                          const updated = services.map((s) =>
-                            s.id === service.id ? { ...s, image_url: e.target.value } : s
-                          );
-                          setServices(updated);
+                    <Label>Zdjęcie</Label>
+                    <div className="space-y-3">
+                      <div className="flex gap-2">
+                        <Input
+                          value={service.image_url || ''}
+                          onChange={(e) => {
+                            const updated = services.map((s) =>
+                              s.id === service.id ? { ...s, image_url: e.target.value } : s
+                            );
+                            setServices(updated);
+                          }}
+                          onBlur={(e) => updateSetting('service', service.service_id, { image_url: e.target.value })}
+                          placeholder="/images/... lub URL z Cloudinary"
+                        />
+                        {service.image_url && (
+                          <div className="relative w-16 h-16 border rounded flex-shrink-0">
+                            <Image src={service.image_url} alt={service.name} fill className="object-cover rounded" />
+                          </div>
+                        )}
+                      </div>
+                      <CloudinaryUploadWidget
+                        onUploadComplete={(results) => {
+                          if (results.length > 0) {
+                            const url = results[0].url;
+                            const updated = services.map((s) =>
+                              s.id === service.id ? { ...s, image_url: url } : s
+                            );
+                            setServices(updated);
+                            updateSetting('service', service.service_id, { image_url: url });
+                          }
                         }}
-                        onBlur={(e) => updateSetting('service', service.service_id, { image_url: e.target.value })}
-                        placeholder="/images/..."
+                        maxFiles={1}
+                        disabled={saving}
+                        folder="kalkulator/services"
                       />
-                      {service.image_url && (
-                        <div className="relative w-16 h-16 border rounded">
-                          <Image src={service.image_url} alt={service.name} fill className="object-cover rounded" />
-                        </div>
-                      )}
                     </div>
                   </div>
                 </CardContent>
