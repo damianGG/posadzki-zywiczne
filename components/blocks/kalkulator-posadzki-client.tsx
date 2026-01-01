@@ -641,6 +641,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const wybraneRodzajPomieszczenieObj = rodzajePomieszczen.find((p) => p.id === rodzajPomieszczenia)
     const wybranyStanBetonuObj = stanyBetonu.find((s) => s.id === stanBetonu)
 
+    // Check if mobile sticky bar should be shown
+    const shouldShowMobileStickyBar = powierzchnia > 0 && 
+        !!wybranapPosadzka && 
+        !!wybranyRodzajPowierzchniObj && 
+        !!wybranyKolorObj && 
+        kosztCalkowity > 0
+
     // Initialize mandatory services on first render
     useEffect(() => {
         const obowiazkowe = dodatkiUslugi.filter((d) => d.obowiazkowy).map((d) => d.id)
@@ -2194,7 +2201,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             </div>
             
             {/* Sticky bottom bar for mobile - z-50 to stay above main content but below modals/dialogs */}
-            {powierzchnia > 0 && wybranapPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && kosztCalkowity > 0 && (
+            {shouldShowMobileStickyBar && (
                 <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-green-500 shadow-2xl z-50">
                     <div className="px-4 py-3">
                         {/* Compact summary */}
@@ -2206,7 +2213,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             <div className="flex items-center justify-between text-xs text-gray-600">
                                 <span>{powierzchnia.toFixed(2)} m²</span>
                                 <span>•</span>
-                                <span>{powierzchnia > 0 ? (kosztCalkowity / powierzchnia).toFixed(2) : '0.00'} zł/m²</span>
+                                <span>{(kosztCalkowity / powierzchnia).toFixed(2)} zł/m²</span>
                                 <span>•</span>
                                 <span className="truncate flex-shrink-0 min-w-0">{wybranyKolorObj?.kodRAL || ''}</span>
                             </div>
