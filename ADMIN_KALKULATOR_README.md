@@ -123,6 +123,7 @@ URL: `/admin/kalkulator`
 - **Podgląd zdjęć** - natychmiastowy podgląd wgranych obrazów
 - **Kategorie usług** - automatyczne grupowanie
 - **Status obowiązkowych** - wizualne oznaczenie usług obowiązkowych
+- **✨ Upload zdjęć przez Cloudinary** - bezpośrednie przesyłanie zdjęć z panelu administracyjnego
 
 ### Screenshoty interfejsu:
 1. Zakładka "Powierzchnie" - edycja rodzajów powierzchni
@@ -130,6 +131,37 @@ URL: `/admin/kalkulator`
 3. Zakładka "Usługi" - edycja usług z cenami
 4. Zakładka "Pomieszczenia" - zarządzanie typami pomieszczeń
 5. Zakładka "Stan betonu" - edycja stanów podłoża
+
+## Upload Zdjęć przez Cloudinary
+
+### Przegląd
+Panel administracyjny kalkulatora obsługuje bezpośrednie przesyłanie zdjęć przez Cloudinary. Każde pole z obrazem zawiera:
+- **Pole tekstowe** - do ręcznego wpisania URL (np. z zewnętrznych źródeł)
+- **Przycisk Cloudinary Upload** - do bezpośredniego przesłania zdjęcia
+
+### Jak używać:
+1. Kliknij przycisk "Prześlij przez Cloudinary" przy wybranym polu
+2. Wybierz zdjęcie z komputera lub zrób zdjęcie aparatem
+3. Zdjęcie zostanie automatycznie przesłane do Cloudinary
+4. URL zdjęcia zostanie automatycznie wstawiony do pola i zapisany w bazie
+
+### Organizacja folderów na Cloudinary:
+- **`kalkulator/surface-types`** - zdjęcia typów powierzchni
+- **`kalkulator/colors`** - miniatury i podglądy kolorów
+- **`kalkulator/services`** - zdjęcia usług
+
+### Limity:
+- Maksymalnie 1 zdjęcie na pole
+- Maksymalny rozmiar pliku: 10MB
+- Obsługiwane formaty: JPG, JPEG, PNG, WebP, GIF
+
+### Wymagane zmienne środowiskowe:
+```env
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=twoja-cloudinary-nazwa
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=posadzki-realizacje
+```
+
+Zmienne te są już skonfigurowane w systemie - ta sama konfiguracja co w panelu realizacji.
 
 ## Naprawione Problemy z Emailem
 
@@ -206,6 +238,7 @@ npm run dev
 - Przejdź do `/admin/kalkulator`
 - Zaloguj się (używając istniejącego mechanizmu auth)
 - Edytuj ceny, opisy, zdjęcia
+- Testuj upload zdjęć przez Cloudinary
 - Sprawdź czy zmiany są widoczne w kalkulatorze na `/kalkulator`
 
 ### 6. Testuj wysyłanie emaili
@@ -219,12 +252,13 @@ npm run dev
 ### Do zrobienia przez developera:
 1. ✅ Uruchom migrację Supabase
 2. ✅ Skonfiguruj zmienne środowiskowe email
-3. 🔄 Przetestuj panel admina
-4. 🔄 Przetestuj wysyłanie emaili
-5. 🔄 Dodaj prawdziwe zdjęcia usług (zamień placeholdery)
+3. ✅ Upload zdjęć przez Cloudinary
+4. 🔄 Przetestuj panel admina
+5. 🔄 Przetestuj wysyłanie emaili
+6. 🔄 Dodaj prawdziwe zdjęcia usług (zamień placeholdery)
 
-### Opcjonalne usprawnienia:
-- Upload zdjęć bezpośrednio z panelu (integracja z Cloudinary)
+### Dodatkowe usprawnienia:
+- ✅ Upload zdjęć bezpośrednio z panelu (integracja z Cloudinary)
 - Historia zmian cen
 - Wersjonowanie ustawień
 - Backup/restore konfiguracji
