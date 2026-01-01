@@ -16,6 +16,7 @@ export interface SurfaceType {
     min_m2: number;
     max_m2: number | null; // null means infinity
     price_per_m2: number;
+    is_flat_rate?: boolean;
   }>;
   image_url?: string;
   properties?: string[];

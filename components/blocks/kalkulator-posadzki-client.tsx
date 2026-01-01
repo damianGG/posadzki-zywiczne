@@ -525,11 +525,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     // Transform server data to component format early to prevent errors
     const transformedSurfaces = React.useMemo(() => {
         if (!initialData?.surfaceTypes || initialData.surfaceTypes.length === 0) {
-            return rodzajePowierzchni
+            if (process.env.NODE_ENV === 'development') {
+                console.warn('Using fallback surface types - Supabase data not available')
+            }
+            return { data: rodzajePowierzchni, isFallback: true }
         }
         
         try {
-            return initialData.surfaceTypes
+            const transformed = initialData.surfaceTypes
                 .filter((s: any) => s.is_active)
                 .map((s: any) => {
                     let properties = []
@@ -552,33 +555,58 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         wlasciwosci: properties,
                     }
                 })
+            
+            if (transformed.length === 0) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn('No active surface types found - using fallback data')
+                }
+                return { data: rodzajePowierzchni, isFallback: true }
+            }
+            
+            return { data: transformed, isFallback: false }
         } catch (error) {
             console.error('Error transforming surfaces:', error)
-            return rodzajePowierzchni
+            return { data: rodzajePowierzchni, isFallback: true }
         }
     }, [initialData])
     
     const transformedColors = React.useMemo(() => {
         if (!initialData?.colors || initialData.colors.length === 0) {
-            return koloryRAL
+            if (process.env.NODE_ENV === 'development') {
+                console.warn('Using fallback colors - Supabase data not available')
+            }
+            return { data: koloryRAL, isFallback: true }
         }
         
         try {
-            return initialData.colors
+            const transformed = initialData.colors
                 .filter((c: any) => c.is_active)
                 .map((c: any) => ({
                     id: String(c.id || ''),
                     nazwa: c.name || 'Bez nazwy',
                     kodRAL: c.ral_code || '',
                     cenaDodatkowa: Number(c.additional_price) || 0,
-                    zdjecie: c.image_url || PLACEHOLDER_IMAGE,
+                    // Prioritize thumbnail_url (correct field from Supabase schema) with image_url as fallback
+                    zdjecie: c.thumbnail_url || c.image_url || PLACEHOLDER_IMAGE,
                     podglad: c.preview_url || PLACEHOLDER_IMAGE,
                 }))
+            
+            if (transformed.length === 0) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn('No active colors found - using fallback data')
+                }
+                return { data: koloryRAL, isFallback: true }
+            }
+            
+            return { data: transformed, isFallback: false }
         } catch (error) {
             console.error('Error transforming colors:', error)
-            return koloryRAL
+            return { data: koloryRAL, isFallback: true }
         }
     }, [initialData])
+    
+    // Derive fallback status from transformed data
+    const usingFallbackData = transformedSurfaces.isFallback || transformedColors.isFallback
     
     const [rodzajPomieszczenia, setRodzajPomieszczenia] = useState<string>("")
     const [stanBetonu, setStanBetonu] = useState<string>("")
@@ -599,12 +627,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [showEmailInput, setShowEmailInput] = useState(false)
     
     // Create dynamic posadzka object with loaded data
-    const wybranapPosadzka = {
+    const wybranapPosadzka = useMemo(() => ({
         id: "zywica",
         nazwa: "Posadzka żywiczna",
-        rodzajePowierzchni: transformedSurfaces,
-        kolory: transformedColors,
-    }
+        rodzajePowierzchni: transformedSurfaces.data,
+        kolory: transformedColors.data,
+    }), [transformedSurfaces, transformedColors])
     
     const wybranyRodzajPowierzchniObj = wybranapPosadzka?.rodzajePowierzchni.find(
         (r) => r.id === wybranyRodzajPowierzchni,
@@ -612,6 +640,25 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const wybranyKolorObj = wybranapPosadzka?.kolory.find((k) => k.id === wybranyKolor)
     const wybraneRodzajPomieszczenieObj = rodzajePomieszczen.find((p) => p.id === rodzajPomieszczenia)
     const wybranyStanBetonuObj = stanyBetonu.find((s) => s.id === stanBetonu)
+
+    // Check if mobile sticky bar should be shown
+    const shouldShowMobileStickyBar = powierzchnia > 0 && 
+        !!wybranapPosadzka && 
+        !!wybranyRodzajPowierzchniObj && 
+        !!wybranyKolorObj && 
+        kosztCalkowity > 0
+    
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development') {
+        console.log('Mobile Sticky Bar Debug:', {
+            shouldShow: shouldShowMobileStickyBar,
+            powierzchnia,
+            wybranapPosadzka: !!wybranapPosadzka,
+            wybranyRodzajPowierzchniObj: !!wybranyRodzajPowierzchniObj,
+            wybranyKolorObj: !!wybranyKolorObj,
+            kosztCalkowity
+        })
+    }
 
     // Initialize mandatory services on first render
     useEffect(() => {
@@ -1187,7 +1234,22 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             {/* Pasek postępu */}
             <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+            {/* Info message if using fallback data */}
+            {usingFallbackData && (
+                <div className="bg-blue-50 border-b border-blue-200">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
+                        <Alert className="bg-blue-100 border-blue-300">
+                            <AlertDescription className="text-blue-800 text-sm">
+                                <strong>Informacja:</strong> Kalkulator korzysta z domyślnych danych. 
+                                Wszystkie funkcje działają poprawnie.
+                            </AlertDescription>
+                        </Alert>
+                    </div>
+                </div>
+            )}
+
+            {/* Main content with extra bottom padding on mobile for sticky bottom bar (128px to accommodate bar height) */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pb-32 lg:pb-8">
                 <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-8 min-h-[600px]">
                     {/* Panel opcji - na mobile pełna szerokość, na lg 1/3 ekranu */}
                     <div className="lg:col-span-4 space-y-4 lg:space-y-6">
@@ -1625,7 +1687,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 </CardHeader>
                                 <CardContent className="space-y-4">
                                     <div className="space-y-3">
-                                        {(Array.isArray(transformedSurfaces) ? transformedSurfaces : []).map((rodzaj, index) => (
+                                        {(Array.isArray(transformedSurfaces.data) ? transformedSurfaces.data : []).map((rodzaj, index) => (
                                             <TooltipProvider key={rodzaj.id}>
                                                 <Tooltip>
                                                     <TooltipTrigger asChild>
@@ -1939,9 +2001,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             </Card>
                         </div>
 
-                        {/* Podsumowanie i akcje */}
+                        {/* Podsumowanie i akcje - ukryte na mobile (przeniesione do sticky bottom bar) */}
                         {powierzchnia > 0 && wybranapPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
-                            <div className="animate-in slide-in-from-bottom-4 duration-700">
+                            <div className="hidden lg:block animate-in slide-in-from-bottom-4 duration-700">
                                 <Card className="bg-green-50 border-green-200 shadow-lg">
                                     <CardHeader className="pb-3">
                                         <CardTitle className="text-lg text-green-800">Podsumowanie</CardTitle>
@@ -1972,8 +2034,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             </div>
                         )}
 
-                        {/* Przyciski akcji */}
-                        <div className="space-y-3">
+                        {/* Przyciski akcji - ukryte na mobile (przeniesione do sticky bottom bar) */}
+                        <div className="hidden lg:block space-y-3">
                             <Button
                                 onClick={resetKalkulator}
                                 variant="outline"
@@ -2149,6 +2211,102 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     </div>
                 </div>
             </div>
+            
+            {/* Sticky bottom bar for mobile - floating pinned at the very bottom */}
+            {shouldShowMobileStickyBar && (
+                <div className="block lg:hidden fixed bottom-0 left-0 right-0 w-full bg-white border-t-2 border-green-500 shadow-lg z-[9999]">
+                    <div className="px-4 py-3 pb-4">
+                        {/* Compact summary */}
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
+                            <div className="flex items-center justify-between mb-2">
+                                <span className="text-sm font-medium text-gray-700">Koszt całkowity:</span>
+                                <span className="text-xl font-bold text-green-700">{kosztCalkowity.toFixed(2)} zł</span>
+                            </div>
+                            <div className="flex items-center justify-between text-xs text-gray-600">
+                                <span>{powierzchnia.toFixed(2)} m²</span>
+                                <span>•</span>
+                                <span>{(kosztCalkowity / powierzchnia).toFixed(2)} zł/m²</span>
+                                <span>•</span>
+                                <span className="truncate flex-shrink-0 min-w-0">{wybranyKolorObj?.kodRAL || ''}</span>
+                            </div>
+                        </div>
+                        
+                        {/* Email input for mobile */}
+                        {showEmailInput ? (
+                            <div className="space-y-2 mb-3">
+                                <Input
+                                    id="userEmailMobile"
+                                    type="email"
+                                    placeholder="Twój adres email"
+                                    value={userEmail}
+                                    onChange={(e) => setUserEmail(e.target.value)}
+                                    className="text-sm"
+                                />
+                                <div className="flex gap-2">
+                                    <Button
+                                        onClick={() => generujPDF(true)}
+                                        disabled={isSendingEmail || !userEmail}
+                                        size="sm"
+                                        className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                                    >
+                                        {isSendingEmail ? (
+                                            <>
+                                                <Mail className="h-3 w-3 mr-1" />
+                                                Wysyłanie...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Mail className="h-3 w-3 mr-1" />
+                                                Wyślij
+                                            </>
+                                        )}
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
+                                            setShowEmailInput(false)
+                                            setUserEmail("")
+                                        }}
+                                        size="sm"
+                                        variant="outline"
+                                    >
+                                        Anuluj
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            /* Action buttons */
+                            <div className="grid grid-cols-2 gap-2">
+                                <Button
+                                    onClick={() => generujPDF(false)}
+                                    disabled={isGeneratingPDF}
+                                    size="sm"
+                                    className="bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                                >
+                                    {isGeneratingPDF ? (
+                                        <>
+                                            <Sparkles className="h-3 w-3 mr-1 animate-spin" />
+                                            <span className="text-xs">PDF...</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Download className="h-3 w-3 mr-1" />
+                                            <span className="text-xs">Pobierz PDF</span>
+                                        </>
+                                    )}
+                                </Button>
+                                <Button
+                                    onClick={() => setShowEmailInput(true)}
+                                    size="sm"
+                                    variant="outline"
+                                >
+                                    <Mail className="h-3 w-3 mr-1" />
+                                    <span className="text-xs">Email</span>
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
