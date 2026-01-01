@@ -2200,10 +2200,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 </div>
             </div>
             
-            {/* Sticky bottom bar for mobile - z-50 to stay above main content but below modals/dialogs */}
+            {/* Sticky bottom bar for mobile - floating pinned at the very bottom */}
             {shouldShowMobileStickyBar && (
-                <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t-2 border-green-500 shadow-2xl z-50">
-                    <div className="px-4 py-3">
+                <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t-2 border-green-500 shadow-[0_-4px_20px_rgba(0,0,0,0.15)] z-50">
+                    <div className="px-4 py-3 pb-4">
                         {/* Compact summary */}
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
                             <div className="flex items-center justify-between mb-2">
