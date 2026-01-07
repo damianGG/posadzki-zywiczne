@@ -268,7 +268,7 @@ function KonkursForm() {
               <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 max-w-md mx-auto">
                 <Calendar className="w-12 h-12 mx-auto mb-4" />
                  <p className="text-lg font-semibold mb-2">Data losowania:</p>
-                 <p className="text-3xl font-bold">3 stycznia 2026</p>
+                 <p className="text-3xl font-bold">30 stycznia 2026</p>
               </div>
             </div>
           </div>
