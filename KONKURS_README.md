@@ -229,11 +229,6 @@ curl -X POST http://localhost:3000/api/generate-code \
 6. **Multi-language**: Support for English version
 7. **Bot Protection**: ✅ Implemented with Google reCAPTCHA v3
 8. **Rate Limiting**: Add request throttling per IP address
-4. **Analytics**: Track conversion rates, popular entry times
-5. **Social Sharing**: Allow users to share contest on social media
-6. **Multi-language**: Support for English version
-7. **Captcha**: Add reCAPTCHA to prevent bot submissions
-8. **Rate Limiting**: Prevent abuse with request throttling
 
 ## Support
 

@@ -14,6 +14,8 @@ interface ContestEntry {
 
 const DATA_FILE = path.join(process.cwd(), "data", "contest-entries.json")
 const MAX_CODE_GENERATION_ATTEMPTS = 10
+const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
+const RECAPTCHA_SCORE_THRESHOLD = 0.5
 
 function getSupabaseClient(): SupabaseClient | null {
   const supabaseUrl = process.env.SUPABASE_URL
@@ -152,8 +154,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify the reCAPTCHA token with Google
-    const recaptchaVerifyUrl = `https://www.google.com/recaptcha/api/siteverify`
-    const recaptchaResponse = await fetch(recaptchaVerifyUrl, {
+    const recaptchaResponse = await fetch(RECAPTCHA_VERIFY_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -163,7 +164,7 @@ export async function POST(request: NextRequest) {
 
     const recaptchaData = await recaptchaResponse.json()
 
-    if (!recaptchaData.success || recaptchaData.score < 0.5) {
+    if (!recaptchaData.success || recaptchaData.score < RECAPTCHA_SCORE_THRESHOLD) {
       console.warn("reCAPTCHA verification failed:", recaptchaData)
       return NextResponse.json(
         {

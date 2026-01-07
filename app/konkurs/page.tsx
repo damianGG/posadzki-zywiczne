@@ -322,7 +322,7 @@ export default function KonkursPage() {
   if (!recaptchaSiteKey) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 via-white to-purple-50">
-        <div className="text-center p-8">
+        <div className="text-center p-8" role="alert" aria-live="polite">
           <h1 className="text-2xl font-bold text-red-600 mb-4">Konfiguracja niekompletna</h1>
           <p className="text-gray-700">
             Brak klucza reCAPTCHA. Skontaktuj się z administratorem.
