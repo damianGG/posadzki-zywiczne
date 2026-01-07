@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Gift, Snowflake, Calendar, CheckCircle2, Loader2 } from "lucide-react"
 import SnowfallAnimation from "@/components/snowfall-animation"
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3"
 
-export default function KonkursPage() {
+function KonkursForm() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -18,18 +19,32 @@ export default function KonkursPage() {
     code?: string
   }>({ type: null, message: "" })
 
+  const { executeRecaptcha } = useGoogleReCaptcha()
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus({ type: null, message: "" })
 
     try {
+      if (!executeRecaptcha) {
+        setSubmitStatus({
+          type: "error",
+          message: "reCAPTCHA nie jest gotowa. Spróbuj ponownie za chwilę.",
+        })
+        setIsSubmitting(false)
+        return
+      }
+
+      // Get reCAPTCHA token
+      const recaptchaToken = await executeRecaptcha("submit_contest")
+
       const response = await fetch("/api/generate-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ name, email, recaptchaToken }),
       })
 
       const data = await response.json()
@@ -277,7 +292,7 @@ export default function KonkursPage() {
 
               <h3 className="text-xl font-semibold mt-6">Regulamin konkursu</h3>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Konkurs trwa do 3 stycznia 2026 roku.</li>
+                <li>Konkurs trwa do 30 stycznia 2026 roku.</li>
                 <li>W konkursie może wziąć udział każda osoba pełnoletnia.</li>
                 <li>Jeden adres email = jeden kod konkursowy.</li>
                 <li>Nagroda główna: posadzka żywiczna o wartości 5000 zł.</li>
@@ -298,5 +313,28 @@ export default function KonkursPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function KonkursPage() {
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+
+  if (!recaptchaSiteKey) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 via-white to-purple-50">
+        <div className="text-center p-8">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Konfiguracja niekompletna</h1>
+          <p className="text-gray-700">
+            Brak klucza reCAPTCHA. Skontaktuj się z administratorem.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <GoogleReCaptchaProvider reCaptchaKey={recaptchaSiteKey}>
+      <KonkursForm />
+    </GoogleReCaptchaProvider>
   )
 }
