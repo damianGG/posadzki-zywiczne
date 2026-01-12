@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Gift, Snowflake, Calendar, CheckCircle2, Loader2 } from "lucide-react"
 import SnowfallAnimation from "@/components/snowfall-animation"
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from "react-google-recaptcha-v3"
 
-export default function KonkursPage() {
+function KonkursForm() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -18,18 +19,32 @@ export default function KonkursPage() {
     code?: string
   }>({ type: null, message: "" })
 
+  const { executeRecaptcha } = useGoogleReCaptcha()
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus({ type: null, message: "" })
 
     try {
+      if (!executeRecaptcha) {
+        setSubmitStatus({
+          type: "error",
+          message: "reCAPTCHA nie jest gotowa. Spróbuj ponownie za chwilę.",
+        })
+        setIsSubmitting(false)
+        return
+      }
+
+      // Get reCAPTCHA token
+      const recaptchaToken = await executeRecaptcha("submit_contest")
+
       const response = await fetch("/api/generate-code", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name, email }),
+        body: JSON.stringify({ name, email, recaptchaToken }),
       })
 
       const data = await response.json()
@@ -72,7 +87,7 @@ export default function KonkursPage() {
               <Snowflake className="w-12 h-12 text-blue-600 animate-pulse" />
             </div>
              <Badge className="text-lg px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600">
-               Noworoczny Konkurs 2025/2026
+               Noworoczny Konkurs 2026
              </Badge>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-4xl">
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
@@ -253,7 +268,7 @@ export default function KonkursPage() {
               <div className="bg-white/20 backdrop-blur-sm rounded-xl p-6 max-w-md mx-auto">
                 <Calendar className="w-12 h-12 mx-auto mb-4" />
                  <p className="text-lg font-semibold mb-2">Data losowania:</p>
-                 <p className="text-3xl font-bold">3 stycznia 2026</p>
+                 <p className="text-3xl font-bold">30 stycznia 2026</p>
               </div>
             </div>
           </div>
@@ -270,14 +285,14 @@ export default function KonkursPage() {
             <div className="prose max-w-none text-gray-700 space-y-4">
               <h3 className="text-xl font-semibold">Ochrona danych osobowych (RODO)</h3>
               <p>
-                Administratorem Twoich danych osobowych jest [Nazwa firmy]. Twoje dane będą przetwarzane
+                Administratorem Twoich danych osobowych jest posadzkizywiczne.com. Twoje dane będą przetwarzane
                 wyłącznie w celu przeprowadzenia konkursu i powiadomienia o wynikach. Masz prawo dostępu
                 do swoich danych, ich sprostowania, usunięcia lub ograniczenia przetwarzania.
               </p>
 
               <h3 className="text-xl font-semibold mt-6">Regulamin konkursu</h3>
               <ul className="list-disc pl-6 space-y-2">
-                <li>Konkurs trwa do 3 stycznia 2026 roku.</li>
+                <li>Konkurs trwa do 30 stycznia 2026 roku.</li>
                 <li>W konkursie może wziąć udział każda osoba pełnoletnia.</li>
                 <li>Jeden adres email = jeden kod konkursowy.</li>
                 <li>Nagroda główna: posadzka żywiczna o wartości 5000 zł.</li>
@@ -298,5 +313,28 @@ export default function KonkursPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function KonkursPage() {
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+
+  if (!recaptchaSiteKey) {
+    return (
+      <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-50 via-white to-purple-50">
+        <div className="text-center p-8" role="alert" aria-live="polite">
+          <h1 className="text-2xl font-bold text-red-600 mb-4">Konfiguracja niekompletna</h1>
+          <p className="text-gray-700">
+            Brak klucza reCAPTCHA. Skontaktuj się z administratorem.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <GoogleReCaptchaProvider reCaptchaKey={recaptchaSiteKey}>
+      <KonkursForm />
+    </GoogleReCaptchaProvider>
   )
 }

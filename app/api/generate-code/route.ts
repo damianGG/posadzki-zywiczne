@@ -14,6 +14,8 @@ interface ContestEntry {
 
 const DATA_FILE = path.join(process.cwd(), "data", "contest-entries.json")
 const MAX_CODE_GENERATION_ATTEMPTS = 10
+const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
+const RECAPTCHA_SCORE_THRESHOLD = 0.5
 
 function getSupabaseClient(): SupabaseClient | null {
   const supabaseUrl = process.env.SUPABASE_URL
@@ -92,7 +94,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
           </p>
           
           <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea;">
-             <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Twój kod konkursowy (losowanie 3 stycznia 2026) to:</p>
+             <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Twój kod konkursowy (losowanie 30 stycznia 2026) to:</p>
             <p style="color: #667eea; font-size: 32px; font-weight: bold; margin: 0; letter-spacing: 2px; font-family: 'Courier New', monospace;">
               ${code}
             </p>
@@ -132,7 +134,47 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email } = await request.json()
+    const { name, email, recaptchaToken } = await request.json()
+
+    // Verify reCAPTCHA token
+    if (!recaptchaToken) {
+      return NextResponse.json(
+        { success: false, message: "Weryfikacja reCAPTCHA nie powiodła się. Spróbuj ponownie." },
+        { status: 400 }
+      )
+    }
+
+    const recaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
+    if (!recaptchaSecretKey) {
+      console.error("RECAPTCHA_SECRET_KEY is not configured")
+      return NextResponse.json(
+        { success: false, message: "Błąd konfiguracji serwera. Skontaktuj się z administratorem." },
+        { status: 500 }
+      )
+    }
+
+    // Verify the reCAPTCHA token with Google
+    const recaptchaResponse = await fetch(RECAPTCHA_VERIFY_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `secret=${recaptchaSecretKey}&response=${recaptchaToken}`,
+    })
+
+    const recaptchaData = await recaptchaResponse.json()
+
+    if (!recaptchaData.success || recaptchaData.score < RECAPTCHA_SCORE_THRESHOLD) {
+      console.warn("reCAPTCHA verification failed:", recaptchaData)
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Weryfikacja reCAPTCHA nie powiodła się. Jeśli jesteś człowiekiem, spróbuj ponownie za chwilę.",
+        },
+        { status: 400 }
+      )
+    }
 
     const supabase = getSupabaseClient()
 
