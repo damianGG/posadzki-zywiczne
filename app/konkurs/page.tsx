@@ -87,7 +87,7 @@ function KonkursForm() {
               <Snowflake className="w-12 h-12 text-blue-600 animate-pulse" />
             </div>
              <Badge className="text-lg px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600">
-               Noworoczny Konkurs 2025/2026
+               Noworoczny Konkurs 2026
              </Badge>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-4xl">
               <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-500 bg-clip-text text-transparent">
@@ -285,7 +285,7 @@ function KonkursForm() {
             <div className="prose max-w-none text-gray-700 space-y-4">
               <h3 className="text-xl font-semibold">Ochrona danych osobowych (RODO)</h3>
               <p>
-                Administratorem Twoich danych osobowych jest [Nazwa firmy]. Twoje dane będą przetwarzane
+                Administratorem Twoich danych osobowych jest posadzkizywiczne.com. Twoje dane będą przetwarzane
                 wyłącznie w celu przeprowadzenia konkursu i powiadomienia o wynikach. Masz prawo dostępu
                 do swoich danych, ich sprostowania, usunięcia lub ograniczenia przetwarzania.
               </p>
