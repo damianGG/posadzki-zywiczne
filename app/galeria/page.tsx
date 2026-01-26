@@ -55,9 +55,12 @@ export default async function GaleriaPage() {
       });
     }
     
-    // Add gallery images
-    realizacja.images.gallery.forEach((imageUrl) => {
-      if (imageUrl) {
+    // Add gallery images, filtering out hidden ones
+    realizacja.images.gallery.forEach((image) => {
+      const imageUrl = typeof image === 'string' ? image : image.url;
+      const isHidden = typeof image === 'string' ? false : (image.hidden || false);
+      
+      if (imageUrl && !isHidden) {
         allImages.push({
           url: imageUrl,
           realizacjaTitle: realizacja.title,

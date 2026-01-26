@@ -6,7 +6,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib/cloudinary-loader';
 
 interface ImageGalleryProps {
-  images: string[];
+  images: Array<string | { url: string; alt?: string; hidden?: boolean }>;
   mainImage: string;
   title: string;
 }
@@ -38,9 +38,17 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
     }
   }, []);
   
-  // Combine main image with gallery images, filter out empty strings and duplicates
+  // Combine main image with gallery images, filter out empty strings, duplicates, and hidden images
   const allImages = useMemo(() => {
-    const combined = mainImage ? [mainImage, ...images] : images;
+    // Convert images to URLs only, filtering out hidden ones
+    const imageUrls = images
+      .filter(img => {
+        if (typeof img === 'string') return true;
+        return !img.hidden; // Filter out hidden images
+      })
+      .map(img => typeof img === 'string' ? img : img.url);
+    
+    const combined = mainImage ? [mainImage, ...imageUrls] : imageUrls;
     return [...new Set(combined)].filter(Boolean);
   }, [mainImage, images]);
 

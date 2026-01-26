@@ -31,6 +31,7 @@ export interface RealizacjaData {
     gallery?: Array<{
       url: string;
       alt?: string;
+      hidden?: boolean;
     }>;
   };
   faq?: Array<{

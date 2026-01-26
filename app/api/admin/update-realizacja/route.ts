@@ -24,6 +24,7 @@ export async function PUT(request: NextRequest) {
     const formDataJson = formData.get('formData') as string;
     slug = formData.get('slug') as string;
     const imagesToDelete = formData.get('imagesToDelete') as string;
+    const existingImagesJson = formData.get('existingImages') as string;
     
     if (!formDataJson || !slug) {
       return NextResponse.json(
@@ -34,6 +35,7 @@ export async function PUT(request: NextRequest) {
 
     const data = JSON.parse(formDataJson);
     const deleteImageIds = imagesToDelete ? JSON.parse(imagesToDelete) : [];
+    const existingImages = existingImagesJson ? JSON.parse(existingImagesJson) : [];
 
     // Get existing realizacja from Supabase
     const existingResult = await getRealizacjaBySlug(slug);
@@ -46,15 +48,19 @@ export async function PUT(request: NextRequest) {
 
     const existingRealizacja = existingResult.data;
     
-    // Get existing images
-    let existingGallery = existingRealizacja.images?.gallery || [];
+    // Build gallery from existingImages with hidden flags preserved
+    let existingGallery = existingImages.map((img: { url: string; publicId: string; filename: string; hidden?: boolean }) => ({
+      url: img.url,
+      alt: img.filename,
+      hidden: img.hidden || false,
+    }));
 
     // Delete specified images from Cloudinary
     for (const publicId of deleteImageIds) {
       try {
         await cloudinary.uploader.destroy(publicId);
         console.log(`Deleted from Cloudinary: ${publicId}`);
-        existingGallery = existingGallery.filter(img => !img.url.includes(publicId));
+        existingGallery = existingGallery.filter((img: { url: string }) => !img.url.includes(publicId));
       } catch (error) {
         console.warn(`Could not delete: ${publicId}`, error);
       }
@@ -100,6 +106,7 @@ export async function PUT(request: NextRequest) {
         uploadedImages.push({
           url: result.secure_url,
           alt: `${data.title} - ${data.location || 'realizacja'}`,
+          hidden: false, // New images are visible by default
         });
       }
     }
