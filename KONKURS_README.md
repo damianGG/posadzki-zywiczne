@@ -39,6 +39,13 @@ A complete Christmas contest landing page that allows users to participate in a 
 
 ## Technical Implementation
 
+### Storage Architecture
+The application uses a dual-storage approach:
+- **Primary Storage**: Supabase database (required for production)
+- **Local Backup**: JSON file at `data/contest-entries.json` (development only)
+
+In serverless environments (Vercel, AWS Lambda), the local backup is automatically skipped since the filesystem is read-only. Supabase serves as the sole storage solution in production.
+
 ### API Endpoint
 **POST** `/api/generate-code`
 
@@ -78,7 +85,16 @@ A complete Christmas contest landing page that allows users to participate in a 
 ```
 
 ### Data Storage
-Contest entries are stored in JSON format at `data/contest-entries.json`:
+
+**Primary Storage (Supabase)**:
+Contest entries are stored in the `contest_entries` table with the following schema:
+- `email` (text): Participant's email address
+- `name` (text): Participant's name
+- `code` (text): Unique contest code
+- `timestamp` (text): ISO 8601 timestamp
+
+**Local Backup (Development Only)**:
+In development environments, entries are also backed up to `data/contest-entries.json`:
 
 ```json
 [
@@ -91,7 +107,10 @@ Contest entries are stored in JSON format at `data/contest-entries.json`:
 ]
 ```
 
-**Note**: This file is excluded from version control via `.gitignore`.
+**Note**: 
+- Local backup is automatically skipped in serverless environments (Vercel, AWS Lambda)
+- This file is excluded from version control via `.gitignore`
+- Supabase configuration is required for the contest feature to work
 
 ## Configuration
 
@@ -113,11 +132,20 @@ RECAPTCHA_SECRET_KEY=your-recaptcha-secret-key
 ```
 
 ### Setting up Gmail App Password
+
+**Important**: Email configuration is optional. If email credentials are not configured or are invalid, the contest code will still be generated and displayed to the user. The email sending failure will be logged but won't prevent contest participation.
+
+To enable email notifications:
 1. Go to your Google Account settings
 2. Enable 2-Step Verification
 3. Visit https://myaccount.google.com/apppasswords
 4. Generate a new app password for "Mail"
 5. Use this password in the `EMAIL_PASS` environment variable
+
+**Common Email Issues**:
+- Error `535-5.7.8 Username and Password not accepted`: Your Gmail credentials are incorrect or you're not using an App Password
+- Make sure 2-Factor Authentication is enabled on your Gmail account
+- Use the App Password, not your regular Gmail password
 
 ### Setting up Google reCAPTCHA v3
 1. Go to https://www.google.com/recaptcha/admin
