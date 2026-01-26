@@ -76,7 +76,7 @@ export async function PUT(request: NextRequest) {
 
     // Upload new images if provided
     const newImages = formData.getAll('newImages') as File[];
-    const uploadedImages: Array<{ url: string; alt: string }> = [];
+    const uploadedImages: Array<{ url: string; alt: string; hidden: boolean }> = [];
     
     if (newImages.length > 0 && newImages[0].size > 0) {
       const folderName = existingRealizacja.cloudinary_folder?.replace('realizacje/', '') || slug;
