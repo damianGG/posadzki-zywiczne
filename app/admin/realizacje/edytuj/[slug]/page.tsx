@@ -506,6 +506,8 @@ export default function EdytujRealizacjePage() {
                             }`}
                             onClick={() => handleToggleImageVisibility(image.publicId)}
                             title={image.hidden ? 'Pokaż w galerii' : 'Ukryj w galerii'}
+                            aria-label={image.hidden ? 'Pokaż zdjęcie w galerii' : 'Ukryj zdjęcie w galerii'}
+                            aria-pressed={!image.hidden}
                           >
                             {image.hidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                           </Button>

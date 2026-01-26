@@ -32,7 +32,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     axis: 'y',
     loop: true,
     skipSnaps: false,
-    duration: 20,
+    duration: 300, // Smooth transition duration (300ms is standard)
   });
 
   // Pre-compute which images are Cloudinary URLs to avoid repeated checks
@@ -292,7 +292,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
                       className="object-cover"
                       sizes="100vw"
                       quality={80}
-                      priority={index === currentIndex}
+                      loading={Math.abs(index - currentIndex) <= 1 ? "eager" : "lazy"}
                       loader={imageCloudinaryStatus[index] ? cloudinaryLoaderMobile : undefined}
                       unoptimized={!imageCloudinaryStatus[index]}
                     />

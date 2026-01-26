@@ -15,6 +15,14 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Type for existing image data from frontend
+interface ExistingImageData {
+  url: string;
+  publicId: string;
+  filename: string;
+  hidden?: boolean;
+}
+
 export async function PUT(request: NextRequest) {
   let slug: string | undefined;
   
@@ -49,7 +57,7 @@ export async function PUT(request: NextRequest) {
     const existingRealizacja = existingResult.data;
     
     // Build gallery from existingImages with hidden flags preserved
-    let existingGallery = existingImages.map((img: { url: string; publicId: string; filename: string; hidden?: boolean }) => ({
+    let existingGallery = existingImages.map((img: ExistingImageData) => ({
       url: img.url,
       alt: img.filename,
       hidden: img.hidden || false,
