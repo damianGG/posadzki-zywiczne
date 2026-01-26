@@ -17,6 +17,16 @@ const MAX_CODE_GENERATION_ATTEMPTS = 10
 const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 const RECAPTCHA_SCORE_THRESHOLD = 0.5
 
+// Detect if running in serverless environment (Vercel/AWS Lambda)
+// where filesystem is read-only except for /tmp
+const isServerless = () => {
+  return (
+    process.env.VERCEL === "1" ||
+    process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined ||
+    process.env.LAMBDA_TASK_ROOT !== undefined
+  )
+}
+
 function getSupabaseClient(): SupabaseClient | null {
   const supabaseUrl = process.env.SUPABASE_URL
   const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
@@ -307,13 +317,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Save locally as fallback
-    try {
-      const entries = await readEntries()
-      entries.push(newEntry)
-      await writeEntries(entries)
-    } catch (localError) {
-      console.error("Error writing local contest entry backup:", localError)
+    // Save locally as fallback (only in non-serverless environments)
+    // In serverless environments (Vercel, AWS Lambda), the filesystem is read-only
+    // and Supabase is the primary/only storage
+    if (!isServerless()) {
+      try {
+        const entries = await readEntries()
+        entries.push(newEntry)
+        await writeEntries(entries)
+      } catch (localError) {
+        console.error("Error writing local contest entry backup:", localError)
+      }
     }
 
     // Send confirmation email
