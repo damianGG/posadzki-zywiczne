@@ -1,30 +1,15 @@
 'use client';
 
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import NextImage from 'next/image';
 import Link from 'next/link';
-import { X, ChevronUp, ChevronDown } from 'lucide-react';
+import { X } from 'lucide-react';
 import { getCategoryDisplayName } from '@/lib/realizacje-helpers';
 import { Badge } from '@/components/ui/badge';
 import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib/cloudinary-loader';
+import useEmblaCarousel from 'embla-carousel-react';
 
 import { RealizacjaCategory } from '@/types/realizacje';
-
-// Cookie helper functions
-const getCookie = (name: string): string | null => {
-  if (typeof document === 'undefined') return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
-  return null;
-};
-
-const setCookie = (name: string, value: string, days: number = 365) => {
-  if (typeof document === 'undefined') return;
-  const expires = new Date();
-  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
-};
 
 interface GalleryImage {
   url: string;
@@ -41,10 +26,14 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
-  const [showSwipeHint, setShowSwipeHint] = useState(false);
   
-  // Ref for the fullscreen viewer container
-  const viewerRef = useRef<HTMLDivElement>(null);
+  // Embla carousel for mobile - vertical axis
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    axis: 'y',
+    loop: true,
+    skipSnaps: false,
+    duration: 20,
+  });
 
   // Pre-compute which images are Cloudinary URLs to avoid repeated checks
   const imageCloudinaryStatus = useMemo(() => {
@@ -82,21 +71,26 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
-  // Check if user has seen swipe hint before
+  // Sync embla carousel with current index
   useEffect(() => {
-    if (isOpen) {
-      const hasSeenHint = getCookie('gallery_swipe_hint_seen');
-      if (!hasSeenHint) {
-        setShowSwipeHint(true);
-        // Auto-hide after 3 seconds
-        const timer = setTimeout(() => {
-          setShowSwipeHint(false);
-          setCookie('gallery_swipe_hint_seen', 'true', 365);
-        }, 3000);
-        return () => clearTimeout(timer);
-      }
+    if (emblaApi && isOpen) {
+      emblaApi.scrollTo(currentIndex, true);
     }
-  }, [isOpen]);
+  }, [emblaApi, currentIndex, isOpen]);
+
+  // Update current index when embla slide changes
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const onSelect = () => {
+      setCurrentIndex(emblaApi.selectedScrollSnap());
+    };
+
+    emblaApi.on('select', onSelect);
+    return () => {
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi]);
 
   const openGallery = (index: number) => {
     setCurrentIndex(index);
@@ -107,18 +101,21 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     setIsOpen(false);
   };
 
-  const dismissSwipeHint = () => {
-    setShowSwipeHint(false);
-    setCookie('gallery_swipe_hint_seen', 'true', 365);
-  };
-
   const goToPrevious = useCallback(() => {
-    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-  }, [images.length]);
+    if (emblaApi && isMobile) {
+      emblaApi.scrollPrev();
+    } else {
+      setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    }
+  }, [emblaApi, isMobile, images.length]);
 
   const goToNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-  }, [images.length]);
+    if (emblaApi && isMobile) {
+      emblaApi.scrollNext();
+    } else {
+      setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    }
+  }, [emblaApi, isMobile, images.length]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -152,51 +149,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     };
   }, [isOpen]);
 
-  // Handle touch swipe for mobile - simple swipe detection without preview
-  useEffect(() => {
-    if (!isOpen || !isMobile) return;
-    
-    const viewer = viewerRef.current;
-    if (!viewer) return;
-
-    let touchStartY = 0;
-    let touchStartX = 0;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartY = e.touches[0].clientY;
-      touchStartX = e.touches[0].clientX;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      const touchEndY = e.changedTouches[0].clientY;
-      const touchEndX = e.changedTouches[0].clientX;
-      
-      const deltaY = touchStartY - touchEndY;
-      const deltaX = touchStartX - touchEndX;
-      
-      // Ensure vertical swipe is dominant (not horizontal)
-      if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 50) {
-        if (deltaY > 0) {
-          // Swiped up - next image (increase slide number)
-          goToNext();
-        } else {
-          // Swiped down - previous image (decrease slide number)
-          goToPrevious();
-        }
-      }
-    };
-
-    viewer.addEventListener('touchstart', handleTouchStart, { passive: true });
-    viewer.addEventListener('touchend', handleTouchEnd, { passive: true });
-
-    return () => {
-      viewer.removeEventListener('touchstart', handleTouchStart);
-      viewer.removeEventListener('touchend', handleTouchEnd);
-    };
-  }, [isOpen, isMobile, goToNext, goToPrevious]);
-
   // Preload adjacent images for smoother transitions
-  // Preload up to 5 images ahead and 1 behind for optimal experience
   useEffect(() => {
     if (!isOpen) return;
 
@@ -286,10 +239,9 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
         </div>
       </section>
 
-      {/* Fullscreen Viewer - Vertical Scroll (TikTok style) */}
+      {/* Fullscreen Viewer - With Embla Carousel for mobile */}
       {isOpen && (
         <div 
-          ref={viewerRef}
           className="fixed inset-0 z-50 bg-black flex items-center justify-center"
           onClick={closeGallery}
         >
@@ -323,41 +275,50 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
             </Badge>
           </div>
 
-          {/* Swipe hint overlay - shown on first visit */}
-          {showSwipeHint && (
-            <div 
-              className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-              onClick={dismissSwipeHint}
-            >
-              <div className="text-center text-white px-6">
-                <div className="mb-4">
-                  <ChevronUp className="w-12 h-12 mx-auto mb-2 animate-bounce" />
-                  <p className="text-lg font-semibold mb-2">Przesuń w górę lub w dół</p>
-                  <p className="text-sm opacity-80">aby przeglądać zdjęcia</p>
-                  <ChevronDown className="w-12 h-12 mx-auto mt-2 animate-bounce" style={{ animationDelay: '0.5s' }} />
-                </div>
-                <p className="text-xs opacity-60 mt-6">Kliknij aby zamknąć</p>
+          {/* Mobile: Embla Carousel with vertical scroll */}
+          {isMobile ? (
+            <div className="overflow-hidden h-full w-full" ref={emblaRef}>
+              <div className="flex flex-col h-full">
+                {images.map((image, index) => (
+                  <div 
+                    key={index} 
+                    className="flex-[0_0_100%] min-h-0 relative"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <NextImage
+                      src={image.url}
+                      alt={image.realizacjaTitle}
+                      fill
+                      className="object-cover"
+                      sizes="100vw"
+                      quality={80}
+                      priority={index === currentIndex}
+                      loader={imageCloudinaryStatus[index] ? cloudinaryLoaderMobile : undefined}
+                      unoptimized={!imageCloudinaryStatus[index]}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
+          ) : (
+            /* Desktop: Simple image viewer */
+            <div 
+              className="relative w-full h-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <NextImage
+                src={currentImage.url}
+                alt={currentImage.realizacjaTitle}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                quality={80}
+                priority
+                loader={imageCloudinaryStatus[currentIndex] ? cloudinaryLoader : undefined}
+                unoptimized={!imageCloudinaryStatus[currentIndex]}
+              />
+            </div>
           )}
-
-          {/* Simple image viewer - no animations, instant transitions */}
-          <div 
-            className="relative w-full h-full"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <NextImage
-              src={currentImage.url}
-              alt={currentImage.realizacjaTitle}
-              fill
-              className={isMobile ? "object-cover" : "object-contain"}
-              sizes="100vw"
-              quality={80}
-              priority
-              loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
-              unoptimized={!imageCloudinaryStatus[currentIndex]}
-            />
-          </div>
         </div>
       )}
     </>
