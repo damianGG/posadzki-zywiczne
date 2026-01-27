@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect, useCallback, useMemo } from "react"
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -633,6 +633,22 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [showLinkSuccess, setShowLinkSuccess] = useState(false)
     const [linkError, setLinkError] = useState<string | null>(null)
     
+    // Refs for timeout cleanup
+    const linkSuccessTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    const linkErrorTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+    
+    // Cleanup timeouts on unmount
+    useEffect(() => {
+        return () => {
+            if (linkSuccessTimeoutRef.current) {
+                clearTimeout(linkSuccessTimeoutRef.current)
+            }
+            if (linkErrorTimeoutRef.current) {
+                clearTimeout(linkErrorTimeoutRef.current)
+            }
+        }
+    }, [])
+    
     // Create dynamic posadzka object with loaded data
     const wybranapPosadzka = useMemo(() => ({
         id: "zywica",
@@ -1203,7 +1219,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const generateShareableLink = async () => {
         if (!wybranyRodzajPowierzchniObj || !wybranyKolorObj) {
             setLinkError("Proszę wybrać rodzaj powierzchni i kolor przed wygenerowaniem linku")
-            setTimeout(() => setLinkError(null), 5000)
+            if (linkErrorTimeoutRef.current) {
+                clearTimeout(linkErrorTimeoutRef.current)
+            }
+            linkErrorTimeoutRef.current = setTimeout(() => setLinkError(null), 5000)
             return
         }
 
@@ -1252,17 +1271,26 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 triggerConfetti()
                 
                 // Hide success message after 10 seconds
-                setTimeout(() => {
+                if (linkSuccessTimeoutRef.current) {
+                    clearTimeout(linkSuccessTimeoutRef.current)
+                }
+                linkSuccessTimeoutRef.current = setTimeout(() => {
                     setShowLinkSuccess(false)
                 }, 10000)
             } else {
                 setLinkError(result.message || "Błąd generowania linku")
-                setTimeout(() => setLinkError(null), 5000)
+                if (linkErrorTimeoutRef.current) {
+                    clearTimeout(linkErrorTimeoutRef.current)
+                }
+                linkErrorTimeoutRef.current = setTimeout(() => setLinkError(null), 5000)
             }
         } catch (error) {
             console.error("Error generating link:", error)
             setLinkError("Wystąpił błąd podczas generowania linku. Spróbuj ponownie.")
-            setTimeout(() => setLinkError(null), 5000)
+            if (linkErrorTimeoutRef.current) {
+                clearTimeout(linkErrorTimeoutRef.current)
+            }
+            linkErrorTimeoutRef.current = setTimeout(() => setLinkError(null), 5000)
         } finally {
             setIsGeneratingLink(false)
         }
@@ -1278,6 +1306,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     if (button) {
                         const originalText = button.innerText
                         button.innerText = "Skopiowano!"
+                        // Note: This timeout is intentionally not tracked in ref
+                        // as it's tied to button text which is safe if component unmounts
                         setTimeout(() => {
                             button.innerText = originalText
                         }, 2000)
@@ -1286,7 +1316,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 .catch(err => {
                     console.error("Failed to copy:", err)
                     setLinkError("Nie udało się skopiować linku")
-                    setTimeout(() => setLinkError(null), 3000)
+                    if (linkErrorTimeoutRef.current) {
+                        clearTimeout(linkErrorTimeoutRef.current)
+                    }
+                    linkErrorTimeoutRef.current = setTimeout(() => setLinkError(null), 3000)
                 })
         }
     }

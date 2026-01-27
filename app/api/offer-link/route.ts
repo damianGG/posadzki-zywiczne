@@ -56,16 +56,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate the full URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
-                    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
+    // Generate the full URL with proper protocol handling
+    let baseUrl = process.env.NEXT_PUBLIC_BASE_URL
     
     if (!baseUrl) {
-      console.error("Base URL not configured. Set NEXT_PUBLIC_BASE_URL or deploy on Vercel")
-      return NextResponse.json(
-        { success: false, message: "Konfiguracja URL nie jest dostępna" },
-        { status: 500 }
-      )
+      // Fall back to Vercel URL if available
+      if (process.env.VERCEL_URL) {
+        baseUrl = `https://${process.env.VERCEL_URL}`
+      } else {
+        console.error("Base URL not configured. Set NEXT_PUBLIC_BASE_URL or deploy on Vercel")
+        return NextResponse.json(
+          { success: false, message: "Konfiguracja URL nie jest dostępna" },
+          { status: 500 }
+        )
+      }
+    }
+    
+    // Ensure protocol is included
+    if (!baseUrl.startsWith('http://') && !baseUrl.startsWith('https://')) {
+      baseUrl = `https://${baseUrl}`
     }
     
     const shareableUrl = `${baseUrl}/oferta/${linkId}`
