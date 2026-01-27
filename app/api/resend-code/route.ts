@@ -1,31 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 import { type SupabaseClient, createClient } from "@supabase/supabase-js"
-import { promises as fs } from "fs"
-import path from "path"
-import crypto from "crypto"
 
-interface ContestEntry {
-  email: string
-  name: string
-  code: string
-  timestamp: string
-}
-
-const DATA_FILE = path.join(process.cwd(), "data", "contest-entries.json")
-const MAX_CODE_GENERATION_ATTEMPTS = 10
 const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 const RECAPTCHA_SCORE_THRESHOLD = 0.5
-
-// Detect if running in serverless environment (Vercel/AWS Lambda)
-// where filesystem is read-only except for /tmp
-const isServerless = () => {
-  return (
-    process.env.VERCEL === "1" ||
-    process.env.AWS_LAMBDA_FUNCTION_NAME !== undefined ||
-    process.env.LAMBDA_TASK_ROOT !== undefined
-  )
-}
 
 function getSupabaseClient(): SupabaseClient | null {
   const supabaseUrl = process.env.SUPABASE_URL
@@ -36,45 +14,6 @@ function getSupabaseClient(): SupabaseClient | null {
   }
 
   return createClient(supabaseUrl, supabaseServiceRoleKey)
-}
-
-async function verifySupabaseConnection(client: SupabaseClient) {
-  const { error } = await client.from("contest_entries").select("code").limit(1)
-
-  if (error?.code === "42P01") {
-    throw new Error(
-      "Brak tabeli contest_entries w Supabase. Utwórz ją (kolumny: email text, name text, code text, timestamp text) lub zaktualizuj migracje."
-    )
-  }
-
-  if (error) {
-    throw error
-  }
-}
-
-async function readEntries(): Promise<ContestEntry[]> {
-  try {
-    const data = await fs.readFile(DATA_FILE, "utf-8")
-    return JSON.parse(data)
-  } catch (error) {
-    // If file doesn't exist, return empty array
-    return []
-  }
-}
-
-async function writeEntries(entries: ContestEntry[]): Promise<void> {
-  await fs.mkdir(path.dirname(DATA_FILE), { recursive: true })
-  await fs.writeFile(DATA_FILE, JSON.stringify(entries, null, 2))
-}
-
-function generateUniqueCode(): string {
-  const alphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-  let code = ""
-  for (let i = 0; i < 5; i++) {
-    const randomIndex = crypto.randomInt(0, alphabet.length)
-    code += alphabet[randomIndex]
-  }
-  return code
 }
 
 async function sendConfirmationEmail(email: string, name: string, code: string): Promise<void> {
@@ -100,7 +39,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
         <div style="background: #f8f9fa; padding: 30px; border-radius: 0 0 10px 10px;">
           <h2 style="color: #333; margin-top: 0;">Witaj ${name}!</h2>
           <p style="color: #555; font-size: 16px; line-height: 1.6;">
-             Dziękujemy za udział w Noworocznym Konkursie!
+             Wysyłamy ponownie Twój kod konkursowy zgodnie z Twoją prośbą.
           </p>
           
           <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea;">
@@ -144,7 +83,7 @@ async function sendConfirmationEmail(email: string, name: string, code: string):
 
 export async function POST(request: NextRequest) {
   try {
-    const { name, email, recaptchaToken } = await request.json()
+    const { email, recaptchaToken } = await request.json()
 
     // Verify reCAPTCHA token
     if (!recaptchaToken) {
@@ -186,6 +125,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json(
+        { success: false, message: "Podaj prawidłowy adres email" },
+        { status: 400 }
+      )
+    }
+
     const supabase = getSupabaseClient()
 
     if (!supabase) {
@@ -199,37 +146,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    try {
-      await verifySupabaseConnection(supabase)
-    } catch (connectionError) {
-      console.error("Supabase connection error:", connectionError)
-      const detailedMessage =
-        connectionError instanceof Error ? connectionError.message : "Nieznany błąd połączenia z Supabase."
-      return NextResponse.json(
-        {
-          success: false,
-          message: `Nie udało się nawiązać połączenia z bazą danych Supabase: ${detailedMessage}`,
-        },
-        { status: 500 }
-      )
-    }
-
-    // Validate input
-    if (!name || name.length < 2) {
-      return NextResponse.json(
-        { success: false, message: "Imię musi mieć minimum 2 znaki" },
-        { status: 400 }
-      )
-    }
-
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return NextResponse.json(
-        { success: false, message: "Podaj prawidłowy adres email" },
-        { status: 400 }
-      )
-    }
-
-    // Check if email already exists in Supabase
+    // Check if email exists in Supabase
     const { data: existingEntry, error: existingEntryError } = await supabase
       .from("contest_entries")
       .select("email, name, code")
@@ -244,98 +161,38 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    if (existingEntry) {
-      return NextResponse.json({
-        success: true,
-        code: existingEntry.code,
-        message:
-          "Ten adres email ma już przypisany kod konkursowy. Jeśli nie otrzymałeś emaila, użyj opcji wysłania ponownie poniżej.",
-        alreadyExists: true,
-      })
-    }
-
-    // Generate unique code
-    let code = generateUniqueCode()
-    let attempts = 0
-
-    // Ensure code is unique in Supabase
-    while (attempts < MAX_CODE_GENERATION_ATTEMPTS) {
-      const { data: codeCheck, error: codeError } = await supabase
-        .from("contest_entries")
-        .select("code")
-        .eq("code", code)
-        .maybeSingle()
-
-      if (codeError) {
-        console.error("Error checking code uniqueness:", codeError)
-        return NextResponse.json(
-          { success: false, message: "Wystąpił błąd podczas generowania kodu. Spróbuj ponownie." },
-          { status: 500 }
-        )
-      }
-
-      if (!codeCheck) {
-        break
-      }
-
-      code = generateUniqueCode()
-      attempts += 1
-    }
-
-    if (attempts >= MAX_CODE_GENERATION_ATTEMPTS) {
+    if (!existingEntry) {
       return NextResponse.json(
-        { success: false, message: "Nie udało się wygenerować unikalnego kodu. Spróbuj ponownie." },
-        { status: 500 }
+        {
+          success: false,
+          message: "Ten adres email nie jest zarejestrowany w konkursie.",
+        },
+        { status: 404 }
       )
-    }
-
-    // Create new entry
-    const newEntry: ContestEntry = {
-      email,
-      name,
-      code,
-      timestamp: new Date().toISOString(),
-    }
-
-    // Save to Supabase
-    const { error: insertError } = await supabase.from("contest_entries").insert(newEntry)
-
-    if (insertError) {
-      console.error("Error inserting entry to Supabase:", insertError)
-      return NextResponse.json(
-        { success: false, message: "Wystąpił błąd podczas zapisywania zgłoszenia. Spróbuj ponownie." },
-        { status: 500 }
-      )
-    }
-
-    // Save locally as fallback (only in non-serverless environments)
-    // In serverless environments (Vercel, AWS Lambda), the filesystem is read-only
-    // and Supabase is the primary/only storage
-    if (!isServerless()) {
-      try {
-        const entries = await readEntries()
-        entries.push(newEntry)
-        await writeEntries(entries)
-      } catch (localError) {
-        console.error("Error writing local contest entry backup:", localError)
-      }
     }
 
     // Send confirmation email
     try {
-      await sendConfirmationEmail(email, name, code)
+      await sendConfirmationEmail(email, existingEntry.name, existingEntry.code)
     } catch (emailError) {
       console.error("Error sending email:", emailError)
-      // Continue even if email fails - user got the code in response
+      return NextResponse.json(
+        {
+          success: false,
+          message:
+            "Nie udało się wysłać emaila. Spróbuj ponownie później lub skontaktuj się z nami: biuro@posadzkizywiczne.com",
+        },
+        { status: 500 }
+      )
     }
 
     return NextResponse.json({
       success: true,
-      code,
-      message: "Kod został wygenerowany i wysłany na Twój email!",
+      code: existingEntry.code,
+      message: "Email został wysłany ponownie na Twój adres!",
     })
   } catch (error) {
-    console.error("Error in generate-code:", error)
+    console.error("Error in resend-code:", error)
     return NextResponse.json(
       { success: false, message: "Wystąpił błąd. Spróbuj ponownie później." },
       { status: 500 }
