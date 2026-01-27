@@ -68,6 +68,8 @@ DECLARE
   link_id TEXT := '';
   i INTEGER;
   link_exists BOOLEAN;
+  max_retries INTEGER := 100; -- Prevent infinite loops
+  retry_count INTEGER := 0;
 BEGIN
   LOOP
     link_id := '';
@@ -80,6 +82,12 @@ BEGIN
     
     IF NOT link_exists THEN
       EXIT;
+    END IF;
+    
+    -- Increment retry counter and check limit
+    retry_count := retry_count + 1;
+    IF retry_count >= max_retries THEN
+      RAISE EXCEPTION 'Unable to generate unique link ID after % attempts', max_retries;
     END IF;
   END LOOP;
   

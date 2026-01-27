@@ -244,7 +244,11 @@ export default function OfferPage() {
                 <div>
                   <p className="text-lg font-semibold text-gray-900 mb-1">Koszt Całkowity</p>
                   <p className="text-sm text-gray-600">
-                    Cena za m²: {(offerData.kosztCalkowity / offerData.powierzchnia).toFixed(2)} zł
+                    {offerData.powierzchnia > 0 ? (
+                      <>Cena za m²: {(offerData.kosztCalkowity / offerData.powierzchnia).toFixed(2)} zł</>
+                    ) : (
+                      <>Cena za m²: N/A</>
+                    )}
                   </p>
                 </div>
                 <div className="text-right">

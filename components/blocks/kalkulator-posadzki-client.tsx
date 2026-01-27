@@ -631,6 +631,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [isGeneratingLink, setIsGeneratingLink] = useState(false)
     const [shareableLink, setShareableLink] = useState<string | null>(null)
     const [showLinkSuccess, setShowLinkSuccess] = useState(false)
+    const [linkError, setLinkError] = useState<string | null>(null)
     
     // Create dynamic posadzka object with loaded data
     const wybranapPosadzka = useMemo(() => ({
@@ -1201,11 +1202,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     // Generate shareable link for the offer
     const generateShareableLink = async () => {
         if (!wybranyRodzajPowierzchniObj || !wybranyKolorObj) {
-            alert("Proszę wybrać rodzaj powierzchni i kolor przed wygenerowaniem linku")
+            setLinkError("Proszę wybrać rodzaj powierzchni i kolor przed wygenerowaniem linku")
+            setTimeout(() => setLinkError(null), 5000)
             return
         }
 
         setIsGeneratingLink(true)
+        setLinkError(null)
 
         try {
             // Prepare offer data with all selections
@@ -1253,11 +1256,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     setShowLinkSuccess(false)
                 }, 10000)
             } else {
-                alert(`Błąd generowania linku: ${result.message}`)
+                setLinkError(result.message || "Błąd generowania linku")
+                setTimeout(() => setLinkError(null), 5000)
             }
         } catch (error) {
             console.error("Error generating link:", error)
-            alert("Wystąpił błąd podczas generowania linku. Spróbuj ponownie.")
+            setLinkError("Wystąpił błąd podczas generowania linku. Spróbuj ponownie.")
+            setTimeout(() => setLinkError(null), 5000)
         } finally {
             setIsGeneratingLink(false)
         }
@@ -1268,11 +1273,20 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         if (shareableLink) {
             navigator.clipboard.writeText(shareableLink)
                 .then(() => {
-                    alert("Link skopiowany do schowka!")
+                    // Simple success feedback - could be improved with toast
+                    const button = document.activeElement as HTMLElement
+                    if (button) {
+                        const originalText = button.innerText
+                        button.innerText = "Skopiowano!"
+                        setTimeout(() => {
+                            button.innerText = originalText
+                        }, 2000)
+                    }
                 })
                 .catch(err => {
                     console.error("Failed to copy:", err)
-                    alert("Nie udało się skopiować linku")
+                    setLinkError("Nie udało się skopiować linku")
+                    setTimeout(() => setLinkError(null), 3000)
                 })
         }
     }
@@ -2273,6 +2287,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         </div>
                                     </div>
                                 </div>
+                            )}
+
+                            {/* Link Generation Error */}
+                            {linkError && (
+                                <Alert variant="destructive" className="animate-in slide-in-from-bottom-2 duration-500">
+                                    <AlertTriangle className="h-4 w-4" />
+                                    <AlertDescription>{linkError}</AlertDescription>
+                                </Alert>
                             )}
                         </div>
                     </div>

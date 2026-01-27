@@ -58,8 +58,16 @@ export async function POST(request: NextRequest) {
 
     // Generate the full URL
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 
-                    process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` :
-                    'http://localhost:3000'
+                    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null)
+    
+    if (!baseUrl) {
+      console.error("Base URL not configured. Set NEXT_PUBLIC_BASE_URL or deploy on Vercel")
+      return NextResponse.json(
+        { success: false, message: "Konfiguracja URL nie jest dostępna" },
+        { status: 500 }
+      )
+    }
+    
     const shareableUrl = `${baseUrl}/oferta/${linkId}`
 
     return NextResponse.json({
@@ -137,19 +145,35 @@ async function trackVisit(linkId: string, request: NextRequest) {
   if (!supabase) return
 
   // Get tracking metadata
-  const ip = request.headers.get('x-forwarded-for') || 
-             request.headers.get('x-real-ip') || 
-             'unknown'
+  const forwardedFor = request.headers.get('x-forwarded-for')
+  const realIp = request.headers.get('x-real-ip')
+  
+  // Extract first IP from x-forwarded-for if present (client's original IP)
+  let ip = 'unknown'
+  if (forwardedFor) {
+    ip = forwardedFor.split(',')[0].trim()
+  } else if (realIp) {
+    ip = realIp
+  }
+  
   const userAgent = request.headers.get('user-agent') || 'unknown'
   const referrer = request.headers.get('referer') || request.headers.get('referrer') || null
 
-  // Insert visit record
-  await supabase
-    .from('offer_visits')
-    .insert({
-      link_id: linkId,
-      ip_address: ip,
-      user_agent: userAgent,
-      referrer: referrer,
-    })
+  // Insert visit record with error logging
+  try {
+    const { error } = await supabase
+      .from('offer_visits')
+      .insert({
+        link_id: linkId,
+        ip_address: ip,
+        user_agent: userAgent,
+        referrer: referrer,
+      })
+    
+    if (error) {
+      console.error('Failed to track visit:', error.message)
+    }
+  } catch (err) {
+    console.error('Error tracking visit:', err)
+  }
 }
