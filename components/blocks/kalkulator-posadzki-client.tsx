@@ -24,6 +24,9 @@ import {
     Mail,
     ToggleLeft,
     ToggleRight,
+    Link2,
+    Share2,
+    Copy,
 } from "lucide-react"
 import jsPDF from "jspdf"
 import Image from "next/image"
@@ -625,6 +628,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
+    const [isGeneratingLink, setIsGeneratingLink] = useState(false)
+    const [shareableLink, setShareableLink] = useState<string | null>(null)
+    const [showLinkSuccess, setShowLinkSuccess] = useState(false)
     
     // Create dynamic posadzka object with loaded data
     const wybranapPosadzka = useMemo(() => ({
@@ -1190,6 +1196,85 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         setIsGeneratingPDF(false)
         setIsSendingEmail(false)
+    }
+
+    // Generate shareable link for the offer
+    const generateShareableLink = async () => {
+        if (!wybranyRodzajPowierzchniObj || !wybranyKolorObj) {
+            alert("Proszę wybrać rodzaj powierzchni i kolor przed wygenerowaniem linku")
+            return
+        }
+
+        setIsGeneratingLink(true)
+
+        try {
+            // Prepare offer data with all selections
+            const selectedDodatki = wybraneDodatki
+                .map(id => dodatkiUslugi.find(d => d.id === id))
+                .filter(Boolean)
+
+            const offerData = {
+                rodzajPomieszczenia: rodzajePomieszczen.find(r => r.id === rodzajPomieszczenia)?.nazwa || rodzajPomieszczenia,
+                stanBetonu: stanyBetonu.find(s => s.id === stanBetonu)?.nazwa,
+                powierzchnia,
+                obwod: parseFloat(obwod) || 0,
+                wybranyRodzajPowierzchni,
+                rodzajPowierzchniNazwa: wybranyRodzajPowierzchniObj.nazwa,
+                wybranyKolor,
+                kolorNazwa: wybranyKolorObj.nazwa,
+                wybraneDodatki,
+                dodatki: selectedDodatki.map(d => ({
+                    nazwa: d.nazwa,
+                    opis: d.opis,
+                })),
+                kosztCalkowity,
+                wymiary,
+                powierzchniaBezposrednia,
+                trybWymiarow,
+            }
+
+            const response = await fetch('/api/offer-link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ offerData }),
+            })
+
+            const result = await response.json()
+
+            if (result.success) {
+                setShareableLink(result.url)
+                setShowLinkSuccess(true)
+                triggerConfetti()
+                
+                // Hide success message after 10 seconds
+                setTimeout(() => {
+                    setShowLinkSuccess(false)
+                }, 10000)
+            } else {
+                alert(`Błąd generowania linku: ${result.message}`)
+            }
+        } catch (error) {
+            console.error("Error generating link:", error)
+            alert("Wystąpił błąd podczas generowania linku. Spróbuj ponownie.")
+        } finally {
+            setIsGeneratingLink(false)
+        }
+    }
+
+    // Copy link to clipboard
+    const copyLinkToClipboard = () => {
+        if (shareableLink) {
+            navigator.clipboard.writeText(shareableLink)
+                .then(() => {
+                    alert("Link skopiowany do schowka!")
+                })
+                .catch(err => {
+                    console.error("Failed to copy:", err)
+                    alert("Nie udało się skopiować linku")
+                })
+        }
     }
 
     // Grupowanie dodatków według kategorii
@@ -2123,8 +2208,72 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                             <Mail className="h-4 w-4 mr-2" />
                                             Wyślij kosztorys emailem
                                         </Button>
+                                        <Button
+                                            onClick={generateShareableLink}
+                                            disabled={isGeneratingLink}
+                                            variant="outline"
+                                            className="w-full transition-all duration-300 hover:scale-105 text-sm sm:text-base py-2 sm:py-3 border-blue-300 hover:bg-blue-50"
+                                        >
+                                            {isGeneratingLink ? (
+                                                <>
+                                                    <Sparkles className="h-4 w-4 mr-2 animate-spin" />
+                                                    Generowanie linku...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Share2 className="h-4 w-4 mr-2" />
+                                                    Wygeneruj link do udostępnienia
+                                                </>
+                                            )}
+                                        </Button>
                                     </div>
                                 )}
+
+                            {/* Shareable Link Success Message */}
+                            {showLinkSuccess && shareableLink && (
+                                <div className="animate-in slide-in-from-bottom-2 duration-500">
+                                    <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-3">
+                                        <div className="flex items-start gap-2">
+                                            <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                                            <div className="flex-1">
+                                                <p className="text-sm font-semibold text-green-900 mb-1">
+                                                    Link został wygenerowany!
+                                                </p>
+                                                <p className="text-xs text-green-700 mb-2">
+                                                    Możesz teraz udostępnić ten link klientowi, aby mógł przeglądać ofertę.
+                                                </p>
+                                                <div className="flex items-center gap-2 bg-white rounded border border-green-300 p-2">
+                                                    <input
+                                                        type="text"
+                                                        value={shareableLink}
+                                                        readOnly
+                                                        className="flex-1 text-xs text-gray-700 bg-transparent border-none focus:outline-none"
+                                                    />
+                                                    <Button
+                                                        onClick={copyLinkToClipboard}
+                                                        size="sm"
+                                                        variant="ghost"
+                                                        className="flex-shrink-0"
+                                                    >
+                                                        <Copy className="h-3 w-3" />
+                                                    </Button>
+                                                </div>
+                                                <div className="mt-2">
+                                                    <Button
+                                                        onClick={() => window.open(shareableLink, '_blank')}
+                                                        size="sm"
+                                                        variant="outline"
+                                                        className="w-full text-xs"
+                                                    >
+                                                        <Link2 className="h-3 w-3 mr-1" />
+                                                        Otwórz link
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
 
