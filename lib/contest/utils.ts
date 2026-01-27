@@ -4,6 +4,7 @@ import nodemailer from "nodemailer"
 // Constants
 export const RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify"
 export const RECAPTCHA_SCORE_THRESHOLD = 0.5
+export const CONTEST_DRAW_DATE = "30 stycznia 2026"
 
 // Supabase client
 export function getSupabaseClient(): SupabaseClient | null {
@@ -54,7 +55,7 @@ export async function sendConfirmationEmail(
           </p>
           
           <div style="background: white; padding: 25px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #667eea;">
-             <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Twój kod konkursowy (losowanie 30 stycznia 2026) to:</p>
+             <p style="color: #666; margin: 0 0 10px 0; font-size: 14px;">Twój kod konkursowy (losowanie ${CONTEST_DRAW_DATE}) to:</p>
             <p style="color: #667eea; font-size: 32px; font-weight: bold; margin: 0; letter-spacing: 2px; font-family: 'Courier New', monospace;">
               ${code}
             </p>

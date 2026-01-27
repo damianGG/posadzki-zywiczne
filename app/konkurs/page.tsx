@@ -250,7 +250,7 @@ function KonkursForm() {
                 </div>
               ) : submitStatus.type === "exists" ? (
                 <div className="bg-blue-50 border-2 border-blue-500 rounded-xl p-8 text-center">
-                  <div className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                  <div className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4" role="img" aria-label="Informacja">
                     ℹ️
                   </div>
                   <h4 className="text-2xl font-bold text-blue-700 mb-3">Email już zarejestrowany</h4>
