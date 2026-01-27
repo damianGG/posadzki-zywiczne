@@ -33,6 +33,7 @@ export async function PUT(request: NextRequest) {
     slug = formData.get('slug') as string;
     const imagesToDelete = formData.get('imagesToDelete') as string;
     const existingImagesJson = formData.get('existingImages') as string;
+    const cloudinaryImagesJson = formData.get('cloudinaryImages') as string;
     
     if (!formDataJson || !slug) {
       return NextResponse.json(
@@ -44,6 +45,7 @@ export async function PUT(request: NextRequest) {
     const data = JSON.parse(formDataJson);
     const deleteImageIds = imagesToDelete ? JSON.parse(imagesToDelete) : [];
     const existingImages = existingImagesJson ? JSON.parse(existingImagesJson) : [];
+    const cloudinaryImages = cloudinaryImagesJson ? JSON.parse(cloudinaryImagesJson) : [];
 
     // Get existing realizacja from Supabase
     const existingResult = await getRealizacjaBySlug(slug);
@@ -119,8 +121,15 @@ export async function PUT(request: NextRequest) {
       }
     }
 
-    // Combine existing and new images
-    const allGallery = [...existingGallery, ...uploadedImages];
+    // Add Cloudinary uploaded images (from Cloudinary widget)
+    const cloudinaryUploadedImages = cloudinaryImages.map((img: { url: string; publicId: string }) => ({
+      url: img.url,
+      alt: `${data.title} - ${data.location || 'realizacja'}`,
+      hidden: false, // New images are visible by default
+    }));
+
+    // Combine existing, newly uploaded, and Cloudinary widget images
+    const allGallery = [...existingGallery, ...uploadedImages, ...cloudinaryUploadedImages];
 
     // Parse arrays from form data
     const tags = data.tags ? data.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : existingRealizacja.tags;
@@ -182,7 +191,8 @@ export async function PUT(request: NextRequest) {
       message: 'Realizacja została zaktualizowana pomyślnie w bazie Supabase',
       slug,
       updatedImages: {
-        added: uploadedImages.length,
+        addedFromUpload: uploadedImages.length,
+        addedFromCloudinary: cloudinaryUploadedImages.length,
         deleted: deleteImageIds.length,
         total: allGallery.length,
       },
