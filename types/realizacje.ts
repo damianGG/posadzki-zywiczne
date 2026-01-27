@@ -11,7 +11,7 @@ export interface Realizacja {
   tags: string[]; // e.g., ["garaż", "epoksyd", "antypoślizg"]
   images: {
     main: string;
-    gallery: string[];
+    gallery: Array<string | { url: string; alt?: string; hidden?: boolean }>;
   };
   details: {
     surface: string; // e.g., "50 m²"

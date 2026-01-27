@@ -15,6 +15,14 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+// Type for existing image data from frontend
+interface ExistingImageData {
+  url: string;
+  publicId: string;
+  filename: string;
+  hidden?: boolean;
+}
+
 export async function PUT(request: NextRequest) {
   let slug: string | undefined;
   
@@ -24,6 +32,8 @@ export async function PUT(request: NextRequest) {
     const formDataJson = formData.get('formData') as string;
     slug = formData.get('slug') as string;
     const imagesToDelete = formData.get('imagesToDelete') as string;
+    const existingImagesJson = formData.get('existingImages') as string;
+    const cloudinaryImagesJson = formData.get('cloudinaryImages') as string;
     
     if (!formDataJson || !slug) {
       return NextResponse.json(
@@ -34,6 +44,8 @@ export async function PUT(request: NextRequest) {
 
     const data = JSON.parse(formDataJson);
     const deleteImageIds = imagesToDelete ? JSON.parse(imagesToDelete) : [];
+    const existingImages = existingImagesJson ? JSON.parse(existingImagesJson) : [];
+    const cloudinaryImages = cloudinaryImagesJson ? JSON.parse(cloudinaryImagesJson) : [];
 
     // Get existing realizacja from Supabase
     const existingResult = await getRealizacjaBySlug(slug);
@@ -46,15 +58,19 @@ export async function PUT(request: NextRequest) {
 
     const existingRealizacja = existingResult.data;
     
-    // Get existing images
-    let existingGallery = existingRealizacja.images?.gallery || [];
+    // Build gallery from existingImages with hidden flags preserved
+    let existingGallery = existingImages.map((img: ExistingImageData) => ({
+      url: img.url,
+      alt: img.filename,
+      hidden: img.hidden || false,
+    }));
 
     // Delete specified images from Cloudinary
     for (const publicId of deleteImageIds) {
       try {
         await cloudinary.uploader.destroy(publicId);
         console.log(`Deleted from Cloudinary: ${publicId}`);
-        existingGallery = existingGallery.filter(img => !img.url.includes(publicId));
+        existingGallery = existingGallery.filter((img: { url: string }) => !img.url.includes(publicId));
       } catch (error) {
         console.warn(`Could not delete: ${publicId}`, error);
       }
@@ -62,7 +78,7 @@ export async function PUT(request: NextRequest) {
 
     // Upload new images if provided
     const newImages = formData.getAll('newImages') as File[];
-    const uploadedImages: Array<{ url: string; alt: string }> = [];
+    const uploadedImages: Array<{ url: string; alt: string; hidden: boolean }> = [];
     
     if (newImages.length > 0 && newImages[0].size > 0) {
       const folderName = existingRealizacja.cloudinary_folder?.replace('realizacje/', '') || slug;
@@ -100,12 +116,20 @@ export async function PUT(request: NextRequest) {
         uploadedImages.push({
           url: result.secure_url,
           alt: `${data.title} - ${data.location || 'realizacja'}`,
+          hidden: false, // New images are visible by default
         });
       }
     }
 
-    // Combine existing and new images
-    const allGallery = [...existingGallery, ...uploadedImages];
+    // Add Cloudinary uploaded images (from Cloudinary widget)
+    const cloudinaryUploadedImages = cloudinaryImages.map((img: { url: string; publicId: string }) => ({
+      url: img.url,
+      alt: `${data.title} - ${data.location || 'realizacja'}`,
+      hidden: false, // New images are visible by default
+    }));
+
+    // Combine existing, newly uploaded, and Cloudinary widget images
+    const allGallery = [...existingGallery, ...uploadedImages, ...cloudinaryUploadedImages];
 
     // Parse arrays from form data
     const tags = data.tags ? data.tags.split(',').map((t: string) => t.trim()).filter(Boolean) : existingRealizacja.tags;
@@ -167,7 +191,8 @@ export async function PUT(request: NextRequest) {
       message: 'Realizacja została zaktualizowana pomyślnie w bazie Supabase',
       slug,
       updatedImages: {
-        added: uploadedImages.length,
+        addedFromUpload: uploadedImages.length,
+        addedFromCloudinary: cloudinaryUploadedImages.length,
         deleted: deleteImageIds.length,
         total: allGallery.length,
       },

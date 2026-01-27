@@ -6,12 +6,13 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib/cloudinary-loader';
 
 interface ImageGalleryProps {
-  images: string[];
+  images: Array<string | { url: string; alt?: string; hidden?: boolean }>;
   mainImage: string;
   title: string;
+  filterHidden?: boolean; // If true, filter out hidden images (for main gallery). Default: false (show all)
 }
 
-export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
+export function ImageGallery({ images, mainImage, title, filterHidden = false }: ImageGalleryProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -38,11 +39,20 @@ export function ImageGallery({ images, mainImage, title }: ImageGalleryProps) {
     }
   }, []);
   
-  // Combine main image with gallery images, filter out empty strings and duplicates
+  // Combine main image with gallery images, filter out empty strings, duplicates, and optionally hidden images
   const allImages = useMemo(() => {
-    const combined = mainImage ? [mainImage, ...images] : images;
+    // Convert images to URLs only, optionally filtering out hidden ones
+    const imageUrls = images
+      .filter(img => {
+        if (typeof img === 'string') return true;
+        // Only filter hidden images if filterHidden prop is true
+        return filterHidden ? !img.hidden : true;
+      })
+      .map(img => typeof img === 'string' ? img : img.url);
+    
+    const combined = mainImage ? [mainImage, ...imageUrls] : imageUrls;
     return [...new Set(combined)].filter(Boolean);
-  }, [mainImage, images]);
+  }, [mainImage, images, filterHidden]);
 
   // Pre-compute which images are Cloudinary URLs to avoid repeated checks
   const imageCloudinaryStatus = useMemo(() => {

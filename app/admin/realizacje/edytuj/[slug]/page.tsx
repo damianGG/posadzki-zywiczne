@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Upload, X, Loader2, CheckCircle2, Trash2, ArrowLeft, Star } from 'lucide-react';
+import { Upload, X, Loader2, CheckCircle2, Trash2, ArrowLeft, Star, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import GoogleDrivePicker from '@/components/admin/google-drive-picker';
 import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
@@ -38,11 +38,13 @@ interface ExistingImage {
   url: string;
   publicId: string;
   filename: string;
+  hidden?: boolean;
 }
 
 interface GalleryImage {
   url: string;
   alt?: string;
+  hidden?: boolean;
 }
 
 export default function EdytujRealizacjePage() {
@@ -126,13 +128,18 @@ export default function EdytujRealizacjePage() {
 
         // Map images.gallery to existingImages format
         if (r.images?.gallery && Array.isArray(r.images.gallery)) {
-          const mappedImages = r.images.gallery.map((img: GalleryImage, index: number) => {
+          const mappedImages = r.images.gallery.map((img: GalleryImage | string, index: number) => {
+            // Handle both string and object formats
+            const imageUrl = typeof img === 'string' ? img : img.url;
+            const imageHidden = typeof img === 'string' ? false : (img.hidden || false);
+            const imageAlt = typeof img === 'string' ? '' : (img.alt || '');
+            
             // Extract publicId from Cloudinary URL
             // URL format: https://res.cloudinary.com/[cloud]/image/upload/v[version]/[folder]/[publicId].[ext]
             let publicId = `${slug}-image-${index}-${Date.now()}`;
-            if (img.url && img.url.includes('cloudinary.com')) {
+            if (imageUrl && imageUrl.includes('cloudinary.com')) {
               try {
-                const urlParts = img.url.split('/');
+                const urlParts = imageUrl.split('/');
                 const versionIndex = urlParts.findIndex((part: string) => part.startsWith('v'));
                 if (versionIndex >= 0 && versionIndex < urlParts.length - 1) {
                   // Get everything after version
@@ -141,14 +148,15 @@ export default function EdytujRealizacjePage() {
                   publicId = pathAfterVersion.replace(/\.[^.]+$/, '');
                 }
               } catch (e) {
-                console.warn('Could not extract publicId from URL:', img.url);
+                console.warn('Could not extract publicId from URL:', imageUrl);
               }
             }
             
             return {
-              url: img.url || '',
+              url: imageUrl || '',
               publicId: publicId,
-              filename: img.alt || `image-${index}.jpg`,
+              filename: imageAlt || `image-${index}.jpg`,
+              hidden: imageHidden,
             };
           });
           setExistingImages(mappedImages);
@@ -165,6 +173,12 @@ export default function EdytujRealizacjePage() {
 
   const handleInputChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleToggleImageVisibility = (publicId: string) => {
+    setExistingImages(prev => prev.map(img => 
+      img.publicId === publicId ? { ...img, hidden: !img.hidden } : img
+    ));
   };
 
   const handleDeleteExistingImage = (publicId: string) => {
@@ -247,6 +261,7 @@ export default function EdytujRealizacjePage() {
       uploadData.append('slug', slug);
       uploadData.append('imagesToDelete', JSON.stringify(imagesToDelete));
       uploadData.append('cloudinaryImages', JSON.stringify(cloudinaryImages));
+      uploadData.append('existingImages', JSON.stringify(existingImages));
 
       console.log('Submitting update with:', {
         slug,
@@ -471,7 +486,8 @@ export default function EdytujRealizacjePage() {
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Obecne zdjęcia</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Kliknij <Star className="w-3 h-3 inline" /> aby ustawić zdjęcie jako główne
+                    Kliknij <Star className="w-3 h-3 inline" /> aby ustawić zdjęcie jako główne, 
+                    <Eye className="w-3 h-3 inline ml-1" /> / <EyeOff className="w-3 h-3 inline" /> aby ukryć/pokazać w galerii
                   </p>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {existingImages.map((image, index) => (
@@ -479,9 +495,22 @@ export default function EdytujRealizacjePage() {
                         <img
                           src={image.url}
                           alt={`Zdjęcie ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg"
+                          className={`w-full h-32 object-cover rounded-lg ${image.hidden ? 'opacity-40' : ''}`}
                         />
                         <div className="absolute top-2 right-2 flex gap-1">
+                          <Button
+                            type="button"
+                            size="sm"
+                            className={`opacity-0 group-hover:opacity-100 transition-opacity ${
+                              image.hidden ? 'bg-gray-500 hover:bg-gray-600' : 'bg-green-500 hover:bg-green-600'
+                            }`}
+                            onClick={() => handleToggleImageVisibility(image.publicId)}
+                            title={image.hidden ? 'Pokaż w galerii' : 'Ukryj w galerii'}
+                            aria-label={image.hidden ? 'Pokaż zdjęcie w galerii' : 'Ukryj zdjęcie w galerii'}
+                            aria-pressed={!image.hidden}
+                          >
+                            {image.hidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </Button>
                           {index !== 0 && (
                             <Button
                               type="button"
@@ -508,6 +537,12 @@ export default function EdytujRealizacjePage() {
                           <span className="absolute bottom-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
                             <Star className="w-3 h-3 fill-white" />
                             Główne
+                          </span>
+                        )}
+                        {image.hidden && (
+                          <span className="absolute bottom-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
+                            <EyeOff className="w-3 h-3" />
+                            Ukryte
                           </span>
                         )}
                       </div>
