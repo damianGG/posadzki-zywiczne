@@ -101,7 +101,7 @@ export default function WynikiKonkursuPage() {
                 asChild
               >
                 <a
-                  href="https://www.instagram.com/posadzkizywiczne/"
+                  href="https://www.instagram.com/reel/DUJjZHnju4l/?igsh=MTIyeGlnOTF2bnNsZQ%3D%3D"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2"
