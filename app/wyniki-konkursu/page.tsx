@@ -53,7 +53,7 @@ export default function WynikiKonkursuPage() {
                 <div className="text-center">
                   <p className="text-lg text-gray-600 mb-2">Zwycięzca konkursu:</p>
                   <p className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent">
-                    [Imię zostanie podane wkrótce]
+                    Aleksandra
                   </p>
                 </div>
                 
@@ -62,7 +62,7 @@ export default function WynikiKonkursuPage() {
                   <p className="text-lg text-gray-600 mb-2">Kod zwycięski:</p>
                   <div className="bg-white rounded-lg p-6 inline-block">
                     <p className="text-3xl md:text-4xl font-bold text-purple-600 font-mono tracking-wider">
-                      [Kod zostanie podany wkrótce]
+                      G957Z
                     </p>
                   </div>
                 </div>
