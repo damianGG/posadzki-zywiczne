@@ -57,20 +57,24 @@ export default function HeroMainPage() {
                         </div>
 
                         <div className="flex flex-col md:flex-row gap-3">
-                            <Button className="gap-4">
-                                <a href="#kontakt">Darmowa wycena</a>
-                                <MoveRight className="w-4 h-4" />
+                            <Button className="gap-4" asChild>
+                                <a href="#kontakt">
+                                    Darmowa wycena
+                                    <MoveRight className="w-4 h-4" />
+                                </a>
                             </Button>
-                            <Button className="gap-4" variant="outline">
-                                <a href="tel:+48507384619">+48 507 384 619</a>
-                                <PhoneCall className="w-4 h-4" />
+                            <Button className="gap-4" variant="outline" asChild>
+                                <a href="tel:+48507384619">
+                                    +48 507 384 619
+                                    <PhoneCall className="w-4 h-4" />
+                                </a>
                             </Button>
 
-                            <Button className="gap-4">
+                            <Button className="gap-4" asChild>
                                 <a href="mailto:biuro@posadzkizywiczne.com">
                                     biuro@posadzkizywiczne.com
+                                    <MoveRight className="w-4 h-4" />
                                 </a>
-                                <MoveRight className="w-4 h-4" />
                             </Button>
                         </div>
                     </div>
