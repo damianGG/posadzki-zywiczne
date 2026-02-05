@@ -11,10 +11,10 @@ export const CTA2 = () => (
         </div>
         <div className="flex flex-col  gap-2">
           <h3 className="text-3xl md:text-5xl tracking-tighter max-w-xl font-regular">
-            Potrzebujesz więcej infomracji?
+            Potrzebujesz więcej informacji?
           </h3>
           <p className="text-lg leading-relaxed tracking-tight text-muted-foreground max-w-xl">
-            Jeśli potrzebujesz więcej infomracji zadzwoń lub napisz bezpośrednio do nas, odpowiemy w ciągu 3 godzin.
+            Jeśli potrzebujesz więcej informacji zadzwoń lub napisz bezpośrednio do nas, odpowiemy w ciągu 3 godzin.
           </p>
         </div>
         <div className="flex flex-col lg:flex-row gap-4">
