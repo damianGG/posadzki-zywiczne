@@ -14,6 +14,7 @@ export default function HeroMainPage() {
                     alt="Posadzka żywiczna w garażu - przykładowa realizacja"
                     fill
                     priority
+                    sizes="100vw"
                     className="object-cover object-right"
                 />
                 <div

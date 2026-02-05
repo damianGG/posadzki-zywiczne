@@ -50,6 +50,7 @@ export default function BlogPreviewSection({
                   alt={post.image.alt}
                   width={400}
                   height={300}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="w-full h-48 object-cover"
                 />
                 {showCategory && (

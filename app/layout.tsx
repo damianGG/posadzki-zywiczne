@@ -21,20 +21,47 @@ import type { Metadata } from 'next'
 import Script from "next/script";
 import { getOrganizationSchema, getWebsiteSchema } from "@/lib/structured-data";
 
+const defaultBaseUrl = "https://posadzkizywiczne.com";
+const baseUrl = (() => {
+  const rawUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  try {
+    return new URL(rawUrl ?? defaultBaseUrl);
+  } catch (error) {
+    if (rawUrl && process.env.NODE_ENV === "development") {
+      console.warn(
+        `Invalid NEXT_PUBLIC_SITE_URL: ${rawUrl}. Expected format: https://example.com`,
+        error
+      );
+    }
+    return new URL(defaultBaseUrl);
+  }
+})();
+const baseUrlString = baseUrl.toString();
+const homeBannerUrl = new URL("/images/home-banner.jpg", baseUrlString).toString();
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
+
 export const metadata: Metadata = {
+  metadataBase: baseUrl,
   title: "Posadzki żywiczne | Garaże, kuchnie, balkony, tarasy | Gwarancja",
   description:
     "Wykonujemy trwałe i estetyczne posadzki żywiczne w garażach, kuchniach, łazienkach, piwnicach, halach oraz na balkonach i tarasach. Oferujemy kompleksowy montaż i fachowe doradztwo. Sprawdź naszą ofertę!",
   keywords:
     "posadzki żywiczne, balkony, tarasy, garaże, kuchnie, łazienki, piwnice, posadzki przemysłowe, magazyny, posadzki dekoracyjne, żywica epoksydowa, żywica poliuretanowa, Warszawa, Kraków, Rzeszów",
+  ...(googleVerification
+    ? {
+        verification: {
+          google: googleVerification,
+        },
+      }
+    : {}),
   openGraph: {
     title: "Posadzki żywiczne | Garaże, kuchnie, balkony, tarasy | Gwarancja",
     description:
       "Wykonujemy trwałe i estetyczne posadzki żywiczne w garażach, kuchniach, łazienkach, piwnicach, halach oraz na balkonach i tarasach. Oferujemy kompleksowy montaż i fachowe doradztwo. Sprawdź naszą ofertę!",
-    url: "https://posadzkizywiczne.com",
+    url: baseUrlString,
     images: [
       {
-        url: "https://posadzkizywiczne.com/images/home-banner.jpg",
+        url: homeBannerUrl,
         width: 1200,
         height: 630,
         alt: "Posadzki Żywiczne - Profesjonalne Usługi",
@@ -46,10 +73,10 @@ export const metadata: Metadata = {
     title: "Posadzki żywiczne | Garaże, kuchnie, balkony, tarasy | Gwarancja",
     description:
       "Wykonujemy trwałe i estetyczne posadzki żywiczne w garażach, kuchniach, łazienkach, piwnicach, halach oraz na balkonach i tarasach. Oferujemy kompleksowy montaż i fachowe doradztwo. Sprawdź naszą ofertę!",
-    images: ["https://posadzkizywiczne.com/images/home-banner.jpg"],
+    images: [homeBannerUrl],
   },
   alternates: {
-    canonical: "https://posadzkizywiczne.com",
+    canonical: baseUrlString,
   },
 };
 
@@ -91,7 +118,6 @@ export default function RootLayout({
       <GoogleAnalytics gaId="G-VCXQVYV8TG" /> */}
       {/* <GoogleTagManager gtmId="G-VCXQVYV8TG" /> */}
       <GoogleTagManager gtmId="GTM-5D97JCZ5" />
-      <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
 
       {/* Google Analytics - gtag.js */}
       <Script
