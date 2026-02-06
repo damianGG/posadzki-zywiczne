@@ -353,9 +353,16 @@ const SERVICE_IMAGE_MAP: Record<string, string> = {
     "naprawa-ubytków": "/images/naprawa.jpg",
     demontaz: "/images/demontaz.jpg",
     "warstwa-ochronna": "/images/warstwa-ochronna.jpg",
-    antypoślizgowa: "/images/antypoślizgowa.jpg",
+    antyposlizgowa: "/images/antypoślizgowa.jpg",
     transport: "/images/transport.jpg",
     sprzatanie: "/images/sprzatanie.jpg",
+}
+
+const getServiceImage = (serviceId?: string | null, imageUrl?: string | null) => {
+    if (imageUrl) return imageUrl
+    if (!serviceId) return PLACEHOLDER_IMAGE
+    const normalizedId = serviceId.replace(/ł/g, "l")
+    return SERVICE_IMAGE_MAP[serviceId] || SERVICE_IMAGE_MAP[normalizedId] || PLACEHOLDER_IMAGE
 }
 
 interface ProgressBarProps {
@@ -651,19 +658,22 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         try {
             const transformed: DodatkowaUsluga[] = initialData.services
                 .filter((s: any) => s.is_active !== false)
-                .map((s: any) => ({
-                    id: String(s.service_id || s.id || ''),
-                    nazwa: s.name || 'Bez nazwy',
-                    opis: s.description || '',
-                    kategoria: s.category || 'inne',
-                    cenaZaM2: s.price_per_m2 !== null && s.price_per_m2 !== undefined ? Number(s.price_per_m2) : undefined,
-                    cenaZaMb: s.price_per_mb !== null && s.price_per_mb !== undefined ? Number(s.price_per_mb) : undefined,
-                    cenaStala: s.price_fixed !== null && s.price_fixed !== undefined ? Number(s.price_fixed) : undefined,
-                    domyslnie: Boolean(s.is_default),
-                    obowiazkowy: Boolean(s.is_mandatory),
-                    wCeniePosadzki: Boolean(s.is_included_in_floor_price),
-                    zdjecie: s.image_url || SERVICE_IMAGE_MAP[String(s.service_id || s.id || '')] || PLACEHOLDER_IMAGE,
-                }))
+                .map((s: any) => {
+                    const serviceId = String(s.service_id || s.id || "")
+                    return {
+                        id: serviceId,
+                        nazwa: s.name || 'Bez nazwy',
+                        opis: s.description || '',
+                        kategoria: s.category || 'inne',
+                        cenaZaM2: s.price_per_m2 !== null && s.price_per_m2 !== undefined ? Number(s.price_per_m2) : undefined,
+                        cenaZaMb: s.price_per_mb !== null && s.price_per_mb !== undefined ? Number(s.price_per_mb) : undefined,
+                        cenaStala: s.price_fixed !== null && s.price_fixed !== undefined ? Number(s.price_fixed) : undefined,
+                        domyslnie: Boolean(s.is_default),
+                        obowiazkowy: Boolean(s.is_mandatory),
+                        wCeniePosadzki: Boolean(s.is_included_in_floor_price),
+                        zdjecie: getServiceImage(serviceId, s.image_url),
+                    }
+                })
 
             if (transformed.length === 0) {
                 if (process.env.NODE_ENV === 'development') {
