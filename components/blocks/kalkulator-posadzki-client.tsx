@@ -358,9 +358,7 @@ const DIACRITIC_MAP: Record<string, string> = {
 const normalizeServiceId = (serviceId: string) =>
     serviceId
         .toLowerCase()
-        .replace(/[ąćęłńóśźż]/g, (char) => DIACRITIC_MAP[char] || char)
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[ąćęłńóśźż]/g, (char) => DIACRITIC_MAP[char])
 
 const SERVICE_IMAGE_MAP: Record<string, string> = {
     gruntowanie: "/images/gruntowanie.jpg",
