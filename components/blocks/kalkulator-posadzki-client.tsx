@@ -365,7 +365,7 @@ const SERVICE_IMAGE_MAP: Record<string, string> = {
     "naprawa-ubytkow": "/images/naprawa.jpg",
     demontaz: "/images/demontaz.jpg",
     "warstwa-ochronna": "/images/warstwa-ochronna.jpg",
-    antyposlizgowa: "/images/antypoślizgowa.jpg",
+    antyposlizgowa: "/images/antyposlizgowa.jpg",
     transport: "/images/transport.jpg",
     sprzatanie: "/images/sprzatanie.jpg",
 }
