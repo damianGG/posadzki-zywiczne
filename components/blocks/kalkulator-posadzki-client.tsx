@@ -343,6 +343,18 @@ const WYMIARY_LIMITS = {
 const FLAT_RATE_LIMIT_M2 = 34
 const FLAT_RATE_AMOUNT = 5000
 
+const normalizeServiceId = (serviceId: string) =>
+    serviceId
+        .replace(/ą/g, "a")
+        .replace(/ć/g, "c")
+        .replace(/ę/g, "e")
+        .replace(/ł/g, "l")
+        .replace(/ń/g, "n")
+        .replace(/ó/g, "o")
+        .replace(/ś/g, "s")
+        .replace(/ź/g, "z")
+        .replace(/ż/g, "z")
+
 const SERVICE_IMAGE_MAP: Record<string, string> = {
     gruntowanie: "/images/gruntowanie.jpg",
     cokol: "/images/cokol.jpg",
@@ -350,7 +362,7 @@ const SERVICE_IMAGE_MAP: Record<string, string> = {
     dylatacje: "/images/dylatacje.jpg",
     podklad: "/images/podklad.jpg",
     szlifowanie: "/images/szlifowanie.jpg",
-    "naprawa-ubytków": "/images/naprawa.jpg",
+    "naprawa-ubytkow": "/images/naprawa.jpg",
     demontaz: "/images/demontaz.jpg",
     "warstwa-ochronna": "/images/warstwa-ochronna.jpg",
     antyposlizgowa: "/images/antypoślizgowa.jpg",
@@ -361,8 +373,8 @@ const SERVICE_IMAGE_MAP: Record<string, string> = {
 const getServiceImage = (serviceId?: string | null, imageUrl?: string | null) => {
     if (imageUrl) return imageUrl
     if (!serviceId) return PLACEHOLDER_IMAGE
-    const normalizedId = serviceId.replace(/ł/g, "l")
-    return SERVICE_IMAGE_MAP[serviceId] || SERVICE_IMAGE_MAP[normalizedId] || PLACEHOLDER_IMAGE
+    const normalizedId = normalizeServiceId(serviceId)
+    return SERVICE_IMAGE_MAP[normalizedId] || PLACEHOLDER_IMAGE
 }
 
 interface ProgressBarProps {
