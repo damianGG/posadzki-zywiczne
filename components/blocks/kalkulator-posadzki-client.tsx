@@ -1113,8 +1113,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.setFillColor(41, 128, 185) // Niebieski pasek
         doc.rect(0, 0, pageWidth, 30, 'F')
 
+        const logoUrl = "/posadzkizywiczne.com_logo.png"
         try {
-            const logoResponse = await fetch("/posadzkizywiczne.com_logo.png")
+            const logoResponse = await fetch(logoUrl)
             if (logoResponse.ok) {
                 const logoBuffer = await logoResponse.arrayBuffer()
                 const binaryChunks: string[] = []
@@ -1127,7 +1128,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 doc.addImage(logoData, "PNG", 12, 5, 20, 20)
             }
         } catch (error) {
-            console.warn("Logo load failed:", error)
+            console.warn(`Logo load failed for ${logoUrl}:`, error)
         }
 
         doc.setTextColor(255, 255, 255) // Biały tekst
@@ -1250,7 +1251,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
         const flatRateAmount = isFlatRate ? Number(applicableRange?.price_per_m2 ?? FLAT_RATE_AMOUNT) : 0
         if (isFlatRate && !applicableRange?.price_per_m2) {
-            console.warn("Flat rate range missing price_per_m2, using default flat rate amount.")
+            console.warn(
+                `Flat rate range for ${wybranyRodzajPowierzchniObj.nazwa} missing price_per_m2, using default ${FLAT_RATE_AMOUNT} zl.`
+            )
         }
         const baseRowTotal = isFlatRate ? flatRateAmount : powierzchnia * basePricePerM2
 
@@ -1352,7 +1355,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         yPosition += 6
         doc.text(formatTextForPDF(`Koszt za m²: ${(kosztCalkowity / powierzchnia).toFixed(2)} zl/m²`), 20, yPosition)
         yPosition += 6
-        if (isFlatRate || powierzchnia < FLAT_RATE_LIMIT_M2) {
+        if (isFlatRate) {
             doc.text(
                 formatTextForPDF(
                     `Dla powierzchni poniżej ${FLAT_RATE_LIMIT_M2} m² obowiązuje cena ryczałtowa ${FLAT_RATE_AMOUNT} zł.`
