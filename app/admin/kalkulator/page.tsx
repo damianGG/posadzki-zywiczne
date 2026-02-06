@@ -241,6 +241,12 @@ export default function CalculatorAdminPage() {
     }
   };
 
+  const withUploadUrl = (results: Array<{ url: string }>, onUrl: (url: string) => void) => {
+    const url = results[0]?.url;
+    if (!url) return;
+    onUrl(url);
+  };
+
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
     if (!token) {
@@ -554,13 +560,13 @@ export default function CalculatorAdminPage() {
                         folder="kalkulator/powierzchnie"
                         disabled={saving}
                         onUploadComplete={(results) => {
-                          const url = results[0]?.url;
-                          if (!url) return;
-                          const updated = surfaceTypes.map((s) =>
-                            s.id === surface.id ? { ...s, image_url: url } : s
-                          );
-                          setSurfaceTypes(updated);
-                          updateSetting('surface-type', surface.type_id, { image_url: url });
+                          withUploadUrl(results, (url) => {
+                            const updated = surfaceTypes.map((s) =>
+                              s.id === surface.id ? { ...s, image_url: url } : s
+                            );
+                            setSurfaceTypes(updated);
+                            updateSetting('surface-type', surface.type_id, { image_url: url });
+                          });
                         }}
                       />
                     </div>
@@ -803,13 +809,13 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/kolory/miniatury"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            const url = results[0]?.url;
-                            if (!url) return;
-                            const updated = colors.map((c) =>
-                              c.id === color.id ? { ...c, thumbnail_url: url } : c
-                            );
-                            setColors(updated);
-                            updateSetting('color', color.color_id, { thumbnail_url: url });
+                            withUploadUrl(results, (url) => {
+                              const updated = colors.map((c) =>
+                                c.id === color.id ? { ...c, thumbnail_url: url } : c
+                              );
+                              setColors(updated);
+                              updateSetting('color', color.color_id, { thumbnail_url: url });
+                            });
                           }}
                         />
                       </div>
@@ -833,13 +839,13 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/kolory/podglady"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            const url = results[0]?.url;
-                            if (!url) return;
-                            const updated = colors.map((c) =>
-                              c.id === color.id ? { ...c, preview_url: url } : c
-                            );
-                            setColors(updated);
-                            updateSetting('color', color.color_id, { preview_url: url });
+                            withUploadUrl(results, (url) => {
+                              const updated = colors.map((c) =>
+                                c.id === color.id ? { ...c, preview_url: url } : c
+                              );
+                              setColors(updated);
+                              updateSetting('color', color.color_id, { preview_url: url });
+                            });
                           }}
                         />
                       </div>
@@ -1050,13 +1056,13 @@ export default function CalculatorAdminPage() {
                         folder="kalkulator/uslugi"
                         disabled={saving}
                         onUploadComplete={(results) => {
-                          const url = results[0]?.url;
-                          if (!url) return;
-                          const updated = services.map((s) =>
-                            s.id === service.id ? { ...s, image_url: url } : s
-                          );
-                          setServices(updated);
-                          updateSetting('service', service.service_id, { image_url: url });
+                          withUploadUrl(results, (url) => {
+                            const updated = services.map((s) =>
+                              s.id === service.id ? { ...s, image_url: url } : s
+                            );
+                            setServices(updated);
+                            updateSetting('service', service.service_id, { image_url: url });
+                          });
                         }}
                       />
                     </div>
@@ -1350,9 +1356,9 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/powierzchnie"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            const url = results[0]?.url;
-                            if (!url) return;
-                            setNewItem((prev: any) => ({ ...prev, image_url: url }));
+                            withUploadUrl(results, (url) => {
+                              setNewItem((prev: any) => ({ ...prev, image_url: url }));
+                            });
                           }}
                         />
                       </div>
@@ -1430,9 +1436,9 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/kolory/miniatury"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            const url = results[0]?.url;
-                            if (!url) return;
-                            setNewItem((prev: any) => ({ ...prev, thumbnail_url: url }));
+                            withUploadUrl(results, (url) => {
+                              setNewItem((prev: any) => ({ ...prev, thumbnail_url: url }));
+                            });
                           }}
                         />
                       </div>
@@ -1450,9 +1456,9 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/kolory/podglady"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            const url = results[0]?.url;
-                            if (!url) return;
-                            setNewItem((prev: any) => ({ ...prev, preview_url: url }));
+                            withUploadUrl(results, (url) => {
+                              setNewItem((prev: any) => ({ ...prev, preview_url: url }));
+                            });
                           }}
                         />
                       </div>
@@ -1565,9 +1571,9 @@ export default function CalculatorAdminPage() {
                         folder="kalkulator/uslugi"
                         disabled={saving}
                         onUploadComplete={(results) => {
-                          const url = results[0]?.url;
-                          if (!url) return;
-                          setNewItem((prev: any) => ({ ...prev, image_url: url }));
+                          withUploadUrl(results, (url) => {
+                            setNewItem((prev: any) => ({ ...prev, image_url: url }));
+                          });
                         }}
                       />
                     </div>
