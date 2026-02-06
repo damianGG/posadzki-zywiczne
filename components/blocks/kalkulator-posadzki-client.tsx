@@ -1109,7 +1109,24 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         // Logo i nazwa firmy (górny nagłówek)
         doc.setFillColor(41, 128, 185) // Niebieski pasek
         doc.rect(0, 0, pageWidth, 30, 'F')
-        
+
+        try {
+            const logoResponse = await fetch("/posadzkizywiczne.com_logo.png")
+            if (logoResponse.ok) {
+                const logoBuffer = await logoResponse.arrayBuffer()
+                let binary = ""
+                const bytes = new Uint8Array(logoBuffer)
+                const chunkSize = 0x8000
+                for (let i = 0; i < bytes.length; i += chunkSize) {
+                    binary += String.fromCharCode(...bytes.slice(i, i + chunkSize))
+                }
+                const logoData = `data:image/png;base64,${btoa(binary)}`
+                doc.addImage(logoData, "PNG", 12, 5, 20, 20)
+            }
+        } catch (error) {
+            console.warn("Logo load failed:", error)
+        }
+
         doc.setTextColor(255, 255, 255) // Biały tekst
         doc.setFontSize(24)
         doc.setFont("helvetica", "bold")
@@ -1118,6 +1135,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.setFontSize(10)
         doc.setFont("helvetica", "normal")
         doc.text("Profesjonalne posadzki zywiczne dla domu i biznesu", pageWidth / 2, 23, { align: "center" })
+        doc.setFontSize(8)
+        doc.text("Instagram: @posadzkizywicznecom", pageWidth - 12, 26, { align: "right" })
 
         yPosition = 40
         doc.setTextColor(0, 0, 0) // Czarny tekst dla reszty dokumentu
@@ -1213,13 +1232,35 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         // Materiał podstawowy
         doc.setFont("helvetica", "normal")
-        const cenaCalkowita = wybranyRodzajPowierzchniObj.cenaZaM2 + wybranyKolorObj.cenaDodatkowa
-        doc.text(formatTextForPDF(`${wybranapPosadzka.nazwa} ${wybranyKolorObj.kodRAL}`), 20, yPosition)
-        doc.text(powierzchnia.toFixed(2), 80, yPosition)
-        doc.text("m²", 110, yPosition)
-        doc.text(`${cenaCalkowita.toFixed(2)} zl`, 140, yPosition)
-        doc.text(`${(powierzchnia * cenaCalkowita).toFixed(2)} zl`, 170, yPosition)
+        const priceRanges = wybranyRodzajPowierzchniObj.price_ranges || []
+        const applicableRange = priceRanges.find((range: any) => {
+            const minMatch = powierzchnia >= range.min_m2
+            const maxMatch = range.max_m2 === null || powierzchnia <= range.max_m2
+            return minMatch && maxMatch
+        })
+        const isFlatRate = Boolean(applicableRange?.is_flat_rate)
+        const basePricePerM2 = !isFlatRate && applicableRange?.price_per_m2
+            ? Number(applicableRange.price_per_m2)
+            : wybranyRodzajPowierzchniObj.cenaZaM2
+        const flatRateAmount = isFlatRate ? Number(applicableRange?.price_per_m2 || 0) : 0
+        const baseRowTotal = isFlatRate ? flatRateAmount : powierzchnia * basePricePerM2
+
+        doc.text(formatTextForPDF(`${wybranapPosadzka.nazwa} - ${wybranyRodzajPowierzchniObj.nazwa}${isFlatRate ? " (ryczalt)" : ""}`), 20, yPosition)
+        doc.text(isFlatRate ? "1" : powierzchnia.toFixed(2), 80, yPosition)
+        doc.text(isFlatRate ? "ryczalt" : "m²", 110, yPosition)
+        doc.text(`${(isFlatRate ? flatRateAmount : basePricePerM2).toFixed(2)} zl`, 140, yPosition)
+        doc.text(`${baseRowTotal.toFixed(2)} zl`, 170, yPosition)
         yPosition += 8
+
+        if (wybranyKolorObj.cenaDodatkowa > 0) {
+            const colorTotal = powierzchnia * wybranyKolorObj.cenaDodatkowa
+            doc.text(formatTextForPDF(`Doplata za kolor (${wybranyKolorObj.kodRAL})`), 20, yPosition)
+            doc.text(powierzchnia.toFixed(2), 80, yPosition)
+            doc.text("m²", 110, yPosition)
+            doc.text(`${wybranyKolorObj.cenaDodatkowa.toFixed(2)} zl`, 140, yPosition)
+            doc.text(`${colorTotal.toFixed(2)} zl`, 170, yPosition)
+            yPosition += 8
+        }
 
         // Stan betonu (jeśli dotyczy)
         if (wybranyStanBetonuObj && wybranyStanBetonuObj.cenaDodatkowa > 0) {
@@ -1301,6 +1342,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.text(formatTextForPDF(`Koszt calkowity: ${kosztCalkowity.toFixed(2)} zl`), 20, yPosition)
         yPosition += 6
         doc.text(formatTextForPDF(`Koszt za m²: ${(kosztCalkowity / powierzchnia).toFixed(2)} zl/m²`), 20, yPosition)
+        yPosition += 6
+        if (isFlatRate || powierzchnia < 34) {
+            doc.text(formatTextForPDF("Dla powierzchni ponizej 34 m² obowiazuje cena ryczaltowa 5000 zl."), 20, yPosition)
+        }
 
         yPosition += 20
 
@@ -1337,7 +1382,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.setFont("helvetica", "normal")
         doc.setTextColor(50, 50, 50)
         doc.text(formatTextForPDF("Web: posadzkizywiczne.com"), 20, footerY + 38)
-        doc.text(formatTextForPDF("Instagram: @posadzkizywiczne"), 20, footerY + 43)
+        doc.text(formatTextForPDF("Instagram: @posadzkizywicznecom"), 20, footerY + 43)
         
         doc.setFontSize(10)
         doc.setFont("helvetica", "bold")
@@ -1355,9 +1400,15 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.setFont("helvetica", "italic")
         doc.setTextColor(100, 100, 100)
         doc.text(
-            formatTextForPDF("Kosztorys wygenerowany automatycznie. Ceny moga ulec zmianie. Prosimy o kontakt w celu potwierdzenia."),
+            formatTextForPDF("Oferta nie jest umowa. Wymagamy kontaktu w celu potwierdzenia ostatecznej ceny."),
             pageWidth / 2,
-            pageHeight - 10,
+            pageHeight - 14,
+            { align: "center" },
+        )
+        doc.text(
+            formatTextForPDF("Kosztorys wygenerowany automatycznie. Ceny moga ulec zmianie."),
+            pageWidth / 2,
+            pageHeight - 8,
             { align: "center" },
         )
 
