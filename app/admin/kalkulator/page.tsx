@@ -241,7 +241,7 @@ export default function CalculatorAdminPage() {
     }
   };
 
-  const withUploadUrl = (results: Array<{ url: string }>, onUrl: (url: string) => void) => {
+  const handleUploadResult = (results: Array<{ url: string }>, onUrl: (url: string) => void) => {
     const url = results[0]?.url;
     if (!url) return;
     onUrl(url);
@@ -560,7 +560,7 @@ export default function CalculatorAdminPage() {
                         folder="kalkulator/powierzchnie"
                         disabled={saving}
                         onUploadComplete={(results) => {
-                          withUploadUrl(results, (url) => {
+                          handleUploadResult(results, (url) => {
                             const updated = surfaceTypes.map((s) =>
                               s.id === surface.id ? { ...s, image_url: url } : s
                             );
@@ -809,7 +809,7 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/kolory/miniatury"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            withUploadUrl(results, (url) => {
+                            handleUploadResult(results, (url) => {
                               const updated = colors.map((c) =>
                                 c.id === color.id ? { ...c, thumbnail_url: url } : c
                               );
@@ -839,7 +839,7 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/kolory/podglady"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            withUploadUrl(results, (url) => {
+                            handleUploadResult(results, (url) => {
                               const updated = colors.map((c) =>
                                 c.id === color.id ? { ...c, preview_url: url } : c
                               );
@@ -1056,7 +1056,7 @@ export default function CalculatorAdminPage() {
                         folder="kalkulator/uslugi"
                         disabled={saving}
                         onUploadComplete={(results) => {
-                          withUploadUrl(results, (url) => {
+                          handleUploadResult(results, (url) => {
                             const updated = services.map((s) =>
                               s.id === service.id ? { ...s, image_url: url } : s
                             );
@@ -1356,7 +1356,7 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/powierzchnie"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            withUploadUrl(results, (url) => {
+                            handleUploadResult(results, (url) => {
                               setNewItem((prev: any) => ({ ...prev, image_url: url }));
                             });
                           }}
@@ -1436,7 +1436,7 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/kolory/miniatury"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            withUploadUrl(results, (url) => {
+                            handleUploadResult(results, (url) => {
                               setNewItem((prev: any) => ({ ...prev, thumbnail_url: url }));
                             });
                           }}
@@ -1456,7 +1456,7 @@ export default function CalculatorAdminPage() {
                           folder="kalkulator/kolory/podglady"
                           disabled={saving}
                           onUploadComplete={(results) => {
-                            withUploadUrl(results, (url) => {
+                            handleUploadResult(results, (url) => {
                               setNewItem((prev: any) => ({ ...prev, preview_url: url }));
                             });
                           }}
@@ -1571,7 +1571,7 @@ export default function CalculatorAdminPage() {
                         folder="kalkulator/uslugi"
                         disabled={saving}
                         onUploadComplete={(results) => {
-                          withUploadUrl(results, (url) => {
+                          handleUploadResult(results, (url) => {
                             setNewItem((prev: any) => ({ ...prev, image_url: url }));
                           });
                         }}
