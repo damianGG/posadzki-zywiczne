@@ -78,9 +78,10 @@ interface StanBetonuOption {
     nazwa: string
     opis: string
     cenaDodatkowa: number
+    showPriceInLabel?: boolean
 }
 
-const rodzajePomieszczen: RodzajPomieszczeniaOption[] = [
+const fallbackRodzajePomieszczen: RodzajPomieszczeniaOption[] = [
     {
         id: "garaz-piwnica",
         nazwa: "Garaż / Piwnica",
@@ -104,7 +105,7 @@ const rodzajePomieszczen: RodzajPomieszczeniaOption[] = [
     },
 ]
 
-const stanyBetonu: StanBetonuOption[] = [
+const fallbackStanyBetonu: StanBetonuOption[] = [
     {
         id: "nowa-wylewka",
         nazwa: "Nowa wylewka betonowa",
@@ -182,7 +183,7 @@ const rodzajePosadzek: PosadzkaOption[] = [
     },
 ]
 
-const dodatkiUslugi = [
+const fallbackDodatkiUslugi = [
     {
         id: "gruntowanie",
         nazwa: "Gruntowanie podłoża",
@@ -318,58 +319,48 @@ const WYMIARY_LIMITS = {
 
 interface ProgressBarProps {
     currentStep: number
-    totalSteps: number
+    steps: Array<{ id: string; title: string; description: string }>
 }
 
-function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
-    const stepsBase = [
-        { number: 1, title: "Typ pomieszczenia", description: "Wybierz rodzaj pomieszczenia" },
-        { number: 2, title: "Stan betonu", description: "Wybierz stan podłoża", conditional: true },
-        { number: 3, title: "Wymiary", description: "Wprowadź wymiary pomieszczenia" },
-        { number: 4, title: "Powierzchnia", description: "Wybierz rodzaj powierzchni" },
-        { number: 5, title: "Kolor", description: "Wybierz kolor posadzki" },
-        { number: 6, title: "Dodatki", description: "Wybierz dodatkowe usługi" },
-    ]
-
-    // Filter steps based on totalSteps
-    const steps = totalSteps === 5 
-        ? stepsBase.filter(s => !s.conditional).map((s, i) => ({ ...s, number: i + 1 }))
-        : stepsBase
+function ProgressBar({ currentStep, steps }: ProgressBarProps) {
+    const totalSteps = steps.length
 
     return (
         <div className="bg-white border-b shadow-sm">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
                 {/* Desktop version */}
                 <div className="hidden md:flex items-center justify-between">
-                    {steps.map((step, index) => (
-                        <div key={step.number} className="flex items-center flex-1">
+                    {steps.map((step, index) => {
+                        const stepNumber = index + 1
+                        return (
+                            <div key={step.id} className="flex items-center flex-1">
                             <div className="flex items-center">
                                 <div
                                     className={`
                     flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-500 ease-in-out
-                    ${currentStep > step.number
+                    ${currentStep > stepNumber
                                             ? "bg-green-500 border-green-500 text-white"
-                                            : currentStep === step.number
+                                            : currentStep === stepNumber
                                                 ? "bg-blue-500 border-blue-500 text-white"
                                                 : "bg-gray-100 border-gray-300 text-gray-500"
                                         }
                   `}
                                 >
-                                    {currentStep > step.number ? (
+                                    {currentStep > stepNumber ? (
                                         <CheckCircle className="w-6 h-6" />
                                     ) : (
-                                        <span className="text-sm font-semibold">{step.number}</span>
+                                        <span className="text-sm font-semibold">{stepNumber}</span>
                                     )}
                                 </div>
                                 <div className="ml-3">
                                     <div
-                                        className={`text-sm font-medium transition-colors duration-300 ${currentStep >= step.number ? "text-gray-900" : "text-gray-500"
+                                        className={`text-sm font-medium transition-colors duration-300 ${currentStep >= stepNumber ? "text-gray-900" : "text-gray-500"
                                             }`}
                                     >
                                         {step.title}
                                     </div>
                                     <div
-                                        className={`text-xs transition-colors duration-300 ${currentStep >= step.number ? "text-gray-600" : "text-gray-400"
+                                        className={`text-xs transition-colors duration-300 ${currentStep >= stepNumber ? "text-gray-600" : "text-gray-400"
                                             }`}
                                     >
                                         {step.description}
@@ -382,14 +373,14 @@ function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
                                         <div
                                             className={`
                         h-full transition-all duration-700 ease-in-out
-                        ${currentStep > step.number ? "bg-green-500 w-full" : "bg-gray-200 w-0"}
+                        ${currentStep > stepNumber ? "bg-green-500 w-full" : "bg-gray-200 w-0"}
                       `}
                                         />
                                     </div>
                                 </div>
                             )}
-                        </div>
-                    ))}
+                            </div>
+                        )})}
                 </div>
 
                 {/* Mobile version */}
@@ -399,7 +390,7 @@ function ProgressBar({ currentStep, totalSteps }: ProgressBarProps) {
                             <div
                                 className={`
                   flex items-center justify-center w-8 h-8 rounded-full border-2 transition-all duration-500 ease-in-out
-                  ${currentStep > steps[currentStep - 1]?.number
+                  ${currentStep === totalSteps
                                         ? "bg-green-500 border-green-500 text-white"
                                         : "bg-blue-500 border-blue-500 text-white"
                                     }
@@ -515,6 +506,9 @@ interface CalculatorData {
     surfaceTypes: any[]
     colors: any[]
     services: any[]
+    roomTypes: any[]
+    concreteStates: any[]
+    stepConfigs: any[]
 }
 
 interface KalkulatorPosadzkiClientProps {
@@ -533,7 +527,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         
         try {
             const transformed = initialData.surfaceTypes
-                .filter((s: any) => s.is_active)
+                .filter((s: any) => s.is_active !== false)
                 .map((s: any) => {
                     let properties = []
                     try {
@@ -580,7 +574,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         
         try {
             const transformed = initialData.colors
-                .filter((c: any) => c.is_active)
+                .filter((c: any) => c.is_active !== false)
                 .map((c: any) => ({
                     id: String(c.id || ''),
                     nazwa: c.name || 'Bez nazwy',
@@ -604,9 +598,141 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             return { data: koloryRAL, isFallback: true }
         }
     }, [initialData])
+
+    const transformedServices = React.useMemo(() => {
+        if (!initialData?.services || initialData.services.length === 0) {
+            if (process.env.NODE_ENV === 'development') {
+                console.warn('Using fallback services - Supabase data not available')
+            }
+            return { data: fallbackDodatkiUslugi, isFallback: true }
+        }
+
+        try {
+            const transformed = initialData.services
+                .filter((s: any) => s.is_active !== false)
+                .map((s: any) => ({
+                    id: String(s.service_id || s.id || ''),
+                    nazwa: s.name || 'Bez nazwy',
+                    opis: s.description || '',
+                    kategoria: s.category || 'inne',
+                    cenaZaM2: s.price_per_m2 !== null && s.price_per_m2 !== undefined ? Number(s.price_per_m2) : undefined,
+                    cenaZaMb: s.price_per_mb !== null && s.price_per_mb !== undefined ? Number(s.price_per_mb) : undefined,
+                    cenaStala: s.price_fixed !== null && s.price_fixed !== undefined ? Number(s.price_fixed) : undefined,
+                    domyslnie: Boolean(s.is_default),
+                    obowiazkowy: Boolean(s.is_mandatory),
+                    wCeniePosadzki: Boolean(s.is_included_in_floor_price),
+                    zdjecie: s.image_url || PLACEHOLDER_IMAGE,
+                }))
+
+            if (transformed.length === 0) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn('No active services found - using fallback data')
+                }
+                return { data: fallbackDodatkiUslugi, isFallback: true }
+            }
+
+            return { data: transformed, isFallback: false }
+        } catch (error) {
+            console.error('Error transforming services:', error)
+            return { data: fallbackDodatkiUslugi, isFallback: true }
+        }
+    }, [initialData])
+
+    const transformedRoomTypes = React.useMemo(() => {
+        if (!initialData?.roomTypes || initialData.roomTypes.length === 0) {
+            if (process.env.NODE_ENV === 'development') {
+                console.warn('Using fallback room types - Supabase data not available')
+            }
+            return { data: fallbackRodzajePomieszczen, isFallback: true }
+        }
+
+        try {
+            const transformed = initialData.roomTypes.map((room: any) => ({
+                id: String(room.room_id || room.id || ''),
+                nazwa: room.name || 'Bez nazwy',
+                opis: room.description || '',
+                ikona: room.icon || '🏠',
+                dostepny: room.is_available !== false,
+            }))
+
+            if (transformed.length === 0) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn('No room types found - using fallback data')
+                }
+                return { data: fallbackRodzajePomieszczen, isFallback: true }
+            }
+
+            return { data: transformed, isFallback: false }
+        } catch (error) {
+            console.error('Error transforming room types:', error)
+            return { data: fallbackRodzajePomieszczen, isFallback: true }
+        }
+    }, [initialData])
+
+    const transformedConcreteStates = React.useMemo(() => {
+        if (!initialData?.concreteStates || initialData.concreteStates.length === 0) {
+            if (process.env.NODE_ENV === 'development') {
+                console.warn('Using fallback concrete states - Supabase data not available')
+            }
+            return { data: fallbackStanyBetonu, isFallback: true }
+        }
+
+        try {
+            const transformed = initialData.concreteStates.map((state: any) => ({
+                id: String(state.state_id || state.id || ''),
+                nazwa: state.name || 'Bez nazwy',
+                opis: state.description || '',
+                cenaDodatkowa: Number(state.additional_price) || 0,
+                showPriceInLabel: Boolean(state.show_price_in_label),
+            }))
+
+            if (transformed.length === 0) {
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn('No concrete states found - using fallback data')
+                }
+                return { data: fallbackStanyBetonu, isFallback: true }
+            }
+
+            return { data: transformed, isFallback: false }
+        } catch (error) {
+            console.error('Error transforming concrete states:', error)
+            return { data: fallbackStanyBetonu, isFallback: true }
+        }
+    }, [initialData])
+
+    const stepConfigVisibility = React.useMemo(() => {
+        const configMap = new Map<string, any>()
+        ;(initialData?.stepConfigs || []).forEach((config: any) => {
+            if (config?.step_id) {
+                configMap.set(config.step_id, config)
+            }
+        })
+
+        const resolveVisibility = (stepId: string) => {
+            const config = configMap.get(stepId)
+            if (!config) return true
+            if (config.can_be_hidden === false) return true
+            return config.is_visible !== false
+        }
+
+        return {
+            concreteState: resolveVisibility('concrete_state'),
+            colors: resolveVisibility('colors'),
+            services: resolveVisibility('services'),
+        }
+    }, [initialData])
     
     // Derive fallback status from transformed data
-    const usingFallbackData = transformedSurfaces.isFallback || transformedColors.isFallback
+    const usingFallbackData =
+        transformedSurfaces.isFallback ||
+        transformedColors.isFallback ||
+        transformedServices.isFallback ||
+        transformedRoomTypes.isFallback ||
+        transformedConcreteStates.isFallback
+
+    const rodzajePomieszczen = transformedRoomTypes.data
+    const stanyBetonu = transformedConcreteStates.data
+    const dodatkiUslugi = transformedServices.data
     
     const [rodzajPomieszczenia, setRodzajPomieszczenia] = useState<string>("")
     const [stanBetonu, setStanBetonu] = useState<string>("")
@@ -662,12 +788,15 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
     // Initialize mandatory services on first render
     useEffect(() => {
-        const obowiazkowe = dodatkiUslugi.filter((d) => d.obowiazkowy).map((d) => d.id)
-        if (wybraneDodatki.length === 0 && obowiazkowe.length > 0) {
-            setWybraneDodatki(obowiazkowe)
+        if (wybraneDodatki.length > 0) return
+        const domyslne = dodatkiUslugi
+            .filter((d) => d.obowiazkowy || d.domyslnie)
+            .map((d) => d.id)
+        if (domyslne.length > 0) {
+            setWybraneDodatki(Array.from(new Set(domyslne)))
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [dodatkiUslugi, wybraneDodatki.length])
+
 
     // Walidacja wymiarów
     const walidujWymiary = useCallback((dlugosc: string, szerokosc: string, powierzchniaBezp: string) => {
@@ -710,9 +839,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         return errors
     }, [trybWymiarow])
 
+    const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+
     // Sprawdzanie kroków
     const rodzajPomieszczeniaJestWybrany = rodzajPomieszczenia !== ""
-    const stanBetonuJestWybrany = stanBetonu !== "" || rodzajPomieszczenia !== "garaz-piwnica"
+    const shouldShowConcreteStep = rodzajPomieszczenia === "garaz-piwnica" && stepConfigVisibility.concreteState
+    const shouldShowColorStep = stepConfigVisibility.colors
+    const shouldShowServicesStep = stepConfigVisibility.services
+    const stanBetonuJestWybrany = !shouldShowConcreteStep || stanBetonu !== ""
     const wymiarySaWypelnione =
         rodzajPomieszczeniaJestWybrany &&
         stanBetonuJestWybrany &&
@@ -721,25 +855,69 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             : powierzchniaBezposrednia && powierzchnia > 0 && walidacjaErrors.length === 0)
 
     const rodzajPowierzchniJestWybrany = wybranyRodzajPowierzchni !== ""
-    const kolorJestWybrany = wybranyKolor !== ""
-    const moznaWybracStanBetonu = rodzajPomieszczeniaJestWybrany && rodzajPomieszczenia === "garaz-piwnica"
+    const kolorJestWybrany = !shouldShowColorStep || wybranyKolor !== ""
+    const moznaWybracStanBetonu = rodzajPomieszczeniaJestWybrany && shouldShowConcreteStep
     const moznaWybracWymiary = rodzajPomieszczeniaJestWybrany && stanBetonuJestWybrany
     const moznaWybracRodzajPowierzchni = wymiarySaWypelnione
-    const moznaWybracKolor = wymiarySaWypelnione && rodzajPowierzchniJestWybrany
-    const moznaWybracDodatki = wymiarySaWypelnione && rodzajPowierzchniJestWybrany && kolorJestWybrany
+    const moznaWybracKolor = wymiarySaWypelnione && rodzajPowierzchniJestWybrany && shouldShowColorStep
+    const moznaWybracDodatki =
+        wymiarySaWypelnione && rodzajPowierzchniJestWybrany && kolorJestWybrany && shouldShowServicesStep
 
-    // Obliczanie aktualnego kroku
-    const getCurrentStep = () => {
-        if (!rodzajPomieszczeniaJestWybrany) return 1
-        if (rodzajPomieszczenia === "garaz-piwnica" && !stanBetonuJestWybrany) return 2
-        if (!wymiarySaWypelnione) return rodzajPomieszczenia === "garaz-piwnica" ? 3 : 2
-        if (!rodzajPowierzchniJestWybrany) return rodzajPomieszczenia === "garaz-piwnica" ? 4 : 3
-        if (!kolorJestWybrany) return rodzajPomieszczenia === "garaz-piwnica" ? 5 : 4
-        return rodzajPomieszczenia === "garaz-piwnica" ? 6 : 5
-    }
+    const steps = React.useMemo(
+        () => [
+            { id: "room", title: "Typ pomieszczenia", description: "Wybierz rodzaj pomieszczenia" },
+            ...(shouldShowConcreteStep
+                ? [{ id: "concrete", title: "Stan betonu", description: "Wybierz stan podłoża" }]
+                : []),
+            { id: "dimensions", title: "Wymiary", description: "Wprowadź wymiary pomieszczenia" },
+            { id: "surface", title: "Powierzchnia", description: "Wybierz rodzaj powierzchni" },
+            ...(shouldShowColorStep ? [{ id: "color", title: "Kolor", description: "Wybierz kolor posadzki" }] : []),
+            ...(shouldShowServicesStep ? [{ id: "services", title: "Dodatki", description: "Wybierz dodatkowe usługi" }] : []),
+        ],
+        [shouldShowConcreteStep, shouldShowColorStep, shouldShowServicesStep],
+    )
 
-    const currentStep = getCurrentStep()
-    const totalSteps = rodzajPomieszczenia === "garaz-piwnica" ? 6 : 5
+    const stepNumberById = React.useMemo(() => {
+        const map = new Map<string, number>()
+        steps.forEach((step, index) => map.set(step.id, index + 1))
+        return map
+    }, [steps])
+
+    const currentStep = React.useMemo(() => {
+        const completion: Record<string, boolean> = {
+            room: rodzajPomieszczeniaJestWybrany,
+            concrete: stanBetonuJestWybrany,
+            dimensions: wymiarySaWypelnione,
+            surface: rodzajPowierzchniJestWybrany,
+            color: kolorJestWybrany,
+            services: !shouldShowServicesStep,
+        }
+
+        const firstIncompleteIndex = steps.findIndex((step) => !completion[step.id])
+        return firstIncompleteIndex === -1 ? steps.length : firstIncompleteIndex + 1
+    }, [
+        steps,
+        rodzajPomieszczeniaJestWybrany,
+        stanBetonuJestWybrany,
+        wymiarySaWypelnione,
+        rodzajPowierzchniJestWybrany,
+        kolorJestWybrany,
+        shouldShowServicesStep,
+    ])
+
+    useEffect(() => {
+        if (shouldShowConcreteStep || rodzajPomieszczenia !== "garaz-piwnica") return
+        if (!stanBetonu && stanyBetonu.length > 0) {
+            setStanBetonu(stanyBetonu[0].id)
+        }
+    }, [shouldShowConcreteStep, rodzajPomieszczenia, stanBetonu, stanyBetonu])
+
+    useEffect(() => {
+        if (shouldShowColorStep || !rodzajPowierzchniJestWybrany || !wymiarySaWypelnione) return
+        if (!wybranyKolor && wybranapPosadzka?.kolory?.length) {
+            setWybranyKolor(wybranapPosadzka.kolory[0].id)
+        }
+    }, [shouldShowColorStep, rodzajPowierzchniJestWybrany, wymiarySaWypelnione, wybranyKolor, wybranapPosadzka])
 
     useEffect(() => {
         const errors = walidujWymiary(wymiary.dlugosc, wymiary.szerokosc, powierzchniaBezposrednia)
@@ -829,6 +1007,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         wybranyRodzajPowierzchniObj,
         wybranyKolorObj,
         wybranyStanBetonuObj,
+        dodatkiUslugi,
         walidujWymiary,
     ])
 
@@ -854,8 +1033,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         setWybranyRodzaj("zywica")
         setWybranyRodzajPowierzchni("")
         setWybranyKolor("")
-        const obowiazkowe = dodatkiUslugi.filter((d) => d.obowiazkowy).map((d) => d.id)
-        setWybraneDodatki(obowiazkowe)
+        const domyslne = dodatkiUslugi
+            .filter((d) => d.obowiazkowy || d.domyslnie)
+            .map((d) => d.id)
+        setWybraneDodatki(Array.from(new Set(domyslne)))
         setObwod("")
         setWalidacjaErrors([])
         setUserEmail("")
@@ -869,6 +1050,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             setIsSendingEmail(true)
         } else {
             setIsGeneratingPDF(true)
+        }
+
+        if (sendEmail && !isValidEmail(userEmail)) {
+            setIsSendingEmail(false)
+            alert("Wprowadź poprawny adres email.")
+            return
         }
 
         // Symulacja generowania PDF
@@ -923,7 +1110,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             yPosition += 6
         }
 
-        if (wybranyStanBetonuObj && rodzajPomieszczenia === "garaz-piwnica") {
+        if (wybranyStanBetonuObj && shouldShowConcreteStep) {
             doc.text(formatTextForPDF(`Stan podloza: ${wybranyStanBetonuObj.nazwa}`), 20, yPosition)
             yPosition += 6
         }
@@ -1232,7 +1419,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             </div>
 
             {/* Pasek postępu */}
-            <ProgressBar currentStep={currentStep} totalSteps={totalSteps} />
+            <ProgressBar currentStep={currentStep} steps={steps} />
 
             {/* Info message if using fallback data */}
             {usingFallbackData && (
@@ -1280,7 +1467,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                             {rodzajPomieszczeniaJestWybrany ? <CheckCircle className="h-6 w-6" /> : <Home className="h-6 w-6" />}
                                         </div>
                                         <span className={rodzajPomieszczeniaJestWybrany ? "text-green-700" : "text-blue-700"}>
-                                            Krok 1: Typ pomieszczenia
+                                            Krok {stepNumberById.get("room") ?? 1}: Typ pomieszczenia
                                         </span>
                                     </CardTitle>
                                     {!rodzajPomieszczeniaJestWybrany && (
@@ -1294,7 +1481,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         <div
                                             key={pomieszczenie.id}
                                             className={`
-                                border rounded-lg p-4 cursor-pointer transition-all duration-300 ease-in-out
+                                border rounded-lg p-3 sm:p-4 cursor-pointer transition-all duration-300 ease-in-out
                                 animate-in slide-in-from-left-2
                                 ${rodzajPomieszczenia === pomieszczenie.id
                                                     ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 scale-105"
@@ -1338,7 +1525,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         </div>
 
                         {/* Krok 2: Stan betonu (tylko dla garaż/piwnica) */}
-                        {rodzajPomieszczenia === "garaz-piwnica" && (
+                        {shouldShowConcreteStep && (
                             <div
                                 className={`
                     transition-all duration-700 ease-in-out transform
@@ -1380,7 +1567,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                             : "text-gray-400"
                                                 }
                                             >
-                                                Krok 2: Stan podłoża
+                                                Krok {stepNumberById.get("concrete") ?? 2}: Stan podłoża
                                             </span>
                                         </CardTitle>
                                         {moznaWybracStanBetonu && !stanBetonuJestWybrany && (
@@ -1394,7 +1581,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                             <div
                                                 key={stan.id}
                                                 className={`
-                                    border rounded-lg p-4 cursor-pointer transition-all duration-300 ease-in-out
+                                    border rounded-lg p-3 sm:p-4 cursor-pointer transition-all duration-300 ease-in-out
                                     animate-in slide-in-from-left-2
                                     ${stanBetonu === stan.id
                                                         ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 scale-105"
@@ -1409,9 +1596,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                     <div className="flex-1">
                                                         <h3 className="font-medium text-sm">{stan.nazwa}</h3>
                                                         <p className="text-xs text-gray-600 mt-1">{stan.opis}</p>
-                                                        {stan.cenaDodatkowa > 0 && (
+                                                        {(stan.cenaDodatkowa > 0 || stan.showPriceInLabel) && (
                                                             <p className="text-sm font-bold text-orange-600 mt-2">
-                                                                +{stan.cenaDodatkowa} zł/m²
+                                                                {stan.cenaDodatkowa > 0 ? `+${stan.cenaDodatkowa} zł/m²` : "Bez dopłaty"}
                                                             </p>
                                                         )}
                                                     </div>
@@ -1465,12 +1652,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                             {wymiarySaWypelnione ? <CheckCircle className="h-6 w-6" /> : <Home className="h-6 w-6" />}
                                         </div>
                                         <span className={wymiarySaWypelnione ? "text-green-700" : moznaWybracWymiary ? "text-blue-700" : "text-gray-400"}>
-                                            Krok {rodzajPomieszczenia === "garaz-piwnica" ? "3" : "2"}: Wymiary pomieszczenia
+                                            Krok {stepNumberById.get("dimensions") ?? 2}: Wymiary pomieszczenia
                                         </span>
                                     </CardTitle>
                                     {!moznaWybracWymiary && (
                                         <CardDescription className="text-gray-500">
-                                            Najpierw wybierz typ pomieszczenia{rodzajPomieszczenia === "garaz-piwnica" && " i stan podłoża"}
+                                            Najpierw wybierz typ pomieszczenia{shouldShowConcreteStep && " i stan podłoża"}
                                         </CardDescription>
                                     )}
                                     {moznaWybracWymiary && !wymiarySaWypelnione && (
@@ -1671,7 +1858,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                         : "text-gray-400"
                                             }
                                         >
-                                            Krok {rodzajPomieszczenia === "garaz-piwnica" ? "4" : "3"}: Rodzaj powierzchni
+                                            Krok {stepNumberById.get("surface") ?? 3}: Rodzaj powierzchni
                                         </span>
                                     </CardTitle>
                                     {!moznaWybracRodzajPowierzchni && (
@@ -1759,247 +1946,252 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         </div>
 
                         {/* Krok: Wybór koloru */}
-                        <div
-                            className={`
+                        {shouldShowColorStep && (
+                            <div
+                                className={`
                 transition-all duration-700 ease-in-out transform
                 ${!moznaWybracKolor ? "opacity-50 scale-95" : kolorJestWybrany ? "scale-100" : "scale-105"}
               `}
-                        >
-                            <Card
-                                className={`
+                            >
+                                <Card
+                                    className={`
                   transition-all duration-500 ease-in-out
                   ${!moznaWybracKolor
-                                        ? "pointer-events-none bg-gray-50 border-gray-200"
-                                        : kolorJestWybrany
-                                            ? "bg-white shadow-md border-green-200"
-                                            : "ring-2 ring-blue-500 shadow-lg bg-blue-50/50 border-blue-200"
-                                    }
+                                            ? "pointer-events-none bg-gray-50 border-gray-200"
+                                            : kolorJestWybrany
+                                                ? "bg-white shadow-md border-green-200"
+                                                : "ring-2 ring-blue-500 shadow-lg bg-blue-50/50 border-blue-200"
+                                        }
                 `}
-                            >
-                                <CardHeader className="pb-3 sm:pb-4">
-                                    <CardTitle className="flex items-center gap-2 sm:gap-3 text-base sm:text-lg">
-                                        <div
-                                            className={`
+                                >
+                                    <CardHeader className="pb-3 sm:pb-4">
+                                        <CardTitle className="flex items-center gap-2 sm:gap-3 text-base sm:text-lg">
+                                            <div
+                                                className={`
                         transition-all duration-300 ease-in-out
                         ${kolorJestWybrany
-                                                    ? "text-green-500 scale-110"
-                                                    : moznaWybracKolor
-                                                        ? "text-blue-600"
-                                                        : "text-gray-400"
-                                                }
+                                                        ? "text-green-500 scale-110"
+                                                        : moznaWybracKolor
+                                                            ? "text-blue-600"
+                                                            : "text-gray-400"
+                                                    }
                       `}
-                                        >
-                                            {kolorJestWybrany ? <CheckCircle className="h-6 w-6" /> : <Palette className="h-6 w-6" />}
-                                        </div>
-                                        <span
-                                            className={
-                                                kolorJestWybrany ? "text-green-700" : moznaWybracKolor ? "text-blue-700" : "text-gray-400"
-                                            }
-                                        >
-                                            Krok {rodzajPomieszczenia === "garaz-piwnica" ? "5" : "4"}: Wybór koloru RAL
-                                        </span>
-                                    </CardTitle>
-                                    {!moznaWybracKolor && (
-                                        <CardDescription className="text-gray-500">
-                                            Najpierw wybierz wymiary i rodzaj powierzchni
-                                        </CardDescription>
-                                    )}
-                                    {moznaWybracKolor && !kolorJestWybrany && (
-                                        <CardDescription className="text-blue-600 font-medium animate-pulse">
-                                            Wybierz kolor posadzki żywicznej
-                                        </CardDescription>
-                                    )}
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="space-y-3">
-                                        {(Array.isArray(koloryRAL) ? koloryRAL : []).map((kolor, index) => (
-                                            <TooltipProvider key={kolor.id}>
-                                                <Tooltip>
-                                                    <TooltipTrigger asChild>
-                                                        <div
-                                                            className={`
+                                            >
+                                                {kolorJestWybrany ? <CheckCircle className="h-6 w-6" /> : <Palette className="h-6 w-6" />}
+                                            </div>
+                                            <span
+                                                className={
+                                                    kolorJestWybrany ? "text-green-700" : moznaWybracKolor ? "text-blue-700" : "text-gray-400"
+                                                }
+                                            >
+                                                Krok {stepNumberById.get("color") ?? 4}: Wybór koloru RAL
+                                            </span>
+                                        </CardTitle>
+                                        {!moznaWybracKolor && (
+                                            <CardDescription className="text-gray-500">
+                                                Najpierw wybierz wymiary i rodzaj powierzchni
+                                            </CardDescription>
+                                        )}
+                                        {moznaWybracKolor && !kolorJestWybrany && (
+                                            <CardDescription className="text-blue-600 font-medium animate-pulse">
+                                                Wybierz kolor posadzki żywicznej
+                                            </CardDescription>
+                                        )}
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div className="space-y-3">
+                                            {(Array.isArray(wybranapPosadzka?.kolory) ? wybranapPosadzka.kolory : []).map((kolor, index) => (
+                                                <TooltipProvider key={kolor.id}>
+                                                    <Tooltip>
+                                                        <TooltipTrigger asChild>
+                                                            <div
+                                                                className={`
                                 border rounded-lg p-3 cursor-pointer transition-all duration-300 ease-in-out
                                 animate-in slide-in-from-left-2
                                 ${wybranyKolor === kolor.id
-                                                                    ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 scale-105"
-                                                                    : "border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:scale-102"
-                                                                }
+                                                                        ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200 scale-105"
+                                                                        : "border-gray-200 hover:border-gray-300 hover:bg-gray-50 hover:scale-102"
+                                                                    }
                                 ${!moznaWybracKolor ? "cursor-not-allowed opacity-50" : ""}
                               `}
-                                                            style={{ animationDelay: `${index * 100}ms` }}
-                                                            onClick={() => moznaWybracKolor && setWybranyKolor(kolor.id)}
-                                                        >
-                                                            <div className="flex items-center gap-3">
-                                                                <div className="relative w-12 h-12 rounded border overflow-hidden flex-shrink-0">
-                                                                    <Image
-                                                                        src={kolor.zdjecie || PLACEHOLDER_IMAGE}
-                                                                        alt={kolor.nazwa}
-                                                                        fill
-                                                                        className="object-cover transition-transform duration-300 hover:scale-110"
-                                                                    />
-                                                                </div>
-                                                                <div className="flex-1 min-w-0">
-                                                                    <h3 className="font-medium text-sm truncate">{kolor.nazwa}</h3>
-                                                                    <p className="text-xs text-gray-600">{kolor.kodRAL}</p>
-                                                                    <p className="text-xs font-medium text-green-600">
-                                                                        {kolor.cenaDodatkowa > 0 ? `+${kolor.cenaDodatkowa} zł/m²` : "Bez dopłaty"}
-                                                                    </p>
-                                                                </div>
-                                                                <div className="flex-shrink-0">
-                                                                    <div
-                                                                        className={`
+                                                                style={{ animationDelay: `${index * 100}ms` }}
+                                                                onClick={() => moznaWybracKolor && setWybranyKolor(kolor.id)}
+                                                            >
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="relative w-12 h-12 rounded border overflow-hidden flex-shrink-0">
+                                                                        <Image
+                                                                            src={kolor.zdjecie || PLACEHOLDER_IMAGE}
+                                                                            alt={kolor.nazwa}
+                                                                            fill
+                                                                            className="object-cover transition-transform duration-300 hover:scale-110"
+                                                                        />
+                                                                    </div>
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <h3 className="font-medium text-sm truncate">{kolor.nazwa}</h3>
+                                                                        <p className="text-xs text-gray-600">{kolor.kodRAL}</p>
+                                                                        <p className="text-xs font-medium text-green-600">
+                                                                            {kolor.cenaDodatkowa > 0 ? `+${kolor.cenaDodatkowa} zł/m²` : "Bez dopłaty"}
+                                                                        </p>
+                                                                    </div>
+                                                                    <div className="flex-shrink-0">
+                                                                        <div
+                                                                            className={`
                                       w-4 h-4 rounded-full border-2 transition-all duration-300
                                       ${wybranyKolor === kolor.id
-                                                                                ? "border-blue-500 bg-blue-500 scale-125"
-                                                                                : "border-gray-300"
-                                                                            }
+                                                                                    ? "border-blue-500 bg-blue-500 scale-125"
+                                                                                    : "border-gray-300"
+                                                                                }
                                     `}
-                                                                    >
-                                                                        {wybranyKolor === kolor.id && (
-                                                                            <div className="w-full h-full rounded-full bg-white scale-50 animate-in zoom-in-50 duration-200"></div>
-                                                                        )}
+                                                                        >
+                                                                            {wybranyKolor === kolor.id && (
+                                                                                <div className="w-full h-full rounded-full bg-white scale-50 animate-in zoom-in-50 duration-200"></div>
+                                                                            )}
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent side="right" className="max-w-xs">
-                                                        <p className="text-sm font-medium">{kolor.nazwa}</p>
-                                                        <p className="text-xs text-gray-600 mt-1">
-                                                            {kolor.cenaDodatkowa > 0
-                                                                ? `Wykończenie z posypką zwiększającą antypoślizgowość. Dopłata: ${kolor.cenaDodatkowa} zł/m²`
-                                                                : "Standardowe wykończenie gładkie w kolorze RAL"}
-                                                        </p>
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                        ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
+                                                        </TooltipTrigger>
+                                                        <TooltipContent side="right" className="max-w-xs">
+                                                            <p className="text-sm font-medium">{kolor.nazwa}</p>
+                                                            <p className="text-xs text-gray-600 mt-1">
+                                                                {kolor.cenaDodatkowa > 0
+                                                                    ? `Wykończenie z posypką zwiększającą antypoślizgowość. Dopłata: ${kolor.cenaDodatkowa} zł/m²`
+                                                                    : "Standardowe wykończenie gładkie w kolorze RAL"}
+                                                            </p>
+                                                        </TooltipContent>
+                                                    </Tooltip>
+                                                </TooltipProvider>
+                                            ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        )}
 
                         {/* Krok: Dodatkowe usługi */}
-                        <div
-                            className={`
+                        {shouldShowServicesStep && (
+                            <div
+                                className={`
                 transition-all duration-700 ease-in-out transform
                 ${!moznaWybracDodatki ? "opacity-50 scale-95" : "scale-100"}
               `}
-                        >
-                            <Card
-                                className={`
+                            >
+                                <Card
+                                    className={`
                   transition-all duration-500 ease-in-out
                   ${!moznaWybracDodatki ? "pointer-events-none bg-gray-50 border-gray-200" : "bg-white shadow-md"}
                 `}
-                            >
-                                <CardHeader className="pb-3 sm:pb-4">
-                                    <CardTitle className="flex items-center gap-2 sm:gap-3 text-base sm:text-lg">
-                                        <Wrench
-                                            className={`h-6 w-6 transition-colors duration-300 ${moznaWybracDodatki ? "text-blue-600" : "text-gray-400"
-                                                }`}
-                                        />
-                                        <span className={moznaWybracDodatki ? "text-blue-700" : "text-gray-400"}>
-                                            Krok {rodzajPomieszczenia === "garaz-piwnica" ? "6" : "5"}: Dodatkowe usługi
-                                        </span>
-                                    </CardTitle>
-                                    {!moznaWybracDodatki && (
-                                        <CardDescription className="text-gray-500">
-                                            Najpierw wybierz wymiary, rodzaj powierzchni i kolor
-                                        </CardDescription>
-                                    )}
-                                    {moznaWybracDodatki && (
-                                        <CardDescription className="text-blue-600 font-medium">
-                                            Wybierz dodatkowe usługi (opcjonalne)
-                                        </CardDescription>
-                                    )}
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    {Object.entries(dodatkiPodleKategorii).map(([kategoria, dodatki]) => (
-                                        <div key={kategoria} className="space-y-3">
-                                            <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
-                                                {kategorieNazwy[kategoria as keyof typeof kategorieNazwy] || kategoria}
-                                            </h4>
-                                            <div className="space-y-2">
-                                                {dodatki.map((dodatek, index) => (
-                                                    <TooltipProvider key={dodatek.id}>
-                                                        <Tooltip>
-                                                            <TooltipTrigger asChild>
-                                                                <div
-                                                                    className={`
+                                >
+                                    <CardHeader className="pb-3 sm:pb-4">
+                                        <CardTitle className="flex items-center gap-2 sm:gap-3 text-base sm:text-lg">
+                                            <Wrench
+                                                className={`h-6 w-6 transition-colors duration-300 ${moznaWybracDodatki ? "text-blue-600" : "text-gray-400"
+                                                    }`}
+                                            />
+                                            <span className={moznaWybracDodatki ? "text-blue-700" : "text-gray-400"}>
+                                                Krok {stepNumberById.get("services") ?? 5}: Dodatkowe usługi
+                                            </span>
+                                        </CardTitle>
+                                        {!moznaWybracDodatki && (
+                                            <CardDescription className="text-gray-500">
+                                                Najpierw wybierz wymiary, rodzaj powierzchni
+                                                {shouldShowColorStep ? " i kolor" : ""}
+                                            </CardDescription>
+                                        )}
+                                        {moznaWybracDodatki && (
+                                            <CardDescription className="text-blue-600 font-medium">
+                                                Wybierz dodatkowe usługi (opcjonalne)
+                                            </CardDescription>
+                                        )}
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        {Object.entries(dodatkiPodleKategorii).map(([kategoria, dodatki]) => (
+                                            <div key={kategoria} className="space-y-3">
+                                                <h4 className="text-sm font-semibold text-gray-700 border-b pb-1">
+                                                    {kategorieNazwy[kategoria as keyof typeof kategorieNazwy] || kategoria}
+                                                </h4>
+                                                <div className="space-y-2">
+                                                    {dodatki.map((dodatek, index) => (
+                                                        <TooltipProvider key={dodatek.id}>
+                                                            <Tooltip>
+                                                                <TooltipTrigger asChild>
+                                                                    <div
+                                                                        className={`
                                     flex items-start space-x-3 p-3 rounded-lg border transition-all duration-300
                                     animate-in slide-in-from-right-2
                                     ${dodatek.obowiazkowy ? "bg-blue-50 border-blue-200" : "border-gray-200"}
                                     ${moznaWybracDodatki ? "hover:bg-gray-50" : ""}
                                   `}
-                                                                    style={{ animationDelay: `${index * 50}ms` }}
-                                                                >
-                                                                    {dodatek.zdjecie && (
-                                                                        <div className="relative w-12 h-12 rounded border overflow-hidden flex-shrink-0">
-                                                                            <Image
-                                                                                src={dodatek.zdjecie || PLACEHOLDER_IMAGE}
-                                                                                alt={dodatek.nazwa}
-                                                                                fill
-                                                                                className="object-cover"
-                                                                            />
-                                                                        </div>
-                                                                    )}
-                                                                    <div className="flex-1 min-w-0">
-                                                                        <div className="flex items-start justify-between gap-2">
-                                                                            <div className="flex items-center gap-2">
-                                                                                <Checkbox
-                                                                                    id={dodatek.id}
-                                                                                    checked={wybraneDodatki.includes(dodatek.id)}
-                                                                                    onCheckedChange={(checked) => handleDodatekChange(dodatek.id, checked as boolean)}
-                                                                                    disabled={!moznaWybracDodatki || dodatek.obowiazkowy}
-                                                                                    className="transition-all duration-200"
+                                                                        style={{ animationDelay: `${index * 50}ms` }}
+                                                                    >
+                                                                        {dodatek.zdjecie && (
+                                                                            <div className="relative w-12 h-12 rounded border overflow-hidden flex-shrink-0">
+                                                                                <Image
+                                                                                    src={dodatek.zdjecie || PLACEHOLDER_IMAGE}
+                                                                                    alt={dodatek.nazwa}
+                                                                                    fill
+                                                                                    className="object-cover"
                                                                                 />
-                                                                                <Label
-                                                                                    htmlFor={dodatek.id}
-                                                                                    className={`text-sm font-medium transition-colors duration-300 ${!moznaWybracDodatki ? "text-gray-400" : dodatek.obowiazkowy ? "text-blue-700" : "cursor-pointer"
-                                                                                        }`}
-                                                                                >
-                                                                                    {dodatek.nazwa}
-                                                                                    {dodatek.obowiazkowy && (
-                                                                                        <span className="ml-2 text-xs text-blue-600 font-semibold">(Obowiązkowe)</span>
-                                                                                    )}
-                                                                                </Label>
                                                                             </div>
-                                                                            <HelpCircle className="h-4 w-4 text-gray-400 hover:text-blue-500 transition-colors flex-shrink-0" />
+                                                                        )}
+                                                                        <div className="flex-1 min-w-0">
+                                                                            <div className="flex items-start justify-between gap-2">
+                                                                                <div className="flex items-center gap-2">
+                                                                                    <Checkbox
+                                                                                        id={dodatek.id}
+                                                                                        checked={wybraneDodatki.includes(dodatek.id)}
+                                                                                        onCheckedChange={(checked) => handleDodatekChange(dodatek.id, checked as boolean)}
+                                                                                        disabled={!moznaWybracDodatki || dodatek.obowiazkowy}
+                                                                                        className="transition-all duration-200"
+                                                                                    />
+                                                                                    <Label
+                                                                                        htmlFor={dodatek.id}
+                                                                                        className={`text-sm font-medium transition-colors duration-300 ${!moznaWybracDodatki ? "text-gray-400" : dodatek.obowiazkowy ? "text-blue-700" : "cursor-pointer"
+                                                                                            }`}
+                                                                                    >
+                                                                                        {dodatek.nazwa}
+                                                                                        {dodatek.obowiazkowy && (
+                                                                                            <span className="ml-2 text-xs text-blue-600 font-semibold">(Obowiązkowe)</span>
+                                                                                        )}
+                                                                                    </Label>
+                                                                                </div>
+                                                                                <HelpCircle className="h-4 w-4 text-gray-400 hover:text-blue-500 transition-colors flex-shrink-0" />
+                                                                            </div>
+                                                                            <p className="text-xs text-gray-600 mt-1 ml-6">{dodatek.opis}</p>
+                                                                            <span
+                                                                                className={`text-sm font-semibold transition-colors duration-300 ml-6 inline-block mt-1 ${!moznaWybracDodatki ? "text-gray-400" : "text-green-600"
+                                                                                    }`}
+                                                                            >
+                                                                                {dodatek.wCeniePosadzki ? (
+                                                                                    <span className="text-blue-600 italic">w cenie posadzki</span>
+                                                                                ) : (
+                                                                                    <>
+                                                                                        {dodatek.cenaZaM2 && `${dodatek.cenaZaM2} zł/m²`}
+                                                                                        {dodatek.cenaZaMb && `${dodatek.cenaZaMb} zł/mb`}
+                                                                                        {dodatek.cenaStala && `${dodatek.cenaStala} zł`}
+                                                                                    </>
+                                                                                )}
+                                                                            </span>
                                                                         </div>
-                                                                        <p className="text-xs text-gray-600 mt-1 ml-6">{dodatek.opis}</p>
-                                                                        <span
-                                                                            className={`text-sm font-semibold transition-colors duration-300 ml-6 inline-block mt-1 ${!moznaWybracDodatki ? "text-gray-400" : "text-green-600"
-                                                                                }`}
-                                                                        >
-                                                                            {dodatek.wCeniePosadzki ? (
-                                                                                <span className="text-blue-600 italic">w cenie posadzki</span>
-                                                                            ) : (
-                                                                                <>
-                                                                                    {dodatek.cenaZaM2 && `${dodatek.cenaZaM2} zł/m²`}
-                                                                                    {dodatek.cenaZaMb && `${dodatek.cenaZaMb} zł/mb`}
-                                                                                    {dodatek.cenaStala && `${dodatek.cenaStala} zł`}
-                                                                                </>
-                                                                            )}
-                                                                        </span>
                                                                     </div>
-                                                                </div>
-                                                            </TooltipTrigger>
-                                                            <TooltipContent side="right" className="max-w-xs">
-                                                                <p className="text-sm font-medium">{dodatek.nazwa}</p>
-                                                                <p className="text-xs text-gray-600 mt-1">{dodatek.opis}</p>
-                                                                {dodatek.obowiazkowy && (
-                                                                    <p className="text-xs text-blue-600 mt-1 font-semibold">Ta usługa jest obowiązkowa i zawarta w cenie</p>
-                                                                )}
-                                                            </TooltipContent>
-                                                        </Tooltip>
-                                                    </TooltipProvider>
-                                                ))}
+                                                                </TooltipTrigger>
+                                                                <TooltipContent side="right" className="max-w-xs">
+                                                                    <p className="text-sm font-medium">{dodatek.nazwa}</p>
+                                                                    <p className="text-xs text-gray-600 mt-1">{dodatek.opis}</p>
+                                                                    {dodatek.obowiazkowy && (
+                                                                        <p className="text-xs text-blue-600 mt-1 font-semibold">Ta usługa jest obowiązkowa i zawarta w cenie</p>
+                                                                    )}
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    ))}
+                                                </div>
                                             </div>
-                                        </div>
-                                    ))}
-                                </CardContent>
-                            </Card>
-                        </div>
+                                        ))}
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        )}
 
                         {/* Podsumowanie i akcje - ukryte na mobile (przeniesione do sticky bottom bar) */}
                         {powierzchnia > 0 && wybranapPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
@@ -2214,8 +2406,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             
             {/* Sticky bottom bar for mobile - floating pinned at the very bottom */}
             {shouldShowMobileStickyBar && (
-                <div className="block lg:hidden fixed bottom-0 left-0 right-0 w-full bg-white border-t-2 border-green-500 shadow-lg z-[9999]">
-                    <div className="px-4 py-3 pb-4">
+                <div className="block lg:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur border-t-2 border-green-500 shadow-lg z-[9999]">
+                    <div className="px-3 sm:px-4 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
                         {/* Compact summary */}
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
                             <div className="flex items-center justify-between mb-2">

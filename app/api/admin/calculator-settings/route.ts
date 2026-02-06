@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
     const type = searchParams.get("type")
 
     if (type === "surface-types") {
-      const result = await getAllSurfaceTypes()
+      const result = await getAllSurfaceTypes({ includeInactive: true, useAdmin: true })
       if (!result.success) {
         return NextResponse.json({ error: result.error }, { status: 500 })
       }
@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (type === "colors") {
-      const result = await getAllColors()
+      const result = await getAllColors({ includeInactive: true, useAdmin: true })
       if (!result.success) {
         return NextResponse.json({ error: result.error }, { status: 500 })
       }
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     }
 
     if (type === "services") {
-      const result = await getAllServices()
+      const result = await getAllServices({ includeInactive: true, useAdmin: true })
       if (!result.success) {
         return NextResponse.json({ error: result.error }, { status: 500 })
       }
@@ -75,9 +75,9 @@ export async function GET(request: NextRequest) {
 
     // Get all settings
     const [surfaceTypes, colors, services, roomTypes, concreteStates, stepConfigs] = await Promise.all([
-      getAllSurfaceTypes(),
-      getAllColors(),
-      getAllServices(),
+      getAllSurfaceTypes({ includeInactive: true, useAdmin: true }),
+      getAllColors({ includeInactive: true, useAdmin: true }),
+      getAllServices({ includeInactive: true, useAdmin: true }),
       getAllRoomTypes(),
       getAllConcreteStates(),
       getAllStepConfigs(),

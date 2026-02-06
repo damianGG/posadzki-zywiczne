@@ -95,7 +95,7 @@ export default function HeroMainPage() {
                             </Button>
 
                             <Button className="gap-3 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 hover:from-purple-700 hover:via-pink-600 hover:to-orange-500 text-white">
-                                <a href="/wyniki-konkursu">Zobacz wyniki konkursu</a>
+                                <a href="/kalkulator">Kalkulator posadzki żywicznej</a>
                                 <MoveRight className="w-4 h-4" />
                             </Button>
 
