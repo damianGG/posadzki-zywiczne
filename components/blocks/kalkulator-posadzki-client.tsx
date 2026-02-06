@@ -343,6 +343,21 @@ const WYMIARY_LIMITS = {
 const FLAT_RATE_LIMIT_M2 = 34
 const FLAT_RATE_AMOUNT = 5000
 
+const SERVICE_IMAGE_MAP: Record<string, string> = {
+    gruntowanie: "/images/gruntowanie.jpg",
+    cokol: "/images/cokol.jpg",
+    uszczelnienie: "/images/uszczelnienie.jpg",
+    dylatacje: "/images/dylatacje.jpg",
+    podklad: "/images/podklad.jpg",
+    szlifowanie: "/images/szlifowanie.jpg",
+    "naprawa-ubytków": "/images/naprawa.jpg",
+    demontaz: "/images/demontaz.jpg",
+    "warstwa-ochronna": "/images/warstwa-ochronna.jpg",
+    antypoślizgowa: "/images/antypoślizgowa.jpg",
+    transport: "/images/transport.jpg",
+    sprzatanie: "/images/sprzatanie.jpg",
+}
+
 interface ProgressBarProps {
     currentStep: number
     steps: Array<{ id: string; title: string; description: string }>
@@ -647,7 +662,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     domyslnie: Boolean(s.is_default),
                     obowiazkowy: Boolean(s.is_mandatory),
                     wCeniePosadzki: Boolean(s.is_included_in_floor_price),
-                    zdjecie: s.image_url || PLACEHOLDER_IMAGE,
+                    zdjecie: s.image_url || SERVICE_IMAGE_MAP[String(s.service_id || s.id || '')] || PLACEHOLDER_IMAGE,
                 }))
 
             if (transformed.length === 0) {
@@ -2225,7 +2240,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                                 <TooltipTrigger asChild>
                                                                     <div
                                                                         className={`
-                                    flex items-start space-x-3 p-3 rounded-lg border transition-all duration-300
+                                    flex flex-col sm:flex-row sm:items-start gap-3 p-3 rounded-lg border transition-all duration-300
                                     animate-in slide-in-from-right-2
                                     ${dodatek.obowiazkowy ? "bg-blue-50 border-blue-200" : "border-gray-200"}
                                     ${moznaWybracDodatki ? "hover:bg-gray-50" : ""}
@@ -2233,7 +2248,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                                         style={{ animationDelay: `${index * 50}ms` }}
                                                                     >
                                                                         {dodatek.zdjecie && (
-                                                                            <div className="relative w-12 h-12 rounded border overflow-hidden flex-shrink-0">
+                                                                            <div className="relative w-16 h-16 rounded border overflow-hidden flex-shrink-0">
                                                                                 <Image
                                                                                     src={dodatek.zdjecie || PLACEHOLDER_IMAGE}
                                                                                     alt={dodatek.nazwa}
@@ -2265,9 +2280,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                                                 </div>
                                                                                 <HelpCircle className="h-4 w-4 text-gray-400 hover:text-blue-500 transition-colors flex-shrink-0" />
                                                                             </div>
-                                                                            <p className="text-xs text-gray-600 mt-1 ml-6">{dodatek.opis}</p>
+                                                                            <p className="text-xs text-gray-600 mt-1 sm:ml-6">{dodatek.opis}</p>
                                                                             <span
-                                                                                className={`text-sm font-semibold transition-colors duration-300 ml-6 inline-block mt-1 ${!moznaWybracDodatki ? "text-gray-400" : "text-green-600"
+                                                                                className={`text-sm font-semibold transition-colors duration-300 sm:ml-6 inline-block mt-1 ${!moznaWybracDodatki ? "text-gray-400" : "text-green-600"
                                                                                     }`}
                                                                             >
                                                                                 {dodatek.wCeniePosadzki ? (
