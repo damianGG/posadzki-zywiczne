@@ -839,7 +839,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         return errors
     }, [trybWymiarow])
 
-    const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    const isValidEmail = (email: string) => {
+        const trimmed = email.trim()
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(trimmed)) {
+            return false
+        }
+        return !trimmed.includes("..")
+    }
 
     // Sprawdzanie kroków
     const rodzajPomieszczeniaJestWybrany = rodzajPomieszczenia !== ""
@@ -1046,16 +1052,15 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const generujPDF = async (sendEmail = false) => {
         if (!powierzchnia || !wybranapPosadzka || !wybranyRodzajPowierzchniObj || !wybranyKolorObj) return
 
+        if (sendEmail && !isValidEmail(userEmail)) {
+            alert("Wprowadź poprawny adres email.")
+            return
+        }
+
         if (sendEmail) {
             setIsSendingEmail(true)
         } else {
             setIsGeneratingPDF(true)
-        }
-
-        if (sendEmail && !isValidEmail(userEmail)) {
-            setIsSendingEmail(false)
-            alert("Wprowadź poprawny adres email.")
-            return
         }
 
         // Symulacja generowania PDF
@@ -2407,7 +2412,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             {/* Sticky bottom bar for mobile - floating pinned at the very bottom */}
             {shouldShowMobileStickyBar && (
                 <div className="block lg:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur border-t-2 border-green-500 shadow-lg z-[9999]">
-                    <div className="px-3 sm:px-4 py-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+                    <div className="px-3 sm:px-4 py-3 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
                         {/* Compact summary */}
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
                             <div className="flex items-center justify-between mb-2">

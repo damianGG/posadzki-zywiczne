@@ -812,7 +812,7 @@ export default function CalculatorAdminPage() {
               </Button>
             </div>
             {services
-              .filter(service => service.category === 'przygotowanie' || service.category === 'wykończenie' || service.category === 'logistyka' || service.category === 'ochrona')
+              .filter(service => ['przygotowanie', 'wykończenie', 'logistyka', 'ochrona'].includes(service.category))
               .map((service) => (
               <Card key={service.id} className={!service.is_active ? 'opacity-60 bg-gray-50' : ''}>
                 <CardHeader>
