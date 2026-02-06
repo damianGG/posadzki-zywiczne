@@ -345,28 +345,28 @@ const FLAT_RATE_AMOUNT = 5000
 
 const DIACRITIC_MAP: Record<string, string> = {
     ą: "a",
-    Ą: "a",
+    Ą: "A",
     ć: "c",
-    Ć: "c",
+    Ć: "C",
     ę: "e",
-    Ę: "e",
+    Ę: "E",
     ł: "l",
-    Ł: "l",
+    Ł: "L",
     ń: "n",
-    Ń: "n",
+    Ń: "N",
     ó: "o",
-    Ó: "o",
+    Ó: "O",
     ś: "s",
-    Ś: "s",
+    Ś: "S",
     ź: "z",
-    Ź: "z",
+    Ź: "Z",
     ż: "z",
-    Ż: "z",
+    Ż: "Z",
 }
 
 const normalizeServiceId = (serviceId: string) =>
     serviceId
-        .replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, (char) => DIACRITIC_MAP[char])
+        .replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, (char) => DIACRITIC_MAP[char] || char)
         .toLowerCase()
 
 const SERVICE_IMAGE_MAP: Record<string, string> = {
