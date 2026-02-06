@@ -790,25 +790,6 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const wybraneRodzajPomieszczenieObj = rodzajePomieszczen.find((p) => p.id === rodzajPomieszczenia)
     const wybranyStanBetonuObj = stanyBetonu.find((s) => s.id === stanBetonu)
 
-    // Check if mobile sticky bar should be shown
-    const shouldShowMobileStickyBar = powierzchnia > 0 && 
-        !!wybranapPosadzka && 
-        !!wybranyRodzajPowierzchniObj && 
-        !!wybranyKolorObj && 
-        kosztCalkowity > 0
-    
-    // Debug logging in development
-    if (process.env.NODE_ENV === 'development') {
-        console.log('Mobile Sticky Bar Debug:', {
-            shouldShow: shouldShowMobileStickyBar,
-            powierzchnia,
-            wybranapPosadzka: !!wybranapPosadzka,
-            wybranyRodzajPowierzchniObj: !!wybranyRodzajPowierzchniObj,
-            wybranyKolorObj: !!wybranyKolorObj,
-            kosztCalkowity
-        })
-    }
-
     // Initialize mandatory services on first render
     useEffect(() => {
         if (wybraneDodatki.length > 0) return
@@ -933,6 +914,33 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         kolorJestWybrany,
         shouldShowServicesStep,
     ])
+
+    const totalSteps = steps.length
+
+    const shouldShowPreview =
+        currentStep === totalSteps &&
+        powierzchnia > 0 &&
+        !!wybranyRodzajPowierzchniObj &&
+        !!wybranyKolorObj
+
+    // Check if mobile sticky bar should be shown
+    const shouldShowMobileStickyBar = powierzchnia > 0 && 
+        !!wybranapPosadzka && 
+        !!wybranyRodzajPowierzchniObj && 
+        !!wybranyKolorObj && 
+        kosztCalkowity > 0
+    
+    // Debug logging in development
+    if (process.env.NODE_ENV === 'development') {
+        console.log('Mobile Sticky Bar Debug:', {
+            shouldShow: shouldShowMobileStickyBar,
+            powierzchnia,
+            wybranapPosadzka: !!wybranapPosadzka,
+            wybranyRodzajPowierzchniObj: !!wybranyRodzajPowierzchniObj,
+            wybranyKolorObj: !!wybranyKolorObj,
+            kosztCalkowity
+        })
+    }
 
     useEffect(() => {
         if (shouldShowConcreteStep || rodzajPomieszczenia !== "garaz-piwnica") return
@@ -1466,8 +1474,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             {/* Main content with extra bottom padding on mobile for sticky bottom bar (128px to accommodate bar height) */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pb-32 lg:pb-8">
                 <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-8 min-h-[600px]">
-                    {/* Panel opcji - na mobile pełna szerokość, na lg 1/3 ekranu */}
-                    <div className="lg:col-span-4 space-y-4 lg:space-y-6">
+                    {/* Panel opcji - na mobile pełna szerokość */}
+                    <div className="lg:col-span-12 space-y-4 lg:space-y-6">
                         {/* Krok 1: Typ pomieszczenia */}
                         <div
                             className={`
@@ -2348,21 +2356,18 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         </div>
                     </div>
 
-                    {/* Podgląd - na mobile pełna szerokość pod opcjami, na lg 2/3 ekranu */}
-                    <div className="lg:col-span-8 order-first lg:order-last">
-                        <Card className="h-64 sm:h-80 lg:h-full transition-all duration-500 ease-in-out">
-                            <CardHeader className="pb-3 sm:pb-4">
-                                <CardTitle className="text-lg sm:text-xl">Podgląd wybranej posadzki</CardTitle>
-                                {wybranyRodzajPowierzchniObj && wybranyKolorObj && (
+                    {shouldShowPreview && wybranyKolorObj && wybranyRodzajPowierzchniObj && (
+                        <div className="lg:col-span-12">
+                            <Card className="transition-all duration-500 ease-in-out">
+                                <CardHeader className="pb-3 sm:pb-4">
+                                    <CardTitle className="text-lg sm:text-xl">Podgląd wybranej posadzki</CardTitle>
                                     <CardDescription className="text-base sm:text-lg font-medium text-blue-600 animate-in fade-in duration-500">
                                         {wybranyRodzajPowierzchniObj.nazwa} - {wybranyKolorObj.nazwa}
                                     </CardDescription>
-                                )}
-                            </CardHeader>
-                            <CardContent className="h-full pb-4">
-                                {wybranyKolorObj && wybranyRodzajPowierzchniObj ? (
-                                    <div className="h-full flex flex-col animate-in fade-in slide-in-from-right-4 duration-700">
-                                        <div className="flex-1 relative rounded-lg overflow-hidden border-2 border-gray-200 min-h-[200px] sm:min-h-[300px] lg:min-h-[400px] group">
+                                </CardHeader>
+                                <CardContent className="pb-4">
+                                    <div className="flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-700">
+                                        <div className="relative rounded-lg overflow-hidden border-2 border-gray-200 min-h-[200px] sm:min-h-[300px] group">
                                             <Image
                                                 src={wybranyKolorObj.podglad || PLACEHOLDER_IMAGE}
                                                 alt={`Podgląd ${wybranyKolorObj.nazwa}`}
@@ -2411,24 +2416,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                             )}
                                         </div>
                                     </div>
-                                ) : (
-                                    <div className="h-full flex items-center justify-center bg-gray-100 rounded-lg">
-                                        <div className="text-center text-gray-500 animate-in fade-in duration-500 p-4">
-                                            <Layers className="h-12 w-12 sm:h-16 sm:w-16 mx-auto mb-4 opacity-50 animate-pulse" />
-                                            <h3 className="text-lg sm:text-xl font-medium mb-2">Wybierz rodzaj powierzchni i kolor</h3>
-                                            <p className="text-sm sm:text-base text-gray-400">
-                                                {!wymiarySaWypelnione
-                                                    ? "Najpierw wprowadź poprawne wymiary pomieszczenia"
-                                                    : !rodzajPowierzchniJestWybrany
-                                                        ? "Wybierz rodzaj powierzchni posadzki"
-                                                        : "Wybierz kolor posadzki RAL"}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
-                            </CardContent>
-                        </Card>
-                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
                 </div>
             </div>
             
