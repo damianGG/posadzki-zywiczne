@@ -343,13 +343,24 @@ const WYMIARY_LIMITS = {
 const FLAT_RATE_LIMIT_M2 = 34
 const FLAT_RATE_AMOUNT = 5000
 
+const DIACRITIC_MAP: Record<string, string> = {
+    ą: "a",
+    ć: "c",
+    ę: "e",
+    ł: "l",
+    ń: "n",
+    ó: "o",
+    ś: "s",
+    ź: "z",
+    ż: "z",
+}
+
 const normalizeServiceId = (serviceId: string) =>
     serviceId
-        .replace(/ł/g, "l")
-        .replace(/Ł/g, "L")
+        .toLowerCase()
+        .replace(/[ąćęłńóśźż]/g, (char) => DIACRITIC_MAP[char] || char)
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
-        .toLowerCase()
 
 const SERVICE_IMAGE_MAP: Record<string, string> = {
     gruntowanie: "/images/gruntowanie.jpg",
