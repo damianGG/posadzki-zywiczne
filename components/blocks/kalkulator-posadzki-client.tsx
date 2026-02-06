@@ -81,6 +81,20 @@ interface StanBetonuOption {
     showPriceInLabel?: boolean
 }
 
+interface DodatkowaUsluga {
+    id: string
+    nazwa: string
+    opis: string
+    kategoria: string
+    domyslnie: boolean
+    zdjecie: string
+    obowiazkowy: boolean
+    wCeniePosadzki: boolean
+    cenaZaM2?: number
+    cenaZaMb?: number
+    cenaStala?: number
+}
+
 const fallbackRodzajePomieszczen: RodzajPomieszczeniaOption[] = [
     {
         id: "garaz-piwnica",
@@ -183,7 +197,7 @@ const rodzajePosadzek: PosadzkaOption[] = [
     },
 ]
 
-const fallbackDodatkiUslugi = [
+const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
     {
         id: "gruntowanie",
         nazwa: "Gruntowanie podłoża",
@@ -608,7 +622,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
 
         try {
-            const transformed = initialData.services
+            const transformed: DodatkowaUsluga[] = initialData.services
                 .filter((s: any) => s.is_active !== false)
                 .map((s: any) => ({
                     id: String(s.service_id || s.id || ''),
@@ -732,7 +746,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
     const rodzajePomieszczen = transformedRoomTypes.data
     const stanyBetonu = transformedConcreteStates.data
-    const dodatkiUslugi = transformedServices.data
+    const dodatkiUslugi: DodatkowaUsluga[] = transformedServices.data
     
     const [rodzajPomieszczenia, setRodzajPomieszczenia] = useState<string>("")
     const [stanBetonu, setStanBetonu] = useState<string>("")
@@ -1394,7 +1408,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             acc[kategoria].push(dodatek)
             return acc
         },
-        {} as Record<string, typeof dodatkiUslugi>,
+        {} as Record<string, DodatkowaUsluga[]>,
     )
 
     const kategorieNazwy = {
