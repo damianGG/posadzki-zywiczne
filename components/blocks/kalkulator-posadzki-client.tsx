@@ -1343,7 +1343,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         doc.setFontSize(11)
         doc.setFont("helvetica", "normal")
-        doc.text(formatTextForPDF(`Koszt calkowity: ${kosztCalkowity.toFixed(2)} zl`), 20, yPosition)
+        doc.text(formatTextForPDF(`Koszt całkowity: ${kosztCalkowity.toFixed(2)} zl`), 20, yPosition)
         yPosition += 6
         doc.text(formatTextForPDF(`Koszt za m²: ${(kosztCalkowity / powierzchnia).toFixed(2)} zl/m²`), 20, yPosition)
         yPosition += 6
@@ -1410,13 +1410,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.setFont("helvetica", "italic")
         doc.setTextColor(100, 100, 100)
         doc.text(
-            formatTextForPDF("Oferta nie jest umowa. Wymagamy kontaktu w celu potwierdzenia ostatecznej ceny."),
+            formatTextForPDF("Oferta nie jest umową. Wymagamy kontaktu w celu potwierdzenia ostatecznej ceny."),
             pageWidth / 2,
             pageHeight - 14,
             { align: "center" },
         )
         doc.text(
-            formatTextForPDF("Kosztorys wygenerowany automatycznie. Ceny moga ulec zmianie."),
+            formatTextForPDF("Kosztorys wygenerowany automatycznie. Ceny mogą ulec zmianie."),
             pageWidth / 2,
             pageHeight - 8,
             { align: "center" },
