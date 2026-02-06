@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
 import { Calculator, Save, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -529,23 +530,39 @@ export default function CalculatorAdminPage() {
                   </div>
                   <div>
                     <Label>URL zdjęcia</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={surface.image_url || ''}
-                        onChange={(e) => {
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <Input
+                          value={surface.image_url || ''}
+                          onChange={(e) => {
+                            const updated = surfaceTypes.map((s) =>
+                              s.id === surface.id ? { ...s, image_url: e.target.value } : s
+                            );
+                            setSurfaceTypes(updated);
+                          }}
+                          onBlur={(e) => updateSetting('surface-type', surface.type_id, { image_url: e.target.value })}
+                          placeholder="/images/..."
+                        />
+                        {surface.image_url && (
+                          <div className="relative w-16 h-16 border rounded">
+                            <Image src={surface.image_url} alt={surface.name} fill className="object-cover rounded" />
+                          </div>
+                        )}
+                      </div>
+                      <CloudinaryUploadWidget
+                        maxFiles={1}
+                        folder="kalkulator/powierzchnie"
+                        disabled={saving}
+                        onUploadComplete={(results) => {
+                          const url = results[0]?.url;
+                          if (!url) return;
                           const updated = surfaceTypes.map((s) =>
-                            s.id === surface.id ? { ...s, image_url: e.target.value } : s
+                            s.id === surface.id ? { ...s, image_url: url } : s
                           );
                           setSurfaceTypes(updated);
+                          updateSetting('surface-type', surface.type_id, { image_url: url });
                         }}
-                        onBlur={(e) => updateSetting('surface-type', surface.type_id, { image_url: e.target.value })}
-                        placeholder="/images/..."
                       />
-                      {surface.image_url && (
-                        <div className="relative w-16 h-16 border rounded">
-                          <Image src={surface.image_url} alt={surface.name} fill className="object-cover rounded" />
-                        </div>
-                      )}
                     </div>
                   </div>
                   
@@ -769,31 +786,63 @@ export default function CalculatorAdminPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label>Miniatura (thumbnail_url)</Label>
-                      <Input
-                        value={color.thumbnail_url || ''}
-                        onChange={(e) => {
-                          const updated = colors.map((c) =>
-                            c.id === color.id ? { ...c, thumbnail_url: e.target.value } : c
-                          );
-                          setColors(updated);
-                        }}
-                        onBlur={(e) => updateSetting('color', color.color_id, { thumbnail_url: e.target.value })}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-2">
+                        <Input
+                          value={color.thumbnail_url || ''}
+                          onChange={(e) => {
+                            const updated = colors.map((c) =>
+                              c.id === color.id ? { ...c, thumbnail_url: e.target.value } : c
+                            );
+                            setColors(updated);
+                          }}
+                          onBlur={(e) => updateSetting('color', color.color_id, { thumbnail_url: e.target.value })}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/kolory/miniatury"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            const url = results[0]?.url;
+                            if (!url) return;
+                            const updated = colors.map((c) =>
+                              c.id === color.id ? { ...c, thumbnail_url: url } : c
+                            );
+                            setColors(updated);
+                            updateSetting('color', color.color_id, { thumbnail_url: url });
+                          }}
+                        />
+                      </div>
                     </div>
                     <div>
                       <Label>Podgląd (preview_url)</Label>
-                      <Input
-                        value={color.preview_url || ''}
-                        onChange={(e) => {
-                          const updated = colors.map((c) =>
-                            c.id === color.id ? { ...c, preview_url: e.target.value } : c
-                          );
-                          setColors(updated);
-                        }}
-                        onBlur={(e) => updateSetting('color', color.color_id, { preview_url: e.target.value })}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-2">
+                        <Input
+                          value={color.preview_url || ''}
+                          onChange={(e) => {
+                            const updated = colors.map((c) =>
+                              c.id === color.id ? { ...c, preview_url: e.target.value } : c
+                            );
+                            setColors(updated);
+                          }}
+                          onBlur={(e) => updateSetting('color', color.color_id, { preview_url: e.target.value })}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/kolory/podglady"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            const url = results[0]?.url;
+                            if (!url) return;
+                            const updated = colors.map((c) =>
+                              c.id === color.id ? { ...c, preview_url: url } : c
+                            );
+                            setColors(updated);
+                            updateSetting('color', color.color_id, { preview_url: url });
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -977,23 +1026,39 @@ export default function CalculatorAdminPage() {
                   )}
                   <div>
                     <Label>URL zdjęcia</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={service.image_url || ''}
-                        onChange={(e) => {
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <Input
+                          value={service.image_url || ''}
+                          onChange={(e) => {
+                            const updated = services.map((s) =>
+                              s.id === service.id ? { ...s, image_url: e.target.value } : s
+                            );
+                            setServices(updated);
+                          }}
+                          onBlur={(e) => updateSetting('service', service.service_id, { image_url: e.target.value })}
+                          placeholder="/images/..."
+                        />
+                        {service.image_url && (
+                          <div className="relative w-16 h-16 border rounded">
+                            <Image src={service.image_url} alt={service.name} fill className="object-cover rounded" />
+                          </div>
+                        )}
+                      </div>
+                      <CloudinaryUploadWidget
+                        maxFiles={1}
+                        folder="kalkulator/uslugi"
+                        disabled={saving}
+                        onUploadComplete={(results) => {
+                          const url = results[0]?.url;
+                          if (!url) return;
                           const updated = services.map((s) =>
-                            s.id === service.id ? { ...s, image_url: e.target.value } : s
+                            s.id === service.id ? { ...s, image_url: url } : s
                           );
                           setServices(updated);
+                          updateSetting('service', service.service_id, { image_url: url });
                         }}
-                        onBlur={(e) => updateSetting('service', service.service_id, { image_url: e.target.value })}
-                        placeholder="/images/..."
                       />
-                      {service.image_url && (
-                        <div className="relative w-16 h-16 border rounded">
-                          <Image src={service.image_url} alt={service.name} fill className="object-cover rounded" />
-                        </div>
-                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -1274,11 +1339,23 @@ export default function CalculatorAdminPage() {
                     </div>
                     <div>
                       <Label>URL zdjęcia</Label>
-                      <Input
-                        value={newItem.image_url || ''}
-                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, image_url: e.target.value }))}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-2">
+                        <Input
+                          value={newItem.image_url || ''}
+                          onChange={(e) => setNewItem((prev: any) => ({ ...prev, image_url: e.target.value }))}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/powierzchnie"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            const url = results[0]?.url;
+                            if (!url) return;
+                            setNewItem((prev: any) => ({ ...prev, image_url: url }));
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div>
@@ -1342,19 +1419,43 @@ export default function CalculatorAdminPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label>Miniatura</Label>
-                      <Input
-                        value={newItem.thumbnail_url || ''}
-                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, thumbnail_url: e.target.value }))}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-2">
+                        <Input
+                          value={newItem.thumbnail_url || ''}
+                          onChange={(e) => setNewItem((prev: any) => ({ ...prev, thumbnail_url: e.target.value }))}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/kolory/miniatury"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            const url = results[0]?.url;
+                            if (!url) return;
+                            setNewItem((prev: any) => ({ ...prev, thumbnail_url: url }));
+                          }}
+                        />
+                      </div>
                     </div>
                     <div>
                       <Label>Podgląd</Label>
-                      <Input
-                        value={newItem.preview_url || ''}
-                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, preview_url: e.target.value }))}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-2">
+                        <Input
+                          value={newItem.preview_url || ''}
+                          onChange={(e) => setNewItem((prev: any) => ({ ...prev, preview_url: e.target.value }))}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/kolory/podglady"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            const url = results[0]?.url;
+                            if (!url) return;
+                            setNewItem((prev: any) => ({ ...prev, preview_url: url }));
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -1453,11 +1554,23 @@ export default function CalculatorAdminPage() {
                   </div>
                   <div>
                     <Label>URL zdjęcia</Label>
-                    <Input
-                      value={newItem.image_url || ''}
-                      onChange={(e) => setNewItem((prev: any) => ({ ...prev, image_url: e.target.value }))}
-                      placeholder="/images/..."
-                    />
+                    <div className="space-y-2">
+                      <Input
+                        value={newItem.image_url || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, image_url: e.target.value }))}
+                        placeholder="/images/..."
+                      />
+                      <CloudinaryUploadWidget
+                        maxFiles={1}
+                        folder="kalkulator/uslugi"
+                        disabled={saving}
+                        onUploadComplete={(results) => {
+                          const url = results[0]?.url;
+                          if (!url) return;
+                          setNewItem((prev: any) => ({ ...prev, image_url: url }));
+                        }}
+                      />
+                    </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-2">
