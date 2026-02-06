@@ -779,17 +779,17 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [showEmailInput, setShowEmailInput] = useState(false)
     
     // Create dynamic posadzka object with loaded data
-    const wybranapPosadzka = useMemo(() => ({
+    const wybranaPosadzka = useMemo(() => ({
         id: "zywica",
         nazwa: "Posadzka żywiczna",
         rodzajePowierzchni: transformedSurfaces.data,
         kolory: transformedColors.data,
     }), [transformedSurfaces, transformedColors])
     
-    const wybranyRodzajPowierzchniObj = wybranapPosadzka?.rodzajePowierzchni.find(
+    const wybranyRodzajPowierzchniObj = wybranaPosadzka?.rodzajePowierzchni.find(
         (r) => r.id === wybranyRodzajPowierzchni,
     )
-    const wybranyKolorObj = wybranapPosadzka?.kolory.find((k) => k.id === wybranyKolor)
+    const wybranyKolorObj = wybranaPosadzka?.kolory.find((k) => k.id === wybranyKolor)
     const wybraneRodzajPomieszczenieObj = rodzajePomieszczen.find((p) => p.id === rodzajPomieszczenia)
     const wybranyStanBetonuObj = stanyBetonu.find((s) => s.id === stanBetonu)
 
@@ -928,7 +928,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
     // Check if mobile sticky bar should be shown
     const shouldShowMobileStickyBar = powierzchnia > 0 && 
-        !!wybranapPosadzka && 
+        !!wybranaPosadzka && 
         !!wybranyRodzajPowierzchniObj && 
         !!wybranyKolorObj && 
         kosztCalkowity > 0
@@ -938,7 +938,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         console.log('Mobile Sticky Bar Debug:', {
             shouldShow: shouldShowMobileStickyBar,
             powierzchnia,
-            wybranapPosadzka: !!wybranapPosadzka,
+            wybranaPosadzka: !!wybranaPosadzka,
             wybranyRodzajPowierzchniObj: !!wybranyRodzajPowierzchniObj,
             wybranyKolorObj: !!wybranyKolorObj,
             kosztCalkowity
@@ -954,10 +954,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
     useEffect(() => {
         if (shouldShowColorStep || !rodzajPowierzchniJestWybrany || !wymiarySaWypelnione) return
-        if (!wybranyKolor && wybranapPosadzka?.kolory?.length) {
-            setWybranyKolor(wybranapPosadzka.kolory[0].id)
+        if (!wybranyKolor && wybranaPosadzka?.kolory?.length) {
+            setWybranyKolor(wybranaPosadzka.kolory[0].id)
         }
-    }, [shouldShowColorStep, rodzajPowierzchniJestWybrany, wymiarySaWypelnione, wybranyKolor, wybranapPosadzka])
+    }, [shouldShowColorStep, rodzajPowierzchniJestWybrany, wymiarySaWypelnione, wybranyKolor, wybranaPosadzka])
 
     useEffect(() => {
         const errors = walidujWymiary(wymiary.dlugosc, wymiary.szerokosc, powierzchniaBezposrednia)
@@ -978,7 +978,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             setPowierzchnia(0)
         }
 
-        if (pow > 0 && wybranapPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && errors.length === 0) {
+        if (pow > 0 && wybranaPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && errors.length === 0) {
             // Calculate base cost using price ranges if available
             let baseCost = 0
             
@@ -1043,7 +1043,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         wybraneDodatki,
         obwod,
         stanBetonu,
-        wybranapPosadzka,
+        wybranaPosadzka,
         wybranyRodzajPowierzchniObj,
         wybranyKolorObj,
         wybranyStanBetonuObj,
@@ -1084,7 +1084,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     }
 
     const generujPDF = async (sendEmail = false) => {
-        if (!powierzchnia || !wybranapPosadzka || !wybranyRodzajPowierzchniObj || !wybranyKolorObj) return
+        if (!powierzchnia || !wybranaPosadzka || !wybranyRodzajPowierzchniObj || !wybranyKolorObj) return
 
         if (sendEmail && !isValidEmail(userEmail)) {
             alert("Wprowadź poprawny adres email.")
@@ -1196,7 +1196,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         doc.setFontSize(11)
         doc.setFont("helvetica", "normal")
-        doc.text(formatTextForPDF(`Rodzaj: ${wybranapPosadzka.nazwa}`), 20, yPosition)
+        doc.text(formatTextForPDF(`Rodzaj: ${wybranaPosadzka.nazwa}`), 20, yPosition)
         yPosition += 6
         doc.text(formatTextForPDF(`Powierzchnia: ${wybranyRodzajPowierzchniObj.nazwa}`), 20, yPosition)
         yPosition += 6
@@ -1249,9 +1249,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             basePricePerM2 = Number(applicableRange.price_per_m2)
         }
         const flatRateAmount = isFlatRate ? Number(applicableRange?.price_per_m2 ?? FLAT_RATE_AMOUNT) : 0
+        if (isFlatRate && !applicableRange?.price_per_m2) {
+            console.warn("Flat rate range missing price_per_m2, using default flat rate amount.")
+        }
         const baseRowTotal = isFlatRate ? flatRateAmount : powierzchnia * basePricePerM2
 
-        doc.text(formatTextForPDF(`${wybranapPosadzka.nazwa} - ${wybranyRodzajPowierzchniObj.nazwa}${isFlatRate ? " (ryczałt)" : ""}`), 20, yPosition)
+        doc.text(formatTextForPDF(`${wybranaPosadzka.nazwa} - ${wybranyRodzajPowierzchniObj.nazwa}${isFlatRate ? " (ryczałt)" : ""}`), 20, yPosition)
         doc.text(isFlatRate ? "1" : powierzchnia.toFixed(2), 80, yPosition)
         doc.text(isFlatRate ? "ryczałt" : "m²", 110, yPosition)
         doc.text(`${(isFlatRate ? flatRateAmount : basePricePerM2).toFixed(2)} zl`, 140, yPosition)
@@ -2099,7 +2102,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                     </CardHeader>
                                     <CardContent className="space-y-4">
                                         <div className="space-y-3">
-                                            {(Array.isArray(wybranapPosadzka?.kolory) ? wybranapPosadzka.kolory : []).map((kolor, index) => (
+                                            {(Array.isArray(wybranaPosadzka?.kolory) ? wybranaPosadzka.kolory : []).map((kolor, index) => (
                                                 <TooltipProvider key={kolor.id}>
                                                     <Tooltip>
                                                         <TooltipTrigger asChild>
@@ -2293,7 +2296,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         )}
 
                         {/* Podsumowanie i akcje - ukryte na mobile (przeniesione do sticky bottom bar) */}
-                        {powierzchnia > 0 && wybranapPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
+                        {powierzchnia > 0 && wybranaPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
                             <div className="hidden lg:block animate-in slide-in-from-bottom-4 duration-700">
                                 <Card className="bg-green-50 border-green-200 shadow-lg">
                                     <CardHeader className="pb-3">
@@ -2384,7 +2387,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             )}
 
                             {powierzchnia > 0 &&
-                                wybranapPosadzka &&
+                                wybranaPosadzka &&
                                 wybranyRodzajPowierzchniObj &&
                                 wybranyKolorObj &&
                                 !showEmailInput && (
