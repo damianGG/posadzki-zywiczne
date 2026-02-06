@@ -1361,7 +1361,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         if (isFlatRate) {
             doc.text(
                 formatTextForPDF(
-                    `Dla powierzchni poniżej ${FLAT_RATE_LIMIT_M2} m² obowiązuje cena ryczałtowa ${flatRateAmount.toFixed(2)} zł.`
+                    `Dla powierzchni do ${FLAT_RATE_LIMIT_M2} m² obowiązuje cena ryczałtowa ${flatRateAmount.toFixed(2)} zł.`
                 ),
                 20,
                 yPosition,
