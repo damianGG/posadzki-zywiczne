@@ -340,6 +340,9 @@ const WYMIARY_LIMITS = {
     maxPowierzchnia: 2500,
 }
 
+const FLAT_RATE_LIMIT_M2 = 34
+const FLAT_RATE_AMOUNT = 5000
+
 interface ProgressBarProps {
     currentStep: number
     steps: Array<{ id: string; title: string; description: string }>
@@ -1134,7 +1137,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         
         doc.setFontSize(10)
         doc.setFont("helvetica", "normal")
-        doc.text("Profesjonalne posadzki zywiczne dla domu i biznesu", pageWidth / 2, 23, { align: "center" })
+        doc.text("Profesjonalne posadzki żywiczne dla domu i biznesu", pageWidth / 2, 23, { align: "center" })
         doc.setFontSize(8)
         doc.text("Instagram: @posadzkizywicznecom", pageWidth - 12, 26, { align: "right" })
 
@@ -1239,22 +1242,23 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             return minMatch && maxMatch
         })
         const isFlatRate = Boolean(applicableRange?.is_flat_rate)
-        const basePricePerM2 = !isFlatRate && applicableRange?.price_per_m2
-            ? Number(applicableRange.price_per_m2)
-            : wybranyRodzajPowierzchniObj.cenaZaM2
-        const flatRateAmount = isFlatRate ? Number(applicableRange?.price_per_m2 || 0) : 0
+        let basePricePerM2 = wybranyRodzajPowierzchniObj.cenaZaM2
+        if (!isFlatRate && applicableRange?.price_per_m2) {
+            basePricePerM2 = Number(applicableRange.price_per_m2)
+        }
+        const flatRateAmount = isFlatRate ? Number(applicableRange?.price_per_m2 ?? FLAT_RATE_AMOUNT) : 0
         const baseRowTotal = isFlatRate ? flatRateAmount : powierzchnia * basePricePerM2
 
-        doc.text(formatTextForPDF(`${wybranapPosadzka.nazwa} - ${wybranyRodzajPowierzchniObj.nazwa}${isFlatRate ? " (ryczalt)" : ""}`), 20, yPosition)
+        doc.text(formatTextForPDF(`${wybranapPosadzka.nazwa} - ${wybranyRodzajPowierzchniObj.nazwa}${isFlatRate ? " (ryczałt)" : ""}`), 20, yPosition)
         doc.text(isFlatRate ? "1" : powierzchnia.toFixed(2), 80, yPosition)
-        doc.text(isFlatRate ? "ryczalt" : "m²", 110, yPosition)
+        doc.text(isFlatRate ? "ryczałt" : "m²", 110, yPosition)
         doc.text(`${(isFlatRate ? flatRateAmount : basePricePerM2).toFixed(2)} zl`, 140, yPosition)
         doc.text(`${baseRowTotal.toFixed(2)} zl`, 170, yPosition)
         yPosition += 8
 
         if (wybranyKolorObj.cenaDodatkowa > 0) {
             const colorTotal = powierzchnia * wybranyKolorObj.cenaDodatkowa
-            doc.text(formatTextForPDF(`Doplata za kolor (${wybranyKolorObj.kodRAL})`), 20, yPosition)
+            doc.text(formatTextForPDF(`Dopłata za kolor (${wybranyKolorObj.kodRAL})`), 20, yPosition)
             doc.text(powierzchnia.toFixed(2), 80, yPosition)
             doc.text("m²", 110, yPosition)
             doc.text(`${wybranyKolorObj.cenaDodatkowa.toFixed(2)} zl`, 140, yPosition)
@@ -1343,8 +1347,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         yPosition += 6
         doc.text(formatTextForPDF(`Koszt za m²: ${(kosztCalkowity / powierzchnia).toFixed(2)} zl/m²`), 20, yPosition)
         yPosition += 6
-        if (isFlatRate || powierzchnia < 34) {
-            doc.text(formatTextForPDF("Dla powierzchni ponizej 34 m² obowiazuje cena ryczaltowa 5000 zl."), 20, yPosition)
+        if (isFlatRate || powierzchnia < FLAT_RATE_LIMIT_M2) {
+            doc.text(
+                formatTextForPDF(
+                    `Dla powierzchni poniżej ${FLAT_RATE_LIMIT_M2} m² obowiązuje cena ryczałtowa ${FLAT_RATE_AMOUNT} zł.`
+                ),
+                20,
+                yPosition,
+            )
         }
 
         yPosition += 20
