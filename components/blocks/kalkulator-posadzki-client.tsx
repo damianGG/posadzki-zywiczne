@@ -345,20 +345,29 @@ const FLAT_RATE_AMOUNT = 5000
 
 const DIACRITIC_MAP: Record<string, string> = {
     ą: "a",
+    Ą: "a",
     ć: "c",
+    Ć: "c",
     ę: "e",
+    Ę: "e",
     ł: "l",
+    Ł: "l",
     ń: "n",
+    Ń: "n",
     ó: "o",
+    Ó: "o",
     ś: "s",
+    Ś: "s",
     ź: "z",
+    Ź: "z",
     ż: "z",
+    Ż: "z",
 }
 
 const normalizeServiceId = (serviceId: string) =>
     serviceId
+        .replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, (char) => DIACRITIC_MAP[char])
         .toLowerCase()
-        .replace(/[ąćęłńóśźż]/g, (char) => DIACRITIC_MAP[char])
 
 const SERVICE_IMAGE_MAP: Record<string, string> = {
     gruntowanie: "/images/gruntowanie.jpg",
@@ -676,9 +685,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             const transformed: DodatkowaUsluga[] = initialData.services
                 .filter((s: any) => s.is_active !== false)
                 .map((s: any) => {
-                    const serviceId = String(s.service_id || s.id || "")
+                    const rawServiceId = String(s.service_id || s.id || "")
                     return {
-                        id: serviceId,
+                        id: rawServiceId,
                         nazwa: s.name || 'Bez nazwy',
                         opis: s.description || '',
                         kategoria: s.category || 'inne',
@@ -688,7 +697,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         domyslnie: Boolean(s.is_default),
                         obowiazkowy: Boolean(s.is_mandatory),
                         wCeniePosadzki: Boolean(s.is_included_in_floor_price),
-                        zdjecie: getServiceImage(serviceId, s.image_url),
+                        zdjecie: getServiceImage(rawServiceId, s.image_url),
                     }
                 })
 
