@@ -1474,7 +1474,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             {/* Main content with extra bottom padding on mobile for sticky bottom bar (128px to accommodate bar height) */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pb-32 lg:pb-8">
                 <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-8 min-h-[600px]">
-                    {/* Panel opcji - na mobile pełna szerokość */}
+                    {/* Panel opcji - pełna szerokość */}
                     <div className="lg:col-span-12 space-y-4 lg:space-y-6">
                         {/* Krok 1: Typ pomieszczenia */}
                         <div
