@@ -1117,13 +1117,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             const logoResponse = await fetch("/posadzkizywiczne.com_logo.png")
             if (logoResponse.ok) {
                 const logoBuffer = await logoResponse.arrayBuffer()
-                let binary = ""
+                const binaryChunks: string[] = []
                 const bytes = new Uint8Array(logoBuffer)
                 const chunkSize = 0x8000
                 for (let i = 0; i < bytes.length; i += chunkSize) {
-                    binary += String.fromCharCode(...bytes.slice(i, i + chunkSize))
+                    binaryChunks.push(String.fromCharCode(...bytes.slice(i, i + chunkSize)))
                 }
-                const logoData = `data:image/png;base64,${btoa(binary)}`
+                const logoData = `data:image/png;base64,${btoa(binaryChunks.join(""))}`
                 doc.addImage(logoData, "PNG", 12, 5, 20, 20)
             }
         } catch (error) {
@@ -1235,8 +1235,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         // Materiał podstawowy
         doc.setFont("helvetica", "normal")
-        const priceRanges = wybranyRodzajPowierzchniObj.price_ranges || []
-        const applicableRange = priceRanges.find((range: any) => {
+        const priceRanges: PriceRange[] = Array.isArray(wybranyRodzajPowierzchniObj.price_ranges)
+            ? wybranyRodzajPowierzchniObj.price_ranges
+            : []
+        const applicableRange = priceRanges.find((range: PriceRange) => {
             const minMatch = powierzchnia >= range.min_m2
             const maxMatch = range.max_m2 === null || powierzchnia <= range.max_m2
             return minMatch && maxMatch
