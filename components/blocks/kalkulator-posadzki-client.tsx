@@ -1249,11 +1249,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         if (!isFlatRate && applicableRange?.price_per_m2) {
             basePricePerM2 = Number(applicableRange.price_per_m2)
         }
-        const flatRateAmount = isFlatRate ? Number(applicableRange?.price_per_m2 ?? FLAT_RATE_AMOUNT) : 0
+        let flatRateAmount = 0
         if (isFlatRate && !applicableRange?.price_per_m2) {
             console.warn(
                 `Flat rate range for ${wybranyRodzajPowierzchniObj.nazwa} missing price_per_m2, using default ${FLAT_RATE_AMOUNT} zl.`
             )
+        }
+        if (isFlatRate) {
+            flatRateAmount = Number(applicableRange?.price_per_m2 ?? FLAT_RATE_AMOUNT)
         }
         const baseRowTotal = isFlatRate ? flatRateAmount : powierzchnia * basePricePerM2
 
@@ -1358,7 +1361,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         if (isFlatRate) {
             doc.text(
                 formatTextForPDF(
-                    `Dla powierzchni poniżej ${FLAT_RATE_LIMIT_M2} m² obowiązuje cena ryczałtowa ${FLAT_RATE_AMOUNT} zł.`
+                    `Dla powierzchni poniżej ${FLAT_RATE_LIMIT_M2} m² obowiązuje cena ryczałtowa ${flatRateAmount.toFixed(2)} zł.`
                 ),
                 20,
                 yPosition,
