@@ -239,6 +239,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "wykończenie",
         domyslnie: false,
         zdjecie: "/images/dylatacje.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
     {
@@ -249,6 +250,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "przygotowanie",
         domyslnie: false,
         zdjecie: "/images/podklad.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
     {
@@ -259,6 +261,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "przygotowanie",
         domyslnie: false,
         zdjecie: "/images/szlifowanie.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
     {
@@ -269,6 +272,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "przygotowanie",
         domyslnie: false,
         zdjecie: "/images/naprawa.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
     {
@@ -279,6 +283,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "ochrona",
         domyslnie: false,
         zdjecie: "/images/warstwa-ochronna.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
     {
@@ -289,6 +294,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "ochrona",
         domyslnie: false,
         zdjecie: "/images/antypoślizgowa.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
     {
@@ -299,6 +305,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "logistyka",
         domyslnie: false,
         zdjecie: "/images/transport.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
     {
@@ -309,6 +316,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "przygotowanie",
         domyslnie: false,
         zdjecie: "/images/demontaz.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
     {
@@ -319,6 +327,7 @@ const fallbackDodatkiUslugi: DodatkowaUsluga[] = [
         kategoria: "wykończenie",
         domyslnie: false,
         zdjecie: "/images/sprzatanie.jpg",
+        obowiazkowy: false,
         wCeniePosadzki: false,
     },
 ]
