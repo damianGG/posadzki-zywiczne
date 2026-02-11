@@ -1154,7 +1154,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     }
 
     const generujPDF = async (sendEmail = false) => {
-        if (powierzchnia <= 0 || !wybranaPosadzka || !wybranyRodzajPowierzchniObj || !wybranyKolorObj) return
+        if (!canGenerateOffer || !wybranaPosadzka || !wybranyRodzajPowierzchniObj || !wybranyKolorObj) return
 
         if (sendEmail && !isValidEmail(userEmail)) {
             alert("Wprowadź poprawny adres email.")
@@ -2537,7 +2537,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     </div>
 
                     {shouldShowPreview && wybranyKolorObj && wybranyRodzajPowierzchniObj && (
-                        <div className="lg:col-span-12 px-4 sm:px-0">
+                        <div className="lg:col-span-12 px-4">
                             <Card className="transition-all duration-500 ease-in-out">
                                 <CardHeader className="pb-3 sm:pb-4">
                                     <CardTitle className="text-lg sm:text-xl">Podgląd wybranej posadzki</CardTitle>
