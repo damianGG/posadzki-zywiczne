@@ -342,12 +342,14 @@ const WYMIARY_LIMITS = {
 
 const FLAT_RATE_LIMIT_M2 = 34
 const FLAT_RATE_AMOUNT = 5000
-const DISCOUNT_PERCENT = 10
-const DISCOUNT_CODES = (process.env.NEXT_PUBLIC_DISCOUNT_CODES ?? "KONKURS10")
-    .split(",")
-    .map((code) => code.trim().toLowerCase())
-    .filter(Boolean)
-const DISCOUNT_MESSAGE = "Rabat został uwzględniony"
+const DISCOUNT_CONFIG = {
+    percent: 10,
+    codes: (process.env.NEXT_PUBLIC_DISCOUNT_CODES ?? "KONKURS10")
+        .split(",")
+        .map((code) => code.trim().toLowerCase())
+        .filter(Boolean),
+    message: "Rabat został uwzględniony",
+}
 
 const DIACRITIC_MAP: Record<string, string> = {
     ą: "a",
@@ -985,16 +987,16 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         !!wybranyKolorObj
 
     // Check if mobile sticky bar should be shown
-    const shouldShowMobileStickyBar = powierzchnia > 0 && 
+    const canGenerateOffer = powierzchnia > 0 && kosztCalkowity > 0
+    const shouldShowMobileStickyBar = canGenerateOffer && 
         !!wybranaPosadzka && 
         !!wybranyRodzajPowierzchniObj && 
-        !!wybranyKolorObj && 
-        kosztCalkowity > 0
+        !!wybranyKolorObj
 
     const discountPercent =
         discountCode.trim() &&
-        DISCOUNT_CODES.includes(discountCode.trim().toLowerCase())
-            ? DISCOUNT_PERCENT
+        DISCOUNT_CONFIG.codes.includes(discountCode.trim().toLowerCase())
+            ? DISCOUNT_CONFIG.percent
             : 0
     const kosztPoRabacie = discountPercent
         ? kosztCalkowity * (1 - discountPercent / 100)
@@ -1152,7 +1154,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     }
 
     const generujPDF = async (sendEmail = false) => {
-        if (!powierzchnia || !wybranaPosadzka || !wybranyRodzajPowierzchniObj || !wybranyKolorObj) return
+        if (powierzchnia <= 0 || !wybranaPosadzka || !wybranyRodzajPowierzchniObj || !wybranyKolorObj) return
 
         if (sendEmail && !isValidEmail(userEmail)) {
             alert("Wprowadź poprawny adres email.")
@@ -1430,7 +1432,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.text(formatTextForPDF(`Koszt za m²: ${pdfCostPerM2.toFixed(2)} zł/m²`), 20, yPosition)
         yPosition += 6
         if (discountPercent > 0) {
-            doc.text(formatTextForPDF(`${DISCOUNT_MESSAGE} (${discountPercent}%).`), 20, yPosition)
+            doc.text(formatTextForPDF(`${DISCOUNT_CONFIG.message} (${discountPercent}%).`), 20, yPosition)
             yPosition += 6
         }
         if (isFlatRate) {
@@ -2412,7 +2414,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         </div>
                                         {discountPercent > 0 && (
                                             <div className="text-center text-xs text-green-700 font-medium">
-                                                {DISCOUNT_MESSAGE} ({discountPercent}%)
+                                                {DISCOUNT_CONFIG.message} ({discountPercent}%)
                                             </div>
                                         )}
                                         <div className="text-center text-xs text-gray-600">
@@ -2437,7 +2439,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 />
                                 {discountPercent > 0 && (
                                     <p className="text-xs text-green-700 font-medium">
-                                        Rabat {discountPercent}% zastosowany
+                                        {DISCOUNT_CONFIG.message} ({discountPercent}%)
                                     </p>
                                 )}
                             </div>
@@ -2505,7 +2507,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                     <div className="animate-in slide-in-from-bottom-2 duration-500 space-y-2">
                                         <Button
                                             onClick={() => generujPDF(false)}
-                                            disabled={isGeneratingPDF}
+                                            disabled={isGeneratingPDF || !canGenerateOffer}
                                             className="w-full bg-green-600 hover:bg-green-700 transition-all duration-300 hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base py-2 sm:py-3"
                                         >
                                             {isGeneratingPDF ? (
@@ -2523,6 +2525,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         <Button
                                             onClick={() => setShowEmailInput(true)}
                                             variant="outline"
+                                            disabled={!canGenerateOffer}
                                             className="w-full transition-all duration-300 hover:scale-105 text-sm sm:text-base py-2 sm:py-3"
                                         >
                                             <Mail className="h-4 w-4 mr-2" />
@@ -2534,7 +2537,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     </div>
 
                     {shouldShowPreview && wybranyKolorObj && wybranyRodzajPowierzchniObj && (
-                        <div className="lg:col-span-12">
+                        <div className="lg:col-span-12 px-4 sm:px-0">
                             <Card className="transition-all duration-500 ease-in-out">
                                 <CardHeader className="pb-3 sm:pb-4">
                                     <CardTitle className="text-lg sm:text-xl">Podgląd wybranej posadzki</CardTitle>
@@ -2579,7 +2582,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                     <p className="text-sm text-gray-600">({kosztPoRabacieZaM2.toFixed(2)} zł/m²)</p>
                                                     {discountPercent > 0 && (
                                                         <p className="text-xs text-green-700 font-medium">
-                                                            {DISCOUNT_MESSAGE} ({discountPercent}%)
+                                                            {DISCOUNT_CONFIG.message} ({discountPercent}%)
                                                         </p>
                                                     )}
                                                     <p className="text-xs text-gray-600">
@@ -2627,7 +2630,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             </div>
                             {discountPercent > 0 && (
                                 <p className="text-xs text-green-700 font-medium mt-2">
-                                    {DISCOUNT_MESSAGE} ({discountPercent}%)
+                                    {DISCOUNT_CONFIG.message} ({discountPercent}%)
                                 </p>
                             )}
                             <p className="text-xs text-gray-600 mt-2">
@@ -2695,7 +2698,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             <div className="grid grid-cols-2 gap-2">
                                 <Button
                                     onClick={() => generujPDF(false)}
-                                    disabled={isGeneratingPDF}
+                                    disabled={isGeneratingPDF || !canGenerateOffer}
                                     size="sm"
                                     className="bg-green-600 hover:bg-green-700 disabled:opacity-50"
                                 >
@@ -2715,6 +2718,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                     onClick={() => setShowEmailInput(true)}
                                     size="sm"
                                     variant="outline"
+                                    disabled={!canGenerateOffer}
                                 >
                                     <Mail className="h-3 w-3 mr-1" />
                                     <span className="text-xs">Email</span>
