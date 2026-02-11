@@ -2630,7 +2630,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                     {DISCOUNT_MESSAGE} ({discountPercent}%)
                                 </p>
                             )}
-                            <p className="text-sm text-gray-600 mt-2">
+                            <p className="text-xs text-gray-600 mt-2">
                                 Cena końcowa zawiera dojazd, materiał i robociznę.
                             </p>
                         </div>
