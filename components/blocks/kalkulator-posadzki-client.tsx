@@ -344,7 +344,7 @@ const WYMIARY_LIMITS = {
 const FLAT_RATE_LIMIT_M2 = 34
 const FLAT_RATE_AMOUNT = 5000
 const createDiscountConfig = () => ({
-    percent: 10,
+    percent: 15,
     codes: (process.env.NEXT_PUBLIC_DISCOUNT_CODES ?? "KONKURS10")
         .split(",")
         .map((code) => code.trim().toLowerCase())
@@ -844,6 +844,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [showEmailInput, setShowEmailInput] = useState(false)
     const discountConfig = useMemo(() => createDiscountConfig(), [])
     const [discountCode, setDiscountCode] = useState("")
+    const [discountVerified, setDiscountVerified] = useState(false)
+    const [discountFeedback, setDiscountFeedback] = useState<string | null>(null)
     
     // Create dynamic posadzka object with loaded data
     const wybranaPosadzka = useMemo(() => ({
@@ -1001,10 +1003,26 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         !!wybranyKolorObj
 
     const normalizedDiscountCode = discountCode.trim().toLowerCase()
-    const discountPercent =
-        normalizedDiscountCode && discountConfig.codes.includes(normalizedDiscountCode)
-            ? discountConfig.percent
-            : 0
+    const handleDiscountInputChange = useCallback((value: string) => {
+        setDiscountCode(value)
+        setDiscountVerified(false)
+        setDiscountFeedback(null)
+    }, [])
+    const handleVerifyDiscount = useCallback(() => {
+        if (!normalizedDiscountCode) {
+            setDiscountVerified(false)
+            setDiscountFeedback("Wpisz kod rabatowy.")
+            return
+        }
+        if (discountConfig.codes.includes(normalizedDiscountCode)) {
+            setDiscountVerified(true)
+            setDiscountFeedback(`${discountConfig.message} (${discountConfig.percent}%).`)
+            return
+        }
+        setDiscountVerified(false)
+        setDiscountFeedback("Nieprawidłowy kod rabatowy.")
+    }, [discountConfig.codes, discountConfig.message, discountConfig.percent, normalizedDiscountCode])
+    const discountPercent = discountVerified ? discountConfig.percent : 0
     const kosztPoRabacie = discountPercent
         ? kosztCalkowity * (1 - discountPercent / 100)
         : kosztCalkowity
@@ -2438,15 +2456,29 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 <Label htmlFor="discountCode" className="font-medium">
                                     Kod rabatowy
                                 </Label>
-                                <Input
-                                    id="discountCode"
-                                    value={discountCode}
-                                    onChange={(e) => setDiscountCode(e.target.value)}
-                                    placeholder="Wpisz kod"
-                                />
-                                {discountPercent > 0 && (
-                                    <p className="text-xs text-green-700 font-medium">
-                                        {discountConfig.message} ({discountPercent}%)
+                                <div className="flex gap-2">
+                                    <Input
+                                        id="discountCode"
+                                        value={discountCode}
+                                        onChange={(e) => handleDiscountInputChange(e.target.value)}
+                                        placeholder="Wpisz kod"
+                                    />
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={handleVerifyDiscount}
+                                        className="shrink-0"
+                                    >
+                                        Sprawdź
+                                    </Button>
+                                </div>
+                                {discountFeedback && (
+                                    <p
+                                        className={`text-xs font-medium ${
+                                            discountVerified ? "text-green-700" : "text-red-600"
+                                        }`}
+                                    >
+                                        {discountFeedback}
                                     </p>
                                 )}
                             </div>
@@ -2649,13 +2681,33 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             <Label htmlFor="discountCodeMobile" className="text-xs font-medium">
                                 Kod rabatowy
                             </Label>
-                            <Input
-                                id="discountCodeMobile"
-                                value={discountCode}
-                                onChange={(e) => setDiscountCode(e.target.value)}
-                                placeholder="Wpisz kod"
-                                className="text-sm"
-                            />
+                            <div className="flex gap-2">
+                                <Input
+                                    id="discountCodeMobile"
+                                    value={discountCode}
+                                    onChange={(e) => handleDiscountInputChange(e.target.value)}
+                                    placeholder="Wpisz kod"
+                                    className="text-sm"
+                                />
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={handleVerifyDiscount}
+                                    className="shrink-0"
+                                >
+                                    Sprawdź
+                                </Button>
+                            </div>
+                            {discountFeedback && (
+                                <p
+                                    className={`text-xs font-medium ${
+                                        discountVerified ? "text-green-700" : "text-red-600"
+                                    }`}
+                                >
+                                    {discountFeedback}
+                                </p>
+                            )}
                         </div>
                         
                         {/* Email input for mobile */}
