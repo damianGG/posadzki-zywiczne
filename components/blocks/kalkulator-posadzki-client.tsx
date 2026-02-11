@@ -842,7 +842,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
-    const discountConfig = useMemo(createDiscountConfig, [])
+    const discountConfig = useMemo(() => createDiscountConfig(), [])
     const [discountCode, setDiscountCode] = useState("")
     
     // Create dynamic posadzka object with loaded data
