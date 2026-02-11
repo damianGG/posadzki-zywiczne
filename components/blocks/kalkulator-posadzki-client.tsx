@@ -1007,21 +1007,22 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         setDiscountCode(value)
         setDiscountVerified(false)
         setDiscountFeedback(null)
-    }, [])
+    }, [setDiscountCode, setDiscountVerified, setDiscountFeedback])
     const handleVerifyDiscount = useCallback(() => {
-        if (!normalizedDiscountCode) {
+        const trimmedCode = discountCode.trim().toLowerCase()
+        if (!trimmedCode) {
             setDiscountVerified(false)
             setDiscountFeedback("Wpisz kod rabatowy.")
             return
         }
-        if (discountConfig.codes.includes(normalizedDiscountCode)) {
+        if (discountConfig.codes.includes(trimmedCode)) {
             setDiscountVerified(true)
             setDiscountFeedback(`${discountConfig.message} (${discountConfig.percent}%).`)
             return
         }
         setDiscountVerified(false)
         setDiscountFeedback("Nieprawidłowy kod rabatowy.")
-    }, [discountConfig.codes, discountConfig.message, discountConfig.percent, normalizedDiscountCode])
+    }, [discountCode, discountConfig.codes, discountConfig.message, discountConfig.percent, setDiscountVerified, setDiscountFeedback])
     const discountPercent = discountVerified ? discountConfig.percent : 0
     const kosztPoRabacie = discountPercent
         ? kosztCalkowity * (1 - discountPercent / 100)
