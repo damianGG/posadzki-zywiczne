@@ -342,14 +342,18 @@ const WYMIARY_LIMITS = {
 
 const FLAT_RATE_LIMIT_M2 = 34
 const FLAT_RATE_AMOUNT = 5000
-const DISCOUNT_CONFIG = {
+const createDiscountConfig = () => ({
     percent: 10,
     codes: (process.env.NEXT_PUBLIC_DISCOUNT_CODES ?? "KONKURS10")
         .split(",")
         .map((code) => code.trim().toLowerCase())
         .filter(Boolean),
     message: "Rabat został uwzględniony",
-}
+})
+
+const PDF_FOOTER_FIRST_LINE_OFFSET = 20
+const PDF_FOOTER_SECOND_LINE_OFFSET = 14
+const PDF_FOOTER_THIRD_LINE_OFFSET = 8
 
 const DIACRITIC_MAP: Record<string, string> = {
     ą: "a",
@@ -836,6 +840,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
+    const discountConfig = useMemo(() => createDiscountConfig(), [])
     const [discountCode, setDiscountCode] = useState("")
     
     // Create dynamic posadzka object with loaded data
@@ -993,10 +998,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         !!wybranyRodzajPowierzchniObj && 
         !!wybranyKolorObj
 
+    const normalizedDiscountCode = discountCode.trim().toLowerCase()
     const discountPercent =
-        discountCode.trim() &&
-        DISCOUNT_CONFIG.codes.includes(discountCode.trim().toLowerCase())
-            ? DISCOUNT_CONFIG.percent
+        normalizedDiscountCode && discountConfig.codes.includes(normalizedDiscountCode)
+            ? discountConfig.percent
             : 0
     const kosztPoRabacie = discountPercent
         ? kosztCalkowity * (1 - discountPercent / 100)
@@ -1432,7 +1437,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.text(formatTextForPDF(`Koszt za m²: ${pdfCostPerM2.toFixed(2)} zł/m²`), 20, yPosition)
         yPosition += 6
         if (discountPercent > 0) {
-            doc.text(formatTextForPDF(`${DISCOUNT_CONFIG.message} (${discountPercent}%).`), 20, yPosition)
+            doc.text(formatTextForPDF(`${discountConfig.message} (${discountPercent}%).`), 20, yPosition)
             yPosition += 6
         }
         if (isFlatRate) {
@@ -1454,9 +1459,6 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
 
         // Footer z informacjami o firmie
-        const FOOTER_FIRST_LINE_OFFSET = 20
-        const FOOTER_SECOND_LINE_OFFSET = 14
-        const FOOTER_THIRD_LINE_OFFSET = 8
         const footerY = pageHeight - 55
         
         doc.setFillColor(245, 245, 245) // Szare tło
@@ -1503,19 +1505,19 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.text(
             formatTextForPDF("Oferta nie jest umową. Wymagamy kontaktu w celu potwierdzenia ostatecznej ceny."),
             pageWidth / 2,
-            pageHeight - FOOTER_FIRST_LINE_OFFSET,
+            pageHeight - PDF_FOOTER_FIRST_LINE_OFFSET,
             { align: "center" },
         )
         doc.text(
             formatTextForPDF("Kosztorys wygenerowany automatycznie. Ceny mogą ulec zmianie."),
             pageWidth / 2,
-            pageHeight - FOOTER_SECOND_LINE_OFFSET,
+            pageHeight - PDF_FOOTER_SECOND_LINE_OFFSET,
             { align: "center" },
         )
         doc.text(
             formatTextForPDF("Cena końcowa zawiera dojazd, materiał i robociznę."),
             pageWidth / 2,
-            pageHeight - FOOTER_THIRD_LINE_OFFSET,
+            pageHeight - PDF_FOOTER_THIRD_LINE_OFFSET,
             { align: "center" },
         )
 
@@ -2417,7 +2419,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         </div>
                                         {discountPercent > 0 && (
                                             <div className="text-center text-xs text-green-700 font-medium">
-                                                {DISCOUNT_CONFIG.message} ({discountPercent}%)
+                                                {discountConfig.message} ({discountPercent}%)
                                             </div>
                                         )}
                                         <div className="text-center text-xs text-gray-600">
@@ -2442,7 +2444,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 />
                                 {discountPercent > 0 && (
                                     <p className="text-xs text-green-700 font-medium">
-                                        {DISCOUNT_CONFIG.message} ({discountPercent}%)
+                                        {discountConfig.message} ({discountPercent}%)
                                     </p>
                                 )}
                             </div>
@@ -2585,7 +2587,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                     <p className="text-sm text-gray-600">({kosztPoRabacieZaM2.toFixed(2)} zł/m²)</p>
                                                     {discountPercent > 0 && (
                                                         <p className="text-xs text-green-700 font-medium">
-                                                            {DISCOUNT_CONFIG.message} ({discountPercent}%)
+                                                            {discountConfig.message} ({discountPercent}%)
                                                         </p>
                                                     )}
                                                     <p className="text-xs text-gray-600">
@@ -2633,7 +2635,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             </div>
                             {discountPercent > 0 && (
                                 <p className="text-xs text-green-700 font-medium mt-2">
-                                    {DISCOUNT_CONFIG.message} ({discountPercent}%)
+                                    {discountConfig.message} ({discountPercent}%)
                                 </p>
                             )}
                             <p className="text-xs text-gray-600 mt-2">
