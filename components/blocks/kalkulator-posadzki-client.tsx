@@ -347,6 +347,7 @@ const DISCOUNT_CODES = (process.env.NEXT_PUBLIC_DISCOUNT_CODES ?? "KONKURS10")
     .split(",")
     .map((code) => code.trim().toLowerCase())
     .filter(Boolean)
+const DISCOUNT_MESSAGE = "Rabat został uwzględniony"
 
 const DIACRITIC_MAP: Record<string, string> = {
     ą: "a",
@@ -1424,12 +1425,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         doc.setFontSize(11)
         doc.setFont("helvetica", "normal")
-        doc.text(formatTextForPDF(`Koszt całkowity: ${pdfCost.toFixed(2)} zl`), 20, yPosition)
+        doc.text(formatTextForPDF(`Koszt całkowity: ${pdfCost.toFixed(2)} zł`), 20, yPosition)
         yPosition += 6
-        doc.text(formatTextForPDF(`Koszt za m²: ${pdfCostPerM2.toFixed(2)} zl/m²`), 20, yPosition)
+        doc.text(formatTextForPDF(`Koszt za m²: ${pdfCostPerM2.toFixed(2)} zł/m²`), 20, yPosition)
         yPosition += 6
         if (discountPercent > 0) {
-            doc.text(formatTextForPDF(`Rabat ${discountPercent}% został uwzględniony.`), 20, yPosition)
+            doc.text(formatTextForPDF(`${DISCOUNT_MESSAGE} (${discountPercent}%).`), 20, yPosition)
             yPosition += 6
         }
         if (isFlatRate) {
@@ -2411,7 +2412,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         </div>
                                         {discountPercent > 0 && (
                                             <div className="text-center text-xs text-green-700 font-medium">
-                                                Rabat {discountPercent}% zastosowany
+                                                {DISCOUNT_MESSAGE} ({discountPercent}%)
                                             </div>
                                         )}
                                         <div className="text-center text-xs text-gray-600">
@@ -2578,7 +2579,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                     <p className="text-sm text-gray-600">({kosztPoRabacieZaM2.toFixed(2)} zł/m²)</p>
                                                     {discountPercent > 0 && (
                                                         <p className="text-xs text-green-700 font-medium">
-                                                            Rabat {discountPercent}% zastosowany
+                                                            {DISCOUNT_MESSAGE} ({discountPercent}%)
                                                         </p>
                                                     )}
                                                     <p className="text-xs text-gray-600">
@@ -2626,10 +2627,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             </div>
                             {discountPercent > 0 && (
                                 <p className="text-xs text-green-700 font-medium mt-2">
-                                    Rabat {discountPercent}% zastosowany
+                                    {DISCOUNT_MESSAGE} ({discountPercent}%)
                                 </p>
                             )}
-                            <p className="text-[10px] text-gray-600 mt-2">
+                            <p className="text-xs text-gray-600 mt-2">
                                 Cena końcowa zawiera dojazd, materiał i robociznę.
                             </p>
                         </div>
