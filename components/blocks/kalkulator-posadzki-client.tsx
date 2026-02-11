@@ -31,6 +31,7 @@ import confetti from "canvas-confetti"
 
 // Constants
 const PLACEHOLDER_IMAGE = "/placeholder.svg"
+const FINAL_PRICE_NOTE = "Cena końcowa zawiera dojazd, materiał i robociznę."
 
 interface PriceRange {
     min_m2: number
@@ -841,7 +842,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
-    const discountConfig = createDiscountConfig()
+    const discountConfig = useMemo(createDiscountConfig, [])
     const [discountCode, setDiscountCode] = useState("")
     
     // Create dynamic posadzka object with loaded data
@@ -1516,7 +1517,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             { align: "center" },
         )
         doc.text(
-            formatTextForPDF("Cena końcowa zawiera dojazd, materiał i robociznę."),
+            formatTextForPDF(FINAL_PRICE_NOTE),
             pageWidth / 2,
             pageHeight - PDF_FOOTER_THIRD_LINE_OFFSET,
             { align: "center" },
@@ -2424,7 +2425,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                             </div>
                                         )}
                                         <div className="text-center text-xs text-gray-600">
-                                            Cena końcowa zawiera dojazd, materiał i robociznę.
+                                            {FINAL_PRICE_NOTE}
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -2592,7 +2593,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                         </p>
                                                     )}
                                                     <p className="text-xs text-gray-600">
-                                                        Cena końcowa zawiera dojazd, materiał i robociznę.
+                                                        {FINAL_PRICE_NOTE}
                                                     </p>
                                                 </div>
                                             </div>
@@ -2640,7 +2641,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 </p>
                             )}
                             <p className="text-xs text-gray-600 mt-2">
-                                Cena końcowa zawiera dojazd, materiał i robociznę.
+                                {FINAL_PRICE_NOTE}
                             </p>
                         </div>
 
