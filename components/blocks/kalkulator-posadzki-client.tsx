@@ -342,6 +342,11 @@ const WYMIARY_LIMITS = {
 
 const FLAT_RATE_LIMIT_M2 = 34
 const FLAT_RATE_AMOUNT = 5000
+const DISCOUNT_PERCENT = 10
+const DISCOUNT_CODES = (process.env.NEXT_PUBLIC_DISCOUNT_CODES ?? "KONKURS10")
+    .split(",")
+    .map((code) => code.trim().toLowerCase())
+    .filter(Boolean)
 
 const DIACRITIC_MAP: Record<string, string> = {
     ą: "a",
@@ -828,6 +833,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
+    const [discountCode, setDiscountCode] = useState("")
     
     // Create dynamic posadzka object with loaded data
     const wybranaPosadzka = useMemo(() => ({
@@ -983,6 +989,16 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         !!wybranyRodzajPowierzchniObj && 
         !!wybranyKolorObj && 
         kosztCalkowity > 0
+
+    const discountPercent =
+        discountCode.trim() &&
+        DISCOUNT_CODES.includes(discountCode.trim().toLowerCase())
+            ? DISCOUNT_PERCENT
+            : 0
+    const kosztPoRabacie = discountPercent
+        ? kosztCalkowity * (1 - discountPercent / 100)
+        : kosztCalkowity
+    const kosztPoRabacieZaM2 = powierzchnia > 0 ? kosztPoRabacie / powierzchnia : 0
     
     // Debug logging in development
     if (process.env.NODE_ENV === 'development') {
@@ -1397,6 +1413,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.line(20, yPosition, pageWidth - 20, yPosition)
         yPosition += 10
 
+        const pdfCost = discountPercent ? kosztPoRabacie : kosztCalkowity
+        const pdfCostPerM2 = powierzchnia > 0 ? pdfCost / powierzchnia : 0
+
         // Podsumowanie
         doc.setFontSize(12)
         doc.setFont("helvetica", "bold")
@@ -1405,10 +1424,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         doc.setFontSize(11)
         doc.setFont("helvetica", "normal")
-        doc.text(formatTextForPDF(`Koszt całkowity: ${kosztCalkowity.toFixed(2)} zl`), 20, yPosition)
+        doc.text(formatTextForPDF(`Koszt całkowity: ${pdfCost.toFixed(2)} zl`), 20, yPosition)
         yPosition += 6
-        doc.text(formatTextForPDF(`Koszt za m²: ${(kosztCalkowity / powierzchnia).toFixed(2)} zl/m²`), 20, yPosition)
+        doc.text(formatTextForPDF(`Koszt za m²: ${pdfCostPerM2.toFixed(2)} zl/m²`), 20, yPosition)
         yPosition += 6
+        if (discountPercent > 0) {
+            doc.text(formatTextForPDF(`Rabat ${discountPercent}% został uwzględniony.`), 20, yPosition)
+            yPosition += 6
+        }
         if (isFlatRate) {
             doc.text(
                 formatTextForPDF(
@@ -1474,11 +1497,17 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.text(
             formatTextForPDF("Oferta nie jest umową. Wymagamy kontaktu w celu potwierdzenia ostatecznej ceny."),
             pageWidth / 2,
-            pageHeight - 14,
+            pageHeight - 20,
             { align: "center" },
         )
         doc.text(
             formatTextForPDF("Kosztorys wygenerowany automatycznie. Ceny mogą ulec zmianie."),
+            pageWidth / 2,
+            pageHeight - 14,
+            { align: "center" },
+        )
+        doc.text(
+            formatTextForPDF("Cena końcowa zawiera dojazd, materiał i robociznę."),
             pageWidth / 2,
             pageHeight - 8,
             { align: "center" },
@@ -1495,7 +1524,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     powierzchnia: powierzchnia.toFixed(2),
                     rodzajPowierzchni: wybranyRodzajPowierzchniObj.nazwa,
                     kolor: wybranyKolorObj.nazwa,
-                    kosztCalkowity: kosztCalkowity.toFixed(2),
+                    kosztCalkowity: pdfCost.toFixed(2),
                 }
 
                 const response = await fetch("/api/send-pdf", {
@@ -2375,10 +2404,18 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         <Separator className="my-2" />
                                         <div className="flex justify-between text-lg font-bold text-green-700">
                                             <span>Koszt całkowity:</span>
-                                            <span className="animate-pulse">{kosztCalkowity.toFixed(2)} zł</span>
+                                            <span className="animate-pulse">{kosztPoRabacie.toFixed(2)} zł</span>
                                         </div>
                                         <div className="text-center text-sm text-green-600">
-                                            ({(kosztCalkowity / powierzchnia).toFixed(2)} zł/m²)
+                                            ({kosztPoRabacieZaM2.toFixed(2)} zł/m²)
+                                        </div>
+                                        {discountPercent > 0 && (
+                                            <div className="text-center text-xs text-green-700 font-medium">
+                                                Rabat {discountPercent}% zastosowany
+                                            </div>
+                                        )}
+                                        <div className="text-center text-xs text-gray-600">
+                                            Cena końcowa zawiera dojazd, materiał i robociznę.
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -2387,6 +2424,22 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
                         {/* Przyciski akcji - ukryte na mobile (przeniesione do sticky bottom bar) */}
                         <div className="hidden lg:block space-y-3">
+                            <div className="space-y-2">
+                                <Label htmlFor="discountCode" className="font-medium">
+                                    Kod rabatowy
+                                </Label>
+                                <Input
+                                    id="discountCode"
+                                    value={discountCode}
+                                    onChange={(e) => setDiscountCode(e.target.value)}
+                                    placeholder="Wpisz kod"
+                                />
+                                {discountPercent > 0 && (
+                                    <p className="text-xs text-green-700 font-medium">
+                                        Rabat {discountPercent}% zastosowany
+                                    </p>
+                                )}
+                            </div>
                             <Button
                                 onClick={resetKalkulator}
                                 variant="outline"
@@ -2481,7 +2534,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
                     {shouldShowPreview && wybranyKolorObj && wybranyRodzajPowierzchniObj && (
                         <div className="lg:col-span-12">
-                            <Card className="transition-all duration-500 ease-in-out">
+                            <Card className="transition-all duration-500 ease-in-out mx-4 sm:mx-0">
                                 <CardHeader className="pb-3 sm:pb-4">
                                     <CardTitle className="text-lg sm:text-xl">Podgląd wybranej posadzki</CardTitle>
                                     <CardDescription className="text-base sm:text-lg font-medium text-blue-600 animate-in fade-in duration-500">
@@ -2520,9 +2573,17 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                 <div>
                                                     <span className="font-medium text-gray-700">Koszt całkowity:</span>
                                                     <p className="text-base sm:text-lg font-bold text-green-600">
-                                                        {kosztCalkowity.toFixed(2)} zł
+                                                        {kosztPoRabacie.toFixed(2)} zł
                                                     </p>
-                                                    <p className="text-sm text-gray-600">({(kosztCalkowity / powierzchnia).toFixed(2)} zł/m²)</p>
+                                                    <p className="text-sm text-gray-600">({kosztPoRabacieZaM2.toFixed(2)} zł/m²)</p>
+                                                    {discountPercent > 0 && (
+                                                        <p className="text-xs text-green-700 font-medium">
+                                                            Rabat {discountPercent}% zastosowany
+                                                        </p>
+                                                    )}
+                                                    <p className="text-xs text-gray-600">
+                                                        Cena końcowa zawiera dojazd, materiał i robociznę.
+                                                    </p>
                                                 </div>
                                             </div>
                                             {wybranyRodzajPowierzchniObj.wlasciwosci && (
@@ -2554,15 +2615,36 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
                             <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm font-medium text-gray-700">Koszt całkowity:</span>
-                                <span className="text-xl font-bold text-green-700">{kosztCalkowity.toFixed(2)} zł</span>
+                                <span className="text-xl font-bold text-green-700">{kosztPoRabacie.toFixed(2)} zł</span>
                             </div>
                             <div className="flex items-center justify-between text-xs text-gray-600">
                                 <span>{powierzchnia.toFixed(2)} m²</span>
                                 <span>•</span>
-                                <span>{(kosztCalkowity / powierzchnia).toFixed(2)} zł/m²</span>
+                                <span>{kosztPoRabacieZaM2.toFixed(2)} zł/m²</span>
                                 <span>•</span>
                                 <span className="truncate flex-shrink-0 min-w-0">{wybranyKolorObj?.kodRAL || ''}</span>
                             </div>
+                            {discountPercent > 0 && (
+                                <p className="text-xs text-green-700 font-medium mt-2">
+                                    Rabat {discountPercent}% zastosowany
+                                </p>
+                            )}
+                            <p className="text-[10px] text-gray-600 mt-2">
+                                Cena końcowa zawiera dojazd, materiał i robociznę.
+                            </p>
+                        </div>
+
+                        <div className="space-y-2 mb-3">
+                            <Label htmlFor="discountCodeMobile" className="text-xs font-medium">
+                                Kod rabatowy
+                            </Label>
+                            <Input
+                                id="discountCodeMobile"
+                                value={discountCode}
+                                onChange={(e) => setDiscountCode(e.target.value)}
+                                placeholder="Wpisz kod"
+                                className="text-sm"
+                            />
                         </div>
                         
                         {/* Email input for mobile */}
