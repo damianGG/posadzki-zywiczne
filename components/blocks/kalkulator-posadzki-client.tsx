@@ -2626,7 +2626,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 <span className="truncate flex-shrink-0 min-w-0">{wybranyKolorObj?.kodRAL || ''}</span>
                             </div>
                             {discountPercent > 0 && (
-                                <p className="text-sm text-green-700 font-medium mt-2">
+                                <p className="text-xs text-green-700 font-medium mt-2">
                                     {DISCOUNT_MESSAGE} ({discountPercent}%)
                                 </p>
                             )}
