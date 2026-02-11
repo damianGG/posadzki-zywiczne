@@ -1022,7 +1022,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
         setDiscountVerified(false)
         setDiscountFeedback("Nieprawidłowy kod rabatowy.")
-    }, [discountCode, discountConfig])
+    }, [discountCode, discountConfig, setDiscountVerified, setDiscountFeedback])
     const discountPercent = discountVerified ? discountConfig.percent : 0
     const kosztPoRabacie = discountPercent
         ? kosztCalkowity * (1 - discountPercent / 100)
