@@ -2549,7 +2549,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             {/* Sticky bottom bar for mobile - floating pinned at the very bottom */}
             {shouldShowMobileStickyBar && (
                 <div className="block lg:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur border-t-2 border-green-500 shadow-lg z-[9999]">
-                    <div className="px-3 sm:px-4 py-3 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
+                    <div className="px-5 sm:px-6 py-3 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
                         {/* Compact summary */}
                         <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3">
                             <div className="flex items-center justify-between mb-2">
