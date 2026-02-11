@@ -2535,7 +2535,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
                     {shouldShowPreview && wybranyKolorObj && wybranyRodzajPowierzchniObj && (
                         <div className="lg:col-span-12">
-                            <Card className="transition-all duration-500 ease-in-out mx-4 sm:mx-0">
+                            <Card className="transition-all duration-500 ease-in-out">
                                 <CardHeader className="pb-3 sm:pb-4">
                                     <CardTitle className="text-lg sm:text-xl">Podgląd wybranej posadzki</CardTitle>
                                     <CardDescription className="text-base sm:text-lg font-medium text-blue-600 animate-in fade-in duration-500">
@@ -2626,11 +2626,11 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                 <span className="truncate flex-shrink-0 min-w-0">{wybranyKolorObj?.kodRAL || ''}</span>
                             </div>
                             {discountPercent > 0 && (
-                                <p className="text-xs text-green-700 font-medium mt-2">
+                                <p className="text-sm text-green-700 font-medium mt-2">
                                     {DISCOUNT_MESSAGE} ({discountPercent}%)
                                 </p>
                             )}
-                            <p className="text-xs text-gray-600 mt-2">
+                            <p className="text-sm text-gray-600 mt-2">
                                 Cena końcowa zawiera dojazd, materiał i robociznę.
                             </p>
                         </div>
