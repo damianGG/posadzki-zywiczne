@@ -1454,6 +1454,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
 
         // Footer z informacjami o firmie
+        const FOOTER_FIRST_LINE_OFFSET = 20
+        const FOOTER_SECOND_LINE_OFFSET = 14
+        const FOOTER_THIRD_LINE_OFFSET = 8
         const footerY = pageHeight - 55
         
         doc.setFillColor(245, 245, 245) // Szare tło
@@ -1500,19 +1503,19 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.text(
             formatTextForPDF("Oferta nie jest umową. Wymagamy kontaktu w celu potwierdzenia ostatecznej ceny."),
             pageWidth / 2,
-            pageHeight - 20,
+            pageHeight - FOOTER_FIRST_LINE_OFFSET,
             { align: "center" },
         )
         doc.text(
             formatTextForPDF("Kosztorys wygenerowany automatycznie. Ceny mogą ulec zmianie."),
             pageWidth / 2,
-            pageHeight - 14,
+            pageHeight - FOOTER_SECOND_LINE_OFFSET,
             { align: "center" },
         )
         doc.text(
             formatTextForPDF("Cena końcowa zawiera dojazd, materiał i robociznę."),
             pageWidth / 2,
-            pageHeight - 8,
+            pageHeight - FOOTER_THIRD_LINE_OFFSET,
             { align: "center" },
         )
 
