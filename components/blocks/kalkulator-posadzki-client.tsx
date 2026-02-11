@@ -354,6 +354,7 @@ const createDiscountConfig = () => ({
 const PDF_FOOTER_FIRST_LINE_OFFSET = 20
 const PDF_FOOTER_SECOND_LINE_OFFSET = 14
 const PDF_FOOTER_THIRD_LINE_OFFSET = 8
+const PDF_FOOTER_RESERVED_HEIGHT = 60
 
 const DIACRITIC_MAP: Record<string, string> = {
     ą: "a",
@@ -840,7 +841,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [isSendingEmail, setIsSendingEmail] = useState(false)
     const [userEmail, setUserEmail] = useState("")
     const [showEmailInput, setShowEmailInput] = useState(false)
-    const discountConfig = useMemo(() => createDiscountConfig(), [])
+    const discountConfig = createDiscountConfig()
     const [discountCode, setDiscountCode] = useState("")
     
     // Create dynamic posadzka object with loaded data
@@ -1453,7 +1454,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         yPosition += 20
 
         // Firma i kontakt w kolorowym footer
-        if (yPosition > pageHeight - 60) {
+        if (yPosition > pageHeight - PDF_FOOTER_RESERVED_HEIGHT) {
             doc.addPage()
             yPosition = 20
         }
