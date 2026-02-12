@@ -1663,9 +1663,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         return null
                     }
                 }
-                const logUnexpectedResponse = (context: string, status: number, type: string) => {
+                const logUnexpectedResponse = (scenario: string, status: number, type: string) => {
                     console.error(
-                        `Email send ${context} response not JSON (status ${status}, content-type: ${type}).`,
+                        `Email send received non-JSON ${scenario} (status ${status}, content-type: ${type}).`,
                     )
                 }
                 const throwInvalidResponse = (context: string, status: number, type: string) => {
@@ -1678,20 +1678,20 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     const errorResult = isJsonResponse ? parseJsonResponse() : null
 
                     if (!errorResult) {
-                        logUnexpectedResponse("error", response.status, contentType)
+                        logUnexpectedResponse("error response", response.status, contentType)
                     }
 
                     throw new Error(errorResult?.message || fallbackErrorMessage)
                 }
 
                 if (!isJsonResponse) {
-                    throwInvalidResponse("invalid", response.status, contentType)
+                    throwInvalidResponse("successful response", response.status, contentType)
                 }
 
                 const result = parseJsonResponse()
 
                 if (!result) {
-                    throwInvalidResponse("invalid", response.status, contentType)
+                    throwInvalidResponse("successful response", response.status, contentType)
                 }
 
                 if (result.success) {
