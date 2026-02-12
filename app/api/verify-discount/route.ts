@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
     }
 
     const entries = await readEntries()
-    const valid = entries.some((entry) => entry.code?.toUpperCase() === normalizedCode)
+    const valid = entries.some((entry) => entry.code === normalizedCode)
     return NextResponse.json({ valid })
   } catch (error) {
     console.error("Discount verification failed:", error)

@@ -1003,14 +1003,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         !!wybranyRodzajPowierzchniObj && 
         !!wybranyKolorObj
 
-    const normalizedDiscountCode = discountCode.trim().toLowerCase()
+    const normalizedDiscountCode = discountCode.trim().toUpperCase()
     const handleDiscountInputChange = useCallback((value: string) => {
         setDiscountCode(value)
         setDiscountVerified(false)
         setDiscountFeedback(null)
     }, [])
     const handleVerifyDiscount = useCallback(async () => {
-        const trimmedCode = discountCode.trim().toLowerCase()
+        const trimmedCode = discountCode.trim().toUpperCase()
         if (!trimmedCode) {
             setDiscountVerified(false)
             setDiscountFeedback("Wpisz kod rabatowy.")
@@ -1044,7 +1044,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         } finally {
             setIsVerifyingDiscount(false)
         }
-    }, [discountCode, discountConfig])
+    }, [discountCode, discountConfig, setDiscountVerified, setDiscountFeedback])
     const discountPercent = discountVerified ? discountConfig.percent : 0
     const kosztPoRabacie = discountPercent
         ? kosztCalkowity * (1 - discountPercent / 100)
