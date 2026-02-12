@@ -1659,14 +1659,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         return null
                     }
                 }
-                const logUnexpectedResponse = (context: string) => {
+                const logUnexpectedResponse = (context: string, status: number, type: string) => {
                     console.error(
-                        `Email send ${context} response not JSON (status ${response.status}, content-type: ${contentType}).`,
+                        `Email send ${context} response not JSON (status ${status}, content-type: ${type}).`,
                     )
                 }
-                const throwInvalidResponse = () => {
-                    logUnexpectedResponse("success")
-                    throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
+                const throwInvalidResponse = (status: number, type: string) => {
+                    logUnexpectedResponse("success", status, type)
+                    throw new Error(`Nieprawidłowa odpowiedź serwera (${status}).`)
                 }
                 const fallbackErrorMessage = `Błąd wysyłania emaila (status ${response.status}).`
 
@@ -1674,20 +1674,20 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     const errorResult = isJsonResponse ? parseJsonResponse() : null
 
                     if (!errorResult) {
-                        logUnexpectedResponse("error")
+                        logUnexpectedResponse("error", response.status, contentType)
                     }
 
                     throw new Error(errorResult?.message || fallbackErrorMessage)
                 }
 
                 if (!isJsonResponse) {
-                    throwInvalidResponse()
+                    throwInvalidResponse(response.status, contentType)
                 }
 
                 const result = parseJsonResponse()
 
                 if (!result) {
-                    throwInvalidResponse()
+                    throwInvalidResponse(response.status, contentType)
                 }
 
                 if (result.success) {
