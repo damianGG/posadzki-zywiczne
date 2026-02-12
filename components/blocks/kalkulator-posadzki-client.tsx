@@ -1652,7 +1652,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 const responseText = await response.text()
                 const contentType = response.headers.get("content-type") || "unknown"
                 const isJsonResponse = contentType.includes("application/json")
-                const parseJsonResponse = (text: string, status: number, type: string) => {
+                const safeParseJsonResponse = (text: string, status: number, type: string) => {
                     try {
                         return JSON.parse(text) as { success?: boolean; message?: string }
                     } catch (error) {
@@ -1672,9 +1672,11 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 const fallbackErrorMessage = `Błąd wysyłania emaila (status ${response.status}).`
 
                 if (!response.ok) {
-                    const errorResult = isJsonResponse ? parseJsonResponse(responseText, response.status, contentType) : null
+                    const errorResult = isJsonResponse
+                        ? safeParseJsonResponse(responseText, response.status, contentType)
+                        : null
 
-                    if (!errorResult) {
+                    if (!errorResult && !isJsonResponse) {
                         console.error(
                             `Email send received non-JSON error response (status ${response.status}, content-type: ${contentType}).`,
                         )
@@ -1687,7 +1689,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     throwInvalidResponse(response.status, contentType, "response body")
                 }
 
-                const result = parseJsonResponse(responseText, response.status, contentType)
+                const result = safeParseJsonResponse(responseText, response.status, contentType)
 
                 if (!result) {
                     throwInvalidResponse(response.status, contentType, "response body")
