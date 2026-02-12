@@ -1650,23 +1650,37 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 })
 
                 const responseText = await response.text()
-                let result: { success?: boolean; message?: string } | null = null
-
-                if (responseText) {
+                const contentType = response.headers.get("content-type") ?? ""
+                const isJsonResponse = contentType.includes("application/json")
+                const parseJsonResponse = () => {
                     try {
-                        result = JSON.parse(responseText) as { success?: boolean; message?: string }
+                        return JSON.parse(responseText) as { success?: boolean; message?: string }
                     } catch (parseError) {
                         console.error("Email send response not JSON:", responseText)
-                        throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
+                        return null
                     }
                 }
+                let result: { success?: boolean; message?: string } | null = null
 
-                if (!result) {
+                if (!response.ok) {
+                    if (isJsonResponse && responseText) {
+                        result = parseJsonResponse()
+                    } else {
+                        console.error("Email send response not JSON:", responseText)
+                    }
+
+                    throw new Error(result?.message || `Błąd wysyłania emaila (status ${response.status}).`)
+                }
+
+                if (!isJsonResponse) {
+                    console.error("Email send response not JSON:", responseText)
                     throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
                 }
 
-                if (!response.ok) {
-                    throw new Error(result.message || `Błąd wysyłania emaila (status ${response.status}).`)
+                result = responseText ? parseJsonResponse() : null
+
+                if (!result) {
+                    throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
                 }
 
                 if (result.success) {
