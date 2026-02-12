@@ -846,6 +846,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const [discountCode, setDiscountCode] = useState("")
     const [discountVerified, setDiscountVerified] = useState(false)
     const [discountFeedback, setDiscountFeedback] = useState<string | null>(null)
+    const [isVerifyingDiscount, setIsVerifyingDiscount] = useState(false)
     
     // Create dynamic posadzka object with loaded data
     const wybranaPosadzka = useMemo(() => ({
@@ -1008,21 +1009,41 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         setDiscountVerified(false)
         setDiscountFeedback(null)
     }, [])
-    const handleVerifyDiscount = useCallback(() => {
+    const handleVerifyDiscount = useCallback(async () => {
         const trimmedCode = discountCode.trim().toLowerCase()
         if (!trimmedCode) {
             setDiscountVerified(false)
             setDiscountFeedback("Wpisz kod rabatowy.")
             return
         }
-        if (discountConfig.codes.includes(trimmedCode)) {
-            setDiscountVerified(true)
-            setDiscountFeedback(`${discountConfig.message} (${discountConfig.percent}%).`)
-            return
+        setIsVerifyingDiscount(true)
+        try {
+            const response = await fetch("/api/verify-discount", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ code: trimmedCode.toUpperCase() }),
+            })
+
+            if (!response.ok) {
+                throw new Error("verify_failed")
+            }
+
+            const data = await response.json()
+            if (data?.valid) {
+                setDiscountVerified(true)
+                setDiscountFeedback(`${discountConfig.message} (${discountConfig.percent}%).`)
+                return
+            }
+
+            setDiscountVerified(false)
+            setDiscountFeedback("Nieprawidłowy kod rabatowy.")
+        } catch (error) {
+            setDiscountVerified(false)
+            setDiscountFeedback("Nie udało się zweryfikować kodu. Spróbuj ponownie.")
+        } finally {
+            setIsVerifyingDiscount(false)
         }
-        setDiscountVerified(false)
-        setDiscountFeedback("Nieprawidłowy kod rabatowy.")
-    }, [discountCode, discountConfig, setDiscountVerified, setDiscountFeedback])
+    }, [discountCode, discountConfig])
     const discountPercent = discountVerified ? discountConfig.percent : 0
     const kosztPoRabacie = discountPercent
         ? kosztCalkowity * (1 - discountPercent / 100)
@@ -2469,8 +2490,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         variant="outline"
                                         onClick={handleVerifyDiscount}
                                         className="shrink-0"
+                                        disabled={isVerifyingDiscount}
                                     >
-                                        Sprawdź
+                                        {isVerifyingDiscount ? "Sprawdzanie..." : "Sprawdź"}
                                     </Button>
                                 </div>
                                 {discountFeedback && (
@@ -2696,8 +2718,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                     variant="outline"
                                     onClick={handleVerifyDiscount}
                                     className="shrink-0"
+                                    disabled={isVerifyingDiscount}
                                 >
-                                    Sprawdź
+                                    {isVerifyingDiscount ? "Sprawdzanie..." : "Sprawdź"}
                                 </Button>
                             </div>
                             {discountFeedback && (
