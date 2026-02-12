@@ -1025,7 +1025,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             })
 
             if (!response.ok) {
-                throw new Error("verify_failed")
+                throw new Error(`verify_failed_${response.status}`)
             }
 
             const data = await response.json()
