@@ -352,6 +352,12 @@ const createDiscountConfig = () => ({
     message: "Rabat został uwzględniony",
 })
 
+const PDF_FONT_FAMILY = "DejaVuSans"
+const PDF_FONT_FILES = {
+    normal: "/fonts/DejaVuSans.ttf",
+    bold: "/fonts/DejaVuSans-Bold.ttf",
+    italic: "/fonts/DejaVuSans-Oblique.ttf",
+}
 const PDF_FOOTER_FIRST_LINE_OFFSET = 20
 const PDF_FOOTER_SECOND_LINE_OFFSET = 14
 const PDF_FOOTER_THIRD_LINE_OFFSET = 8
@@ -571,27 +577,19 @@ const triggerConfetti = () => {
     }, 250)
 }
 
+const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
+    const bytes = new Uint8Array(buffer)
+    const chunkSize = 0x8000
+    const chunks: string[] = []
+    for (let i = 0; i < bytes.length; i += chunkSize) {
+        chunks.push(String.fromCharCode(...bytes.slice(i, i + chunkSize)))
+    }
+    return btoa(chunks.join(""))
+}
+
 // Funkcja do konwersji tekstu na format kompatybilny z PDF
 const formatTextForPDF = (text: string): string => {
     return text
-        .replace(/ą/g, "a")
-        .replace(/ć/g, "c")
-        .replace(/ę/g, "e")
-        .replace(/ł/g, "l")
-        .replace(/ń/g, "n")
-        .replace(/ó/g, "o")
-        .replace(/ś/g, "s")
-        .replace(/ź/g, "z")
-        .replace(/ż/g, "z")
-        .replace(/Ą/g, "A")
-        .replace(/Ć/g, "C")
-        .replace(/Ę/g, "E")
-        .replace(/Ł/g, "L")
-        .replace(/Ń/g, "N")
-        .replace(/Ó/g, "O")
-        .replace(/Ś/g, "S")
-        .replace(/Ź/g, "Z")
-        .replace(/Ż/g, "Z")
 }
 
 interface CalculatorData {
@@ -1228,6 +1226,25 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         const pageWidth = doc.internal.pageSize.width
         const pageHeight = doc.internal.pageSize.height
         let yPosition = 15
+        let pdfFontFamily = PDF_FONT_FAMILY
+
+        try {
+            const fontEntries = Object.entries(PDF_FONT_FILES) as Array<[keyof typeof PDF_FONT_FILES, string]>
+            for (const [style, fontUrl] of fontEntries) {
+                const fontResponse = await fetch(fontUrl)
+                if (!fontResponse.ok) {
+                    throw new Error(`Font load failed: ${fontUrl}`)
+                }
+                const fontBuffer = await fontResponse.arrayBuffer()
+                const fontFileName = fontUrl.split("/").pop() ?? `font-${style}.ttf`
+                const fontData = arrayBufferToBase64(fontBuffer)
+                doc.addFileToVFS(fontFileName, fontData)
+                doc.addFont(fontFileName, PDF_FONT_FAMILY, style)
+            }
+        } catch (error) {
+            console.warn("PDF font load failed, falling back to default font:", error)
+            pdfFontFamily = "helvetica"
+        }
 
         // Unikalny numer kosztorysu
         const numerKosztorysu = `PZ-${Date.now().toString().slice(-6)}`
@@ -1242,13 +1259,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             const logoResponse = await fetch(logoUrl)
             if (logoResponse.ok) {
                 const logoBuffer = await logoResponse.arrayBuffer()
-                const binaryChunks: string[] = []
-                const bytes = new Uint8Array(logoBuffer)
-                const chunkSize = 0x8000
-                for (let i = 0; i < bytes.length; i += chunkSize) {
-                    binaryChunks.push(String.fromCharCode(...bytes.slice(i, i + chunkSize)))
-                }
-                const logoData = `data:image/png;base64,${btoa(binaryChunks.join(""))}`
+                const logoData = `data:image/png;base64,${arrayBufferToBase64(logoBuffer)}`
                 doc.addImage(logoData, "PNG", 12, 4, 22, 22)
             }
         } catch (error) {
@@ -1257,11 +1268,11 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         doc.setTextColor(255, 255, 255) // Biały tekst
         doc.setFontSize(22)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.text("POSADZKI ZYWICZNE", pageWidth / 2, 15, { align: "center" })
         
         doc.setFontSize(10)
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
         doc.text("Profesjonalne posadzki żywiczne dla domu i biznesu", pageWidth / 2, 23, { align: "center" })
         doc.setFontSize(8)
         doc.text("Instagram: @posadzkizywicznecom", pageWidth - 12, 26, { align: "right" })
@@ -1271,9 +1282,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         // Numer kosztorysu i data
         doc.setFontSize(12)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.text(formatTextForPDF("KOSZTORYS"), 20, yPosition)
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
         doc.text(`Nr: ${numerKosztorysu}`, 20, yPosition + 6)
         doc.text(`Data: ${dataKosztorysu}`, 20, yPosition + 12)
 
@@ -1281,12 +1292,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         // Dane pomieszczenia
         doc.setFontSize(14)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.text(formatTextForPDF("DANE POMIESZCZENIA"), 20, yPosition)
         yPosition += 10
 
         doc.setFontSize(11)
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
 
         if (wybraneRodzajPomieszczenieObj) {
             doc.text(formatTextForPDF(`Typ pomieszczenia: ${wybraneRodzajPomieszczenieObj.nazwa}`), 20, yPosition)
@@ -1315,12 +1326,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         // Wybrana posadzka
         doc.setFontSize(14)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.text(formatTextForPDF("SPECYFIKACJA POSADZKI"), 20, yPosition)
         yPosition += 10
 
         doc.setFontSize(11)
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
         doc.text(formatTextForPDF(`Rodzaj: ${wybranaPosadzka.nazwa}`), 20, yPosition)
         yPosition += 6
         doc.text(formatTextForPDF(`Powierzchnia: ${wybranyRodzajPowierzchniObj.nazwa}`), 20, yPosition)
@@ -1341,7 +1352,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         // Szczegółowa kalkulacja
         doc.setFontSize(14)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.text(formatTextForPDF("SZCZEGOLOWA KALKULACJA"), 20, yPosition)
         yPosition += 10
 
@@ -1372,7 +1383,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         // Tabela - nagłówki
         doc.setFontSize(10)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.text(formatTextForPDF("Pozycja"), tablePositionX, yPosition)
         doc.text(formatTextForPDF("Ilosc"), tableQtyX, yPosition)
         doc.text(formatTextForPDF("Jednostka"), tableUnitX, yPosition)
@@ -1384,7 +1395,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         yPosition += 8
 
         // Materiał podstawowy
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
         const priceRanges: PriceRange[] = Array.isArray(wybranyRodzajPowierzchniObj.price_ranges)
             ? wybranyRodzajPowierzchniObj.price_ranges
             : []
@@ -1504,12 +1515,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
         // Podsumowanie
         doc.setFontSize(12)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.text(formatTextForPDF("PODSUMOWANIE"), 20, yPosition)
         yPosition += 10
 
         doc.setFontSize(11)
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
         doc.text(formatTextForPDF(`Koszt całkowity: ${pdfCost.toFixed(2)} zł`), 20, yPosition)
         yPosition += 6
         doc.text(formatTextForPDF(`Koszt za m²: ${pdfCostPerM2.toFixed(2)} zł/m²`), 20, yPosition)
@@ -1544,42 +1555,42 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.rect(0, footerY - 5, pageWidth, PDF_FOOTER_BOX_HEIGHT, 'F')
         
         doc.setFontSize(12)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.setTextColor(41, 128, 185)
         doc.text(formatTextForPDF("O FIRMIE"), 20, footerY + 5)
         
         doc.setFontSize(9)
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
         doc.setTextColor(50, 50, 50)
         doc.text(formatTextForPDF("Posadzki Zywiczne - Profesjonalne posadzki epoksydowe"), 20, footerY + 12)
         doc.text(formatTextForPDF("Specjalizujemy sie w wykonywaniu posadzek zywicznych"), 20, footerY + 17)
         doc.text(formatTextForPDF("dla garaży, piwnicy domow i przestrzeni komercyjnych."), 20, footerY + 22)
         
         doc.setFontSize(10)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.setTextColor(41, 128, 185)
         doc.text(formatTextForPDF("KONTAKT"), 20, footerY + 32)
         
         doc.setFontSize(9)
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
         doc.setTextColor(50, 50, 50)
         doc.text(formatTextForPDF("Web: posadzkizywiczne.com"), 20, footerY + 38)
         doc.text(formatTextForPDF("Instagram: @posadzkizywicznecom"), 20, footerY + 43)
         
         doc.setFontSize(10)
-        doc.setFont("helvetica", "bold")
+        doc.setFont(pdfFontFamily, "bold")
         doc.setTextColor(41, 128, 185)
         doc.text(formatTextForPDF("REALIZACJE"), 120, footerY + 32)
         
         doc.setFontSize(9)
-        doc.setFont("helvetica", "normal")
+        doc.setFont(pdfFontFamily, "normal")
         doc.setTextColor(50, 50, 50)
         doc.text(formatTextForPDF("Zobacz nasze realizacje na:"), 120, footerY + 38)
         doc.text(formatTextForPDF("posadzkizywiczne.com/realizacje"), 120, footerY + 43)
 
         // Stopka z disclaimerem
         doc.setFontSize(8)
-        doc.setFont("helvetica", "italic")
+        doc.setFont(pdfFontFamily, "italic")
         doc.setTextColor(100, 100, 100)
         doc.text(
             formatTextForPDF("Oferta nie jest umową. Wymagamy kontaktu w celu potwierdzenia ostatecznej ceny."),
