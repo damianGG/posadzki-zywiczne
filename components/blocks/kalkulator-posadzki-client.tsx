@@ -1234,7 +1234,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             for (const [style, fontUrl] of fontEntries) {
                 const fontResponse = await fetch(fontUrl)
                 if (!fontResponse.ok) {
-                    throw new Error(`Font load failed (${fontUrl})`)
+                    throw new Error(`Font load failed (${fontUrl}) status ${fontResponse.status}`)
                 }
                 const fontBuffer = await fontResponse.arrayBuffer()
                 const fontFileName = fontUrl.split("/").pop() ?? `font-${style}.ttf`
@@ -1243,13 +1243,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 doc.addFont(fontFileName, PDF_FONT_FAMILY, style)
             }
         } catch (error) {
-            console.warn("PDF font load failed, aborting PDF generation:", error)
+            console.warn("PDF font load failed (font assets), aborting PDF generation:", error)
             fontsLoaded = false
         }
 
         if (!fontsLoaded) {
             alert(
-                "Nie udało się wczytać czcionek PDF z polskimi znakami. Sprawdź połączenie, odśwież stronę lub sprawdź konsolę przeglądarki.",
+                "Nie udało się wczytać czcionek PDF z polskimi znakami. Sprawdź połączenie i odśwież stronę.",
             )
             setIsGeneratingPDF(false)
             setIsSendingEmail(false)
