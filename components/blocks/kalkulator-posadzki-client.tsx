@@ -1245,14 +1245,14 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     binaryChunks.push(String.fromCharCode(...bytes.slice(i, i + chunkSize)))
                 }
                 const logoData = `data:image/png;base64,${btoa(binaryChunks.join(""))}`
-                doc.addImage(logoData, "PNG", 12, 5, 20, 20)
+                doc.addImage(logoData, "PNG", 12, 4, 22, 22)
             }
         } catch (error) {
             console.warn(`Logo load failed for ${logoUrl}:`, error)
         }
 
         doc.setTextColor(255, 255, 255) // Biały tekst
-        doc.setFontSize(24)
+        doc.setFontSize(22)
         doc.setFont("helvetica", "bold")
         doc.text("POSADZKI ZYWICZNE", pageWidth / 2, 15, { align: "center" })
         
@@ -1341,14 +1341,39 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.text(formatTextForPDF("SZCZEGOLOWA KALKULACJA"), 20, yPosition)
         yPosition += 10
 
+        const tablePositionX = 20
+        const tablePositionWidth = 60
+        const tableQtyX = 85
+        const tableUnitX = 110
+        const tablePriceX = 140
+        const tableValueX = 170
+        const tableRowLineHeight = 6
+
+        const renderPdfRow = (
+            positionLabel: string,
+            quantity: string,
+            unit: string,
+            unitPrice: string,
+            value: string,
+        ) => {
+            const positionLines = doc.splitTextToSize(formatTextForPDF(positionLabel), tablePositionWidth)
+            doc.text(positionLines, tablePositionX, yPosition)
+            doc.text(quantity, tableQtyX, yPosition)
+            doc.text(unit, tableUnitX, yPosition)
+            doc.text(unitPrice, tablePriceX, yPosition)
+            doc.text(value, tableValueX, yPosition)
+            const rowHeight = Math.max(positionLines.length, 1) * tableRowLineHeight
+            yPosition += rowHeight + 2
+        }
+
         // Tabela - nagłówki
         doc.setFontSize(10)
         doc.setFont("helvetica", "bold")
-        doc.text(formatTextForPDF("Pozycja"), 20, yPosition)
-        doc.text(formatTextForPDF("Ilosc"), 80, yPosition)
-        doc.text(formatTextForPDF("Jednostka"), 110, yPosition)
-        doc.text(formatTextForPDF("Cena jedn."), 140, yPosition)
-        doc.text(formatTextForPDF("Wartosc"), 170, yPosition)
+        doc.text(formatTextForPDF("Pozycja"), tablePositionX, yPosition)
+        doc.text(formatTextForPDF("Ilosc"), tableQtyX, yPosition)
+        doc.text(formatTextForPDF("Jednostka"), tableUnitX, yPosition)
+        doc.text(formatTextForPDF("Cena jedn."), tablePriceX, yPosition)
+        doc.text(formatTextForPDF("Wartosc"), tableValueX, yPosition)
 
         yPosition += 5
         doc.line(20, yPosition, pageWidth - 20, yPosition)
@@ -1380,31 +1405,34 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
         const baseRowTotal = isFlatRate ? flatRateAmount : powierzchnia * basePricePerM2
 
-        doc.text(formatTextForPDF(`${wybranaPosadzka.nazwa} - ${wybranyRodzajPowierzchniObj.nazwa}${isFlatRate ? " (ryczałt)" : ""}`), 20, yPosition)
-        doc.text(isFlatRate ? "1" : powierzchnia.toFixed(2), 80, yPosition)
-        doc.text(isFlatRate ? "ryczałt" : "m²", 110, yPosition)
-        doc.text(`${(isFlatRate ? flatRateAmount : basePricePerM2).toFixed(2)} zl`, 140, yPosition)
-        doc.text(`${baseRowTotal.toFixed(2)} zl`, 170, yPosition)
-        yPosition += 8
+        renderPdfRow(
+            `${wybranaPosadzka.nazwa} - ${wybranyRodzajPowierzchniObj.nazwa}${isFlatRate ? " (ryczałt)" : ""}`,
+            isFlatRate ? "1" : powierzchnia.toFixed(2),
+            isFlatRate ? "ryczałt" : "m²",
+            `${(isFlatRate ? flatRateAmount : basePricePerM2).toFixed(2)} zl`,
+            `${baseRowTotal.toFixed(2)} zl`,
+        )
 
         if (wybranyKolorObj.cenaDodatkowa > 0) {
             const colorTotal = powierzchnia * wybranyKolorObj.cenaDodatkowa
-            doc.text(formatTextForPDF(`Dopłata za kolor (${wybranyKolorObj.kodRAL})`), 20, yPosition)
-            doc.text(powierzchnia.toFixed(2), 80, yPosition)
-            doc.text("m²", 110, yPosition)
-            doc.text(`${wybranyKolorObj.cenaDodatkowa.toFixed(2)} zl`, 140, yPosition)
-            doc.text(`${colorTotal.toFixed(2)} zl`, 170, yPosition)
-            yPosition += 8
+            renderPdfRow(
+                `Dopłata za kolor (${wybranyKolorObj.kodRAL})`,
+                powierzchnia.toFixed(2),
+                "m²",
+                `${wybranyKolorObj.cenaDodatkowa.toFixed(2)} zl`,
+                `${colorTotal.toFixed(2)} zl`,
+            )
         }
 
         // Stan betonu (jeśli dotyczy)
         if (wybranyStanBetonuObj && wybranyStanBetonuObj.cenaDodatkowa > 0) {
-            doc.text(formatTextForPDF(`Przygotowanie podloza: ${wybranyStanBetonuObj.nazwa}`), 20, yPosition)
-            doc.text(powierzchnia.toFixed(2), 80, yPosition)
-            doc.text("m²", 110, yPosition)
-            doc.text(`${wybranyStanBetonuObj.cenaDodatkowa.toFixed(2)} zl`, 140, yPosition)
-            doc.text(`${(powierzchnia * wybranyStanBetonuObj.cenaDodatkowa).toFixed(2)} zl`, 170, yPosition)
-            yPosition += 8
+            renderPdfRow(
+                `Przygotowanie podloza: ${wybranyStanBetonuObj.nazwa}`,
+                powierzchnia.toFixed(2),
+                "m²",
+                `${wybranyStanBetonuObj.cenaDodatkowa.toFixed(2)} zl`,
+                `${(powierzchnia * wybranyStanBetonuObj.cenaDodatkowa).toFixed(2)} zl`,
+            )
         }
 
         // Dodatkowe usługi
@@ -1419,46 +1447,47 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
             if (dodatek.wCeniePosadzki) {
                 // Service included in floor price
-                doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
-                doc.text("-", 80, yPosition)
-                doc.text("-", 110, yPosition)
-                doc.text("w cenie posadzki", 140, yPosition)
-                doc.text("0.00 zl", 170, yPosition)
+                renderPdfRow(dodatek.nazwa, "-", "-", "w cenie", "0.00 zl")
             } else if (dodatek.cenaZaM2) {
                 ilosc = powierzchnia
                 jednostka = "m²"
                 cenaJedn = dodatek.cenaZaM2
                 wartosc = powierzchnia * dodatek.cenaZaM2
                 
-                doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
-                doc.text(ilosc.toFixed(2), 80, yPosition)
-                doc.text(jednostka, 110, yPosition)
-                doc.text(`${cenaJedn.toFixed(2)} zl`, 140, yPosition)
-                doc.text(`${wartosc.toFixed(2)} zl`, 170, yPosition)
+                renderPdfRow(
+                    dodatek.nazwa,
+                    ilosc.toFixed(2),
+                    jednostka,
+                    `${cenaJedn.toFixed(2)} zl`,
+                    `${wartosc.toFixed(2)} zl`,
+                )
             } else if (dodatek.cenaZaMb && obwod) {
                 ilosc = Number.parseFloat(obwod)
                 jednostka = "mb"
                 cenaJedn = dodatek.cenaZaMb
                 wartosc = ilosc * dodatek.cenaZaMb
                 
-                doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
-                doc.text(ilosc.toFixed(2), 80, yPosition)
-                doc.text(jednostka, 110, yPosition)
-                doc.text(`${cenaJedn.toFixed(2)} zl`, 140, yPosition)
-                doc.text(`${wartosc.toFixed(2)} zl`, 170, yPosition)
+                renderPdfRow(
+                    dodatek.nazwa,
+                    ilosc.toFixed(2),
+                    jednostka,
+                    `${cenaJedn.toFixed(2)} zl`,
+                    `${wartosc.toFixed(2)} zl`,
+                )
             } else if (dodatek.cenaStala) {
                 ilosc = 1
                 jednostka = "kpl"
                 cenaJedn = dodatek.cenaStala
                 wartosc = dodatek.cenaStala
                 
-                doc.text(formatTextForPDF(dodatek.nazwa), 20, yPosition)
-                doc.text(ilosc.toFixed(2), 80, yPosition)
-                doc.text(jednostka, 110, yPosition)
-                doc.text(`${cenaJedn.toFixed(2)} zl`, 140, yPosition)
-                doc.text(`${wartosc.toFixed(2)} zl`, 170, yPosition)
+                renderPdfRow(
+                    dodatek.nazwa,
+                    ilosc.toFixed(2),
+                    jednostka,
+                    `${cenaJedn.toFixed(2)} zl`,
+                    `${wartosc.toFixed(2)} zl`,
+                )
             }
-            yPosition += 8
         })
 
         // Linia podsumowania
