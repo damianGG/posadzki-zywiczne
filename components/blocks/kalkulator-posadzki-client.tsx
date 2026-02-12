@@ -357,7 +357,7 @@ const PDF_FONT_FILES = {
     normal: "/fonts/DejaVuSans.ttf",
     bold: "/fonts/DejaVuSans-Bold.ttf",
     italic: "/fonts/DejaVuSans-Oblique.ttf",
-}
+} as const
 const PDF_FOOTER_FIRST_LINE_OFFSET = 20
 const PDF_FOOTER_SECOND_LINE_OFFSET = 14
 const PDF_FOOTER_THIRD_LINE_OFFSET = 8
@@ -1229,13 +1229,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         let pdfFontFamily = PDF_FONT_FAMILY
         let fontsLoaded = true
 
-        let failedFontUrl: string | null = null
         try {
-            const fontEntries = Object.entries(PDF_FONT_FILES) as Array<[keyof typeof PDF_FONT_FILES, string]>
+            const fontEntries = Object.entries(PDF_FONT_FILES)
             for (const [style, fontUrl] of fontEntries) {
                 const fontResponse = await fetch(fontUrl)
                 if (!fontResponse.ok) {
-                    throw new Error(`Font load failed: ${fontUrl}`)
+                    throw new Error(`Font load failed (${fontUrl})`)
                 }
                 const fontBuffer = await fontResponse.arrayBuffer()
                 const fontFileName = fontUrl.split("/").pop() ?? `font-${style}.ttf`
@@ -1244,19 +1243,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 doc.addFont(fontFileName, PDF_FONT_FAMILY, style)
             }
         } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : String(error)
-            const urlMatch = errorMessage.match(/Font load failed: (.+)$/)
-            failedFontUrl = urlMatch ? urlMatch[1] : null
-            console.warn(
-                `PDF font load failed${failedFontUrl ? ` (${failedFontUrl})` : ""}, aborting PDF generation:`,
-                error,
-            )
+            console.warn("PDF font load failed, aborting PDF generation:", error)
             fontsLoaded = false
         }
 
         if (!fontsLoaded) {
             alert(
-                "Nie udało się wczytać czcionek PDF z polskimi znakami. Sprawdź połączenie lub odśwież stronę.",
+                "Nie udało się wczytać czcionek PDF z polskimi znakami. Sprawdź połączenie, odśwież stronę lub sprawdź konsolę przeglądarki.",
             )
             setIsGeneratingPDF(false)
             setIsSendingEmail(false)
