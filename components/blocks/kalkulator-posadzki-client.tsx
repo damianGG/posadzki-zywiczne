@@ -1537,7 +1537,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
 
         // Footer z informacjami o firmie
-        const footerY = pageHeight - PDF_FOOTER_BOX_HEIGHT - PDF_DISCLAIMER_HEIGHT
+        const footerY =
+            pageHeight - PDF_FOOTER_BOX_HEIGHT - PDF_DISCLAIMER_HEIGHT - PDF_FOOTER_SECTION_SPACING
         
         doc.setFillColor(245, 245, 245) // Szare tło
         doc.rect(0, footerY - 5, pageWidth, PDF_FOOTER_BOX_HEIGHT, 'F')
