@@ -1662,12 +1662,6 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
                 const responseText = await response.text()
                 const contentType = response.headers.get("content-type") || "unknown"
-                const throwInvalidResponse = (status: number, responseContentType: string, scenario: string) => {
-                    console.error(
-                        `Email send received non-JSON ${scenario} (status ${status}, content-type: ${responseContentType}).`,
-                    )
-                    throw new Error(`Nieprawidłowa odpowiedź serwera (${status}).`)
-                }
                 const fallbackErrorMessage = `Błąd wysyłania emaila (status ${response.status}).`
 
                 if (!response.ok) {
@@ -1679,7 +1673,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 const result = tryParseJson(responseText, response.status, contentType)
 
                 if (!result) {
-                    throwInvalidResponse(response.status, contentType, "response body")
+                    console.error(
+                        `Email send received non-JSON response body (status ${response.status}, content-type: ${contentType}).`,
+                    )
+                    throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
                 }
 
                 if (result.success) {
