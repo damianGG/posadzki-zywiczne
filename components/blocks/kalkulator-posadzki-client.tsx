@@ -1040,7 +1040,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             setDiscountVerified(false)
             setDiscountFeedback("Nieprawidłowy kod rabatowy.")
         } catch (error) {
-            console.error("Discount verification failed:", error)
+            console.error("Discount verification failed (client fetch error):", error)
             setDiscountVerified(false)
             setDiscountFeedback("Nie udało się zweryfikować kodu. Spróbuj ponownie.")
         } finally {

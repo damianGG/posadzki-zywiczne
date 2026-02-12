@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         .limit(1)
 
       if (error) {
-        console.error("Discount verification failed - Supabase query error:", error)
+        console.error("Discount verification failed (Supabase query error):", error)
         return NextResponse.json({ valid: false }, { status: 500 })
       }
 
