@@ -1044,7 +1044,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         } finally {
             setIsVerifyingDiscount(false)
         }
-    }, [discountCode, discountConfig, setDiscountVerified, setDiscountFeedback])
+    }, [discountCode, discountConfig])
     const discountPercent = discountVerified ? discountConfig.percent : 0
     const kosztPoRabacie = discountPercent
         ? kosztCalkowity * (1 - discountPercent / 100)
