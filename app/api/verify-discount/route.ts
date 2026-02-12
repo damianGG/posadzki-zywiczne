@@ -4,7 +4,10 @@ import { promises as fs } from "fs"
 import path from "path"
 
 const DATA_FILE = path.join(process.cwd(), "data", "contest-entries.json")
+const FALLBACK_CACHE_TTL_MS = 60_000
 let cachedNormalizedEntries: string[] | null = null
+let cachedEntriesMtimeMs: number | null = null
+let cachedEntriesCheckedAt = 0
 
 function getSupabaseClient(): SupabaseClient | null {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -23,20 +26,30 @@ function getSupabaseClient(): SupabaseClient | null {
 }
 
 async function readNormalizedEntries(): Promise<string[]> {
-  if (cachedNormalizedEntries) {
+  const now = Date.now()
+  if (cachedNormalizedEntries && now - cachedEntriesCheckedAt < FALLBACK_CACHE_TTL_MS) {
     return cachedNormalizedEntries
   }
   try {
+    const stat = await fs.stat(DATA_FILE)
+    if (cachedNormalizedEntries && cachedEntriesMtimeMs === stat.mtimeMs) {
+      cachedEntriesCheckedAt = now
+      return cachedNormalizedEntries
+    }
     const data = await fs.readFile(DATA_FILE, "utf-8")
     const entries = JSON.parse(data) as Array<{ code?: string }>
     cachedNormalizedEntries = entries
       .map((entry) => entry.code?.trim().toUpperCase())
       .filter((entry): entry is string => Boolean(entry))
+    cachedEntriesMtimeMs = stat.mtimeMs
+    cachedEntriesCheckedAt = now
     return cachedNormalizedEntries
   } catch (error) {
     console.error("Discount verification fallback read failed:", error)
-    cachedNormalizedEntries = null
-    return []
+    cachedNormalizedEntries = []
+    cachedEntriesMtimeMs = null
+    cachedEntriesCheckedAt = now
+    return cachedNormalizedEntries
   }
 }
 
