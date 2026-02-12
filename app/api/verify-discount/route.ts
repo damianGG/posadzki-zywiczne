@@ -4,7 +4,7 @@ import { promises as fs } from "fs"
 import path from "path"
 
 const DATA_FILE = path.join(process.cwd(), "data", "contest-entries.json")
-const FALLBACK_CACHE_TTL_MS = 60_000
+const ENTRIES_CACHE_TTL_MS = 60_000
 let cachedNormalizedEntries: string[] | null = null
 let cachedEntriesMtimeMs: number | null = null
 let cachedEntriesCheckedAt = 0
@@ -27,7 +27,7 @@ function getSupabaseClient(): SupabaseClient | null {
 
 async function readNormalizedEntries(): Promise<string[]> {
   const now = Date.now()
-  if (cachedNormalizedEntries && now - cachedEntriesCheckedAt < FALLBACK_CACHE_TTL_MS) {
+  if (cachedNormalizedEntries && now - cachedEntriesCheckedAt < ENTRIES_CACHE_TTL_MS) {
     return cachedNormalizedEntries
   }
   try {
@@ -45,7 +45,7 @@ async function readNormalizedEntries(): Promise<string[]> {
     cachedEntriesCheckedAt = now
     return cachedNormalizedEntries
   } catch (error) {
-    console.error("Discount verification fallback read failed:", error)
+    console.error("Failed to read contest entries from file:", error)
     cachedNormalizedEntries = []
     cachedEntriesMtimeMs = null
     cachedEntriesCheckedAt = now
@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
         .limit(1)
 
       if (error) {
-        console.error("Discount verification failed (supabase):", error)
+        console.error("Discount verification failed - Supabase query error:", error)
         return NextResponse.json({ valid: false }, { status: 500 })
       }
 
