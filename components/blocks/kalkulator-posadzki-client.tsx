@@ -1234,7 +1234,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             for (const [style, fontUrl] of fontEntries) {
                 const fontResponse = await fetch(fontUrl)
                 if (!fontResponse.ok) {
-                    throw new Error(`Font load failed (${fontUrl}) status ${fontResponse.status}`)
+                    throw new Error(
+                        `Failed to load PDF font from ${fontUrl}: HTTP ${fontResponse.status}`
+                    )
                 }
                 const fontBuffer = await fontResponse.arrayBuffer()
                 const fontFileName = fontUrl.split("/").pop() ?? `font-${style}.ttf`
@@ -1243,7 +1245,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 doc.addFont(fontFileName, PDF_FONT_FAMILY, style)
             }
         } catch (error) {
-            console.warn("PDF font load failed, stopping PDF generation:", error)
+            console.warn("Failed to load PDF fonts:", error)
             fontsLoaded = false
         }
 
