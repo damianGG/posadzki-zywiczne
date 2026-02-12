@@ -1649,7 +1649,25 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     }),
                 })
 
-                const result = await response.json()
+                const responseText = await response.text()
+                let result: { success?: boolean; message?: string } | null = null
+
+                if (responseText) {
+                    try {
+                        result = JSON.parse(responseText) as { success?: boolean; message?: string }
+                    } catch (parseError) {
+                        console.error("Email send response not JSON:", responseText)
+                        throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
+                    }
+                }
+
+                if (!result) {
+                    throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
+                }
+
+                if (!response.ok) {
+                    throw new Error(result.message || `Błąd wysyłania emaila (status ${response.status}).`)
+                }
 
                 if (result.success) {
                     // Uruchom konfetti po wysłaniu emaila
