@@ -1655,7 +1655,11 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 const parseJsonResponse = () => {
                     try {
                         return JSON.parse(responseText) as { success?: boolean; message?: string }
-                    } catch {
+                    } catch (error) {
+                        console.error(
+                            `Email send JSON parse failed (status ${response.status}, content-type: ${contentType}).`,
+                            error,
+                        )
                         return null
                     }
                 }
@@ -1664,8 +1668,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         `Email send ${context} response not JSON (status ${status}, content-type: ${type}).`,
                     )
                 }
-                const throwInvalidResponse = (status: number, type: string) => {
-                    logUnexpectedResponse("success", status, type)
+                const throwInvalidResponse = (context: string, status: number, type: string) => {
+                    logUnexpectedResponse(context, status, type)
                     throw new Error(`Nieprawidłowa odpowiedź serwera (${status}).`)
                 }
                 const fallbackErrorMessage = `Błąd wysyłania emaila (status ${response.status}).`
@@ -1681,13 +1685,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 }
 
                 if (!isJsonResponse) {
-                    throwInvalidResponse(response.status, contentType)
+                    throwInvalidResponse("invalid", response.status, contentType)
                 }
 
                 const result = parseJsonResponse()
 
                 if (!result) {
-                    throwInvalidResponse(response.status, contentType)
+                    throwInvalidResponse("invalid", response.status, contentType)
                 }
 
                 if (result.success) {
