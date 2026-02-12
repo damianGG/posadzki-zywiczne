@@ -1243,7 +1243,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 doc.addFont(fontFileName, PDF_FONT_FAMILY, style)
             }
         } catch (error) {
-            console.warn("PDF font load failed (font assets), PDF generation canceled:", error)
+            console.warn("PDF font load failed (font assets), canceling PDF generation:", error)
             fontsLoaded = false
         }
 
