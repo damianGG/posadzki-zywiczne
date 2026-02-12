@@ -1663,10 +1663,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                         return null
                     }
                 }
-                const successScenario = "successful response"
-                const throwInvalidResponse = (status: number) => {
+                const throwInvalidResponse = (status: number, type: string) => {
                     console.error(
-                        `Email send received non-JSON ${successScenario} (status ${status}, content-type: ${contentType}).`,
+                        `Email send received non-JSON successful response (status ${status}, content-type: ${type}).`,
                     )
                     throw new Error(`Nieprawidłowa odpowiedź serwera (${status}).`)
                 }
@@ -1685,13 +1684,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 }
 
                 if (!isJsonResponse) {
-                    throwInvalidResponse(response.status)
+                    throwInvalidResponse(response.status, contentType)
                 }
 
                 const result = parseJsonResponse()
 
                 if (!result) {
-                    throwInvalidResponse(response.status)
+                    throwInvalidResponse(response.status, contentType)
                 }
 
                 if (result.success) {
