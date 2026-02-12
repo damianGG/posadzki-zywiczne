@@ -1447,7 +1447,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
             if (dodatek.wCeniePosadzki) {
                 // Service included in floor price
-                renderPdfRow(dodatek.nazwa, "-", "-", "w cenie", "0.00 zl")
+                renderPdfRow(dodatek.nazwa, "-", "-", "w cenie posadzki", "0.00 zl")
             } else if (dodatek.cenaZaM2) {
                 ilosc = powierzchnia
                 jednostka = "m²"
