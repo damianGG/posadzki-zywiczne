@@ -1660,7 +1660,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     }
                 }
                 const logUnexpectedResponse = (context: string) => {
-                    console.error(`Email send ${context} response not JSON:`, responseText)
+                    console.error(
+                        `Email send ${context} response not JSON (status ${response.status}, content-type: ${contentType || "unknown"}).`,
+                    )
+                }
+                const throwInvalidResponse = () => {
+                    logUnexpectedResponse("success")
+                    throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
                 }
                 const fallbackErrorMessage = `Błąd wysyłania emaila (status ${response.status}).`
 
@@ -1675,15 +1681,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 }
 
                 if (!isJsonResponse) {
-                    logUnexpectedResponse("success")
-                    throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
+                    throwInvalidResponse()
                 }
 
                 const result = parseJsonResponse()
 
                 if (!result) {
-                    logUnexpectedResponse("success")
-                    throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
+                    throwInvalidResponse()
                 }
 
                 if (result.success) {
