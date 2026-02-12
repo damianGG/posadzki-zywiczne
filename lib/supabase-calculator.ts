@@ -83,6 +83,11 @@ export interface StepConfig {
   can_be_hidden?: boolean;
 }
 
+interface FetchOptions {
+  includeInactive?: boolean;
+  useAdmin?: boolean;
+}
+
 /**
  * Get Supabase client with service role key
  */
@@ -119,15 +124,16 @@ export function getSupabasePublic(): SupabaseClient | null {
 
 // ========== Surface Types ==========
 
-export async function getAllSurfaceTypes() {
-  const supabase = getSupabasePublic();
+export async function getAllSurfaceTypes(options: FetchOptions = {}) {
+  const supabase = options.useAdmin ? getSupabaseAdmin() : getSupabasePublic();
   if (!supabase) return { success: false, error: 'Supabase not configured' };
 
-  const { data, error } = await supabase
+  const query = supabase
     .from('calculator_surface_types')
     .select('*')
-    .eq('is_active', true)
     .order('display_order');
+
+  const { data, error } = options.includeInactive ? await query : await query.eq('is_active', true);
 
   if (error) return { success: false, error: error.message };
   return { success: true, data };
@@ -150,15 +156,16 @@ export async function updateSurfaceType(type_id: string, updates: Partial<Surfac
 
 // ========== Colors ==========
 
-export async function getAllColors() {
-  const supabase = getSupabasePublic();
+export async function getAllColors(options: FetchOptions = {}) {
+  const supabase = options.useAdmin ? getSupabaseAdmin() : getSupabasePublic();
   if (!supabase) return { success: false, error: 'Supabase not configured' };
 
-  const { data, error } = await supabase
+  const query = supabase
     .from('calculator_colors')
     .select('*')
-    .eq('is_active', true)
     .order('display_order');
+
+  const { data, error } = options.includeInactive ? await query : await query.eq('is_active', true);
 
   if (error) return { success: false, error: error.message };
   return { success: true, data };
@@ -181,15 +188,16 @@ export async function updateColor(color_id: string, updates: Partial<ColorOption
 
 // ========== Services ==========
 
-export async function getAllServices() {
-  const supabase = getSupabasePublic();
+export async function getAllServices(options: FetchOptions = {}) {
+  const supabase = options.useAdmin ? getSupabaseAdmin() : getSupabasePublic();
   if (!supabase) return { success: false, error: 'Supabase not configured' };
 
-  const { data, error } = await supabase
+  const query = supabase
     .from('calculator_services')
     .select('*')
-    .eq('is_active', true)
     .order('display_order');
+
+  const { data, error } = options.includeInactive ? await query : await query.eq('is_active', true);
 
   if (error) return { success: false, error: error.message };
   return { success: true, data };

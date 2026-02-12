@@ -9,7 +9,17 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Calculator, Save, RefreshCw, AlertCircle, CheckCircle2, Image as ImageIcon } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
+import { Calculator, Save, RefreshCw, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
 
 interface SurfaceType {
@@ -108,6 +118,135 @@ export default function CalculatorAdminPage() {
   const [createType, setCreateType] = useState<string>('');
   const [newItem, setNewItem] = useState<any>({});
 
+  const toNumberOrNull = (value: any) => {
+    if (value === '' || value === null || value === undefined) return null;
+    return Number(value);
+  };
+
+  const getDefaultNewItem = (type: string) => {
+    switch (type) {
+      case 'surface-type':
+        return {
+          type_id: '',
+          name: '',
+          description: '',
+          price_per_m2: 0,
+          image_url: '',
+          properties: '',
+          is_active: true,
+        };
+      case 'color':
+        return {
+          color_id: '',
+          name: '',
+          ral_code: '',
+          additional_price: 0,
+          thumbnail_url: '',
+          preview_url: '',
+          is_active: true,
+        };
+      case 'service':
+        return {
+          service_id: '',
+          name: '',
+          description: '',
+          category: 'przygotowanie',
+          price_per_m2: '',
+          price_per_mb: '',
+          price_fixed: '',
+          image_url: '',
+          is_mandatory: false,
+          is_default: false,
+          is_included_in_floor_price: false,
+          is_active: true,
+        };
+      case 'room-type':
+        return {
+          room_id: '',
+          name: '',
+          description: '',
+          icon: '🏠',
+          is_available: true,
+        };
+      case 'concrete-state':
+        return {
+          state_id: '',
+          name: '',
+          description: '',
+          additional_price: 0,
+          show_price_in_label: false,
+        };
+      default:
+        return {};
+    }
+  };
+
+  const buildNewItemPayload = (type: string, data: any) => {
+    switch (type) {
+      case 'surface-type':
+        return {
+          type_id: data.type_id?.trim(),
+          name: data.name?.trim(),
+          description: data.description?.trim() || '',
+          price_per_m2: toNumberOrNull(data.price_per_m2) ?? 0,
+          image_url: data.image_url?.trim() || null,
+          properties: typeof data.properties === 'string'
+            ? data.properties.split(',').map((item: string) => item.trim()).filter(Boolean)
+            : data.properties || [],
+          is_active: data.is_active ?? true,
+        };
+      case 'color':
+        return {
+          color_id: data.color_id?.trim(),
+          name: data.name?.trim(),
+          ral_code: data.ral_code?.trim() || '',
+          additional_price: toNumberOrNull(data.additional_price) ?? 0,
+          thumbnail_url: data.thumbnail_url?.trim() || null,
+          preview_url: data.preview_url?.trim() || null,
+          is_active: data.is_active ?? true,
+        };
+      case 'service':
+        return {
+          service_id: data.service_id?.trim(),
+          name: data.name?.trim(),
+          description: data.description?.trim() || '',
+          category: data.category || 'przygotowanie',
+          price_per_m2: toNumberOrNull(data.price_per_m2),
+          price_per_mb: toNumberOrNull(data.price_per_mb),
+          price_fixed: toNumberOrNull(data.price_fixed),
+          image_url: data.image_url?.trim() || null,
+          is_mandatory: Boolean(data.is_mandatory),
+          is_default: Boolean(data.is_default),
+          is_included_in_floor_price: Boolean(data.is_included_in_floor_price),
+          is_active: data.is_active ?? true,
+        };
+      case 'room-type':
+        return {
+          room_id: data.room_id?.trim(),
+          name: data.name?.trim(),
+          description: data.description?.trim() || '',
+          icon: data.icon?.trim() || '',
+          is_available: data.is_available ?? true,
+        };
+      case 'concrete-state':
+        return {
+          state_id: data.state_id?.trim(),
+          name: data.name?.trim(),
+          description: data.description?.trim() || '',
+          additional_price: toNumberOrNull(data.additional_price) ?? 0,
+          show_price_in_label: Boolean(data.show_price_in_label),
+        };
+      default:
+        return data;
+    }
+  };
+
+  const handleUploadResult = (results: Array<{ url: string }>, onUrl: (url: string) => void) => {
+    const url = results[0]?.url;
+    if (!url) return;
+    onUrl(url);
+  };
+
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
     if (!token) {
@@ -194,10 +333,26 @@ export default function CalculatorAdminPage() {
   const createNewItem = async () => {
     try {
       setSaving(true);
+      const payload = buildNewItemPayload(createType, newItem);
+      const requiredIdMap: Record<string, string> = {
+        'surface-type': 'type_id',
+        'color': 'color_id',
+        'service': 'service_id',
+        'room-type': 'room_id',
+        'concrete-state': 'state_id',
+      };
+      const requiredIdField = requiredIdMap[createType];
+
+      if (!requiredIdField || !payload?.[requiredIdField] || !payload?.name) {
+        setMessage({ type: 'error', text: 'Uzupełnij wymagane pola (ID i nazwa).' });
+        setSaving(false);
+        return;
+      }
+
       const response = await fetch('/api/admin/calculator-settings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: createType, data: newItem }),
+        body: JSON.stringify({ type: createType, data: payload }),
       });
 
       const data = await response.json();
@@ -242,7 +397,7 @@ export default function CalculatorAdminPage() {
 
   const openCreateModal = (type: string) => {
     setCreateType(type);
-    setNewItem({});
+    setNewItem(getDefaultNewItem(type));
     setShowCreateModal(true);
   };
 
@@ -381,23 +536,39 @@ export default function CalculatorAdminPage() {
                   </div>
                   <div>
                     <Label>URL zdjęcia</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={surface.image_url || ''}
-                        onChange={(e) => {
-                          const updated = surfaceTypes.map((s) =>
-                            s.id === surface.id ? { ...s, image_url: e.target.value } : s
-                          );
-                          setSurfaceTypes(updated);
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <Input
+                          value={surface.image_url || ''}
+                          onChange={(e) => {
+                            const updated = surfaceTypes.map((s) =>
+                              s.id === surface.id ? { ...s, image_url: e.target.value } : s
+                            );
+                            setSurfaceTypes(updated);
+                          }}
+                          onBlur={(e) => updateSetting('surface-type', surface.type_id, { image_url: e.target.value })}
+                          placeholder="/images/..."
+                        />
+                        {surface.image_url && (
+                          <div className="relative w-16 h-16 border rounded">
+                            <Image src={surface.image_url} alt={surface.name} fill className="object-cover rounded" />
+                          </div>
+                        )}
+                      </div>
+                      <CloudinaryUploadWidget
+                        maxFiles={1}
+                        folder="kalkulator/powierzchnie"
+                        disabled={saving}
+                        onUploadComplete={(results) => {
+                          handleUploadResult(results, (url) => {
+                            const updated = surfaceTypes.map((s) =>
+                              s.id === surface.id ? { ...s, image_url: url } : s
+                            );
+                            setSurfaceTypes(updated);
+                            updateSetting('surface-type', surface.type_id, { image_url: url });
+                          });
                         }}
-                        onBlur={(e) => updateSetting('surface-type', surface.type_id, { image_url: e.target.value })}
-                        placeholder="/images/..."
                       />
-                      {surface.image_url && (
-                        <div className="relative w-16 h-16 border rounded">
-                          <Image src={surface.image_url} alt={surface.name} fill className="object-cover rounded" />
-                        </div>
-                      )}
                     </div>
                   </div>
                   
@@ -621,31 +792,63 @@ export default function CalculatorAdminPage() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label>Miniatura (thumbnail_url)</Label>
-                      <Input
-                        value={color.thumbnail_url || ''}
-                        onChange={(e) => {
-                          const updated = colors.map((c) =>
-                            c.id === color.id ? { ...c, thumbnail_url: e.target.value } : c
-                          );
-                          setColors(updated);
-                        }}
-                        onBlur={(e) => updateSetting('color', color.color_id, { thumbnail_url: e.target.value })}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-2">
+                        <Input
+                          value={color.thumbnail_url || ''}
+                          onChange={(e) => {
+                            const updated = colors.map((c) =>
+                              c.id === color.id ? { ...c, thumbnail_url: e.target.value } : c
+                            );
+                            setColors(updated);
+                          }}
+                          onBlur={(e) => updateSetting('color', color.color_id, { thumbnail_url: e.target.value })}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/kolory/miniatury"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            handleUploadResult(results, (url) => {
+                              const updated = colors.map((c) =>
+                                c.id === color.id ? { ...c, thumbnail_url: url } : c
+                              );
+                              setColors(updated);
+                              updateSetting('color', color.color_id, { thumbnail_url: url });
+                            });
+                          }}
+                        />
+                      </div>
                     </div>
                     <div>
                       <Label>Podgląd (preview_url)</Label>
-                      <Input
-                        value={color.preview_url || ''}
-                        onChange={(e) => {
-                          const updated = colors.map((c) =>
-                            c.id === color.id ? { ...c, preview_url: e.target.value } : c
-                          );
-                          setColors(updated);
-                        }}
-                        onBlur={(e) => updateSetting('color', color.color_id, { preview_url: e.target.value })}
-                        placeholder="/images/..."
-                      />
+                      <div className="space-y-2">
+                        <Input
+                          value={color.preview_url || ''}
+                          onChange={(e) => {
+                            const updated = colors.map((c) =>
+                              c.id === color.id ? { ...c, preview_url: e.target.value } : c
+                            );
+                            setColors(updated);
+                          }}
+                          onBlur={(e) => updateSetting('color', color.color_id, { preview_url: e.target.value })}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/kolory/podglady"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            handleUploadResult(results, (url) => {
+                              const updated = colors.map((c) =>
+                                c.id === color.id ? { ...c, preview_url: url } : c
+                              );
+                              setColors(updated);
+                              updateSetting('color', color.color_id, { preview_url: url });
+                            });
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -664,7 +867,7 @@ export default function CalculatorAdminPage() {
               </Button>
             </div>
             {services
-              .filter(service => service.category === 'przygotowanie' || service.category === 'wykończenie' || service.category === 'logistyka')
+              .filter(service => ['przygotowanie', 'wykończenie', 'logistyka', 'ochrona'].includes(service.category))
               .map((service) => (
               <Card key={service.id} className={!service.is_active ? 'opacity-60 bg-gray-50' : ''}>
                 <CardHeader>
@@ -734,6 +937,36 @@ export default function CalculatorAdminPage() {
                       Usługa w cenie posadzki (zamiast wyświetlania ceny, pokaże &quot;w cenie posadzki&quot;)
                     </Label>
                   </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <Switch
+                        checked={service.is_mandatory || false}
+                        onCheckedChange={(checked) => {
+                          const updated = services.map((s) =>
+                            s.id === service.id ? { ...s, is_mandatory: checked } : s
+                          );
+                          setServices(updated);
+                          updateSetting('service', service.service_id, { is_mandatory: checked });
+                        }}
+                        disabled={saving}
+                      />
+                      <Label className="cursor-pointer">Usługa obowiązkowa</Label>
+                    </div>
+                    <div className="flex items-center gap-2 p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <Switch
+                        checked={service.is_default || false}
+                        onCheckedChange={(checked) => {
+                          const updated = services.map((s) =>
+                            s.id === service.id ? { ...s, is_default: checked } : s
+                          );
+                          setServices(updated);
+                          updateSetting('service', service.service_id, { is_default: checked });
+                        }}
+                        disabled={saving}
+                      />
+                      <Label className="cursor-pointer">Domyślnie zaznaczona</Label>
+                    </div>
+                  </div>
                   {!service.is_included_in_floor_price && (
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {service.price_per_m2 !== undefined && service.price_per_m2 !== null && (
@@ -799,23 +1032,39 @@ export default function CalculatorAdminPage() {
                   )}
                   <div>
                     <Label>URL zdjęcia</Label>
-                    <div className="flex gap-2">
-                      <Input
-                        value={service.image_url || ''}
-                        onChange={(e) => {
-                          const updated = services.map((s) =>
-                            s.id === service.id ? { ...s, image_url: e.target.value } : s
-                          );
-                          setServices(updated);
+                    <div className="space-y-2">
+                      <div className="flex gap-2">
+                        <Input
+                          value={service.image_url || ''}
+                          onChange={(e) => {
+                            const updated = services.map((s) =>
+                              s.id === service.id ? { ...s, image_url: e.target.value } : s
+                            );
+                            setServices(updated);
+                          }}
+                          onBlur={(e) => updateSetting('service', service.service_id, { image_url: e.target.value })}
+                          placeholder="/images/..."
+                        />
+                        {service.image_url && (
+                          <div className="relative w-16 h-16 border rounded">
+                            <Image src={service.image_url} alt={service.name} fill className="object-cover rounded" />
+                          </div>
+                        )}
+                      </div>
+                      <CloudinaryUploadWidget
+                        maxFiles={1}
+                        folder="kalkulator/uslugi"
+                        disabled={saving}
+                        onUploadComplete={(results) => {
+                          handleUploadResult(results, (url) => {
+                            const updated = services.map((s) =>
+                              s.id === service.id ? { ...s, image_url: url } : s
+                            );
+                            setServices(updated);
+                            updateSetting('service', service.service_id, { image_url: url });
+                          });
                         }}
-                        onBlur={(e) => updateSetting('service', service.service_id, { image_url: e.target.value })}
-                        placeholder="/images/..."
                       />
-                      {service.image_url && (
-                        <div className="relative w-16 h-16 border rounded">
-                          <Image src={service.image_url} alt={service.name} fill className="object-cover rounded" />
-                        </div>
-                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -827,6 +1076,12 @@ export default function CalculatorAdminPage() {
         {/* Room Types */}
         {activeTab === 'rooms' && (
           <div className="space-y-4">
+            <div className="flex justify-end mb-4">
+              <Button onClick={() => openCreateModal('room-type')} className="gap-2">
+                <Save className="w-4 h-4" />
+                Dodaj nowe pomieszczenie
+              </Button>
+            </div>
             {roomTypes.map((room) => (
               <Card key={room.id} className={!room.is_available ? 'opacity-60 bg-gray-50' : ''}>
                 <CardHeader>
@@ -1032,6 +1287,447 @@ export default function CalculatorAdminPage() {
             ))}
           </div>
         )}
+
+        <Dialog
+          open={showCreateModal}
+          onOpenChange={(open) => {
+            setShowCreateModal(open);
+            if (!open) {
+              setNewItem({});
+            }
+          }}
+        >
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Dodaj nową pozycję</DialogTitle>
+              <DialogDescription>Wypełnij wymagane pola i zapisz.</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
+              {createType === 'surface-type' && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>ID typu</Label>
+                      <Input
+                        value={newItem.type_id || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, type_id: e.target.value }))}
+                        placeholder="np. podstawowa"
+                      />
+                    </div>
+                    <div>
+                      <Label>Nazwa</Label>
+                      <Input
+                        value={newItem.name || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, name: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Opis</Label>
+                    <Textarea
+                      value={newItem.description || ''}
+                      onChange={(e) => setNewItem((prev: any) => ({ ...prev, description: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Cena za m² (zł)</Label>
+                      <Input
+                        type="number"
+                        value={newItem.price_per_m2 ?? ''}
+                        onChange={(e) =>
+                          setNewItem((prev: any) => ({
+                            ...prev,
+                            price_per_m2: e.target.value === '' ? '' : Number(e.target.value),
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label>URL zdjęcia</Label>
+                      <div className="space-y-2">
+                        <Input
+                          value={newItem.image_url || ''}
+                          onChange={(e) => setNewItem((prev: any) => ({ ...prev, image_url: e.target.value }))}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/powierzchnie"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            handleUploadResult(results, (url) => {
+                              setNewItem((prev: any) => ({ ...prev, image_url: url }));
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Właściwości (oddzielone przecinkami)</Label>
+                    <Textarea
+                      value={newItem.properties || ''}
+                      onChange={(e) => setNewItem((prev: any) => ({ ...prev, properties: e.target.value }))}
+                    />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={newItem.is_active ?? true}
+                      onCheckedChange={(checked) => setNewItem((prev: any) => ({ ...prev, is_active: checked }))}
+                    />
+                    <Label>Aktywne</Label>
+                  </div>
+                </>
+              )}
+
+              {createType === 'color' && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>ID koloru</Label>
+                      <Input
+                        value={newItem.color_id || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, color_id: e.target.value }))}
+                        placeholder="np. ral7035"
+                      />
+                    </div>
+                    <div>
+                      <Label>Nazwa</Label>
+                      <Input
+                        value={newItem.name || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, name: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Kod RAL</Label>
+                      <Input
+                        value={newItem.ral_code || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, ral_code: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <Label>Dopłata (zł/m²)</Label>
+                      <Input
+                        type="number"
+                        value={newItem.additional_price ?? ''}
+                        onChange={(e) =>
+                          setNewItem((prev: any) => ({
+                            ...prev,
+                            additional_price: e.target.value === '' ? '' : Number(e.target.value),
+                          }))
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Miniatura</Label>
+                      <div className="space-y-2">
+                        <Input
+                          value={newItem.thumbnail_url || ''}
+                          onChange={(e) => setNewItem((prev: any) => ({ ...prev, thumbnail_url: e.target.value }))}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/kolory/miniatury"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            handleUploadResult(results, (url) => {
+                              setNewItem((prev: any) => ({ ...prev, thumbnail_url: url }));
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Podgląd</Label>
+                      <div className="space-y-2">
+                        <Input
+                          value={newItem.preview_url || ''}
+                          onChange={(e) => setNewItem((prev: any) => ({ ...prev, preview_url: e.target.value }))}
+                          placeholder="/images/..."
+                        />
+                        <CloudinaryUploadWidget
+                          maxFiles={1}
+                          folder="kalkulator/kolory/podglady"
+                          disabled={saving}
+                          onUploadComplete={(results) => {
+                            handleUploadResult(results, (url) => {
+                              setNewItem((prev: any) => ({ ...prev, preview_url: url }));
+                            });
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={newItem.is_active ?? true}
+                      onCheckedChange={(checked) => setNewItem((prev: any) => ({ ...prev, is_active: checked }))}
+                    />
+                    <Label>Aktywny</Label>
+                  </div>
+                </>
+              )}
+
+              {createType === 'service' && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>ID usługi</Label>
+                      <Input
+                        value={newItem.service_id || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, service_id: e.target.value }))}
+                        placeholder="np. gruntowanie"
+                      />
+                    </div>
+                    <div>
+                      <Label>Nazwa</Label>
+                      <Input
+                        value={newItem.name || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, name: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Opis</Label>
+                    <Textarea
+                      value={newItem.description || ''}
+                      onChange={(e) => setNewItem((prev: any) => ({ ...prev, description: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <Label>Kategoria</Label>
+                    <Select
+                      value={newItem.category || 'przygotowanie'}
+                      onValueChange={(value) => setNewItem((prev: any) => ({ ...prev, category: value }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Wybierz kategorię" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="przygotowanie">Przygotowanie</SelectItem>
+                        <SelectItem value="wykończenie">Wykończenie</SelectItem>
+                        <SelectItem value="ochrona">Ochrona</SelectItem>
+                        <SelectItem value="logistyka">Logistyka</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label>Cena za m²</Label>
+                      <Input
+                        type="number"
+                        value={newItem.price_per_m2 ?? ''}
+                        onChange={(e) =>
+                          setNewItem((prev: any) => ({
+                            ...prev,
+                            price_per_m2: e.target.value === '' ? '' : Number(e.target.value),
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label>Cena za mb</Label>
+                      <Input
+                        type="number"
+                        value={newItem.price_per_mb ?? ''}
+                        onChange={(e) =>
+                          setNewItem((prev: any) => ({
+                            ...prev,
+                            price_per_mb: e.target.value === '' ? '' : Number(e.target.value),
+                          }))
+                        }
+                      />
+                    </div>
+                    <div>
+                      <Label>Cena stała</Label>
+                      <Input
+                        type="number"
+                        value={newItem.price_fixed ?? ''}
+                        onChange={(e) =>
+                          setNewItem((prev: any) => ({
+                            ...prev,
+                            price_fixed: e.target.value === '' ? '' : Number(e.target.value),
+                          }))
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>URL zdjęcia</Label>
+                    <div className="space-y-2">
+                      <Input
+                        value={newItem.image_url || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, image_url: e.target.value }))}
+                        placeholder="/images/..."
+                      />
+                      <CloudinaryUploadWidget
+                        maxFiles={1}
+                        folder="kalkulator/uslugi"
+                        disabled={saving}
+                        onUploadComplete={(results) => {
+                          handleUploadResult(results, (url) => {
+                            setNewItem((prev: any) => ({ ...prev, image_url: url }));
+                          });
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={Boolean(newItem.is_mandatory)}
+                        onCheckedChange={(checked) => setNewItem((prev: any) => ({ ...prev, is_mandatory: checked }))}
+                      />
+                      <Label>Obowiązkowa</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={Boolean(newItem.is_default)}
+                        onCheckedChange={(checked) => setNewItem((prev: any) => ({ ...prev, is_default: checked }))}
+                      />
+                      <Label>Domyślnie wybrana</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={Boolean(newItem.is_included_in_floor_price)}
+                        onCheckedChange={(checked) =>
+                          setNewItem((prev: any) => ({ ...prev, is_included_in_floor_price: checked }))
+                        }
+                      />
+                      <Label>W cenie posadzki</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={newItem.is_active ?? true}
+                        onCheckedChange={(checked) => setNewItem((prev: any) => ({ ...prev, is_active: checked }))}
+                      />
+                      <Label>Aktywna</Label>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {createType === 'room-type' && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>ID pomieszczenia</Label>
+                      <Input
+                        value={newItem.room_id || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, room_id: e.target.value }))}
+                        placeholder="np. garaz-piwnica"
+                      />
+                    </div>
+                    <div>
+                      <Label>Nazwa</Label>
+                      <Input
+                        value={newItem.name || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, name: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Opis</Label>
+                    <Textarea
+                      value={newItem.description || ''}
+                      onChange={(e) => setNewItem((prev: any) => ({ ...prev, description: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Ikona (emoji)</Label>
+                      <Input
+                        value={newItem.icon || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, icon: e.target.value }))}
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={newItem.is_available ?? true}
+                        onCheckedChange={(checked) => setNewItem((prev: any) => ({ ...prev, is_available: checked }))}
+                      />
+                      <Label>Dostępne</Label>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {createType === 'concrete-state' && (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>ID stanu</Label>
+                      <Input
+                        value={newItem.state_id || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, state_id: e.target.value }))}
+                        placeholder="np. nowa-wylewka"
+                      />
+                    </div>
+                    <div>
+                      <Label>Nazwa</Label>
+                      <Input
+                        value={newItem.name || ''}
+                        onChange={(e) => setNewItem((prev: any) => ({ ...prev, name: e.target.value }))}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label>Opis</Label>
+                    <Textarea
+                      value={newItem.description || ''}
+                      onChange={(e) => setNewItem((prev: any) => ({ ...prev, description: e.target.value }))}
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label>Dopłata (zł/m²)</Label>
+                      <Input
+                        type="number"
+                        value={newItem.additional_price ?? ''}
+                        onChange={(e) =>
+                          setNewItem((prev: any) => ({
+                            ...prev,
+                            additional_price: e.target.value === '' ? '' : Number(e.target.value),
+                          }))
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={Boolean(newItem.show_price_in_label)}
+                        onCheckedChange={(checked) =>
+                          setNewItem((prev: any) => ({ ...prev, show_price_in_label: checked }))
+                        }
+                      />
+                      <Label>Pokaż cenę w etykiecie</Label>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowCreateModal(false);
+                  setNewItem({});
+                }}
+              >
+                Anuluj
+              </Button>
+              <Button onClick={createNewItem} disabled={saving} className="gap-2">
+                <Save className="w-4 h-4" />
+                Utwórz
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
