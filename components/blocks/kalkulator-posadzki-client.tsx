@@ -1650,18 +1650,18 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 })
 
                 const responseText = await response.text()
-                const contentType = response.headers.get("content-type") ?? ""
+                const contentType = response.headers.get("content-type") || "unknown"
                 const isJsonResponse = contentType.includes("application/json")
                 const parseJsonResponse = () => {
                     try {
                         return JSON.parse(responseText) as { success?: boolean; message?: string }
-                    } catch (parseError) {
+                    } catch {
                         return null
                     }
                 }
                 const logUnexpectedResponse = (context: string) => {
                     console.error(
-                        `Email send ${context} response not JSON (status ${response.status}, content-type: ${contentType || "unknown"}).`,
+                        `Email send ${context} response not JSON (status ${response.status}, content-type: ${contentType}).`,
                     )
                 }
                 const throwInvalidResponse = () => {
