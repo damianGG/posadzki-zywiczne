@@ -26,6 +26,7 @@ async function readEntries(): Promise<Array<{ code?: string }>> {
     const data = await fs.readFile(DATA_FILE, "utf-8")
     return JSON.parse(data)
   } catch (error) {
+    console.error("Discount verification fallback read failed:", error)
     return []
   }
 }

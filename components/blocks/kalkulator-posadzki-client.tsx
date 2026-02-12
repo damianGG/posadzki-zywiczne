@@ -1021,7 +1021,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             const response = await fetch("/api/verify-discount", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ code: trimmedCode.toUpperCase() }),
+                body: JSON.stringify({ code: trimmedCode }),
             })
 
             if (!response.ok) {
@@ -1038,6 +1038,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
             setDiscountVerified(false)
             setDiscountFeedback("Nieprawidłowy kod rabatowy.")
         } catch (error) {
+            console.error("Discount verification failed:", error)
             setDiscountVerified(false)
             setDiscountFeedback("Nie udało się zweryfikować kodu. Spróbuj ponownie.")
         } finally {
