@@ -589,7 +589,7 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
 
 // Funkcja do konwersji tekstu na format kompatybilny z PDF
 const formatTextForPDF = (text: string): string => {
-    return text
+    return text.normalize("NFC")
 }
 
 interface CalculatorData {
@@ -1227,6 +1227,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         const pageHeight = doc.internal.pageSize.height
         let yPosition = 15
         let pdfFontFamily = PDF_FONT_FAMILY
+        let fontsLoaded = true
 
         try {
             const fontEntries = Object.entries(PDF_FONT_FILES) as Array<[keyof typeof PDF_FONT_FILES, string]>
@@ -1242,8 +1243,15 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 doc.addFont(fontFileName, PDF_FONT_FAMILY, style)
             }
         } catch (error) {
-            console.warn("PDF font load failed, falling back to default font:", error)
-            pdfFontFamily = "helvetica"
+            console.warn("PDF font load failed, aborting PDF generation:", error)
+            fontsLoaded = false
+        }
+
+        if (!fontsLoaded) {
+            alert("Nie udało się wczytać czcionek PDF z polskimi znakami. Spróbuj ponownie.")
+            setIsGeneratingPDF(false)
+            setIsSendingEmail(false)
+            return
         }
 
         // Unikalny numer kosztorysu
