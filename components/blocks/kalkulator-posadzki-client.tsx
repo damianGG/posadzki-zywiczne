@@ -1652,20 +1652,20 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                 const responseText = await response.text()
                 const contentType = response.headers.get("content-type") || "unknown"
                 const isJsonResponse = contentType.includes("application/json")
-                const safeParseJsonResponse = (text: string, status: number, type: string) => {
+                const tryParseJson = (text: string, status: number, responseContentType: string) => {
                     try {
                         return JSON.parse(text) as { success?: boolean; message?: string }
                     } catch (error) {
                         console.error(
-                            `Email send JSON parse failed (status ${status}, content-type: ${type}).`,
+                            `Email send JSON parse failed (status ${status}, content-type: ${responseContentType}).`,
                             error,
                         )
                         return null
                     }
                 }
-                const throwInvalidResponse = (status: number, type: string, scenario: string) => {
+                const throwInvalidResponse = (status: number, responseContentType: string, scenario: string) => {
                     console.error(
-                        `Email send received non-JSON ${scenario} (status ${status}, content-type: ${type}).`,
+                        `Email send received non-JSON ${scenario} (status ${status}, content-type: ${responseContentType}).`,
                     )
                     throw new Error(`Nieprawidłowa odpowiedź serwera (${status}).`)
                 }
@@ -1673,14 +1673,8 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
 
                 if (!response.ok) {
                     const errorResult = isJsonResponse
-                        ? safeParseJsonResponse(responseText, response.status, contentType)
+                        ? tryParseJson(responseText, response.status, contentType)
                         : null
-
-                    if (!errorResult && !isJsonResponse) {
-                        console.error(
-                            `Email send received non-JSON error response (status ${response.status}, content-type: ${contentType}).`,
-                        )
-                    }
 
                     throw new Error(errorResult?.message || fallbackErrorMessage)
                 }
@@ -1689,7 +1683,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     throwInvalidResponse(response.status, contentType, "response body")
                 }
 
-                const result = safeParseJsonResponse(responseText, response.status, contentType)
+                const result = tryParseJson(responseText, response.status, contentType)
 
                 if (!result) {
                     throwInvalidResponse(response.status, contentType, "response body")
