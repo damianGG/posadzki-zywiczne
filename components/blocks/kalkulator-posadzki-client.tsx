@@ -355,7 +355,9 @@ const createDiscountConfig = () => ({
 const PDF_FOOTER_FIRST_LINE_OFFSET = 20
 const PDF_FOOTER_SECOND_LINE_OFFSET = 14
 const PDF_FOOTER_THIRD_LINE_OFFSET = 8
-const PDF_FOOTER_RESERVED_HEIGHT = 60
+const PDF_FOOTER_BOX_HEIGHT = 55
+const PDF_DISCLAIMER_HEIGHT = 26
+const PDF_FOOTER_RESERVED_HEIGHT = PDF_FOOTER_BOX_HEIGHT + PDF_DISCLAIMER_HEIGHT + 10
 
 const DIACRITIC_MAP: Record<string, string> = {
     ą: "a",
@@ -1533,10 +1535,10 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
 
         // Footer z informacjami o firmie
-        const footerY = pageHeight - 55
+        const footerY = pageHeight - PDF_FOOTER_BOX_HEIGHT - PDF_DISCLAIMER_HEIGHT
         
         doc.setFillColor(245, 245, 245) // Szare tło
-        doc.rect(0, footerY - 5, pageWidth, 55, 'F')
+        doc.rect(0, footerY - 5, pageWidth, PDF_FOOTER_BOX_HEIGHT, 'F')
         
         doc.setFontSize(12)
         doc.setFont("helvetica", "bold")
