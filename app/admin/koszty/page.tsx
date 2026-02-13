@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +11,6 @@ import { ArrowLeft, Plus, Trash2, Wallet, Warehouse } from 'lucide-react';
 
 const PROJECTS_STORAGE_KEY = 'admin_project_costs_v1';
 const INVENTORY_STORAGE_KEY = 'admin_inventory_items_v1';
-let fallbackIdCounter = 0;
 
 interface ProjectCostEntry {
   id: string;
@@ -57,30 +56,34 @@ const toNumber = (value: string) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
-const createId = () => {
-  if (typeof crypto !== 'undefined') {
-    if (crypto.randomUUID) {
-      return crypto.randomUUID();
-    }
-    if (crypto.getRandomValues) {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
-        const random = crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f;
-        const value = char === 'x' ? random : (random & 0x3) | 0x8;
-        return value.toString(16);
-      });
-    }
-  }
-  fallbackIdCounter += 1;
-  return `legacy-${Date.now()}-${fallbackIdCounter}`;
-};
-
 export default function AdminKosztyPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [projects, setProjects] = useState<ProjectCostEntry[]>([]);
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [projectForm, setProjectForm] = useState(emptyProjectForm);
   const [inventoryForm, setInventoryForm] = useState(emptyInventoryForm);
+  const fallbackIdCounterRef = useRef(0);
   const router = useRouter();
+
+  const createId = useMemo(() => {
+    if (typeof crypto !== 'undefined') {
+      if (crypto.randomUUID) {
+        return () => crypto.randomUUID();
+      }
+      if (crypto.getRandomValues) {
+        return () =>
+          'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
+            const random = crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f;
+            const value = char === 'x' ? random : (random & 0x3) | 0x8;
+            return value.toString(16);
+          });
+      }
+    }
+    return () => {
+      fallbackIdCounterRef.current += 1;
+      return `legacy-${Date.now()}-${fallbackIdCounterRef.current}`;
+    };
+  }, []);
 
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
