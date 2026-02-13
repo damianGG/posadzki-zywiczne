@@ -56,6 +56,13 @@ const toNumber = (value: string) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const calculateProjectCost = (project: {
+  materialCost: number;
+  travelCost: number;
+  fuelCost: number;
+  otherCost: number;
+}) => project.materialCost + project.travelCost + project.fuelCost + project.otherCost;
+
 export default function AdminKosztyPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [projects, setProjects] = useState<ProjectCostEntry[]>([]);
@@ -63,15 +70,15 @@ export default function AdminKosztyPage() {
   const [projectForm, setProjectForm] = useState(emptyProjectForm);
   const [inventoryForm, setInventoryForm] = useState(emptyInventoryForm);
   const fallbackIdCounterRef = useRef(0);
+  const idGeneratorRef = useRef<(() => string) | null>(null);
   const router = useRouter();
 
-  const createId = useMemo(() => {
+  if (!idGeneratorRef.current) {
     if (typeof crypto !== 'undefined') {
       if (crypto.randomUUID) {
-        return () => crypto.randomUUID();
-      }
-      if (crypto.getRandomValues) {
-        return () =>
+        idGeneratorRef.current = () => crypto.randomUUID();
+      } else if (crypto.getRandomValues) {
+        idGeneratorRef.current = () =>
           'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
             const random = crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f;
             const value = char === 'x' ? random : (random & 0x3) | 0x8;
@@ -79,11 +86,15 @@ export default function AdminKosztyPage() {
           });
       }
     }
-    return () => {
-      fallbackIdCounterRef.current += 1;
-      return `legacy-${Date.now()}-${fallbackIdCounterRef.current}`;
-    };
-  }, []);
+    if (!idGeneratorRef.current) {
+      idGeneratorRef.current = () => {
+        fallbackIdCounterRef.current += 1;
+        return `legacy-${Date.now()}-${fallbackIdCounterRef.current}`;
+      };
+    }
+  }
+
+  const createId = () => idGeneratorRef.current?.() ?? `legacy-${Date.now()}`;
 
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
@@ -128,15 +139,7 @@ export default function AdminKosztyPage() {
   );
   const totalProjectCosts = useMemo(
     () =>
-      projects.reduce(
-        (sum, project) =>
-          sum +
-          project.materialCost +
-          project.travelCost +
-          project.fuelCost +
-          project.otherCost,
-        0,
-      ),
+      projects.reduce((sum, project) => sum + calculateProjectCost(project), 0),
     [projects],
   );
   const totalProjectProfit = useMemo(
@@ -191,8 +194,7 @@ export default function AdminKosztyPage() {
     setInventoryForm(emptyInventoryForm);
   };
 
-  const projectCosts = (project: ProjectCostEntry) =>
-    project.materialCost + project.travelCost + project.fuelCost + project.otherCost;
+  const projectCosts = (project: ProjectCostEntry) => calculateProjectCost(project);
 
   if (!isAuthenticated) {
     return null;
