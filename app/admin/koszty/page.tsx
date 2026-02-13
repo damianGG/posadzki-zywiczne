@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,26 +69,31 @@ export default function AdminKosztyPage() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [projectForm, setProjectForm] = useState(emptyProjectForm);
   const [inventoryForm, setInventoryForm] = useState(emptyInventoryForm);
+  const fallbackCounterRef = useRef(0);
   const router = useRouter();
 
   const createId = useMemo(() => {
-    let fallbackCounter = 0;
     if (typeof crypto !== 'undefined') {
       if (crypto.randomUUID) {
         return () => crypto.randomUUID();
       }
       if (crypto.getRandomValues) {
-        return () =>
-          'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
-            const random = crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f;
-            const value = char === 'x' ? random : (random & 0x3) | 0x8;
-            return value.toString(16);
-          });
+        return () => {
+          const bytes = crypto.getRandomValues(new Uint8Array(16));
+          bytes[6] = (bytes[6] & 0x0f) | 0x40;
+          bytes[8] = (bytes[8] & 0x3f) | 0x80;
+          const toHex = (value: number) => value.toString(16).padStart(2, '0');
+          const hex = Array.from(bytes, toHex).join('');
+          return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(
+            16,
+            20,
+          )}-${hex.slice(20)}`;
+        };
       }
     }
     return () => {
-      fallbackCounter += 1;
-      return `legacy-${Date.now()}-${fallbackCounter}`;
+      fallbackCounterRef.current += 1;
+      return `legacy-${Date.now()}-${fallbackCounterRef.current}`;
     };
   }, []);
 
