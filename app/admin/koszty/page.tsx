@@ -62,9 +62,13 @@ const createId = () => {
       return crypto.randomUUID();
     }
     if (crypto.getRandomValues) {
+      const uuidVersionMask = 0x0f;
+      const uuidVersionValue = 0x40;
+      const uuidVariantMask = 0x3f;
+      const uuidVariantValue = 0x80;
       const bytes = crypto.getRandomValues(new Uint8Array(16));
-      bytes[6] = (bytes[6] & 0x0f) | 0x40;
-      bytes[8] = (bytes[8] & 0x3f) | 0x80;
+      bytes[6] = (bytes[6] & uuidVersionMask) | uuidVersionValue;
+      bytes[8] = (bytes[8] & uuidVariantMask) | uuidVariantValue;
       const toHex = (value: number) => value.toString(16).padStart(2, '0');
       const hex = Array.from(bytes, toHex).join('');
       return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(
@@ -87,7 +91,7 @@ export default function AdminKosztyPage() {
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
     if (!token) {
-      router.push('/admin/realizacje/dodaj');
+      router.push('/admin');
       return;
     }
     setIsAuthenticated(true);
