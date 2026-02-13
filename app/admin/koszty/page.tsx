@@ -62,10 +62,10 @@ const createId = () => {
       return crypto.randomUUID();
     }
     if (crypto.getRandomValues) {
-      return '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (char) => {
-        const value = Number(char);
-        const random = crypto.getRandomValues(new Uint8Array(1))[0];
-        return (value ^ (random & (15 >> (value / 4)))).toString(16);
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
+        const random = crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f;
+        const value = char === 'x' ? random : (random & 0x3) | 0x8;
+        return value.toString(16);
       });
     }
   }
@@ -140,7 +140,7 @@ export default function AdminKosztyPage() {
   );
   const profitMargin = useMemo(() => {
     if (totalProjectRevenue === 0) return null;
-    return Math.round((totalProjectProfit / totalProjectRevenue) * 100);
+    return ((totalProjectProfit / totalProjectRevenue) * 100).toFixed(1);
   }, [totalProjectProfit, totalProjectRevenue]);
   const inventoryEntries = useMemo(
     () =>
