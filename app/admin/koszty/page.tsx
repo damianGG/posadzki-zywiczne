@@ -63,7 +63,10 @@ const createId = () => {
     }
     if (crypto.getRandomValues) {
       const randomValues = crypto.getRandomValues(new Uint32Array(4));
-      return Array.from(randomValues, (value) => value.toString(16).padStart(8, '0')).join('-');
+      const randomId = Array.from(randomValues, (value) => value.toString(16).padStart(8, '0')).join(
+        '-',
+      );
+      return `rand-${randomId}`;
     }
   }
   return `legacy-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -131,7 +134,10 @@ export default function AdminKosztyPage() {
       ),
     [projects],
   );
-  const totalProjectProfit = totalProjectRevenue - totalProjectCosts;
+  const totalProjectProfit = useMemo(
+    () => totalProjectRevenue - totalProjectCosts,
+    [totalProjectCosts, totalProjectRevenue],
+  );
   const profitMargin = useMemo(() => {
     if (totalProjectRevenue <= 0) return null;
     return Math.round((totalProjectProfit / totalProjectRevenue) * 100);
