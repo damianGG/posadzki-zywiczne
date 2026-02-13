@@ -62,19 +62,8 @@ const createId = () => {
       return crypto.randomUUID();
     }
     if (crypto.getRandomValues) {
-      const uuidVersionMask = 0x0f;
-      const uuidVersionValue = 0x40;
-      const uuidVariantMask = 0x3f;
-      const uuidVariantValue = 0x80;
-      const bytes = crypto.getRandomValues(new Uint8Array(16));
-      bytes[6] = (bytes[6] & uuidVersionMask) | uuidVersionValue;
-      bytes[8] = (bytes[8] & uuidVariantMask) | uuidVariantValue;
-      const toHex = (value: number) => value.toString(16).padStart(2, '0');
-      const hex = Array.from(bytes, toHex).join('');
-      return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(
-        16,
-        20,
-      )}-${hex.slice(20)}`;
+      const randomValues = crypto.getRandomValues(new Uint32Array(4));
+      return Array.from(randomValues, (value) => value.toString(16).padStart(8, '0')).join('-');
     }
   }
   return `legacy-${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -143,9 +132,21 @@ export default function AdminKosztyPage() {
     [projects],
   );
   const totalProjectProfit = totalProjectRevenue - totalProjectCosts;
-  const totalInventoryValue = useMemo(
-    () => inventoryItems.reduce((sum, item) => sum + item.quantity * item.unitCost, 0),
+  const profitMargin = useMemo(() => {
+    if (totalProjectRevenue <= 0) return null;
+    return Math.round((totalProjectProfit / totalProjectRevenue) * 100);
+  }, [totalProjectProfit, totalProjectRevenue]);
+  const inventoryEntries = useMemo(
+    () =>
+      inventoryItems.map((item) => ({
+        ...item,
+        totalValue: item.quantity * item.unitCost,
+      })),
     [inventoryItems],
+  );
+  const totalInventoryValue = useMemo(
+    () => inventoryEntries.reduce((sum, item) => sum + item.totalValue, 0),
+    [inventoryEntries],
   );
 
   const addProject = () => {
@@ -330,9 +331,7 @@ export default function AdminKosztyPage() {
                 <div className="rounded-lg border bg-white/70 px-3 py-2 shadow-sm dark:border-gray-700 dark:bg-gray-900/40">
                   <p className="text-xs uppercase tracking-wide text-gray-500">Marża</p>
                   <p className="text-lg font-semibold">
-                    {totalProjectRevenue > 0
-                      ? `${Math.round((totalProjectProfit / totalProjectRevenue) * 100)}%`
-                      : '—'}
+                    {profitMargin !== null ? `${profitMargin}%` : '—'}
                   </p>
                 </div>
               </div>
@@ -485,7 +484,7 @@ export default function AdminKosztyPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {inventoryItems.map((item) => (
+                      {inventoryEntries.map((item) => (
                         <tr key={item.id} className="border-b last:border-b-0">
                           <td className="py-2 pr-4 font-medium text-gray-900 dark:text-gray-100">
                             {item.name}
@@ -495,7 +494,7 @@ export default function AdminKosztyPage() {
                             {formatCurrency(item.unitCost)}
                           </td>
                           <td className="py-2 pr-4 text-right">
-                            {formatCurrency(item.unitCost * item.quantity)}
+                            {formatCurrency(item.totalValue)}
                           </td>
                           <td className="py-2 text-right">
                             <Button
