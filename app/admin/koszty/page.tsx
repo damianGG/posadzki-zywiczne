@@ -11,6 +11,7 @@ import { ArrowLeft, Plus, Trash2, Wallet, Warehouse } from 'lucide-react';
 
 const PROJECTS_STORAGE_KEY = 'admin_project_costs_v1';
 const INVENTORY_STORAGE_KEY = 'admin_inventory_items_v1';
+let fallbackIdCounter = 0;
 
 interface ProjectCostEntry {
   id: string;
@@ -69,7 +70,8 @@ const createId = () => {
       });
     }
   }
-  return `legacy-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  fallbackIdCounter += 1;
+  return `legacy-${Date.now()}-${fallbackIdCounter}`;
 };
 
 export default function AdminKosztyPage() {
@@ -115,7 +117,7 @@ export default function AdminKosztyPage() {
   useEffect(() => {
     if (!isAuthenticated) return;
     localStorage.setItem(INVENTORY_STORAGE_KEY, JSON.stringify(inventoryItems));
-  }, [inventoryItems, isAuthenticated]);
+  }, [isAuthenticated, inventoryItems]);
 
   const totalProjectRevenue = useMemo(
     () => projects.reduce((sum, project) => sum + project.revenue, 0),
