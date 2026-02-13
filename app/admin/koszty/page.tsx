@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,16 +69,16 @@ export default function AdminKosztyPage() {
   const [inventoryItems, setInventoryItems] = useState<InventoryItem[]>([]);
   const [projectForm, setProjectForm] = useState(emptyProjectForm);
   const [inventoryForm, setInventoryForm] = useState(emptyInventoryForm);
-  const fallbackIdCounterRef = useRef(0);
-  const idGeneratorRef = useRef<(() => string) | null>(null);
   const router = useRouter();
 
-  if (!idGeneratorRef.current) {
+  const createId = useMemo(() => {
+    let fallbackCounter = 0;
     if (typeof crypto !== 'undefined') {
       if (crypto.randomUUID) {
-        idGeneratorRef.current = () => crypto.randomUUID();
-      } else if (crypto.getRandomValues) {
-        idGeneratorRef.current = () =>
+        return () => crypto.randomUUID();
+      }
+      if (crypto.getRandomValues) {
+        return () =>
           'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (char) => {
             const random = crypto.getRandomValues(new Uint8Array(1))[0] & 0x0f;
             const value = char === 'x' ? random : (random & 0x3) | 0x8;
@@ -86,15 +86,11 @@ export default function AdminKosztyPage() {
           });
       }
     }
-    if (!idGeneratorRef.current) {
-      idGeneratorRef.current = () => {
-        fallbackIdCounterRef.current += 1;
-        return `legacy-${Date.now()}-${fallbackIdCounterRef.current}`;
-      };
-    }
-  }
-
-  const createId = () => idGeneratorRef.current?.() ?? `legacy-${Date.now()}`;
+    return () => {
+      fallbackCounter += 1;
+      return `legacy-${Date.now()}-${fallbackCounter}`;
+    };
+  }, []);
 
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
@@ -193,8 +189,6 @@ export default function AdminKosztyPage() {
     setInventoryItems((prev) => [newItem, ...prev]);
     setInventoryForm(emptyInventoryForm);
   };
-
-  const projectCosts = (project: ProjectCostEntry) => calculateProjectCost(project);
 
   if (!isAuthenticated) {
     return null;
@@ -367,7 +361,7 @@ export default function AdminKosztyPage() {
                     </thead>
                     <tbody>
                       {projects.map((project) => {
-                        const totalCost = projectCosts(project);
+                        const totalCost = calculateProjectCost(project);
                         const profit = project.revenue - totalCost;
                         return (
                           <tr key={project.id} className="border-b last:border-b-0">
