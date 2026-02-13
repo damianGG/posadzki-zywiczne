@@ -56,6 +56,13 @@ const toNumber = (value: string) => {
   return Number.isFinite(parsed) ? parsed : 0;
 };
 
+const createId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+};
+
 export default function AdminKosztyPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [projects, setProjects] = useState<ProjectCostEntry[]>([]);
@@ -128,7 +135,7 @@ export default function AdminKosztyPage() {
     if (!projectForm.name.trim()) return;
 
     const newProject: ProjectCostEntry = {
-      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      id: createId(),
       name: projectForm.name.trim(),
       revenue: toNumber(projectForm.revenue),
       materialCost: toNumber(projectForm.materialCost),
@@ -145,7 +152,7 @@ export default function AdminKosztyPage() {
     if (!inventoryForm.name.trim()) return;
 
     const newItem: InventoryItem = {
-      id: `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+      id: createId(),
       name: inventoryForm.name.trim(),
       quantity: toNumber(inventoryForm.quantity),
       unitCost: toNumber(inventoryForm.unitCost),
