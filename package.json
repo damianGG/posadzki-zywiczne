@@ -48,6 +48,7 @@
     "class-variance-authority": "^0.7.0",
     "cloudinary": "^2.8.0",
     "clsx": "^2.1.0",
+    "critters": "^0.0.25",
     "date-fns": "^3.6.0",
     "dotenv": "^17.2.3",
     "embla-carousel-autoplay": "^8.1.7",
