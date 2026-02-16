@@ -15,7 +15,7 @@ export default function HeroMainPage() {
                     fill
                     priority
                     fetchPriority="high"
-                    quality={60}
+                    quality={75}
                     sizes="100vw"
                     className="object-cover object-right"
                 />

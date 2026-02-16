@@ -146,16 +146,15 @@ export default function ScrollDrivenRenovationTimeline() {
   const [scrollProgress, setScrollProgress] = useState(0)
   const [stepProgress, setStepProgress] = useState(0)
   const timelineRef = useRef<HTMLDivElement>(null)
+  const animationFrameRef = useRef<number | null>(null)
   const [showScrollHint, setShowScrollHint] = useState(true)
 
   useEffect(() => {
-    let animationFrame: number | null = null
-
     const handleScroll = () => {
-      if (animationFrame !== null) return
+      if (animationFrameRef.current !== null) return
 
-      animationFrame = window.requestAnimationFrame(() => {
-        animationFrame = null
+      animationFrameRef.current = window.requestAnimationFrame(() => {
+        animationFrameRef.current = null
 
         if (!timelineRef.current) return
 
@@ -206,8 +205,9 @@ export default function ScrollDrivenRenovationTimeline() {
 
     return () => {
       window.removeEventListener("scroll", handleScroll)
-      if (animationFrame !== null) {
-        window.cancelAnimationFrame(animationFrame)
+      if (animationFrameRef.current !== null) {
+        window.cancelAnimationFrame(animationFrameRef.current)
+        animationFrameRef.current = null
       }
     }
   }, [])
