@@ -6,10 +6,11 @@ const withMDX = createMDX({ extension: /\.mdx?$/ });
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     pageExtensions: ['ts', 'tsx', 'mdx'],
-    experimental: { 
+    experimental: {
         mdxRs: true,
-        serverComponentsExternalPackages: ['nodemailer'],
+        optimizeCss: true,
     },
+    serverExternalPackages: ['nodemailer'],
     // Optimize for production builds
     reactStrictMode: true,
     // Ensure proper caching headers

@@ -149,54 +149,67 @@ export default function ScrollDrivenRenovationTimeline() {
   const [showScrollHint, setShowScrollHint] = useState(true)
 
   useEffect(() => {
+    let animationFrame: number | null = null
+
     const handleScroll = () => {
-      if (!timelineRef.current) return
+      if (animationFrame !== null) return
 
-      const rect = timelineRef.current.getBoundingClientRect()
-      const windowHeight = window.innerHeight
-      const elementHeight = rect.height
+      animationFrame = window.requestAnimationFrame(() => {
+        animationFrame = null
 
-      // Calculate how much of the timeline is visible
-      const elementTop = rect.top
-      const elementBottom = rect.bottom
+        if (!timelineRef.current) return
 
-      // Start animation when element enters viewport
-      const startOffset = windowHeight * 0.8
-      const endOffset = windowHeight * 0.2
+        const rect = timelineRef.current.getBoundingClientRect()
+        const windowHeight = window.innerHeight
+        const elementHeight = rect.height
 
-      let progress = 0
+        // Calculate how much of the timeline is visible
+        const elementTop = rect.top
+        const elementBottom = rect.bottom
 
-      if (elementTop <= startOffset && elementBottom >= endOffset) {
-        // Element is in the animation zone
-        const visibleHeight = Math.min(startOffset - elementTop, elementHeight)
-        const totalAnimationHeight = elementHeight + startOffset - endOffset
-        progress = Math.max(0, Math.min(1, visibleHeight / totalAnimationHeight))
-      } else if (elementBottom < endOffset) {
-        // Element has passed through completely
-        progress = 1
-      }
+        // Start animation when element enters viewport
+        const startOffset = windowHeight * 0.8
+        const endOffset = windowHeight * 0.2
 
-      setScrollProgress(progress)
+        let progress = 0
 
-      // Calculate current step based on progress
-      const totalSteps = renovationSteps.length
-      const stepSize = 1 / totalSteps
-      const currentStepIndex = Math.min(Math.floor(progress / stepSize), totalSteps - 1)
-      const stepProgressValue = ((progress % stepSize) / stepSize) * 100
+        if (elementTop <= startOffset && elementBottom >= endOffset) {
+          // Element is in the animation zone
+          const visibleHeight = Math.min(startOffset - elementTop, elementHeight)
+          const totalAnimationHeight = elementHeight + startOffset - endOffset
+          progress = Math.max(0, Math.min(1, visibleHeight / totalAnimationHeight))
+        } else if (elementBottom < endOffset) {
+          // Element has passed through completely
+          progress = 1
+        }
 
-      setCurrentStep(currentStepIndex)
-      setStepProgress(stepProgressValue)
+        setScrollProgress(progress)
 
-      // Hide scroll hint after some scrolling
-      if (progress > 0.1) {
-        setShowScrollHint(false)
-      }
+        // Calculate current step based on progress
+        const totalSteps = renovationSteps.length
+        const stepSize = 1 / totalSteps
+        const currentStepIndex = Math.min(Math.floor(progress / stepSize), totalSteps - 1)
+        const stepProgressValue = ((progress % stepSize) / stepSize) * 100
+
+        setCurrentStep(currentStepIndex)
+        setStepProgress(stepProgressValue)
+
+        // Hide scroll hint after some scrolling
+        if (progress > 0.1) {
+          setShowScrollHint(false)
+        }
+      })
     }
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll, { passive: true })
     handleScroll() // Initial call
 
-    return () => window.removeEventListener("scroll", handleScroll)
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+      if (animationFrame !== null) {
+        window.cancelAnimationFrame(animationFrame)
+      }
+    }
   }, [])
 
   const scrollToStep = (stepIndex: number) => {
