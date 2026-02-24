@@ -17,10 +17,10 @@ export const FAQ2 = () => (
           <Badge variant="outline">FAQ</Badge>
           <div className="flex gap-2 flex-col">
             <h4 className="text-3xl md:text-5xl tracking-tighter max-w-xl text-center font-regular">
-              Najczęściej zadawane pytania dotyczące remontu balkonów i tarasów
+              Najczęściej zadawane pytania dotyczące posadzek w przemyśle spożywczym
             </h4>
             <p className="text-lg leading-relaxed tracking-tight text-muted-foreground max-w-xl text-center">
-              Odpowiadamy na najczęstsze pytania klientów dotyczące remontów balkonów, tarasów i posadzek, aby pomóc w lepszym zrozumieniu procesu i naszych usług.
+              Odpowiadamy na najczęstsze pytania klientów z branży spożywczej dotyczące norm HACCP, certyfikatów i właściwości posadzek żywicznych.
             </p>
           </div>
         </div>
@@ -54,44 +54,44 @@ export const FAQ2 = () => (
 // Przykładowe pytania i odpowiedzi FAQ
 const faqItems = [
   {
-    question: "Jakie są zalety posadzek żywicznych w garażu?",
-    answer: "Posadzki żywiczne są trwałe, odporne na ścieranie, chemikalia oraz łatwe w utrzymaniu czystości, co czyni je idealnym wyborem do garaży.",
-    link: "/blog/zalety-posadzek-zywicznych-w-garazu"
+    question: "Czy posadzka żywiczna spełnia wymagania systemu HACCP?",
+    answer: "Tak. Posadzki żywiczne (epoksydowe i poliuretanowe) są bezszwowe, nienasiąkliwe i odporne chemicznie, co w pełni spełnia wymagania systemu HACCP dotyczące powierzchni w kontakcie pośrednim z żywnością. Eliminują fugi — główne siedlisko bakterii i grzybów.",
+    link: "/blog/posadzka-zywiczna-haccp"
   },
   {
-    question: "Jaki rodzaj posadzki żywicznej wybrać do garażu?",
-    answer: "Do garaży najczęściej polecane są posadzki epoksydowe ze względu na ich wysoką wytrzymałość mechaniczną i odporność na chemikalia.",
-    link: "/blog/jaki-rodzaj-posadzki-zywicznej-wybrac-do-garazu"
+    question: "Jakie certyfikaty potwierdzają dopuszczenie posadzki do stosowania w przemyśle spożywczym?",
+    answer: "Stosowane przez nas materiały posiadają atest PZH (Państwowego Zakładu Higieny) dopuszczający je do stosowania w obiektach przemysłu spożywczego. Możemy dostarczyć dokumentację wymaganą przez audyty BRC, IFS Food, ISO 22000 oraz inspekcję sanitarną.",
+    link: "/blog/certyfikaty-posadzki-spozywcze"
   },
   {
-    question: "Czy mogę samodzielnie wykonać posadzkę żywiczną w garażu?",
-    answer: "Wykonanie posadzki żywicznej wymaga odpowiedniego przygotowania podłoża i precyzyjnego nałożenia materiału. Choć jest to możliwe do wykonania samodzielnie, zaleca się skorzystanie z usług profesjonalistów.",
-    link: "/blog/czy-moge-samodzielnie-wykonac-posadzke-zywiczna-w-garazu"
+    question: "Co to jest atest PZH i dlaczego jest ważny?",
+    answer: "Atest PZH (Państwowego Zakładu Higieny) to polska certyfikacja potwierdzająca, że materiał jest bezpieczny higienicznie i może być stosowany w miejscach produkcji lub przetwarzania żywności. Jest wymagany przez Sanepid oraz wiele systemów audytowych.",
+    link: "/blog/atest-pzh-posadzki"
   },
   {
-    question: "Jak przygotować podłoże pod posadzkę żywiczną w garażu?",
-    answer: "Podłoże powinno być suche, czyste, stabilne i odpylone. Wszelkie nierówności należy zeszlifować, a ubytki wypełnić zaprawami naprawczymi.",
-    link: "/blog/jak-przygotowac-podloze-pod-posadzke-zywiczna-w-garazu"
+    question: "Na jakie substancje chemiczne jest odporna posadzka w kuchni przemysłowej?",
+    answer: "Posadzki poliuretanowe i epoksydowe są odporne na kwasy spożywcze (mlekowy, octowy, cytrynowy), tłuszcze zwierzęce i roślinne, oleje, zasady (NaOH, KOH), chlor i inne przemysłowe środki dezynfekujące stosowane w branży spożywczej.",
+    link: "/blog/odpornosc-chemiczna-posadzki-spozywczej"
   },
   {
-    question: "Ile kosztuje wykonanie posadzki żywicznej w garażu?",
-    answer: "Koszt posadzki żywicznej zależy od rodzaju użytej żywicy i metrażu, średnio wynosi od 100 do 200 zł za m².",
-    link: "/blog/ile-kosztuje-wykonanie-posadzki-zywicznej-w-garazu"
+    question: "Czy posadzka żywiczna wytrzymuje mycie gorącą wodą i parą?",
+    answer: "Tak. Posadzki poliuretanowe dedykowane do przemysłu spożywczego wytrzymują temperaturę do 80°C i działanie pary wodnej. Są odporne na gwałtowne zmiany temperatur (ang. thermal shock), co jest kluczowe przy myciu myjkami wysokociśnieniowymi na gorąco.",
+    link: "/blog/posadzka-para-wodna-temperatura"
   },
   {
-    question: "Jak dbać o posadzkę żywiczną w garażu?",
-    answer: "Regularne czyszczenie wodą z łagodnym detergentem oraz unikanie uszkodzeń mechanicznych pozwoli zachować posadzkę w dobrym stanie przez długie lata.",
-    link: "/blog/jak-dbac-o-posadzke-zywiczna-w-garazu"
+    question: "Jaka klasa antypoślizgowości jest wymagana w kuchniach i zakładach spożywczych?",
+    answer: "W strefach stale mokrych (kuchnie przemysłowe, ubojnie, myjnie) zalecana jest klasa R11 lub wyższa (R12). Oferujemy posadzki spełniające te normy, co jest wymagane przez audyty BRC Food Safety i IFS Food oraz przepisy BHP.",
+    link: "/blog/antypolizgowos-klasa-r11-r12-branza-spozywcza"
   },
   {
-    question: "Czy posadzka żywiczna w garażu jest odporna na plamy z oleju?",
-    answer: "Tak, posadzki żywiczne są odporne na plamy z oleju i innych chemikaliów, co ułatwia ich czyszczenie.",
-    link: "/blog/czy-posadzka-zywiczna-w-garazu-jest-odporna-na-plamy-z-oleju"
+    question: "Jak długo trwa montaż posadzki w czynnym zakładzie produkcyjnym?",
+    answer: "Czas wykonania zależy od powierzchni i stanu podłoża. Typowo dla kuchni przemysłowej lub hali produkcyjnej do 500 m² prace trwają 3–5 dni roboczych (frezowanie, gruntowanie, właściwa posadzka, lakierowanie). Możliwa realizacja etapowa, aby nie wstrzymywać produkcji.",
+    link: "/blog/czas-montazu-posadzki-zaklad"
   },
   {
-    question: "Jakie są wady posadzek żywicznych w garażu?",
-    answer: "Do wad posadzek żywicznych można zaliczyć ich stosunkowo wysoką cenę oraz konieczność profesjonalnego wykonania dla uzyskania optymalnych właściwości.",
-    link: "/blog/jakie-sa-wady-posadzek-zywicznych-w-garazu"
+    question: "Jak utrzymywać czystość posadzki żywicznej w zakładzie spożywczym?",
+    answer: "Posadzkę można myć codziennie myjkami ciśnieniowymi, automatami szorującymi i wszelkimi środkami myjąco-dezynfekującymi dopuszczonymi do kontaktu z żywnością. Nie wymaga specjalnych konserwantów ani wosków — wystarczy standardowy protokół CIP/COP stosowany w zakładach.",
+    link: "/blog/czyszczenie-posadzki-zaklad-spozywczy"
   }
 ];
 

@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 export default function HeroMainPage() {
     const [titleNumber, setTitleNumber] = useState(0);
     const titles = useMemo(
-        () => ["piękna?", "trwała?", "nowoczesna?", "czysta?"],
+        () => ["higieniczna?", "certyfikowana?", "zgodna z HACCP?", "trwała?"],
         []
     );
 
@@ -51,7 +51,7 @@ export default function HeroMainPage() {
                         </div>
                         <div className="flex gap-4 flex-col">
                             <h1 className="text-5xl md:text-7xl max-w-2xl tracking-tighter text-left font-regular">
-                                <span className="text-spektr-cyan-50">Posadzka żywiczna która będzie</span>
+                                <span className="text-spektr-cyan-50">Posadzka żywiczna dla produkcji spożywczej która będzie</span>
                                 <span className="relative flex w-full justify-start overflow-hidden text-left md:pb-4 md:pt-1">
                                     &nbsp;
                                     {titles.map((title, index) => (
@@ -79,7 +79,7 @@ export default function HeroMainPage() {
                             </h1>
 
                             <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-left">
-                                Odporne na zanieczyszczenia, estetyczne i łatwe w utrzymaniu.
+                                Bezszwowe, certyfikowane posadzki epoksydowe i poliuretanowe spełniające wymagania HACCP, ISO 22000 oraz PZH — idealne do kuchni przemysłowych, zakładów mięsnych, piekarni, mleczarni i pomieszczeń sterylnych.
                             </p>
                         </div>
                         <div className="flex flex-col md:flex-row gap-3">
