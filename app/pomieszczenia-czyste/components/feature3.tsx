@@ -9,47 +9,47 @@ import Image from 'next/image';
 const features = [
   {
     id: 1,
-    title: "Odporność na chemikalia",
+    title: "Spełnia wymagania HACCP",
     description:
-      "Posadzki żywiczne są wyjątkowo odporne na deszcz, śnieg, mróz i promieniowanie UV, co sprawia, że nie pękają ani nie blakną, zapewniając trwałość przez wiele lat.",
-    image: "/garaz/beton-plamy.jpg",
-    alt: "Posadzka żywiczna czyszczenie",
+      "Bezszwowa powierzchnia bez fug i porów eliminuje miejsca, w których gromadzą się bakterie, pleśnie i resztki jedzenia. Posadzka żywiczna spełnia wszystkie wymagania systemu HACCP — kluczowego standardu bezpieczeństwa żywności.",
+    image: "/gastronomia.jpg",
+    alt: "Higieniczna posadzka żywiczna w kuchni przemysłowej zgodna z HACCP",
     link: "#",
   },
   {
     id: 2,
-    title: "Łatwość w czyszczeniu",
+    title: "Odporność na środki myjące i dezynfekujące",
     description:
-      "Powierzchnie z żywicy są łatwe w utrzymaniu, wystarczy przetrzeć wilgotną szmatką, aby usunąć zabrudzenia i zachować piękny wygląd.",
-    image: "/sprzatanie-balokonu-2.jpg",
-    alt: "Czyszczenie posadzki żywicznej",
+      "Posadzki poliuretanowe i epoksydowe wytrzymują działanie stężonych środków dezynfekujących, zasad, kwasów spożywczych (mlekowego, octowego, cytrynowego) oraz tłuszczów zwierzęcych i roślinnych bez utraty właściwości.",
+    image: "/produkcja.jpg",
+    alt: "Posadzka żywiczna w zakładzie produkcji spożywczej",
     link: "#",
   },
   {
     id: 3,
-    title: "Estetyka",
+    title: "Bezszwowa powierzchnia — zero bakterii",
     description:
-      "Posadzki żywiczne pozwalają na stworzenie unikalnych wzorów i kolorów, które można dostosować do stylu balkonu lub tarasu, dodając elegancji i nowoczesności.",
-    image: "/garaz/garaz-hala.png",
-    alt: "estetyka powierzchni balkonu",
+      "W przeciwieństwie do płytek ceramicznych, posadzka żywiczna nie ma fug — najbardziej newralgicznego miejsca dla rozwoju mikroorganizmów. Monolityczna powierzchnia jest w pełni szczelna i łatwa do codziennej dezynfekcji.",
+    image: "/kuchnia.jpg",
+    alt: "Bezszwowa posadzka żywiczna — czyste pomieszczenie produkcyjne",
     link: "#",
   },
   {
     id: 4,
-    title: "UV odporna",
+    title: "Odporność termiczna i na parę wodną",
     description:
-      "Posadzka nie blaknie i zachowuje kolor na lata, nawet przy intensywnym nasłonecznieniu.",
-    image: "/uvprotect.jpg",
-    alt: "Odporność UV",
+      "Posadzka wytrzymuje mycie gorącą wodą do 80°C i działanie pary wodnej, co jest niezbędne w kuchniach przemysłowych, browarach, mleczarniach i zakładach mięsnych. Brak ryzyka odwarstwienia ani pęknięć.",
+    image: "/garaz/garaz-hala.png",
+    alt: "Posadzka odporna na parę i wysoką temperaturę",
     link: "#",
   },
   {
     id: 5,
-    title: "Bezpieczeństwo",
+    title: "Antypoślizgowość R11 / R12",
     description:
-      "Antypoślizgowa powierzchnia zapewnia bezpieczeństwo użytkowania.",
+      "Specjalna struktura powierzchni antypoślizgowej klasy R11 lub R12 zapewnia bezpieczeństwo pracowników nawet przy stałym zawilgoceniu i zabrudzeniu tłuszczem. Wymóg wielu audytów BRC i IFS Food.",
     image: "/antypolizg.jpg",
-    alt: "Antypoślizg",
+    alt: "Antypoślizgowa posadzka żywiczna R11 R12 dla branży spożywczej",
     link: "#",
   },
 ];
@@ -58,7 +58,7 @@ export const FeatureList = ({ features }) => (
   <div className="w-full py-20 lg:py-40">
     <div className="container mx-auto">
       <h2 className="text-xl md:text-3xl lg:text-5xl tracking-tighter font-medium text-left mb-20">
-        Najważniesze zalety
+        Kluczowe właściwości dla branży spożywczej
       </h2>
       <div className="flex flex-col gap-10">
         {features.map((feature, index) => (
@@ -83,9 +83,6 @@ export const FeatureList = ({ features }) => (
                   {feature.description}
                 </p>
               </div>
-              {/* <Button variant="outline" size="sm" className="gap-4 w-fit">
-                Czytaj więcej<MoveRight className="w-4 h-4" />
-              </Button> */}
             </div>
           </div>
         ))}

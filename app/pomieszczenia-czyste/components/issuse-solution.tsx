@@ -16,51 +16,51 @@ import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 const data = {
     problem: {
         title: "Problem",
-        description: "Masz dość pylącego betnu w którym trudno utrzymać czystość?",
+        description: "Standardowe posadzki nie spełniają norm sanitarnych w produkcji spożywczej?",
         points: [
-            "Pęknięcia i pylenie betonu",
-            "Nasiąkliwość i plamy",
-            "Brak odporności chemicznej i na sól drogową",
-            "Nierówności i brak estetyki",
-            "Brak odporności na zmienne temperatury i wilgoć",
+            "Fugi i pory – idealne siedlisko bakterii i grzybów",
+            "Nasiąkliwe podłoże pochłania tłuszcze, kwasy i detergenty",
+            "Trudności w dezynfekcji – kontrola sanepidu wykazuje uchybienia",
+            "Pękający beton i odpadające płytki zagrażają produktowi",
+            "Brak odporności na gorącą wodę i parę wodną",
         ],
         images: [
             {
-                src: "/garaz/garaz-tesla.png",
-                alt: "Zniszczona powierzchnia balkonu - przykład 3",
+                src: "/garaz/beton-problem.jpg",
+                alt: "Zniszczona posadzka w zakładzie spożywczym",
             },
             {
                 src: "/garaz/beton-plamy.jpg",
-                alt: "Zniszczona powierzchnia balkonu - przykład 1",
+                alt: "Pory i plamy na betonowej podłodze",
             },
             {
-                src: "/garaz/beton-problem.jpg",
-                alt: "Zniszczona powierzchnia balkonu - przykład 2",
+                src: "/garaz/garaz-tesla.png",
+                alt: "Stara, niehigieniczna posadzka",
             },
         ],
     },
     solution: {
         title: "Rozwiązanie",
-        description: "Posadzki żywiczne - trwałe i eleganckie rozwiązanie",
+        description: "Bezszwowe posadzki żywiczne zgodne z HACCP i normami sanitarnymi",
         points: [
-            "Odporność na obciążenia mechaniczne",
-            "Odporność chemiczna",
-            "Łatwość czyszczenia",
-            "Estetyka i personalizacja",
-            "Wodoodporność i zabezpieczenie przed wilgocią",
+            "Bezszwowa powierzchnia — bez fug, bez bakterii",
+            "Pełna odporność chemiczna: kwasy spożywcze, zasady, środki dezynfekujące",
+            "Certyfikat PZH — dopuszczenie do kontaktu z żywnością",
+            "Odporność na parę wodną i myjki wysokociśnieniowe (80°C)",
+            "Antypoślizgowa nawet w wilgotnych warunkach (R11/R12)",
         ],
         images: [
             {
+                src: "/gastronomia.jpg",
+                alt: "Higieniczna posadzka żywiczna w kuchni przemysłowej",
+            },
+            {
+                src: "/produkcja.jpg",
+                alt: "Posadzka żywiczna w zakładzie produkcji spożywczej",
+            },
+            {
                 src: "/garaz/garaz-tesla-po.png",
-                alt: "Profesjonalna posadzka żywiczna - przykład 3",
-            },
-            {
-                src: "/garaz/garaz-zywica.webp",
-                alt: "Profesjonalna posadzka żywiczna - przykład 1",
-            },
-            {
-                src: "/garaz/garaz-zywica-2.jpg",
-                alt: "Profesjonalna posadzka żywiczna - przykład 2",
+                alt: "Efekt końcowy — estetyczna i higieniczna posadzka",
             },
         ],
     },
@@ -140,10 +140,10 @@ export default function ProblemSolutionSection() {
                 <div className="flex flex-col items-center space-y-4 text-center">
                     <div className="space-y-2">
                         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                            Problem & Rozwiązanie
+                            Problem & Rozwiązanie w branży spożywczej
                         </h2>
                         <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                            Poznaj różnicę, jaką może przynieść profesjonalna posadzka żywiczna
+                            Dowiedz się, dlaczego standardowe podłogi nie spełniają norm sanitarnych i jak posadzki żywiczne rozwiązują ten problem
                         </p>
                     </div>
                 </div>

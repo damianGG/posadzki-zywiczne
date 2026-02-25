@@ -10,6 +10,7 @@ import { Feature3 } from "./components/feature3";
 import ProblemSolutionSection from "./components/issuse-solution";
 import BenefitsSection from "./components/BenefitsSection";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
+import CertificatesSection from "./components/CertificatesSection";
 
 export default function Home() {
 
@@ -18,9 +19,10 @@ export default function Home() {
         <>
             <HeroMainPage />
             <ProblemSolutionSection />
+            <CertificatesSection />
             <BenefitsSection />
-            <SocialProofSection />
             <Feature3 />
+            <SocialProofSection />
             <FAQ2 />
             <CTA2 />
             {/* <Case2 /> */}

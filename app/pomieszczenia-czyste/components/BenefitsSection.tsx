@@ -1,53 +1,37 @@
 import Image from "next/image"
-import { Sun, Sparkles, Palette, Shield, Timer, ThumbsUp } from 'lucide-react'
+import { ShieldCheck, Droplets, Thermometer, Zap, FlaskConical, BadgeCheck } from 'lucide-react'
 
 // Dane korzyści
 const benefits = [
     {
-        icon: Sun,
-        title: "Odporność na UV",
-        description: "Posadzka nie blaknie i zachowuje kolor na lata, nawet przy intensywnym nasłonecznieniu."
+        icon: ShieldCheck,
+        title: "Zgodność z HACCP",
+        description: "Posadzka spełnia wymogi systemu HACCP — bezszwowa powierzchnia eliminuje miejsca, w których mogą gromadzić się bakterie i pleśnie."
     },
     {
-        icon: Sparkles,
-        title: "Łatwe czyszczenie",
-        description: "Gładka powierzchnia bez fug sprawia, że czyszczenie jest proste i szybkie. Bez smug i plam."
+        icon: Droplets,
+        title: "Łatwa dezynfekcja",
+        description: "Gładka, nienasiąkliwa powierzchnia umożliwia szybką i skuteczną dezynfekcję silnymi środkami chemicznymi bez ryzyka degradacji podłoża."
     },
     {
-        icon: Palette,
-        title: "Estetyka",
-        description: "Dowolne kolory i wykończenia pozwalają na pełną personalizację według Twoich preferencji."
+        icon: FlaskConical,
+        title: "Odporność chemiczna",
+        description: "Pełna odporność na kwasy spożywcze (mlekowy, octowy, cytrynowy), tłuszcze, zasady oraz przemysłowe środki myjące i dezynfekujące."
     },
     {
-        icon: Shield,
-        title: "Trwałość",
-        description: "Odporna na uszkodzenia mechaniczne, zarysowania i uderzenia. Służy przez wiele lat."
+        icon: Thermometer,
+        title: "Odporność termiczna",
+        description: "Wytrzymuje temperaturę do 80°C (myjki wysokociśnieniowe, para wodna) oraz gwałtowne zmiany temperatur podczas mycia na gorąco."
     },
     {
-        icon: Timer,
-        title: "Szybki montaż",
-        description: "Instalacja jest szybka i czysta, minimalizując czas remontu."
+        icon: Zap,
+        title: "Antypoślizgowość R11/R12",
+        description: "Specjalna struktura antypoślizgowa klasy R11 lub R12 — bezpieczna nawet w warunkach stałego zawilgocenia i zabrudzeń tłuszczem."
     },
     {
-        icon: ThumbsUp,
-        title: "Bezpieczeństwo",
-        description: "Antypoślizgowa powierzchnia zapewnia bezpieczeństwo użytkowania."
-    }
-]
-
-// Zdjęcia ilustrujące korzyści
-const benefitImages = [
-    {
-        src: "/placeholder.svg?height=400&width=600",
-        alt: "Przykład trwałości posadzki żywicznej po latach użytkowania"
-    },
-    {
-        src: "/placeholder.svg?height=400&width=600",
-        alt: "Demonstracja łatwego czyszczenia posadzki"
-    },
-    {
-        src: "/placeholder.svg?height=400&width=600",
-        alt: "Różnorodne kolory i wzory posadzek żywicznych"
+        icon: BadgeCheck,
+        title: "Certyfikat PZH",
+        description: "Stosowane materiały posiadają atest PZH (Państwowego Zakładu Higieny) dopuszczający je do stosowania w obiektach przemysłu spożywczego."
     }
 ]
 
@@ -58,10 +42,10 @@ export default function BenefitsSection() {
                 <div className="flex flex-col items-center space-y-4 text-center">
                     <div className="space-y-2">
                         <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                            Dlaczego warto wybrać posadzkę żywiczną?
+                            Dlaczego posadzka żywiczna to standard w przemyśle spożywczym?
                         </h2>
                         <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                            Poznaj kluczowe zalety posadzek żywicznych, które sprawiają, że są idealnym wyborem
+                            Poznaj kluczowe zalety posadzek żywicznych w kuchniach przemysłowych, zakładach produkcji spożywczej i pomieszczeniach wymagających zachowania sterylności
                         </p>
                     </div>
                 </div>
