@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Image, Share2, ArrowRight, Calculator, Images } from 'lucide-react';
+import { Image, Share2, ArrowRight, Calculator, Images, Boxes, ClipboardList } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminPage() {
@@ -105,6 +105,42 @@ export default function AdminPage() {
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Zarządzaj cenami, opisami i zdjęciami dla kalkulatora posadzek żywicznych.
+              </p>
+            </Card>
+          </Link>
+
+          {/* Magazyn Card */}
+          <Link href="/admin/magazyn">
+            <Card className="p-6 hover:shadow-xl transition-all cursor-pointer group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-cyan-100 dark:bg-cyan-900/30 rounded-lg group-hover:bg-cyan-200 transition-colors">
+                  <Boxes className="w-6 h-6 text-cyan-600 dark:text-cyan-400" />
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-cyan-600 transition-colors" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Magazyn
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Zdefiniuj rodzaje materiałów i zarządzaj aktualnym stanem magazynowym.
+              </p>
+            </Card>
+          </Link>
+
+          {/* Projekty Card */}
+          <Link href="/admin/projekty">
+            <Card className="p-6 hover:shadow-xl transition-all cursor-pointer group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg group-hover:bg-indigo-200 transition-colors">
+                  <ClipboardList className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Projekty
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Rejestruj dzienne zużycie materiałów na zleceniach i automatycznie odejmuj je z magazynu.
               </p>
             </Card>
           </Link>
