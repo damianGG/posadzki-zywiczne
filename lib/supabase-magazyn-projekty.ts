@@ -21,6 +21,10 @@ export interface ProjectMaterialUsage {
   material?: { name: string; unit: string } | null;
 }
 
+type ProjectMaterialUsageRow = Omit<ProjectMaterialUsage, 'material'> & {
+  material?: Array<{ name: string; unit: string }> | null;
+};
+
 export async function listMagazynMaterials() {
   const supabase = getSupabaseAdmin();
   if (!supabase) return { success: false, error: 'Supabase nie jest skonfigurowany' };
@@ -114,7 +118,13 @@ export async function listProjectMaterialUsage() {
     .limit(200);
 
   if (error) return { success: false, error: error.message };
-  return { success: true, data: (data || []) as ProjectMaterialUsage[] };
+
+  const normalizedData = ((data || []) as ProjectMaterialUsageRow[]).map((row) => ({
+    ...row,
+    material: row.material?.[0] || null,
+  }));
+
+  return { success: true, data: normalizedData };
 }
 
 export async function addProjectMaterialUsage(payload: {
