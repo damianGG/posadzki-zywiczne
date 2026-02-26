@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/card';
@@ -24,7 +24,7 @@ export default function MagazynPage() {
   const [newUnit, setNewUnit] = useState('kg');
   const [newQuantity, setNewQuantity] = useState('');
 
-  const fetchMaterials = async () => {
+  const fetchMaterials = useCallback(async () => {
     setLoading(true);
     const res = await fetch('/api/admin/magazyn');
     const data = await res.json();
@@ -32,7 +32,7 @@ export default function MagazynPage() {
       setMaterials(data.materials || []);
     }
     setLoading(false);
-  };
+  }, []);
 
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
@@ -42,7 +42,7 @@ export default function MagazynPage() {
     }
     setIsAuthenticated(true);
     fetchMaterials();
-  }, [router]);
+  }, [router, fetchMaterials]);
 
   const addMaterial = async () => {
     const res = await fetch('/api/admin/magazyn', {
@@ -68,6 +68,11 @@ export default function MagazynPage() {
   };
 
   const updateMaterial = async (id: string, quantity_available: number, is_active: boolean) => {
+    if (Number.isNaN(quantity_available) || quantity_available < 0) {
+      alert('Stan magazynowy musi być liczbą większą lub równą 0');
+      return;
+    }
+
     const res = await fetch('/api/admin/magazyn', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },

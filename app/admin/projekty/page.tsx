@@ -25,9 +25,8 @@ interface Usage {
   material?: { name: string; unit: string };
 }
 
-const today = new Date().toISOString().split('T')[0];
-
 export default function ProjektyPage() {
+  const today = new Date().toISOString().split('T')[0];
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [materials, setMaterials] = useState<Material[]>([]);
@@ -48,17 +47,18 @@ export default function ProjektyPage() {
     const usageData = await usageRes.json();
 
     if (materialsRes.ok) {
-      const activeMaterials = (materialsData.materials || []).filter((m: Material) => m.is_active);
+      const activeMaterials = (materialsData.materials || []).filter((material: Material) => material.is_active);
       setMaterials(activeMaterials);
-      if (!materialId && activeMaterials[0]) {
-        setMaterialId(activeMaterials[0].id);
-      }
+      setMaterialId((currentMaterialId) => {
+        if (currentMaterialId || !activeMaterials[0]) return currentMaterialId;
+        return activeMaterials[0].id;
+      });
     }
 
     if (usageRes.ok) {
       setUsageEntries(usageData.usage || []);
     }
-  }, [materialId]);
+  }, []);
 
   useEffect(() => {
     const token = sessionStorage.getItem('admin_token');
