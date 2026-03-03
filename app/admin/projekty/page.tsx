@@ -16,6 +16,16 @@ interface Material {
   is_active: boolean;
 }
 
+interface Project {
+  slug: string;
+  title: string;
+  location: string;
+  images?: {
+    main?: string;
+    gallery?: Array<{ url: string }>;
+  };
+}
+
 interface Usage {
   id: string;
   project_name: string;
@@ -30,21 +40,24 @@ export default function ProjektyPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [materials, setMaterials] = useState<Material[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [usageEntries, setUsageEntries] = useState<Usage[]>([]);
-  const [projectName, setProjectName] = useState('');
+  const [projectSlug, setProjectSlug] = useState('');
   const [materialId, setMaterialId] = useState('');
   const [quantityUsed, setQuantityUsed] = useState('');
   const [usageDate, setUsageDate] = useState(today);
   const [notes, setNotes] = useState('');
 
   const fetchData = useCallback(async () => {
-    const [materialsRes, usageRes] = await Promise.all([
+    const [materialsRes, usageRes, projectsRes] = await Promise.all([
       fetch('/api/admin/magazyn'),
       fetch('/api/admin/projekty'),
+      fetch('/api/admin/list-realizacje'),
     ]);
 
     const materialsData = await materialsRes.json();
     const usageData = await usageRes.json();
+    const projectsData = await projectsRes.json();
 
     if (materialsRes.ok) {
       const activeMaterials = (materialsData.materials || []).filter((material: Material) => material.is_active);
@@ -52,6 +65,15 @@ export default function ProjektyPage() {
       setMaterialId((currentMaterialId) => {
         if (currentMaterialId || !activeMaterials[0]) return currentMaterialId;
         return activeMaterials[0].id;
+      });
+    }
+
+    if (projectsRes.ok) {
+      const availableProjects = projectsData.realizacje || [];
+      setProjects(availableProjects);
+      setProjectSlug((currentProjectSlug) => {
+        if (currentProjectSlug || !availableProjects[0]) return currentProjectSlug;
+        return availableProjects[0].slug;
       });
     }
 
@@ -71,11 +93,17 @@ export default function ProjektyPage() {
   }, [router, fetchData]);
 
   const addUsage = async () => {
+    const selectedProject = projects.find((project) => project.slug === projectSlug);
+    if (!selectedProject) {
+      alert('Najpierw dodaj projekt w sekcji Realizacje.');
+      return;
+    }
+
     const res = await fetch('/api/admin/projekty', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        project_name: projectName,
+        project_name: selectedProject.title,
         material_id: materialId,
         quantity_used: Number(quantityUsed),
         usage_date: usageDate,
@@ -95,6 +123,8 @@ export default function ProjektyPage() {
   };
 
   if (!isAuthenticated) return null;
+  const selectedProject = projects.find((project) => project.slug === projectSlug);
+  const previewImage = selectedProject?.images?.gallery?.[0]?.url || selectedProject?.images?.main;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-6 px-4">
@@ -112,8 +142,37 @@ export default function ProjektyPage() {
         <Card className="p-4 mb-6">
           <h2 className="font-semibold mb-3">Dodaj wpis zużycia</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-            <Input placeholder="Nazwa projektu / zlecenia" value={projectName} onChange={(e) => setProjectName(e.target.value)} />
+            <select
+              value={projectSlug}
+              onChange={(e) => setProjectSlug(e.target.value)}
+              className="border rounded-md px-3 py-2 bg-white dark:bg-gray-900"
+            >
+              {projects.map((project) => (
+                <option key={project.slug} value={project.slug}>
+                  {project.title}
+                </option>
+              ))}
+            </select>
             <Input type="date" value={usageDate} onChange={(e) => setUsageDate(e.target.value)} />
+          </div>
+          <div className="mb-3 p-3 border rounded-md bg-gray-50 dark:bg-gray-900/40">
+            <p className="text-sm">
+              <span className="font-medium">Adres inwestycji:</span>{' '}
+              {!selectedProject
+                ? 'Brak projektu. Dodaj projekt w sekcji Realizacje.'
+                : selectedProject.location || 'Nie uzupełniono adresu inwestycji'}
+            </p>
+            {previewImage && (
+              <img src={previewImage} alt={selectedProject?.title || 'Projekt'} className="mt-2 h-24 rounded-md object-cover" />
+            )}
+            <p className="text-xs text-gray-600 dark:text-gray-300 mt-2">
+              Projekty ze zdjęciami tworzysz w{' '}
+              <Link href="/admin/realizacje/dodaj" className="underline">
+                /admin/realizacje/dodaj
+              </Link>
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
             <select
               value={materialId}
               onChange={(e) => setMaterialId(e.target.value)}
