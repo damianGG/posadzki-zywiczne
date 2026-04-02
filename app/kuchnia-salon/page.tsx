@@ -29,7 +29,7 @@ const highlights = [
 ];
 
 const stats = [
-  { value: "180–350", label: "zł/m² orientacyjnie za system do domu lub mieszkania" },
+  { value: "180-350", label: "zł/m² orientacyjnie za system do domu lub mieszkania" },
   { value: "0", label: "fug i miejsc gromadzących brud" },
   { value: "1", label: "spójna powierzchnia od salonu po łazienkę i garaż" },
 ];
@@ -253,7 +253,7 @@ export default function KitchenLivingPage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="gap-2">
                 <Link href="/kontakt">
-                  Wyślij zdjęcia wnętrza — przygotujemy wycenę
+                  Wyślij zdjęcia wnętrza — Przygotujemy wycenę
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -594,7 +594,7 @@ export default function KitchenLivingPage() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="gap-2">
                   <Link href="/kontakt">
-                    Wyślij zdjęcia wnętrza — przygotujemy wycenę
+                    Wyślij zdjęcia wnętrza — Przygotujemy wycenę
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
