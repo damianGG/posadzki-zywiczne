@@ -211,7 +211,7 @@ export default function KitchenLivingPage() {
         <div className="container relative grid gap-12 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
           <div className="space-y-8">
             <Badge variant="outline" className="rounded-full px-4 py-1 text-sm">
-              Podłoga żywiczna • kuchnia • salon • cały dom i mieszkanie
+              Podłoga żywiczna, kuchnia, salon, cały dom i mieszkanie
             </Badge>
             <div className="space-y-5">
               <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
@@ -404,31 +404,33 @@ export default function KitchenLivingPage() {
         </div>
 
         <div className="mt-12 overflow-hidden rounded-[28px] border bg-card shadow-sm">
-          <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-[1.3fr_repeat(4,minmax(0,1fr))]">
-            <div className="bg-muted/40 p-4 text-sm font-semibold">Kryterium</div>
-            <div className="bg-muted/40 p-4 text-sm font-semibold">Żywica</div>
-            <div className="bg-muted/40 p-4 text-sm font-semibold">Płytki</div>
-            <div className="bg-muted/40 p-4 text-sm font-semibold">Panele</div>
-            <div className="bg-muted/40 p-4 text-sm font-semibold">Mikrocement</div>
-            {comparisonRows.map((row) => (
-              <div key={row.label} className="contents">
-                <div className="bg-background p-4 text-sm font-medium">
-                  {row.label}
-                </div>
-                <div className="bg-background p-4 text-sm text-muted-foreground">
-                  {row.resin}
-                </div>
-                <div className="bg-background p-4 text-sm text-muted-foreground">
-                  {row.tiles}
-                </div>
-                <div className="bg-background p-4 text-sm text-muted-foreground">
-                  {row.panels}
-                </div>
-                <div className="bg-background p-4 text-sm text-muted-foreground">
-                  {row.microcement}
-                </div>
-              </div>
-            ))}
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-collapse text-left text-sm">
+              <thead className="bg-muted/40">
+                <tr>
+                  <th className="p-4 font-semibold">Kryterium</th>
+                  <th className="p-4 font-semibold">Żywica</th>
+                  <th className="p-4 font-semibold">Płytki</th>
+                  <th className="p-4 font-semibold">Panele</th>
+                  <th className="p-4 font-semibold">Mikrocement</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonRows.map((row) => (
+                  <tr key={row.label} className="border-t align-top">
+                    <th scope="row" className="bg-background p-4 font-medium">
+                      {row.label}
+                    </th>
+                    <td className="bg-background p-4 text-muted-foreground">{row.resin}</td>
+                    <td className="bg-background p-4 text-muted-foreground">{row.tiles}</td>
+                    <td className="bg-background p-4 text-muted-foreground">{row.panels}</td>
+                    <td className="bg-background p-4 text-muted-foreground">
+                      {row.microcement}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -459,7 +461,7 @@ export default function KitchenLivingPage() {
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {caseStudies.map((item) => (
               <div
                 key={item.title}
