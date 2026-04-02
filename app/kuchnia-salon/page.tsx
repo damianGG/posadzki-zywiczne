@@ -25,11 +25,11 @@ const highlights = [
   "Bez fug — mniej sprzątania, więcej czystej i higienicznej powierzchni.",
   "Wykończenie premium: mat, półmat lub wariant antypoślizgowy dopasowany do wnętrza.",
   "Podłoga żywiczna do kuchni, salonu i całego domu, także na ogrzewanie podłogowe.",
-  "Transparentna wycena: orientacyjnie od 180 do 350 zł/m² w zależności od systemu i podłoża.",
+  "Transparentna wycena: najczęściej około 300 zł/m² za system do domu lub mieszkania.",
 ];
 
 const stats = [
-  { value: "180-350", label: "zł/m² orientacyjnie za system do domu lub mieszkania" },
+  { value: "300", label: "zł/m² najczęściej za system do domu lub mieszkania" },
   { value: "0", label: "fug i miejsc gromadzących brud" },
   { value: "1", label: "spójna powierzchnia od salonu po łazienkę i garaż" },
 ];
@@ -97,7 +97,7 @@ const spaces = [
 ];
 
 const process = [
-  "Wysyłasz zdjęcia wnętrza, orientacyjny metraż i informację, czy zależy Ci na macie, półmacie czy mocniejszym efekcie dekoracyjnym.",
+  "Podajesz orientacyjny metraż, zakres prac i informację, czy zależy Ci na macie, półmacie czy mocniejszym efekcie dekoracyjnym.",
   "Ocenimy podłoże, zakres prac i dobierzemy system do domu, mieszkania lub całej inwestycji prowadzonej z architektem.",
   "Dostajesz konkretną wycenę, orientacyjny harmonogram oraz informację, jak przygotować wnętrze do realizacji.",
   "Wykonujemy posadzkę w ustalonym kolorze i strukturze, a po odbiorze przekazujemy zasady pielęgnacji oraz użytkowania.",
@@ -117,7 +117,7 @@ const questions = [
   {
     question: "Ile kosztuje posadzka żywiczna do domu lub mieszkania?",
     answer:
-      "Najczęściej orientacyjny zakres to od 180 do 350 zł/m². Finalna cena zależy od metrażu, stanu podłoża, wybranego systemu, koloru oraz tego, czy realizujemy jedną strefę czy cały dom lub mieszkanie.",
+      "Najczęściej trzeba liczyć około 300 zł/m². Finalna cena zależy od metrażu, stanu podłoża, wybranego systemu, koloru oraz tego, czy realizujemy jedną strefę czy cały dom lub mieszkanie.",
   },
   {
     question: "Czy można ją wykonać na ogrzewaniu podłogowym?",
@@ -244,7 +244,7 @@ export default function KitchenLivingPage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="gap-2">
                 <Link href="/kontakt">
-                  Wyślij zdjęcia wnętrza – Przygotujemy wycenę
+                  Zapytaj o wycenę — około 300 zł/m²
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -490,14 +490,15 @@ export default function KitchenLivingPage() {
               Jak wygląda współpraca
             </Badge>
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Najprostsze CTA działa najlepiej: wyślij zdjęcia wnętrza i od razu
-              przejdźmy do konkretów.
+              Najprostszy komunikat działa najlepiej: najczęściej to około 300
+              zł/m² i od razu wiadomo, o jakim budżecie mówimy.
             </h2>
             <p className="text-lg leading-8 text-muted-foreground">
-              Dzięki temu szybciej ocenimy, czy potrzebujesz rozwiązania do samej
-              kuchni z salonem, czy od razu do całego domu lub mieszkania. To
-              wygodne także dla architekta, który chce od razu sprawdzić zakres,
-              budżet i możliwości kolorystyczne.
+              Taki punkt odniesienia ułatwia pierwszą rozmowę i pozwala szybciej
+              ocenić, czy szukasz rozwiązania do samej kuchni z salonem, czy od
+              razu do całego domu lub mieszkania. To wygodne także dla
+              architekta, który chce od razu sprawdzić zakres, budżet i
+              możliwości kolorystyczne.
             </p>
           </div>
 
@@ -555,14 +556,15 @@ export default function KitchenLivingPage() {
                 Ostatni krok
               </Badge>
               <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-                Wyślij zdjęcia wnętrza i sprawdź, czy posadzka żywiczna będzie
-                dobrym wyborem do Twojego domu lub mieszkania.
+                Najczęściej to około 300 zł/m² — sprawdź, czy posadzka żywiczna
+                będzie dobrym wyborem do Twojego domu lub mieszkania.
               </h2>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
-                To najprostszy sposób na szybką wycenę i konkretną rekomendację.
-                Podpowiemy, jaki system sprawdzi się najlepiej, jaki efekt
-                wizualny możesz osiągnąć i czy warto prowadzić jedną powierzchnię
-                przez kuchnię, salon i kolejne pomieszczenia.
+                To prosty punkt odniesienia, który pomaga od razu ocenić budżet
+                i porównać żywicę z innymi materiałami. Podpowiemy, jaki system
+                sprawdzi się najlepiej, jaki efekt wizualny możesz osiągnąć i
+                czy warto prowadzić jedną powierzchnię przez kuchnię, salon i
+                kolejne pomieszczenia.
               </p>
             </div>
 
@@ -571,7 +573,7 @@ export default function KitchenLivingPage() {
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Wyślij zdjęcia wnętrza, planowany metraż i miejscowość.
+                  Podaj planowany metraż, miejscowość i zakres: kuchnia z salonem albo cały dom.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
@@ -585,7 +587,7 @@ export default function KitchenLivingPage() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="gap-2">
                   <Link href="/kontakt">
-                    Wyślij zdjęcia wnętrza – Przygotujemy wycenę
+                    Zapytaj o wycenę — około 300 zł/m²
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
