@@ -29,7 +29,7 @@ const highlights = [
 ];
 
 const stats = [
-  { value: "300", label: "zł/m² najczęściej za system do domu lub mieszkania" },
+  { value: "~300", label: "zł/m² najczęściej za system do domu lub mieszkania" },
   { value: "0", label: "fug i miejsc gromadzących brud" },
   { value: "1", label: "spójna powierzchnia od salonu po łazienkę i garaż" },
 ];
@@ -244,7 +244,7 @@ export default function KitchenLivingPage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="gap-2">
                 <Link href="/kontakt">
-                  Orientacyjna cena: około 300 zł/m²
+                  Zapytaj o wycenę
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -591,7 +591,7 @@ export default function KitchenLivingPage() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="gap-2">
                   <Link href="/kontakt">
-                    Orientacyjna cena: około 300 zł/m²
+                    Zapytaj o wycenę
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
