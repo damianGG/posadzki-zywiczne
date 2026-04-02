@@ -155,15 +155,6 @@ const caseStudies = [
     image: "/kuchnia.jpg",
     alt: "Posadzka żywiczna w domu jednorodzinnym w Krakowie",
   },
-  {
-    title: "Mieszkanie premium, detal strefy dziennej",
-    location: "Rzeszów",
-    surface: "45 m²",
-    challenge: "Inwestor chciał efekt premium bez fug oraz powierzchnię, którą łatwo utrzymać w czystości przy codziennym użytkowaniu.",
-    effect: "Jednolita posadzka optycznie powiększyła wnętrze i pozwoliła spójnie połączyć kuchnię z salonem w jednym nowoczesnym układzie.",
-    image: "/mieszkanie.jpg",
-    alt: "Nowoczesne wnętrze z posadzką żywiczną bez fug",
-  },
 ];
 
 const comparisonRows = [
@@ -253,7 +244,7 @@ export default function KitchenLivingPage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="gap-2">
                 <Link href="/kontakt">
-                  Wyślij zdjęcia wnętrza — Przygotujemy wycenę
+                  Wyślij zdjęcia wnętrza – Przygotujemy wycenę
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -461,7 +452,7 @@ export default function KitchenLivingPage() {
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-6 lg:grid-cols-2">
             {caseStudies.map((item) => (
               <div
                 key={item.title}
@@ -594,7 +585,7 @@ export default function KitchenLivingPage() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="gap-2">
                   <Link href="/kontakt">
-                    Wyślij zdjęcia wnętrza — Przygotujemy wycenę
+                    Wyślij zdjęcia wnętrza – Przygotujemy wycenę
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
