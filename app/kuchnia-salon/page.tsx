@@ -139,7 +139,7 @@ const questions = [
 const caseStudies = [
   {
     title: "Mieszkanie, salon z kuchnią",
-    location: "Rzeszów, Centrum",
+    location: "Rzeszów",
     surface: "45 m²",
     challenge: "Klient chciał jasną, nowoczesną podłogę bez fug do otwartej strefy dziennej i na ogrzewanie podłogowe.",
     effect: "Powstała bezspoinowa powierzchnia w białym połysku, łatwa w sprzątaniu i spójna dla całej części dziennej.",
@@ -148,7 +148,7 @@ const caseStudies = [
   },
   {
     title: "Dom jednorodzinny, cała strefa mieszkalna",
-    location: "Kraków, Krowodrza",
+    location: "Kraków",
     surface: "120 m²",
     challenge: "Inwestorowi zależało na jednej spójnej posadzce w całym domu zamiast łączenia kilku materiałów.",
     effect: "Szary system samopoziomujący połączył salon, kuchnię i kolejne pomieszczenia w nowoczesną, minimalistyczną całość.",
@@ -156,11 +156,11 @@ const caseStudies = [
     alt: "Posadzka żywiczna w domu jednorodzinnym w Krakowie",
   },
   {
-    title: "Strefa dzienna do projektu premium",
-    location: "Małopolska i Podkarpackie",
-    surface: "realizacje od mieszkań po domy 120 m²+",
-    challenge: "Klienci chcą efektu „jak z katalogu”, ale bez rezygnowania z wygody i łatwego sprzątania.",
-    effect: "Najlepiej sprawdza się spójna posadzka żywiczna prowadzona przez kuchnię, salon, hol i kolejne strefy domu.",
+    title: "Mieszkanie premium, detal strefy dziennej",
+    location: "Rzeszów",
+    surface: "45 m²",
+    challenge: "Inwestor chciał efekt premium bez fug oraz powierzchnię, którą łatwo utrzymać w czystości przy codziennym użytkowaniu.",
+    effect: "Jednolita posadzka optycznie powiększyła wnętrze i pozwoliła spójnie połączyć kuchnię z salonem w jednym nowoczesnym układzie.",
     image: "/mieszkanie.jpg",
     alt: "Nowoczesne wnętrze z posadzką żywiczną bez fug",
   },
