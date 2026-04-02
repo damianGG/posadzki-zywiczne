@@ -22,52 +22,53 @@ import {
 } from "@/components/ui/accordion";
 
 const highlights = [
-  "Bez fug, progów i trudnych miejsc do czyszczenia",
-  "Wykończenie dopasowane do stylu kuchni, salonu i całego domu",
-  "Odporność na codzienne użytkowanie, plamy i wilgoć",
+  "Bez fug — mniej sprzątania, więcej czystej i higienicznej powierzchni.",
+  "Wykończenie premium: mat, półmat lub wariant antypoślizgowy dopasowany do wnętrza.",
+  "Podłoga żywiczna do kuchni, salonu i całego domu, także na ogrzewanie podłogowe.",
+  "Transparentna wycena: orientacyjnie od 180 do 350 zł/m² w zależności od systemu i podłoża.",
 ];
 
 const stats = [
-  { value: "1", label: "spójna posadzka w całej strefie dziennej" },
+  { value: "180–350", label: "zł/m² orientacyjnie za system do domu lub mieszkania" },
   { value: "0", label: "fug i miejsc gromadzących brud" },
-  { value: "100%", label: "projektu dopasowanego do wnętrza" },
+  { value: "1", label: "spójna powierzchnia od salonu po łazienkę i garaż" },
 ];
 
 const benefits = [
   {
-    title: "Łatwe sprzątanie na co dzień",
+    title: "Bez fug, więc sprzątanie naprawdę jest prostsze",
     description:
-      "Gładka powierzchnia bez fug sprawia, że okruchy, kurz i zabrudzenia z kuchni nie zatrzymują się między płytkami.",
+      "Okruchy, kurz i zabrudzenia z kuchni nie wchodzą w szczeliny między płytkami. To jeden z najmocniejszych argumentów dla rodzin, alergików i właścicieli zwierząt.",
     icon: Sparkles,
   },
   {
-    title: "Komfort w salonie i kuchni",
+    title: "Efekt premium, który robi wrażenie od wejścia",
     description:
-      "System dobieramy do pomieszczenia tak, aby podłoga była przyjemna w odbiorze i dobrze pracowała w przestrzeni mieszkalnej.",
+      "Dobieramy kolor, stopień połysku i charakter powierzchni do wnętrz nowoczesnych, minimalistycznych, loft, japandi i premium, tak aby całość wyglądała jak z dobrze dopracowanego projektu.",
     icon: Home,
   },
   {
-    title: "Odporność na domowe wyzwania",
+    title: "Trwałość na lata zamiast wymiany co kilka sezonów",
     description:
-      "Rozlana kawa, woda przy zlewie, przesuwane krzesła czy intensywne użytkowanie nie muszą oznaczać szybkiego zużycia podłogi.",
+      "System do domu dobieramy pod codzienne użytkowanie: kuchnię, salon, dzieci, zwierzęta i przesuwane meble. W razie potrzeby powierzchnię można też odświeżyć lub zrenowować.",
     icon: ShieldCheck,
   },
   {
-    title: "Nowoczesny efekt premium",
+    title: "Jedna podłoga w całym domu lub mieszkaniu",
     description:
-      "Mat, satyna lub delikatny połysk pozwalają uzyskać elegancki efekt dopasowany do mebli, ścian i światła we wnętrzu.",
+      "Salon, kuchnia, łazienka, korytarz, a nawet garaż mogą tworzyć jedną spójną powierzchnię bez progów i wizualnych podziałów.",
     icon: Layers3,
   },
   {
-    title: "Bezpieczne rozwiązanie dla rodziny",
+    title: "Bezpieczne wykończenie do konkretnego pomieszczenia",
     description:
-      "Dobieramy parametry antypoślizgowe i sposób wykończenia tak, aby dom był wygodny dla dzieci, dorosłych i zwierząt.",
+      "Obawę o śliskość zamykamy doborem wykończenia: mat, półmat albo wariant antypoślizgowy tam, gdzie jest to potrzebne — np. w łazience lub przy wejściu.",
     icon: HeartHandshake,
   },
   {
-    title: "Remont zaplanowany krok po kroku",
+    title: "Działa z ogrzewaniem podłogowym i nowoczesnym projektem",
     description:
-      "Klient od początku wie, jak wygląda przygotowanie podłoża, harmonogram prac, czas schnięcia i moment pełnego użytkowania.",
+      "Posadzka żywiczna bardzo dobrze współpracuje z ogrzewaniem podłogowym i wpisuje się w projekty prowadzone wspólnie z inwestorem lub architektem wnętrz.",
     icon: TimerReset,
   },
 ];
@@ -76,93 +77,130 @@ const spaces = [
   {
     title: "Kuchnia otwarta na salon",
     description:
-      "Jedna powierzchnia wizualnie powiększa wnętrze i buduje spokojny, uporządkowany efekt.",
+      "Jedna powierzchnia wizualnie powiększa wnętrze, porządkuje strefę dzienną i daje mocniejszy efekt premium niż klasyczny podział: płytki plus panele.",
+  },
+  {
+    title: "Cały dom lub całe mieszkanie",
+    description:
+      "Największą przewagę widać wtedy, gdy żywica łączy salon, kuchnię, łazienkę, hol i garaż w jedną spójną powierzchnię.",
   },
   {
     title: "Mieszkania premium i apartamenty",
     description:
-      "To świetny wybór tam, gdzie liczy się detal, nowoczesna estetyka i łatwe utrzymanie czystości.",
+      "To wybór dla klientów, którzy kupują oczami, ale chcą też realnej wygody w codziennym utrzymaniu wnętrza.",
   },
   {
-    title: "Domy jednorodzinne",
+    title: "Współpraca z architektem wnętrz",
     description:
-      "Rozwiązanie sprawdza się w intensywnie używanej strefie dziennej, łącząc design z trwałością.",
-  },
-  {
-    title: "Wnętrza po generalnym remoncie",
-    description:
-      "Posadzka żywiczna dobrze wpisuje się w projekty, w których chcesz uniknąć podziałów między pomieszczeniami.",
+      "Dostarczamy rozwiązanie, które łatwo wpisać w spójny projekt nowoczesnego, loftowego, industrialnego lub japandi wnętrza.",
   },
 ];
 
 const process = [
-  "Rozmowa o wnętrzu, stylu życia domowników i oczekiwanym efekcie.",
-  "Ocena podłoża oraz dobór systemu odpowiedniego do domu lub mieszkania.",
-  "Przygotowanie powierzchni, naprawy i wykonanie warstw roboczych.",
-  "Wykończenie w ustalonym kolorze i strukturze oraz przekazanie zasad pielęgnacji.",
+  "Wysyłasz zdjęcia wnętrza, orientacyjny metraż i informację, czy zależy Ci na macie, półmacie czy mocniejszym efekcie dekoracyjnym.",
+  "Ocenimy podłoże, zakres prac i dobierzemy system do domu, mieszkania lub całej inwestycji prowadzonej z architektem.",
+  "Dostajesz konkretną wycenę, orientacyjny harmonogram oraz informację, jak przygotować wnętrze do realizacji.",
+  "Wykonujemy posadzkę w ustalonym kolorze i strukturze, a po odbiorze przekazujemy zasady pielęgnacji oraz użytkowania.",
 ];
 
 const questions = [
   {
-    question: "Czy posadzka żywiczna nadaje się do kuchni?",
+    question: "Czy podłoga żywiczna w domu się rysuje?",
     answer:
-      "Tak. W kuchni ceniona jest za łatwe czyszczenie, brak fug, odporność na wilgoć oraz elegancki wygląd w codziennym użytkowaniu.",
+      "Każda podłoga pracuje w codziennym użytkowaniu, ale dobrze dobrany system żywiczny jest odporny na typowe użytkowanie domowe. Dodatkowo brak fug eliminuje miejsca najszybszej degradacji, a powierzchnię można po latach odświeżyć lub zrenowować.",
   },
   {
-    question: "Czy taka podłoga pasuje również do salonu?",
+    question: "Czy posadzka żywiczna jest śliska?",
     answer:
-      "Tak, szczególnie w nowoczesnych i minimalistycznych wnętrzach. Jednolita powierzchnia porządkuje przestrzeń i dobrze łączy kuchnię z częścią wypoczynkową.",
+      "Nie musi być. Do wnętrza dobieramy odpowiednie wykończenie: mat, półmat lub wariant antypoślizgowy. Inny system rekomendujemy do salonu, a inny do łazienki czy strefy wejściowej.",
   },
   {
-    question: "Czy posadzka żywiczna jest zimna i twarda?",
+    question: "Ile kosztuje posadzka żywiczna do domu lub mieszkania?",
     answer:
-      "Odbiór zależy od wybranego systemu oraz podłoża. Przy doborze rozwiązania bierzemy pod uwagę komfort użytkowania, ogrzewanie podłogowe i charakter wnętrza.",
+      "Najczęściej orientacyjny zakres to od 180 do 350 zł/m². Finalna cena zależy od metrażu, stanu podłoża, wybranego systemu, koloru oraz tego, czy realizujemy jedną strefę czy cały dom lub mieszkanie.",
   },
   {
-    question: "Jak wygląda pielęgnacja w domu lub mieszkaniu?",
+    question: "Czy można ją wykonać na ogrzewaniu podłogowym?",
     answer:
-      "Na co dzień wystarcza odkurzanie i mycie delikatnym środkiem. Brak fug znacząco ogranicza miejsca, w których zwykle gromadzi się brud.",
-  },
-  {
-    question: "Czy można dobrać kolor do aranżacji wnętrza?",
-    answer:
-      "Tak. Dobieramy odcień, poziom połysku i finalny charakter powierzchni tak, aby współgrały z meblami, światłem i stylem całego wnętrza.",
+      "Tak. To jedno z często wybieranych rozwiązań do nowoczesnych domów i mieszkań. System dobieramy tak, aby dobrze współpracował z ogrzewaniem podłogowym i charakterem pomieszczenia.",
   },
   {
     question: "Ile trwa realizacja?",
     answer:
-      "Termin zależy od stanu podłoża, metrażu i wybranego systemu, ale klient jeszcze przed startem prac otrzymuje czytelny plan kolejnych etapów.",
+      "Najczęściej od 3 do 7 dni roboczych, zależnie od metrażu, stanu podłoża i wybranego systemu. Już przed startem prac dostajesz realny harmonogram oraz informację, kiedy można wrócić do normalnego użytkowania.",
+  },
+  {
+    question: "Czy można dobrać kolor i efekt pod konkretny styl wnętrza?",
+    answer:
+      "Tak. To jeden z powodów, dla których architekci i inwestorzy wybierają żywicę do wnętrz nowoczesnych, minimalistycznych, loftowych, industrialnych, japandi i premium. Kolor, struktura i poziom połysku są dobierane indywidualnie.",
   },
 ];
 
-const gallery = [
+const caseStudies = [
   {
-    title: "Strefa dzienna bez podziałów",
-    description:
-      "Jedna powierzchnia od kuchni po salon daje spójny i spokojny efekt wizualny.",
-    image: "/mieszkanie.jpg",
-    alt: "Posadzka żywiczna w nowoczesnym mieszkaniu",
-  },
-  {
-    title: "Kuchnia gotowa na codzienność",
-    description:
-      "Powierzchnia łatwa do utrzymania w czystości i odporna na typowe zabrudzenia.",
-    image: "/kuchnia.jpg",
-    alt: "Posadzka żywiczna w kuchni",
-  },
-  {
-    title: "Inspiracja do Twojej realizacji",
-    description:
-      "Tutaj możemy pokazać kolejne zdjęcie Twojej kuchni, salonu lub całej strefy dziennej.",
+    title: "Mieszkanie, salon z kuchnią",
+    location: "Rzeszów, Centrum",
+    surface: "45 m²",
+    challenge: "Klient chciał jasną, nowoczesną podłogę bez fug do otwartej strefy dziennej i na ogrzewanie podłogowe.",
+    effect: "Powstała bezspoinowa powierzchnia w białym połysku, łatwa w sprzątaniu i spójna dla całej części dziennej.",
     image: "/mieszkanie/DeWatermark.ai_1732886162387.png",
-    alt: "Nowoczesne wnętrze domu z posadzką żywiczną",
+    alt: "Podłoga żywiczna w mieszkaniu w Rzeszowie",
+  },
+  {
+    title: "Dom jednorodzinny, cała strefa mieszkalna",
+    location: "Kraków, Krowodrza",
+    surface: "120 m²",
+    challenge: "Inwestorowi zależało na jednej spójnej posadzce w całym domu zamiast łączenia kilku materiałów.",
+    effect: "Szary system samopoziomujący połączył salon, kuchnię i kolejne pomieszczenia w nowoczesną, minimalistyczną całość.",
+    image: "/kuchnia.jpg",
+    alt: "Posadzka żywiczna w domu jednorodzinnym w Krakowie",
+  },
+  {
+    title: "Strefa dzienna do projektu premium",
+    location: "Małopolska i Podkarpackie",
+    surface: "realizacje od mieszkań po domy 120 m²+",
+    challenge: "Klienci chcą efektu „jak z katalogu”, ale bez rezygnowania z wygody i łatwego sprzątania.",
+    effect: "Najlepiej sprawdza się spójna posadzka żywiczna prowadzona przez kuchnię, salon, hol i kolejne strefy domu.",
+    image: "/mieszkanie.jpg",
+    alt: "Nowoczesne wnętrze z posadzką żywiczną bez fug",
   },
 ];
 
-const visualSlots = [
-  "Zdjęcie detalu przy wyspie kuchennej",
-  "Zdjęcie szerokiego planu salonu",
-  "Zdjęcie zbliżenia struktury i koloru",
+const comparisonRows = [
+  {
+    label: "Wygląd premium i spójna powierzchnia",
+    resin: "Jedna powierzchnia bez fug i progów",
+    tiles: "Dobra trwałość, ale widoczne podziały i fugi",
+    panels: "Przyjemne wizualnie, ale mniej odporne w kuchni",
+    microcement: "Ładny efekt, zwykle mniej odporny systemowo",
+  },
+  {
+    label: "Sprzątanie i higiena",
+    resin: "Najłatwiejsze: brak fug i szczelin",
+    tiles: "Fugi łapią brud i wymagają czyszczenia",
+    panels: "Łatwe na sucho, słabsze przy wilgoci",
+    microcement: "Bez fug, ale wymaga pilnowania zabezpieczenia",
+  },
+  {
+    label: "Odporność w codziennym użytkowaniu",
+    resin: "Wysoka przy systemie dobranym do domu",
+    tiles: "Trwałe, ale fuga i spoiny są słabym punktem",
+    panels: "Szybciej widać zużycie i ślady eksploatacji",
+    microcement: "Mocno zależy od wykonania i pielęgnacji",
+  },
+  {
+    label: "Ogrzewanie podłogowe",
+    resin: "Tak",
+    tiles: "Tak",
+    panels: "Zależnie od rodzaju paneli",
+    microcement: "Tak",
+  },
+];
+
+const serviceAreas = [
+  "Podkarpackie — Rzeszów i okolice",
+  "Małopolskie — Kraków, Wieliczka, Nowy Sącz",
+  "Lubelskie — realizacje i wyceny po wcześniejszym ustaleniu zakresu",
 ];
 
 export default function KitchenLivingPage() {
@@ -173,18 +211,19 @@ export default function KitchenLivingPage() {
         <div className="container relative grid gap-12 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-28">
           <div className="space-y-8">
             <Badge variant="outline" className="rounded-full px-4 py-1 text-sm">
-              Kuchnia • salon • domy i mieszkania
+              Podłoga żywiczna • kuchnia • salon • cały dom i mieszkanie
             </Badge>
             <div className="space-y-5">
               <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                Posadzki żywiczne do domu i mieszkania, które robią efekt
-                <span className="text-primary"> od pierwszego wejścia</span>
+                Podłoga żywiczna bez fug, która wygląda
+                <span className="text-primary"> jak z katalogu i sprawdza się na co dzień</span>
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                Jeśli chcesz wiedzieć więcej niż tylko „czy to ładnie wygląda”,
-                tutaj znajdziesz odpowiedzi. Pokazujemy, jak posadzka żywiczna
-                sprawdza się w kuchni, salonie i otwartej strefie dziennej —
-                od estetyki, przez trwałość, aż po codzienne użytkowanie.
+                To strona dla właścicieli domów i mieszkań oraz architektów
+                wnętrz, którzy szukają efektu premium bez kompromisu w
+                praktyczności. Pokazujemy, jak posadzka żywiczna sprawdza się w
+                kuchni, salonie i całym domu — od designu, przez trwałość, aż po
+                realny koszt i codzienne użytkowanie.
               </p>
             </div>
 
@@ -214,7 +253,7 @@ export default function KitchenLivingPage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="gap-2">
                 <Link href="/kontakt">
-                  Zapytaj o wycenę
+                  Wyślij zdjęcia wnętrza — przygotujemy wycenę
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -247,17 +286,17 @@ export default function KitchenLivingPage() {
               <div className="rounded-[24px] border bg-card p-6 shadow-sm">
                 <p className="text-sm font-medium text-primary">Co interesuje klientów?</p>
                 <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                  <li>Czy podłoga będzie praktyczna przy dzieciach i zwierzętach?</li>
-                  <li>Czy łatwo utrzymać ją w czystości przy otwartej kuchni?</li>
-                  <li>Jak będzie wyglądać po kilku latach użytkowania?</li>
+                  <li>Czy podłoga nie będzie się szybko rysować lub niszczyć?</li>
+                  <li>Czy w kuchni i salonie nie okaże się zbyt śliska?</li>
+                  <li>Czy cena rzeczywiście ma sens wobec trwałości i efektu?</li>
                 </ul>
               </div>
               <div className="rounded-[24px] border bg-card p-6 shadow-sm">
-                <p className="text-sm font-medium text-primary">Jak pomagamy?</p>
+                <p className="text-sm font-medium text-primary">Jak odpowiadamy?</p>
                 <p className="mt-4 text-sm leading-7 text-muted-foreground">
-                  Tłumaczymy różnice między systemami, dobieramy wykończenie do
-                  wnętrza i pokazujemy, na co zwrócić uwagę przed podjęciem
-                  decyzji.
+                  Dobieramy system do użytkowania domowego, rekomendujemy mat,
+                  półmat lub antypoślizg i pokazujemy, kiedy żywica jest lepszym
+                  wyborem niż płytki, panele lub mikrocement.
                 </p>
               </div>
             </div>
@@ -271,13 +310,13 @@ export default function KitchenLivingPage() {
             Dlaczego to działa we wnętrzach
           </Badge>
           <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Nie tylko ładna podłoga. To rozwiązanie, które odpowiada na realne
-            potrzeby domowników.
+            Najpierw kupujesz oczami. Potem doceniasz, że ta podłoga naprawdę
+            ułatwia codzienne życie.
           </h2>
           <p className="mt-4 text-lg leading-8 text-muted-foreground">
-            Klienci wybierający posadzkę do domu pytają o codzienność: sprzątanie,
-            trwałość, bezpieczeństwo i wygląd po czasie. Dlatego ta strona
-            prowadzi przez wszystkie najważniejsze zagadnienia.
+            Najmocniejsze argumenty klientów indywidualnych są zawsze te same:
+            brak fug, efekt premium i spokój na lata. Właśnie na tych trzech
+            przewagach budujemy realizacje do domów i mieszkań.
           </p>
         </div>
 
@@ -309,24 +348,23 @@ export default function KitchenLivingPage() {
               Gdzie sprawdza się najlepiej
             </Badge>
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Posadzka żywiczna w kuchni i salonie szczególnie dobrze wypada tam,
-              gdzie chcesz uzyskać efekt spójnego wnętrza.
+              Największą przewagę widać wtedy, gdy myślisz o wnętrzu całościowo,
+              a nie tylko o jednym pomieszczeniu.
             </h2>
             <p className="text-lg leading-8 text-muted-foreground">
-              To rozwiązanie dla osób, które myślą o domu całościowo i nie chcą
-              walczyć z łączeniami materiałów, fugami oraz wizualnym chaosem
-              między pomieszczeniami.
+              Podłoga żywiczna najlepiej wypada w domach i mieszkaniach, w
+              których chcesz zachować jedną estetykę od kuchni, przez salon, po
+              kolejne strefy. To mocny argument także dla architektów wnętrz.
             </p>
             <div className="rounded-[24px] border bg-background p-6 shadow-sm">
               <p className="flex items-center gap-2 text-base font-medium">
                 <Droplets className="h-5 w-5 text-primary" />
-                Kuchnia i salon to miejsce, w którym estetyka musi iść w parze z
-                praktycznością.
+                Tu design odpowiada za decyzję, a praktyczność zamyka sprzedaż.
               </p>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                Właśnie dlatego klienci coraz częściej wybierają posadzki
-                żywiczne zamiast klasycznych podziałów: płytki w kuchni, panele
-                w salonie.
+                Dlatego coraz częściej żywica wygrywa z zestawem „płytki w
+                kuchni i panele w salonie”, zwłaszcza gdy inwestor chce spójnej,
+                nowoczesnej powierzchni bez fug.
               </p>
             </div>
           </div>
@@ -351,77 +389,46 @@ export default function KitchenLivingPage() {
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
             <Badge variant="outline" className="rounded-full px-4 py-1 text-sm">
-              Zdjęcia i inspiracje
+              Porównanie materiałów
             </Badge>
             <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-              Miejsce na realizacje, inspiracje i zdjęcia, które pomagają podjąć
-              decyzję.
+              Żywica kontra płytki, panele i mikrocement — szybkie porównanie
+              przed decyzją.
             </h2>
             <p className="mt-4 text-lg leading-8 text-muted-foreground">
-              Poniżej pokazujemy przykładowe ujęcia oraz gotowe sloty pod kolejne
-              fotografie wnętrz. Dzięki temu sekcja może rosnąć razem z nowymi
-              realizacjami.
+              Ta sekcja ma zamknąć najczęstszy dylemat inwestora: który materiał
+              da najlepszy efekt wizualny, będzie najłatwiejszy w utrzymaniu i
+              nie rozbije wnętrza na kilka różnych powierzchni.
             </p>
           </div>
         </div>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-          <div className="grid gap-6 md:grid-cols-2">
-            {gallery.slice(0, 2).map((item) => (
-              <div
-                key={item.title}
-                className="overflow-hidden rounded-[28px] border bg-card shadow-sm"
-              >
-                <div className="relative aspect-[4/3]">
-                  <Image
-                    src={item.image}
-                    alt={item.alt}
-                    fill
-                    className="object-cover"
-                  />
+        <div className="mt-12 overflow-hidden rounded-[28px] border bg-card shadow-sm">
+          <div className="grid grid-cols-1 gap-px bg-border md:grid-cols-[1.3fr_repeat(4,minmax(0,1fr))]">
+            <div className="bg-muted/40 p-4 text-sm font-semibold">Kryterium</div>
+            <div className="bg-muted/40 p-4 text-sm font-semibold">Żywica</div>
+            <div className="bg-muted/40 p-4 text-sm font-semibold">Płytki</div>
+            <div className="bg-muted/40 p-4 text-sm font-semibold">Panele</div>
+            <div className="bg-muted/40 p-4 text-sm font-semibold">Mikrocement</div>
+            {comparisonRows.map((row) => (
+              <div key={row.label} className="contents">
+                <div className="bg-background p-4 text-sm font-medium">
+                  {row.label}
                 </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold">{item.title}</h3>
-                  <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                    {item.description}
-                  </p>
+                <div className="bg-background p-4 text-sm text-muted-foreground">
+                  {row.resin}
+                </div>
+                <div className="bg-background p-4 text-sm text-muted-foreground">
+                  {row.tiles}
+                </div>
+                <div className="bg-background p-4 text-sm text-muted-foreground">
+                  {row.panels}
+                </div>
+                <div className="bg-background p-4 text-sm text-muted-foreground">
+                  {row.microcement}
                 </div>
               </div>
             ))}
-          </div>
-
-          <div className="space-y-6">
-            <div className="overflow-hidden rounded-[28px] border bg-card shadow-sm">
-              <div className="relative aspect-[4/3]">
-                <Image
-                  src={gallery[2].image}
-                  alt={gallery[2].alt}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="text-xl font-semibold">{gallery[2].title}</h3>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                  {gallery[2].description}
-                </p>
-              </div>
-            </div>
-
-            <div className="grid gap-4">
-              {visualSlots.map((slot) => (
-                <div
-                  key={slot}
-                  className="rounded-[24px] border border-dashed bg-muted/40 p-5"
-                >
-                  <p className="text-sm font-medium">{slot}</p>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    Rezerwowe miejsce na kolejne zdjęcie realizacji lub render,
-                    jeśli będziemy rozbudowywać landing page o nową galerię.
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
       </section>
@@ -430,17 +437,74 @@ export default function KitchenLivingPage() {
         <div className="container grid gap-10 px-4 py-16 md:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:py-24">
           <div className="space-y-5">
             <Badge className="rounded-full border-white/20 bg-white/10 px-4 py-1 text-sm text-white hover:bg-white/10">
+              Realizacje i obszar działania
+            </Badge>
+            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+              Konkretne realizacje sprzedają lepiej niż ogólne obietnice.
+            </h2>
+            <p className="text-lg leading-8 text-slate-300">
+              Obsługujemy inwestycje w województwie podkarpackim, małopolskim i
+              lubelskim. Poniżej pokazujemy przykładowe realizacje oraz typy
+              projektów, o które klienci pytają najczęściej.
+            </p>
+            <div className="grid gap-3">
+              {serviceAreas.map((area) => (
+                <div
+                  key={area}
+                  className="rounded-[20px] border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-200"
+                >
+                  {area}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            {caseStudies.map((item) => (
+              <div
+                key={item.title}
+                className="overflow-hidden rounded-[28px] border border-white/10 bg-white/5"
+              >
+                <div className="relative aspect-[4/3]">
+                  <Image src={item.image} alt={item.alt} fill className="object-cover" />
+                </div>
+                <div className="space-y-4 p-6">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-400">
+                      {item.location} • {item.surface}
+                    </p>
+                    <h3 className="mt-2 text-xl font-semibold text-white">{item.title}</h3>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-200">Problem klienta</p>
+                    <p className="mt-2 text-sm leading-7 text-slate-300">{item.challenge}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-200">Efekt końcowy</p>
+                    <p className="mt-2 text-sm leading-7 text-slate-300">{item.effect}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b bg-muted/30">
+        <div className="container grid gap-10 px-4 py-16 md:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:py-24">
+          <div className="space-y-5">
+            <Badge variant="outline" className="rounded-full px-4 py-1 text-sm">
               Jak wygląda współpraca
             </Badge>
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Klient nie zostaje sam z pytaniami — od pierwszej rozmowy wie, co
-              wydarzy się dalej.
+              Najprostsze CTA działa najlepiej: wyślij zdjęcia wnętrza i od razu
+              przejdźmy do konkretów.
             </h2>
-            <p className="text-lg leading-8 text-slate-300">
-              Dobra strona sprzedażowa nie tylko inspiruje, ale też porządkuje
-              proces. To ważne zwłaszcza przy inwestycjach w domach i
-              mieszkaniach, gdzie liczy się harmonogram, czystość prac i
-              bezpieczeństwo decyzji.
+            <p className="text-lg leading-8 text-muted-foreground">
+              Dzięki temu szybciej ocenimy, czy potrzebujesz rozwiązania do samej
+              kuchni z salonem, czy od razu do całego domu lub mieszkania. To
+              wygodne także dla architekta, który chce od razu sprawdzić zakres,
+              budżet i możliwości kolorystyczne.
             </p>
           </div>
 
@@ -448,12 +512,12 @@ export default function KitchenLivingPage() {
             {process.map((step, index) => (
               <div
                 key={step}
-                className="rounded-[24px] border border-white/10 bg-white/5 p-6"
+                className="rounded-[24px] border bg-background p-6 shadow-sm"
               >
-                <p className="text-sm font-medium text-slate-300">
+                <p className="text-sm font-medium text-primary">
                   Krok {index + 1}
                 </p>
-                <p className="mt-2 text-base leading-7 text-white">{step}</p>
+                <p className="mt-2 text-base leading-7 text-foreground">{step}</p>
               </div>
             ))}
           </div>
@@ -466,11 +530,11 @@ export default function KitchenLivingPage() {
             FAQ
           </Badge>
           <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Najczęstsze pytania o posadzki żywiczne w domach i mieszkaniach
+            Najczęstsze pytania o podłogi i posadzki żywiczne w domach i mieszkaniach
           </h2>
           <p className="mt-4 text-lg leading-8 text-muted-foreground">
-            Ta sekcja powstała z myślą o kliencie, który przed decyzją chce znać
-            odpowiedzi na konkretne pytania — praktyczne, techniczne i estetyczne.
+            Ta sekcja łączy sprzedaż z techniką: zamyka obawy o trwałość,
+            śliskość, koszt, ogrzewanie podłogowe i czas realizacji.
           </p>
         </div>
 
@@ -498,13 +562,14 @@ export default function KitchenLivingPage() {
                 Ostatni krok
               </Badge>
               <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-                Chcesz sprawdzić, czy posadzka żywiczna będzie dobrym wyborem do
-                Twojej kuchni lub salonu?
+                Wyślij zdjęcia wnętrza i sprawdź, czy posadzka żywiczna będzie
+                dobrym wyborem do Twojego domu lub mieszkania.
               </h2>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
-                Porozmawiajmy o wnętrzu, stylu życia domowników, oczekiwaniach i
-                budżecie. Doradzimy uczciwie, czy to rozwiązanie pasuje do Twojego
-                domu lub mieszkania.
+                To najprostszy sposób na szybką wycenę i konkretną rekomendację.
+                Podpowiemy, jaki system sprawdzi się najlepiej, jaki efekt
+                wizualny możesz osiągnąć i czy warto prowadzić jedną powierzchnię
+                przez kuchnię, salon i kolejne pomieszczenia.
               </p>
             </div>
 
@@ -513,21 +578,21 @@ export default function KitchenLivingPage() {
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Wyślij zdjęcia wnętrza i planowany metraż.
+                  Wyślij zdjęcia wnętrza, planowany metraż i miejscowość.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Opowiedz, czy zależy Ci bardziej na macie, satynie czy połysku.
+                  Napisz, czy zależy Ci bardziej na macie, półmacie, połysku lub antypoślizgu.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Zapytaj o wariant najlepiej dopasowany do domu lub mieszkania.
+                  Zapytaj o wariant do kuchni z salonem albo o spójną posadzkę do całego domu.
                 </li>
               </ul>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="gap-2">
                   <Link href="/kontakt">
-                    Skontaktuj się z nami
+                    Wyślij zdjęcia wnętrza — przygotujemy wycenę
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>

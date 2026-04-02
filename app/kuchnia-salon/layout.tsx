@@ -3,15 +3,15 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: "Posadzki Żywiczne do Domu i Mieszkania | Kuchnia i Salon",
+  title: "Podłoga Żywiczna do Kuchni, Salonu i Domu | Wycena ze Zdjęć",
   description:
-    "Nowoczesne posadzki żywiczne do kuchni, salonu, domu i mieszkania. Sprawdź zalety, odpowiedzi na najczęstsze pytania i inspiracje do wnętrz.",
+    "Podłoga żywiczna bez fug do kuchni, salonu, domu i mieszkania. Sprawdź ceny, porównanie z płytkami i panelami oraz realizacje z Podkarpacia i Małopolski.",
   keywords:
-    "posadzki żywiczne kuchnia, posadzki żywiczne salon, posadzki żywiczne dom, posadzki żywiczne mieszkanie, żywiczne wnętrza",
+    "podłoga żywiczna kuchnia, posadzka żywiczna salon, posadzka żywiczna dom, posadzka żywiczna mieszkanie, podłoga bez fug, posadzka żywiczna Rzeszów, posadzka żywiczna Kraków",
   openGraph: {
-    title: "Posadzki Żywiczne do Domu i Mieszkania | Kuchnia i Salon",
+    title: "Podłoga Żywiczna do Kuchni, Salonu i Domu | Wycena ze Zdjęć",
     description:
-      "Poznaj zalety posadzek żywicznych w domu i mieszkaniu. Kuchnia, salon i otwarte strefy dzienne w nowoczesnym wydaniu.",
+      "Sprawdź, czy podłoga żywiczna pasuje do kuchni, salonu i całego domu. Ceny, FAQ, porównanie materiałów i realizacje z regionu.",
     url: "https://posadzkizywiczne.com/kuchnia-salon",
     images: [
       {
