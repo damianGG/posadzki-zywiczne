@@ -244,7 +244,7 @@ export default function KitchenLivingPage() {
             <div className="flex flex-col gap-3 sm:flex-row">
               <Button asChild size="lg" className="gap-2">
                 <Link href="/kontakt">
-                  Zapytaj o wycenę — około 300 zł/m²
+                  Orientacyjna cena: około 300 zł/m²
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
@@ -573,11 +573,15 @@ export default function KitchenLivingPage() {
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Podaj planowany metraż, miejscowość i zakres: kuchnia z salonem albo cały dom.
+                  Podaj planowany metraż i miejscowość.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Napisz, czy zależy Ci bardziej na macie, półmacie, połysku lub antypoślizgu.
+                  Napisz, czy chodzi o kuchnię z salonem, czy o cały dom.
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="mt-0.5 h-4 w-4 text-primary" />
+                  Określ, czy zależy Ci na macie, półmacie, połysku lub antypoślizgu.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
@@ -587,7 +591,7 @@ export default function KitchenLivingPage() {
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                 <Button asChild className="gap-2">
                   <Link href="/kontakt">
-                    Zapytaj o wycenę — około 300 zł/m²
+                    Orientacyjna cena: około 300 zł/m²
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
