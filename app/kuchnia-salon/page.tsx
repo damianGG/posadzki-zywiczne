@@ -22,117 +22,117 @@ import {
 } from "@/components/ui/accordion";
 
 const highlights = [
-  "Bez fug — mniej sprzątania, więcej czystej i higienicznej powierzchni.",
-  "Wykończenie premium: mat, półmat lub wariant antypoślizgowy dopasowany do wnętrza.",
-  "Podłoga żywiczna do kuchni, salonu i całego domu, także na ogrzewanie podłogowe.",
-  "Transparentna wycena: najczęściej około 300 zł/m² za system do domu lub mieszkania.",
+  "Bez fug — jedno przetarcie mopem zastępuje szorowanie szczoteczką każdego tygodnia.",
+  "Wykończenie premium: mat, półmat lub wariant antypoślizgowy — dobieramy do Twojego wnętrza i trybu życia.",
+  "Spójna powierzchnia przez cały dom: kuchnia, salon, łazienka, hol i garaż bez progów i wizualnych podziałów.",
+  "Transparentna wycena: najczęściej około 300 zł/m² za profesjonalny system dopasowany do domu lub mieszkania.",
 ];
 
 const stats = [
-  { value: "~300", label: "zł/m² najczęściej za system do domu lub mieszkania" },
-  { value: "0", label: "fug i miejsc gromadzących brud" },
-  { value: "1", label: "spójna powierzchnia od salonu po łazienkę i garaż" },
+  { value: "~300", label: "zł/m² — najczęstszy koszt systemu do domu lub mieszkania" },
+  { value: "0", label: "fug, szczelin i miejsc, w których zbiera się brud" },
+  { value: "1", label: "spójna powierzchnia od salonu, przez kuchnię, po garaż" },
 ];
 
 const benefits = [
   {
-    title: "Bez fug, więc sprzątanie naprawdę jest prostsze",
+    title: "Koniec z szorowania fug — jedną ścierką i gotowe",
     description:
-      "Okruchy, kurz i zabrudzenia z kuchni nie wchodzą w szczeliny między płytkami. To jeden z najmocniejszych argumentów dla rodzin, alergików i właścicieli zwierząt.",
+      "Brak fug to argument numer jeden, który klienci wymieniają po realizacji. Okruchy z kuchni, włosy, kurz — sprzątasz jednym ruchem mopa, bez klęczenia i szczoteczki. Szczególnie doceniają to rodziny z dziećmi, alergicy i właściciele zwierząt.",
     icon: Sparkles,
   },
   {
-    title: "Efekt premium, który robi wrażenie od wejścia",
+    title: "Design, który robi wrażenie — od pierwszego wejrzenia",
     description:
-      "Dobieramy kolor, stopień połysku i charakter powierzchni do wnętrz nowoczesnych, minimalistycznych, loft, japandi i premium, tak aby całość wyglądała jak z dobrze dopracowanego projektu.",
+      "Podłoga nadaje ton całej przestrzeni. Dobieramy kolor, poziom połysku i charakter powierzchni tak, aby idealnie wpisywały się w wnętrza nowoczesne, minimalistyczne, loftowe, japandi i premium — i żeby efekt wyglądał dokładnie tak, jak w projekcie.",
     icon: Home,
   },
   {
-    title: "Trwałość na lata zamiast wymiany co kilka sezonów",
+    title: "Inwestujesz raz — i przez lata nie myślisz o wymianie",
     description:
-      "System do domu dobieramy pod codzienne użytkowanie: kuchnię, salon, dzieci, zwierzęta i przesuwane meble. W razie potrzeby powierzchnię można też odświeżyć lub zrenowować.",
+      "Dobrze dobrany system żywiczny wytrzymuje codzienne użytkowanie: kuchnię, dzieci, zwierzęta i przesuwane meble. W razie potrzeby powierzchnię można po latach odświeżyć lub zrenowować — bez kucia, hałasu i tygodniowego remontu.",
     icon: ShieldCheck,
   },
   {
-    title: "Jedna podłoga w całym domu lub mieszkaniu",
+    title: "Jeden materiał od kuchni po łazienkę — bez progów i podziałów",
     description:
-      "Salon, kuchnia, łazienka, korytarz, a nawet garaż mogą tworzyć jedną spójną powierzchnię bez progów i wizualnych podziałów.",
+      "Koniec z kompromisem: płytki w kuchni, panele w salonie, coś innego w holu. Posadzka żywiczna tworzy jedną spójną, estetyczną przestrzeń w całym domu lub mieszkaniu — i właśnie to klienci opisują jako największą wizualną zmianę.",
     icon: Layers3,
   },
   {
-    title: "Bezpieczne wykończenie do konkretnego pomieszczenia",
+    title: "Nie ślizga się — wykończenie dobieramy do każdego pomieszczenia",
     description:
-      "Obawę o śliskość zamykamy doborem wykończenia: mat, półmat albo wariant antypoślizgowy tam, gdzie jest to potrzebne — np. w łazience lub przy wejściu.",
+      "To jedno z pierwszych pytań, które zadają klienci — i słusznie. Do salonu rekomendujemy mat lub półmat, a w łazience i strefie wejściowej stosujemy wariant antypoślizgowy. Bezpieczeństwo użytkowania jest dla nas tak samo ważne jak estetyka.",
     icon: HeartHandshake,
   },
   {
-    title: "Działa z ogrzewaniem podłogowym i nowoczesnym projektem",
+    title: "Doskonale współpracuje z ogrzewaniem podłogowym",
     description:
-      "Posadzka żywiczna bardzo dobrze współpracuje z ogrzewaniem podłogowym i wpisuje się w projekty prowadzone wspólnie z inwestorem lub architektem wnętrz.",
+      "Jeśli planujesz ogrzewanie podłogowe lub już je masz, posadzka żywiczna jest jednym z najlepszych rozwiązań. Dobieramy system z myślą o konkretnym układzie grzewczym, parametrach technicznych i wymaganiach architekta lub inwestora.",
     icon: TimerReset,
   },
 ];
 
 const spaces = [
   {
-    title: "Kuchnia otwarta na salon",
+    title: "Kuchnia otwarta na salon — jeden materiał, efekt wow",
     description:
-      "Jedna powierzchnia wizualnie powiększa wnętrze, porządkuje strefę dzienną i daje mocniejszy efekt premium niż klasyczny podział: płytki plus panele.",
+      "Jedna spójna powierzchnia bez fugi między kuchnią a salonem wizualnie powiększa przestrzeń i nadaje jej premium charakter. Klienci opisują to jako zmianę, która zrobiła największą różnicę w odbiorze całego wnętrza.",
   },
   {
-    title: "Cały dom lub całe mieszkanie",
+    title: "Cały dom lub całe mieszkanie bez progów",
     description:
-      "Największą przewagę widać wtedy, gdy żywica łączy salon, kuchnię, łazienkę, hol i garaż w jedną spójną powierzchnię.",
+      "Największą różnicę widać i czuć, gdy żywica łączy salon, kuchnię, łazienkę, hol i garaż w jedną harmonijną przestrzeń. Żadnych progów, żadnych wizualnych podziałów — tylko czysta estetyka od progu do ostatniego pokoju.",
   },
   {
     title: "Mieszkania premium i apartamenty",
     description:
-      "To wybór dla klientów, którzy kupują oczami, ale chcą też realnej wygody w codziennym utrzymaniu wnętrza.",
+      "Dla klientów, którzy chcą wyróżniającego się wnętrza na rynku nieruchomości lub po prostu pragną żyć w przestrzeni klasy premium — posadzka żywiczna to wybór, który przemawia do każdego, kto przestępuje próg.",
   },
   {
-    title: "Współpraca z architektem wnętrz",
+    title: "Projekt z architektem wnętrz",
     description:
-      "Dostarczamy rozwiązanie, które łatwo wpisać w spójny projekt nowoczesnego, loftowego, industrialnego lub japandi wnętrza.",
+      "Dostarczamy rozwiązanie, które łatwo wpisać w każdy spójny projekt. Możemy bezpośrednio skonsultować się z Twoim architektem w sprawie kolorystyki, wykończenia i technicznych wymagań — żeby efekt końcowy był dokładnie taki, jak na wizualizacji.",
   },
 ];
 
 const process = [
-  "Podajesz orientacyjny metraż, zakres prac i informację, czy zależy Ci na macie, półmacie czy mocniejszym efekcie dekoracyjnym.",
-  "Ocenimy podłoże, zakres prac i dobierzemy system do domu, mieszkania lub całej inwestycji prowadzonej z architektem.",
-  "Dostajesz konkretną wycenę, orientacyjny harmonogram oraz informację, jak przygotować wnętrze do realizacji.",
-  "Wykonujemy posadzkę w ustalonym kolorze i strukturze, a po odbiorze przekazujemy zasady pielęgnacji oraz użytkowania.",
+  "Powiedz nam o swoim wnętrzu: orientacyjny metraż, zakres prac i preferencje wykończenia (mat, półmat lub mocniejszy efekt dekoracyjny) — to wystarczy do pierwszej rozmowy.",
+  "Ocenimy stan podłoża, zakres prac i dobierzemy system idealny dla Twojego domu lub mieszkania — tak, aby spełniał zarówno Twoje oczekiwania estetyczne, jak i wymagania praktyczne.",
+  "Dostajesz konkretną wycenę bez ukrytych kosztów, realny harmonogram i jasną informację, jak przygotować wnętrze przed realizacją — żeby wszystko przebiegło sprawnie.",
+  "Wykonujemy posadzkę w ustalonym kolorze i strukturze. Po odbiorze przekazujemy szczegółową instrukcję pielęgnacji i użytkowania — dzięki której Twoja podłoga będzie wyglądać pięknie przez wiele lat.",
 ];
 
 const questions = [
   {
     question: "Czy podłoga żywiczna w domu się rysuje?",
     answer:
-      "Każda podłoga pracuje w codziennym użytkowaniu, ale dobrze dobrany system żywiczny jest odporny na typowe użytkowanie domowe. Dodatkowo brak fug eliminuje miejsca najszybszej degradacji, a powierzchnię można po latach odświeżyć lub zrenowować.",
+      "Odpowiednio dobrany system żywiczny jest odporny na typowe codzienne użytkowanie — zarysowania od mebli, butów czy zwierząt. Co ważne, brak fug oznacza brak najsłabszych punktów każdej podłogi płytkowej. Jeśli po latach pojawią się drobne ślady użytkowania, powierzchnię można odświeżyć lub zrenowować bez konieczności kucia i generalnego remontu.",
   },
   {
     question: "Czy posadzka żywiczna jest śliska?",
     answer:
-      "Nie musi być. Do wnętrza dobieramy odpowiednie wykończenie: mat, półmat lub wariant antypoślizgowy. Inny system rekomendujemy do salonu, a inny do łazienki czy strefy wejściowej.",
+      "Nie musi być — i właśnie dlatego dobór wykończenia jest tak ważny. Do salonu i kuchni rekomendujemy mat lub półmat, które dają komfortowy, nieformalny charakter. Do łazienki, strefy wejściowej lub klatki schodowej stosujemy wariant antypoślizgowy. Każde pomieszczenie traktujemy indywidualnie.",
   },
   {
     question: "Ile kosztuje posadzka żywiczna do domu lub mieszkania?",
     answer:
-      "Najczęściej trzeba liczyć około 300 zł/m². Finalna cena zależy od metrażu, stanu podłoża, wybranego systemu, koloru oraz tego, czy realizujemy jedną strefę czy cały dom lub mieszkanie.",
+      "Najczęściej trzeba liczyć około 300 zł/m². To dobry punkt odniesienia, który pozwala od razu porównać żywicę z płytkami, panelami czy mikrocementem. Finalna cena zależy od metrażu, stanu podłoża, wybranego systemu, koloru oraz tego, czy realizujemy jedną strefę, czy cały dom lub mieszkanie. Wycenę dostajesz bezpłatnie i bez zobowiązań.",
   },
   {
     question: "Czy można ją wykonać na ogrzewaniu podłogowym?",
     answer:
-      "Tak. To jedno z często wybieranych rozwiązań do nowoczesnych domów i mieszkań. System dobieramy tak, aby dobrze współpracował z ogrzewaniem podłogowym i charakterem pomieszczenia.",
+      "Tak — i to jest jedno z częstszych zastosowań w nowych, dobrze zaprojektowanych domach. Posadzka żywiczna dobrze przewodzi ciepło i sprawdza się zarówno w systemach wodnych, jak i elektrycznych. System dobieramy zawsze z uwzględnieniem konkretnego układu grzewczego, aby mieć pewność, że wszystko współpracuje prawidłowo.",
   },
   {
     question: "Ile trwa realizacja?",
     answer:
-      "Najczęściej od 3 do 7 dni roboczych, zależnie od metrażu, stanu podłoża i wybranego systemu. Już przed startem prac dostajesz realny harmonogram oraz informację, kiedy można wrócić do normalnego użytkowania.",
+      "Najczęściej od 3 do 7 dni roboczych, zależnie od metrażu, stanu podłoża i wybranego systemu. Zanim zaczniemy, dostajesz realny harmonogram z podaniem daty, kiedy możesz wrócić do normalnego użytkowania. Staramy się, żeby remont był jak najmniej uciążliwy dla domowników.",
   },
   {
     question: "Czy można dobrać kolor i efekt pod konkretny styl wnętrza?",
     answer:
-      "Tak. To jeden z powodów, dla których architekci i inwestorzy wybierają żywicę do wnętrz nowoczesnych, minimalistycznych, loftowych, industrialnych, japandi i premium. Kolor, struktura i poziom połysku są dobierane indywidualnie.",
+      "Tak — i to jest jedna z największych przewag posadzki żywicznej nad innymi materiałami. Kolor, struktura i poziom połysku dobieramy indywidualnie, dzięki czemu podłoga może być dokładnie taka, jaka jest na wizualizacji od architekta. Sprawdza się w wnętrzach nowoczesnych, minimalistycznych, loftowych, industrialnych, japandi i premium.",
   },
 ];
 
@@ -206,15 +206,15 @@ export default function KitchenLivingPage() {
             </Badge>
             <div className="space-y-5">
               <h1 className="max-w-3xl text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
-                Podłoga żywiczna bez fug, która wygląda
-                <span className="text-primary"> jak z katalogu i sprawdza się na co dzień</span>
+                Podłoga żywiczna, która zmienia kuchnię i salon
+                <span className="text-primary"> w przestrzeń, gdzie naprawdę chce się żyć</span>
               </h1>
               <p className="max-w-2xl text-lg leading-8 text-muted-foreground">
-                To strona dla właścicieli domów i mieszkań oraz architektów
-                wnętrz, którzy szukają efektu premium bez kompromisu w
-                praktyczności. Pokazujemy, jak posadzka żywiczna sprawdza się w
-                kuchni, salonie i całym domu — od designu, przez trwałość, aż po
-                realny koszt i codzienne użytkowanie.
+                Bez fug, bez kompromisów i bez wybierania między pięknym
+                designem a wygodą w codziennym użytkowaniu. Pokazujemy,
+                dlaczego właściciele domów i mieszkań coraz częściej wybierają
+                posadzkę żywiczną — i jak to wygląda w praktyce, od pierwszej
+                rozmowy po odbiór gotowej realizacji.
               </p>
             </div>
 
@@ -269,7 +269,7 @@ export default function KitchenLivingPage() {
                   Realizacja
                 </p>
                 <p className="mt-2 max-w-md text-2xl font-medium">
-                  Spójna podłoga od kuchni po salon bez fug i wizualnych podziałów
+                  Jedna spójna posadzka — kuchnia, salon, łazienka, bez jednej fugi
                 </p>
               </div>
             </div>
@@ -277,17 +277,18 @@ export default function KitchenLivingPage() {
               <div className="rounded-[24px] border bg-card p-6 shadow-sm">
                 <p className="text-sm font-medium text-primary">Co interesuje klientów?</p>
                 <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
-                  <li>Czy podłoga nie będzie się szybko rysować lub niszczyć?</li>
-                  <li>Czy w kuchni i salonie nie okaże się zbyt śliska?</li>
-                  <li>Czy cena rzeczywiście ma sens wobec trwałości i efektu?</li>
+                  <li>Czy posadzka żywiczna naprawdę wytrzyma codzienne użytkowanie przez lata?</li>
+                  <li>Czy w kuchni i salonie nie będzie śliska — szczególnie przy dzieciach?</li>
+                  <li>Czy warto wydać więcej i co dokładnie zyskuję w zamian za tę cenę?</li>
                 </ul>
               </div>
               <div className="rounded-[24px] border bg-card p-6 shadow-sm">
                 <p className="text-sm font-medium text-primary">Jak odpowiadamy?</p>
                 <p className="mt-4 text-sm leading-7 text-muted-foreground">
-                  Dobieramy system do użytkowania domowego, rekomendujemy mat,
-                  półmat lub antypoślizg i pokazujemy, kiedy żywica jest lepszym
-                  wyborem niż płytki, panele lub mikrocement.
+                  Dobieramy system stworzony pod użytkowanie domowe i wyjaśniamy,
+                  kiedy żywica jest po prostu lepszym wyborem niż płytki, panele
+                  czy mikrocement — a kiedy warto rozważyć inne rozwiązanie.
+                  Żadnego nacisku, tylko rzetelna informacja.
                 </p>
               </div>
             </div>
@@ -301,13 +302,14 @@ export default function KitchenLivingPage() {
             Dlaczego to działa we wnętrzach
           </Badge>
           <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-            Najpierw kupujesz oczami. Potem doceniasz, że ta podłoga naprawdę
-            ułatwia codzienne życie.
+            Najpierw kupujesz oczami. Potem odkrywasz, że ta podłoga
+            naprawdę ułatwia codzienne życie.
           </h2>
           <p className="mt-4 text-lg leading-8 text-muted-foreground">
-            Najmocniejsze argumenty klientów indywidualnych są zawsze te same:
-            brak fug, efekt premium i spokój na lata. Właśnie na tych trzech
-            przewagach budujemy realizacje do domów i mieszkań.
+            Klienci mówią to samo: brak fug zmienił ich podejście do
+            sprzątania, efekt premium sprawia, że goście pytają o podłogę, a
+            trwałość daje spokój na lata. To trzy argumenty, które decydują
+            o wyborze żywicy zamiast klasycznych rozwiązań.
           </p>
         </div>
 
@@ -339,23 +341,24 @@ export default function KitchenLivingPage() {
               Gdzie sprawdza się najlepiej
             </Badge>
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Największą przewagę widać wtedy, gdy myślisz o wnętrzu całościowo,
-              a nie tylko o jednym pomieszczeniu.
+              Największą różnicę widać wtedy, gdy traktujesz dom jako całość —
+              nie jako zbiór oddzielnych pomieszczeń.
             </h2>
             <p className="text-lg leading-8 text-muted-foreground">
-              Podłoga żywiczna najlepiej wypada w domach i mieszkaniach, w
-              których chcesz zachować jedną estetykę od kuchni, przez salon, po
-              kolejne strefy. To mocny argument także dla architektów wnętrz.
+              Posadzka żywiczna sprawdza się najlepiej wszędzie tam, gdzie
+              zależy Ci na jednej estetyce od kuchni, przez salon, po kolejne
+              strefy. To wybór, który doceniają zarówno inwestorzy
+              indywidualni, jak i architekci wnętrz planujący spójne projekty.
             </p>
             <div className="rounded-[24px] border bg-background p-6 shadow-sm">
               <p className="flex items-center gap-2 text-base font-medium">
                 <Droplets className="h-5 w-5 text-primary" />
-                Tu design odpowiada za decyzję, a praktyczność zamyka sprzedaż.
+                Design przekonuje — praktyczność ostatecznie zamyka decyzję.
               </p>
               <p className="mt-3 text-sm leading-7 text-muted-foreground">
-                Dlatego coraz częściej żywica wygrywa z zestawem „płytki w
-                kuchni i panele w salonie”, zwłaszcza gdy inwestor chce spójnej,
-                nowoczesnej powierzchni bez fug.
+                Właśnie dlatego żywica coraz częściej wyprzedza zestaw „płytki
+                w kuchni i panele w salonie” — zwłaszcza gdy inwestor chce
+                jednolitej, nowoczesnej powierzchni bez fug i wizualnych cięć.
               </p>
             </div>
           </div>
@@ -387,9 +390,9 @@ export default function KitchenLivingPage() {
               przed decyzją.
             </h2>
             <p className="mt-4 text-lg leading-8 text-muted-foreground">
-              Ta sekcja ma zamknąć najczęstszy dylemat inwestora: który materiał
-              da najlepszy efekt wizualny, będzie najłatwiejszy w utrzymaniu i
-              nie rozbije wnętrza na kilka różnych powierzchni.
+              Sprawdź, w czym posadzka żywiczna wypada lepiej, a w czym inne
+              materiały mogą być wystarczające. Rzetelne zestawienie — bez
+              ukrytych wad. Podejmij decyzję z pełną wiedzą.
             </p>
           </div>
         </div>
@@ -433,12 +436,13 @@ export default function KitchenLivingPage() {
               Realizacje i obszar działania
             </Badge>
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Konkretne realizacje sprzedają lepiej niż ogólne obietnice.
+              Efekty mówią więcej niż opisy — zobacz, jak wygląda to w praktyce.
             </h2>
             <p className="text-lg leading-8 text-slate-300">
               Obsługujemy inwestycje w województwie podkarpackim, małopolskim i
-              lubelskim. Poniżej pokazujemy przykładowe realizacje oraz typy
-              projektów, o które klienci pytają najczęściej.
+              lubelskim. Poniżej pokazujemy przykładowe realizacje, żebyś
+              mógł zobaczyć, co oznacza posadzka żywiczna w domu w
+              konkretnych metrażach i efekcie końcowym.
             </p>
             <div className="grid gap-3">
               {serviceAreas.map((area) => (
@@ -490,15 +494,14 @@ export default function KitchenLivingPage() {
               Jak wygląda współpraca
             </Badge>
             <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              Najprostszy komunikat działa najlepiej: najczęściej to około 300
-              zł/m² i od razu wiadomo, o jakim budżecie mówimy.
+              Prosta i przejrzysta współpraca — od pierwszego pytania do
+              gotowej podłogi.
             </h2>
             <p className="text-lg leading-8 text-muted-foreground">
-              Taki punkt odniesienia ułatwia pierwszą rozmowę i pozwala szybciej
-              ocenić, czy szukasz rozwiązania do samej kuchni z salonem, czy od
-              razu do całego domu lub mieszkania. To wygodne także dla
-              architekta, który chce od razu sprawdzić zakres, budżet i
-              możliwości kolorystyczne.
+              Staramy się, żeby każdy etap był zrozumiały i przewidywalny.
+              Już na wstępie wiesz, o jakim budżecie mówimy — najczęściej
+              około 300 zł/m² — dzięki czemu możesz od razu ocenić, czy
+              szukasz rozwiązania dla kuchni z salonem, czy dla całego domu.
             </p>
           </div>
 
@@ -527,8 +530,9 @@ export default function KitchenLivingPage() {
             Najczęstsze pytania o podłogi i posadzki żywiczne w domach i mieszkaniach
           </h2>
           <p className="mt-4 text-lg leading-8 text-muted-foreground">
-            Ta sekcja łączy sprzedaż z techniką: zamyka obawy o trwałość,
-            śliskość, koszt, ogrzewanie podłogowe i czas realizacji.
+            Zebraliśmy pytania, które słyszymy najczęściej. Odpowiadamy
+            szczerze — o trwałości, śliskości, kosztach, ogrzewaniu
+            podłogowym i czasie realizacji. Bez owijania w bawełnę.
           </p>
         </div>
 
@@ -556,36 +560,35 @@ export default function KitchenLivingPage() {
                 Ostatni krok
               </Badge>
               <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
-                Najczęściej to około 300 zł/m² — sprawdź, czy posadzka żywiczna
-                będzie dobrym wyborem do Twojego domu lub mieszkania.
+                Zrób pierwszy krok — dowiedz się, ile kosztuje posadzka
+                żywiczna w Twoim domu lub mieszkaniu.
               </h2>
               <p className="mt-4 max-w-2xl text-lg leading-8 text-muted-foreground">
-                To prosty punkt odniesienia, który pomaga od razu ocenić budżet
-                i porównać żywicę z innymi materiałami. Podpowiemy, jaki system
-                sprawdzi się najlepiej, jaki efekt wizualny możesz osiągnąć i
-                czy warto prowadzić jedną powierzchnię przez kuchnię, salon i
-                kolejne pomieszczenia.
+                Najczęściej to około 300 zł/m² — dobry punkt wyjścia, żeby
+                ocenić budżet i porównać żywicę z innymi materiałami. Powiedz
+                nam, co planujesz, a pomożemy dobrać system, kolor i wykończenie
+                dopasowane do Twojego wnętrza i stylu życia.
               </p>
             </div>
 
             <div className="rounded-[28px] border bg-background/90 p-6 shadow-sm">
-              <p className="text-lg font-semibold">Co możesz zrobić teraz?</p>
+              <p className="text-lg font-semibold">Zacznij od trzech prostych kroków:</p>
               <ul className="mt-5 space-y-3 text-sm text-muted-foreground">
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Podaj planowany metraż i miejscowość.
+                  Podaj planowany metraż i miejscowość — to wystarczy do pierwszej rozmowy.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Napisz, czy chodzi o kuchnię z salonem, czy o cały dom.
+                  Napisz, czy chodzi o kuchnię z salonem, o cały dom, czy o pojedyncze pomieszczenie.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Określ, czy zależy Ci na macie, półmacie, połysku lub antypoślizgu.
+                  Powiedz, jaki efekt Cię interesuje: mat, półmat, połysk, antypoślizg — lub zapytaj, co polecamy.
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="mt-0.5 h-4 w-4 text-primary" />
-                  Zapytaj o wariant do kuchni z salonem albo o spójną posadzkę do całego domu.
+                  Dostaniesz bezpłatną wycenę bez zobowiązań i realną odpowiedź, czy żywica to dobry wybór dla Ciebie.
                 </li>
               </ul>
               <div className="mt-6 flex flex-col gap-3 sm:flex-row">
