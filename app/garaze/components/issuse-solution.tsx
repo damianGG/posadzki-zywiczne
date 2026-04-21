@@ -50,16 +50,28 @@ const data = {
         ],
         images: [
             {
-                src: "/garaz/garaz-tesla-po.png",
-                alt: "Profesjonalna posadzka żywiczna - przykład 3",
+                src: "/realizacje/tarnow-bajeczna-garaz/IMG_8666.JPG",
+                alt: "Profesjonalna posadzka żywiczna w garażu - Tarnów",
             },
             {
-                src: "/garaz/garaz-zywica.webp",
-                alt: "Profesjonalna posadzka żywiczna - przykład 1",
+                src: "/realizacje/tarnow-bajeczna-garaz/IMG_8687.JPG",
+                alt: "Profesjonalna posadzka żywiczna w garażu - Tarnów",
             },
             {
-                src: "/garaz/garaz-zywica-2.jpg",
-                alt: "Profesjonalna posadzka żywiczna - przykład 2",
+                src: "/realizacje/tarnow-bajeczna-garaz/IMG_8695.JPG",
+                alt: "Profesjonalna posadzka żywiczna w garażu - Tarnów",
+            },
+            {
+                src: "/garaz/IMG_0910.JPG",
+                alt: "Profesjonalna posadzka żywiczna w garażu - przykład 1",
+            },
+            {
+                src: "/garaz/IMG_0914.JPG",
+                alt: "Profesjonalna posadzka żywiczna w garażu - przykład 2",
+            },
+            {
+                src: "/garaz/IMG_0915.JPG",
+                alt: "Profesjonalna posadzka żywiczna w garażu - przykład 3",
             },
         ],
     },
