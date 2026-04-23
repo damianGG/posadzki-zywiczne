@@ -97,6 +97,7 @@ export default function AdminShopPage() {
   useEffect(() => {
     const token = sessionStorage.getItem("admin_token")
     if (!token) {
+      // Existing admin login flow starts on the realizacje add route.
       router.push("/admin/realizacje/dodaj")
       return
     }
@@ -194,8 +195,11 @@ export default function AdminShopPage() {
         is_active: Boolean(bundle.is_active),
         display_order: toNumber(bundle.display_order),
       })
-    } catch {
-      setMessage({ type: "error", text: `Pole included_items dla ${bundle.name} musi być poprawnym JSON-em.` })
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: `Pole included_items dla ${bundle.name} musi być poprawnym JSON-em. ${error instanceof Error ? error.message : ""}`.trim(),
+      })
     }
   }
 

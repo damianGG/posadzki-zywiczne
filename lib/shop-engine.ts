@@ -12,6 +12,7 @@ export function getRoomTypeLabel(roomType: string) {
 }
 
 export function estimatePerimeter(area: number) {
+  // MVP assumes a near-square room to estimate mb-based extras like cokoły.
   return Math.max(0, 4 * Math.sqrt(area))
 }
 

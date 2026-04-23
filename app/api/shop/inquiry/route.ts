@@ -9,10 +9,13 @@ const formatCurrency = (value: number) => `${value.toFixed(2)} zł`
 
 function isValidEmail(value: string) {
   const trimmed = value.trim()
-  const atIndex = trimmed.indexOf("@")
-  const lastDotIndex = trimmed.lastIndexOf(".")
+  const parts = trimmed.split("@")
+  if (parts.length !== 2 || !parts[0] || !parts[1] || trimmed.includes(" ")) {
+    return false
+  }
 
-  return atIndex > 0 && lastDotIndex > atIndex + 1 && lastDotIndex < trimmed.length - 1
+  const domainParts = parts[1].split(".")
+  return domainParts.length >= 2 && domainParts.every(Boolean)
 }
 
 function validatePayload(payload: Partial<ShopInquiryPayload>) {
