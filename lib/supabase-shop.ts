@@ -8,7 +8,7 @@ interface FetchOptions {
   useAdmin?: boolean
 }
 
-export function isShopSupabaseConfigured() {
+export function isShopSupabaseAdminConfigured() {
   return Boolean((process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL) && process.env.SUPABASE_SERVICE_ROLE_KEY)
 }
 

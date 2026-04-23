@@ -8,10 +8,10 @@ import {
   getAllShopBundles,
   getAllShopProducts,
   getAllShopRecommendationRules,
+  isShopSupabaseAdminConfigured,
   updateShopBundle,
   updateShopProduct,
   updateShopRecommendationRule,
-  isShopSupabaseConfigured,
 } from "@/lib/supabase-shop"
 
 export async function GET() {
@@ -28,7 +28,7 @@ export async function GET() {
       recommendationRules: recommendationRules.success
         ? recommendationRules.data ?? []
         : fallbackShopCatalog.recommendationRules,
-      fallbackMode: !isShopSupabaseConfigured() || !products.success || !bundles.success || !recommendationRules.success,
+      fallbackMode: !isShopSupabaseAdminConfigured() || !products.success || !bundles.success || !recommendationRules.success,
     })
   } catch (error) {
     console.error("Error loading shop admin data", error)

@@ -6,6 +6,7 @@ import { getShopCatalog } from "@/lib/supabase-shop"
 import type { ShopInquiryPayload } from "@/types/shop"
 
 const formatCurrency = (value: number) => `${value.toFixed(2)} zł`
+const MAX_AREA_M2 = 1000
 
 function isValidEmail(value: string) {
   const trimmed = value.trim()
@@ -35,7 +36,7 @@ function validatePayload(payload: Partial<ShopInquiryPayload>) {
     return "Wybierz typ pomieszczenia"
   }
 
-  if (!payload.area || Number(payload.area) <= 0 || Number(payload.area) > 1000) {
+  if (!payload.area || Number(payload.area) <= 0 || Number(payload.area) > MAX_AREA_M2) {
     return "Podaj poprawny metraż"
   }
 

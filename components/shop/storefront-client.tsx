@@ -478,7 +478,7 @@ export default function StorefrontClient({ initialCatalog }: StorefrontClientPro
                       </div>
                       <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-zinc-500">
                         <span>Kategoria: {product.category}</span>
-                        <span>{formatProductPricing(product)}</span>
+                        <span>{checked ? "Dodano do zapytania" : "Opcjonalny dodatek"}</span>
                       </div>
                     </div>
                   </CardContent>
