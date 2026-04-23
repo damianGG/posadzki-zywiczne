@@ -48,6 +48,11 @@ export const Header2 = () => {
             description: "",
         },
         {
+            title: "Sklep",
+            href: "/sklep",
+            description: "",
+        },
+        {
             title: "Balkony i Tarasy",
             href: "/posadzki-zywiczne-na-balkony",
             description: "",
