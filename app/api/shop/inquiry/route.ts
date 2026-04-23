@@ -3,24 +3,24 @@ import nodemailer from "nodemailer"
 
 import { getCartSummary, getRoomTypeLabel } from "@/lib/shop-engine"
 import { getShopCatalog } from "@/lib/supabase-shop"
-import { ShopInquiryPayload } from "@/types/shop"
-
-const escapeHtml = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;")
+import type { ShopInquiryPayload } from "@/types/shop"
 
 const formatCurrency = (value: number) => `${value.toFixed(2)} zł`
+
+function isValidEmail(value: string) {
+  const trimmed = value.trim()
+  const atIndex = trimmed.indexOf("@")
+  const lastDotIndex = trimmed.lastIndexOf(".")
+
+  return atIndex > 0 && lastDotIndex > atIndex + 1 && lastDotIndex < trimmed.length - 1
+}
 
 function validatePayload(payload: Partial<ShopInquiryPayload>) {
   if (!payload.customerName || payload.customerName.trim().length < 2) {
     return "Podaj imię i nazwisko"
   }
 
-  if (!payload.email || !/^\S+@\S+\.\S+$/.test(payload.email)) {
+  if (!payload.email || !isValidEmail(payload.email)) {
     return "Podaj poprawny adres email"
   }
 
@@ -32,7 +32,7 @@ function validatePayload(payload: Partial<ShopInquiryPayload>) {
     return "Wybierz typ pomieszczenia"
   }
 
-  if (!payload.area || Number(payload.area) <= 0) {
+  if (!payload.area || Number(payload.area) <= 0 || Number(payload.area) > 1000) {
     return "Podaj poprawny metraż"
   }
 
@@ -77,57 +77,49 @@ export async function POST(request: NextRequest) {
     })
 
     const adminRecipient = process.env.ADMIN_EMAIL || process.env.EMAIL_USER
-    const customerName = escapeHtml(payload.customerName.trim())
-    const email = escapeHtml(payload.email.trim())
-    const phone = escapeHtml((payload.phone || "").trim())
-    const notes = escapeHtml((payload.notes || "").trim())
+    const customerName = payload.customerName.trim()
+    const email = payload.email.trim()
+    const phone = (payload.phone || "").trim()
+    const notes = (payload.notes || "").trim()
     const roomTypeLabel = getRoomTypeLabel(payload.roomType)
 
-    const addOnsMarkup = summary.selectedAddOns.length
-      ? `<ul>${summary.selectedAddOns
-          .map(
-            (item) => `<li>${escapeHtml(item.product.name)} — ${formatCurrency(item.total)}</li>`
-          )
-          .join("")}</ul>`
-      : "<p>Brak dodatkowych produktów.</p>"
+    const addOnsText = summary.selectedAddOns.length
+      ? summary.selectedAddOns.map((item) => `- ${item.product.name}: ${formatCurrency(item.total)}`).join("\\n")
+      : "- Brak dodatkowych produktów"
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
       to: adminRecipient,
-      replyTo: payload.email,
+      replyTo: email,
       subject: `Nowe zapytanie sklepowe: ${summary.selectedBundle.name}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto;">
-          <h2>Nowe zapytanie ze sklepu MVP</h2>
-          <p><strong>Klient:</strong> ${customerName}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Telefon:</strong> ${phone || "—"}</p>
-          <p><strong>Pomieszczenie:</strong> ${roomTypeLabel}</p>
-          <p><strong>Metraż:</strong> ${Number(payload.area).toFixed(1)} m²</p>
-          <p><strong>Zestaw:</strong> ${escapeHtml(summary.selectedBundle.name)} — ${formatCurrency(summary.selectedBundleTotal)}</p>
-          <h3>Polecane dodatki wybrane przez klienta</h3>
-          ${addOnsMarkup}
-          <p><strong>Wartość orientacyjna:</strong> ${formatCurrency(summary.total)}</p>
-          <h3>Notatka klienta</h3>
-          <p>${notes || "Brak dodatkowych uwag."}</p>
-        </div>
-      `,
+      text: [
+        "Nowe zapytanie ze sklepu MVP",
+        `Klient: ${customerName}`,
+        `Email: ${email}`,
+        `Telefon: ${phone || "-"}`,
+        `Pomieszczenie: ${roomTypeLabel}`,
+        `Metraż: ${Number(payload.area).toFixed(1)} m²`,
+        `Zestaw: ${summary.selectedBundle.name} — ${formatCurrency(summary.selectedBundleTotal)}`,
+        "",
+        "Wybrane dodatki:",
+        addOnsText,
+        "",
+        `Wartość orientacyjna: ${formatCurrency(summary.total)}`,
+        `Uwagi klienta: ${notes || "Brak dodatkowych uwag."}`,
+      ].join("\\n"),
     })
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: payload.email,
+      to: email,
       subject: `Potwierdzenie zapytania: ${summary.selectedBundle.name}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 680px; margin: 0 auto;">
-          <h2>Dziękujemy za zapytanie</h2>
-          <p>Otrzymaliśmy Twoje zgłoszenie dotyczące zestawu <strong>${escapeHtml(summary.selectedBundle.name)}</strong>.</p>
-          <p><strong>Pomieszczenie:</strong> ${roomTypeLabel}</p>
-          <p><strong>Metraż:</strong> ${Number(payload.area).toFixed(1)} m²</p>
-          <p><strong>Szacunkowa wartość:</strong> ${formatCurrency(summary.total)}</p>
-          <p>Skontaktujemy się, aby potwierdzić szczegóły i ustalić finalny zakres zamówienia.</p>
-        </div>
-      `,
+      text: [
+        `Dziękujemy za zapytanie dotyczące zestawu ${summary.selectedBundle.name}.`,
+        `Pomieszczenie: ${roomTypeLabel}`,
+        `Metraż: ${Number(payload.area).toFixed(1)} m²`,
+        `Szacunkowa wartość: ${formatCurrency(summary.total)}`,
+        "Skontaktujemy się, aby potwierdzić szczegóły i ustalić finalny zakres zamówienia.",
+      ].join("\\n"),
     })
 
     return NextResponse.json({ success: true, message: "Zapytanie zostało wysłane." })
