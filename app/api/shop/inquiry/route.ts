@@ -86,6 +86,8 @@ export async function POST(request: NextRequest) {
     const phone = (payload.phone || "").trim()
     const notes = (payload.notes || "").trim()
     const roomTypeLabel = getRoomTypeLabel(payload.roomType)
+    const baseColorName = payload.baseColorName?.trim() || "Nie wybrano"
+    const flakeColorName = payload.flakeColorName?.trim() || "Bez płatków"
 
     const addOnsText = summary.selectedAddOns.length
       ? summary.selectedAddOns.map((item) => `- ${item.product.name}: ${formatCurrency(item.total)}`).join("\n")
@@ -104,6 +106,8 @@ export async function POST(request: NextRequest) {
         `Pomieszczenie: ${roomTypeLabel}`,
         `Metraż: ${Number(payload.area).toFixed(1)} m²`,
         `Zestaw: ${summary.selectedBundle.name} — ${formatCurrency(summary.selectedBundleTotal)}`,
+        `Kolor bazowy: ${baseColorName}`,
+        `Kolor płatków: ${flakeColorName}`,
         "",
         "Wybrane dodatki:",
         addOnsText,
@@ -121,6 +125,8 @@ export async function POST(request: NextRequest) {
         `Dziękujemy za zapytanie dotyczące zestawu ${summary.selectedBundle.name}.`,
         `Pomieszczenie: ${roomTypeLabel}`,
         `Metraż: ${Number(payload.area).toFixed(1)} m²`,
+        `Kolor bazowy: ${baseColorName}`,
+        `Kolor płatków: ${flakeColorName}`,
         `Szacunkowa wartość: ${formatCurrency(summary.total)}`,
         "Skontaktujemy się, aby potwierdzić szczegóły i ustalić finalny zakres zamówienia.",
       ].join("\n"),

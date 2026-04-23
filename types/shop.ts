@@ -93,4 +93,8 @@ export interface ShopInquiryPayload {
   area: number
   bundleId: string
   addOnProductIds: string[]
+  baseColorId?: string
+  baseColorName?: string
+  flakeColorId?: string
+  flakeColorName?: string
 }
