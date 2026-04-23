@@ -1,0 +1,147 @@
+{
+  "_comment": "To jest szablon pliku JSON dla nowej realizacji",
+  "_instructions": "Skopiuj ten plik, zmień nazwę i wypełnij wszystkie pola",
+  "_filename_format": "kategoria-lokalizacja-rok.json (np. garaz-warszawa-2024.json)",
+  "_location": "Zapisz w folderze: /data/realizacje/",
+  
+  "slug": "PRZYKŁAD: garaz-warszawa-2024",
+  "_slug_info": "Unikalny identyfikator (taki sam jak nazwa pliku bez .json). Format: kategoria-lokalizacja-rok",
+  
+  "title": "PRZYKŁAD: Posadzka żywiczna w garażu dwustanowiskowym - Warszawa",
+  "_title_info": "Tytuł realizacji (50-70 znaków). Zawiera typ projektu, lokalizację. Ważne dla SEO!",
+  
+  "description": "PRZYKŁAD: Kompleksowa realizacja posadzki epoksydowej w garażu dwustanowiskowym w warszawskim Mokotowie. Zastosowaliśmy trójwarstwowy system epoksydowy z posypką kwarcową, zapewniający wysoką odporność na ścieranie, plamy olejowe i intensywny ruch samochodów. Powierzchnia 40 m² została wykonana w neutralnym szarym kolorze RAL 7037.",
+  "_description_info": "Szczegółowy opis projektu (150-250 znaków). BARDZO WAŻNE dla SEO! Używaj konkretnych słów kluczowych, lokalizacji, parametrów.",
+  
+  "category": "WYBIERZ JEDNĄ Z: mieszkania-domy | balkony-tarasy | kuchnie | pomieszczenia-czyste | schody",
+  "_category_info": "Kategoria projektu. DOKŁADNIE jedna z powyższych wartości.",
+  "_category_examples": {
+    "mieszkania-domy": "Dla mieszkań, domów, salonów, pokoi",
+    "balkony-tarasy": "Dla balkonów i tarasów",
+    "kuchnie": "Dla kuchni",
+    "pomieszczenia-czyste": "Dla garaży, hal, warsztatów, pomieszczeń przemysłowych",
+    "schody": "Dla schodów wewnętrznych i zewnętrznych"
+  },
+  
+  "type": "WYBIERZ JEDEN Z: indywidualna | komercyjna",
+  "_type_info": "Typ projektu",
+  "_type_examples": {
+    "indywidualna": "Dla klientów prywatnych (dom, mieszkanie)",
+    "komercyjna": "Dla firm, obiektów publicznych, biur"
+  },
+  
+  "location": "PRZYKŁAD: Warszawa, Mokotów",
+  "_location_info": "Lokalizacja projektu: Miasto, dzielnica (lub samo miasto)",
+  
+  "date": "PRZYKŁAD: 2024-10-15",
+  "_date_info": "Data realizacji w formacie YYYY-MM-DD (rok-miesiąc-dzień)",
+  
+  "tags": [
+    "PRZYKŁAD: garaż",
+    "PRZYKŁAD: epoksyd",
+    "PRZYKŁAD: antypoślizg",
+    "PRZYKŁAD: dwustanowiskowy",
+    "PRZYKŁAD: posypka kwarcowa"
+  ],
+  "_tags_info": "Tablica 5-10 krótkich tagów (słów kluczowych). Używane do filtrowania i wyszukiwania.",
+  "_tags_examples": [
+    "Dla garażu: garaż, epoksyd, antypoślizg, dwustanowiskowy, posypka kwarcowa",
+    "Dla balkonu: balkon, poliuretan, UV, wodoszczelność, antypoślizg",
+    "Dla mieszkania: mieszkanie, salon, epoksyd, nowoczesna, gładka"
+  ],
+  
+  "images": {
+    "main": "PRZYKŁAD: /garaz/garaz-warszawa-2024-main.jpg",
+    "_main_info": "Ścieżka do głównego zdjęcia. MUSI zaczynać się od / (np. /garaz/nazwa.jpg)",
+    
+    "gallery": [
+      "PRZYKŁAD: /garaz/garaz-warszawa-2024-1.jpg",
+      "PRZYKŁAD: /garaz/garaz-warszawa-2024-2.jpg",
+      "PRZYKŁAD: /garaz/garaz-warszawa-2024-3.jpg",
+      "PRZYKŁAD: /garaz/garaz-warszawa-2024-4.jpg"
+    ],
+    "_gallery_info": "Tablica ścieżek do zdjęć w galerii (3-6 zdjęć optymalnie, max 10)",
+    "_images_location": "Umieść zdjęcia w folderze /public/ (np. /public/garaz/, /public/mieszkanie/)"
+  },
+  
+  "details": {
+    "surface": "PRZYKŁAD: 40 m²",
+    "_surface_info": "Powierzchnia z jednostką (np. 40 m², 25 m²)",
+    
+    "system": "PRZYKŁAD: Epoksyd z posypką kwarcową",
+    "_system_info": "System/materiał użyty (np. Epoksyd z posypką kwarcową, Poliuretan UV, Epoksyd samopoziomujący)",
+    
+    "color": "OPCJONALNIE - PRZYKŁAD: Szary RAL 7037",
+    "_color_info": "Kolor (opcjonalnie). Można pominąć jeśli nie ma",
+    
+    "duration": "OPCJONALNIE - PRZYKŁAD: 3 dni",
+    "_duration_info": "Czas realizacji (opcjonalnie). Można pominąć jeśli nie wiadomo"
+  },
+  
+  "features": [
+    "PRZYKŁAD: Wysoka odporność na ścieranie",
+    "PRZYKŁAD: Łatwe utrzymanie czystości",
+    "PRZYKŁAD: Estetyczny wygląd",
+    "PRZYKŁAD: Odporność na plamy olejowe",
+    "PRZYKŁAD: Antypoślizgowa powierzchnia",
+    "PRZYKŁAD: Bezspoinowa powierzchnia",
+    "PRZYKŁAD: Kompatybilność z ogrzewaniem podłogowym"
+  ],
+  "_features_info": "Tablica 5-7 cech i zalet projektu. Konkretne korzyści dla klienta.",
+  "_features_examples": [
+    "Wysoka odporność na ścieranie",
+    "Łatwe utrzymanie czystości",
+    "Estetyczny wygląd",
+    "Odporność na plamy olejowe",
+    "Antypoślizgowa powierzchnia",
+    "Bezspoinowa powierzchnia",
+    "Kompatybilność z ogrzewaniem podłogowym",
+    "Odporność na UV",
+    "Wodoszczelność",
+    "Chemoodporność"
+  ],
+  
+  "keywords": [
+    "PRZYKŁAD: posadzka żywiczna garaż",
+    "PRZYKŁAD: epoksyd garaż Warszawa",
+    "PRZYKŁAD: posadzka garaż dwustanowiskowy",
+    "PRZYKŁAD: posadzka antypoślizgowa garaż"
+  ],
+  "_keywords_info": "Tablica 3-5 fraz SEO - frazy, które klienci wpisują w Google",
+  "_keywords_examples": [
+    "Dla garażu: posadzka żywiczna garaż, epoksyd garaż [miasto], posadzka antypoślizgowa garaż",
+    "Dla balkonu: posadzka balkon, renowacja balkonu [miasto], balkon wodoszczelny",
+    "Dla mieszkania: posadzka żywiczna mieszkanie, posadzka salon, epoksyd mieszkanie"
+  ],
+  
+  "clientTestimonial": {
+    "_testimonial_info": "OPCJONALNE! Możesz pominąć cały blok clientTestimonial jeśli nie masz opinii",
+    "content": "PRZYKŁAD: Jestem bardzo zadowolony z wykonanej posadzki. Garaż wygląda profesjonalnie, a powierzchnia jest bardzo wytrzymała. Ekipa pracowała szybko i sprawnie.",
+    "_content_info": "Treść opinii klienta - cytat",
+    
+    "author": "PRZYKŁAD: Pan Tomasz, Warszawa",
+    "_author_info": "Autor opinii: Imię (lub Pan/Pani + Imię), Miasto"
+  },
+  
+  "_final_checklist": {
+    "1": "Wypełniłem slug (identyfikator URL)",
+    "2": "Wypełniłem title (50-70 znaków)",
+    "3": "Napisałem description (150-250 znaków z SEO keywords)",
+    "4": "Wybrałem category (jedna z 5 dostępnych)",
+    "5": "Wybrałem type (indywidualna lub komercyjna)",
+    "6": "Dodałem location (miasto, dzielnica)",
+    "7": "Ustawiłem date (YYYY-MM-DD)",
+    "8": "Dodałem 5-10 tags",
+    "9": "Ustawiłem images.main (ścieżka do głównego zdjęcia)",
+    "10": "Dodałem images.gallery (3-6 zdjęć)",
+    "11": "Wypełniłem details.surface (powierzchnia)",
+    "12": "Wypełniłem details.system (materiał/system)",
+    "13": "Dodałem 5-7 features (zalety)",
+    "14": "Dodałem 3-5 keywords (frazy SEO)",
+    "15": "Zdjęcia są w folderze /public/ i właściwie nazwane",
+    "16": "Usunąłem wszystkie pola z podkreślnikiem (_comment, _info, etc.)",
+    "17": "Plik JSON ma poprawną składnię (bez błędów)"
+  },
+  
+  "_before_saving": "WAŻNE: Przed zapisaniem usuń WSZYSTKIE pola zaczynające się od _ (podkreślnik) - są tylko informacyjne!"
+}
