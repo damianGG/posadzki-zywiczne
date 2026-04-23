@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
     const roomTypeLabel = getRoomTypeLabel(payload.roomType)
 
     const addOnsText = summary.selectedAddOns.length
-      ? summary.selectedAddOns.map((item) => `- ${item.product.name}: ${formatCurrency(item.total)}`).join("\\n")
+      ? summary.selectedAddOns.map((item) => `- ${item.product.name}: ${formatCurrency(item.total)}`).join("\n")
       : "- Brak dodatkowych produktów"
 
     await transporter.sendMail({
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
         "",
         `Wartość orientacyjna: ${formatCurrency(summary.total)}`,
         `Uwagi klienta: ${notes || "Brak dodatkowych uwag."}`,
-      ].join("\\n"),
+      ].join("\n"),
     })
 
     await transporter.sendMail({
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         `Metraż: ${Number(payload.area).toFixed(1)} m²`,
         `Szacunkowa wartość: ${formatCurrency(summary.total)}`,
         "Skontaktujemy się, aby potwierdzić szczegóły i ustalić finalny zakres zamówienia.",
-      ].join("\\n"),
+      ].join("\n"),
     })
 
     return NextResponse.json({ success: true, message: "Zapytanie zostało wysłane." })
