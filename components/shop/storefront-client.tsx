@@ -357,7 +357,6 @@ export default function StorefrontClient({ initialCatalog }: StorefrontClientPro
       setSubmitState({ type: "success", message: data.message || "Zapytanie zostało wysłane." })
       setFormState({ customerName: "", email: "", phone: "", notes: "" })
       setSelectedAddOnIds([])
-      setActiveStep("contact")
     } catch (error) {
       setSubmitState({
         type: "error",
@@ -418,7 +417,7 @@ export default function StorefrontClient({ initialCatalog }: StorefrontClientPro
                           left: particle.left,
                           width: `${particle.size}px`,
                           height: `${particle.size}px`,
-                          backgroundColor: selectedFlakeColor.hex === "transparent" ? "#ffffff" : selectedFlakeColor.hex,
+                          backgroundColor: selectedFlakeColor.id === "bez-platkow" ? "#ffffff" : selectedFlakeColor.hex,
                         }}
                       />
                     ))}
@@ -694,7 +693,7 @@ export default function StorefrontClient({ initialCatalog }: StorefrontClientPro
                           >
                             <div
                               className="relative mb-4 h-36 overflow-hidden rounded-[20px] border border-black/5"
-                              style={{ background: color.id === "bez-platkow" ? selectedBaseColor.gradient : selectedBaseColor.gradient }}
+                              style={{ background: selectedBaseColor.gradient }}
                             >
                               {color.id !== "bez-platkow" && (
                                 <>
