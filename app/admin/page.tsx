@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Image, Share2, ArrowRight, Calculator, Images } from 'lucide-react';
+import { Image, Share2, ArrowRight, Calculator, Images, Wallet } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminPage() {
@@ -105,6 +105,25 @@ export default function AdminPage() {
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Zarządzaj cenami, opisami i zdjęciami dla kalkulatora posadzek żywicznych.
+              </p>
+            </Card>
+          </Link>
+
+          {/* Costs Card */}
+          <Link href="/admin/koszty">
+            <Card className="p-6 hover:shadow-xl transition-all cursor-pointer group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg group-hover:bg-emerald-200 transition-colors">
+                  <Wallet className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-emerald-600 transition-colors" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Finanse i magazyn
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Monitoruj koszty materiałów, paliwa i dojazdów oraz stan zapasów, aby widzieć
+                realny zysk z projektów.
               </p>
             </Card>
           </Link>
