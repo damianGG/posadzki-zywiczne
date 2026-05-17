@@ -75,6 +75,7 @@ function ImageCarousel({
                                             src={image.src}
                                             alt={image.alt}
                                             fill
+                                            sizes="(max-width: 768px) 100vw, 50vw"
                                             className="rounded-lg object-cover"
                                         />
                                     </div>
