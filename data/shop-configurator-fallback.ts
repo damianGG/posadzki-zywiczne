@@ -1,5 +1,14 @@
 import { ShopConfiguratorConfig } from "@/types/shop"
 
+export const defaultRoomStepSetting = {
+  id: "room",
+  title: "Pomieszczenie",
+  question: "Gdzie chcesz wykonać posadzkę?",
+  description: "Najpierw wybierz typ pomieszczenia. Kolejne warianty mogą być aktywne albo oznaczone jako „Wkrótce”.",
+  is_active: true,
+  next_label: "Dalej",
+} as const
+
 export const fallbackShopConfiguratorConfig: ShopConfiguratorConfig = {
   room_variants: [
     {
@@ -23,14 +32,7 @@ export const fallbackShopConfiguratorConfig: ShopConfiguratorConfig = {
     },
   ],
   steps: [
-    {
-      id: "room",
-      title: "Pomieszczenie",
-      question: "Gdzie chcesz wykonać posadzkę?",
-      description: "Najpierw wybierz typ pomieszczenia. Kolejne warianty mogą być aktywne albo oznaczone jako „Wkrótce”.",
-      is_active: true,
-      next_label: "Dalej",
-    },
+    defaultRoomStepSetting,
     {
       id: "substrate",
       title: "Podłoże",

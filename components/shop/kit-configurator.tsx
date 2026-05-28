@@ -25,6 +25,7 @@ import {
   getStepSettings,
   getSubstrateOptions,
   getVisibleKitItems,
+  isRoomVariantSelectable,
   isStepComplete,
   resolveSelections,
 } from "@/lib/shop-configurator"
@@ -124,7 +125,7 @@ export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
               {activeStep.id === "room" ? (
                 <div className="grid gap-4 md:grid-cols-2">
                   {activeRoomVariants.map((roomVariant) => {
-                    const isSelectable = roomVariant.is_active !== false && roomVariant.status !== "coming-soon"
+                    const isSelectable = isRoomVariantSelectable(roomVariant)
                     return (
                       <OptionCard
                         key={roomVariant.id}

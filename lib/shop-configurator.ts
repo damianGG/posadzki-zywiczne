@@ -1,3 +1,4 @@
+import { defaultRoomStepSetting } from "@/data/shop-configurator-fallback"
 import {
   ShopCatalog,
   ShopConfiguratorColorOption,
@@ -13,14 +14,6 @@ import {
 } from "@/types/shop"
 
 const roundCurrency = (value: number) => Math.round(value * 100) / 100
-const defaultRoomStep: ShopConfiguratorStepSetting = {
-  id: "room",
-  title: "Pomieszczenie",
-  question: "Gdzie chcesz wykonać posadzkę?",
-  description: "Najpierw wybierz typ pomieszczenia. Kolejne warianty mogą być aktywne albo oznaczone jako „Wkrótce”.",
-  is_active: true,
-  next_label: "Dalej",
-}
 
 function sortByOrder<T extends { sort_order?: number }>(items: T[]) {
   return [...items].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
@@ -34,8 +27,12 @@ export function getActiveRoomVariants(config: ShopConfiguratorConfig) {
   return sortByOrder(config.room_variants.filter((item) => item.is_active !== false || item.status === "coming-soon"))
 }
 
+export function isRoomVariantSelectable(roomVariant: ShopConfiguratorRoomVariant) {
+  return roomVariant.status !== "coming-soon" && roomVariant.is_active !== false
+}
+
 export function getPrimaryRoomVariant(config: ShopConfiguratorConfig) {
-  return getActiveRoomVariants(config).find((item) => item.is_active !== false && item.status !== "coming-soon") ?? config.room_variants[0]
+  return getActiveRoomVariants(config).find(isRoomVariantSelectable) ?? config.room_variants[0]
 }
 
 export function getStepSettings(config: ShopConfiguratorConfig, requiresFlakeColor: boolean) {
@@ -44,7 +41,7 @@ export function getStepSettings(config: ShopConfiguratorConfig, requiresFlakeCol
     .filter((step) => step.id !== "flake-color" || requiresFlakeColor)
     .filter((step) => step.id !== "plinth" || config.plinth.enabled)
 
-  const roomStep = configuredSteps.find((step) => step.id === "room") ?? defaultRoomStep
+  const roomStep = configuredSteps.find((step) => step.id === "room") ?? defaultRoomStepSetting
   const remainingSteps = configuredSteps.filter((step) => step.id !== "room")
 
   return [roomStep, ...remainingSteps]
