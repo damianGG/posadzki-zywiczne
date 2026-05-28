@@ -1,13 +1,13 @@
-import { ShopConfiguratorConfig } from "@/types/shop"
+import { ShopConfiguratorConfig, ShopConfiguratorStepSetting } from "@/types/shop"
 
-export const defaultRoomStepSetting = {
+export const defaultRoomStepSetting: ShopConfiguratorStepSetting = {
   id: "room",
   title: "Pomieszczenie",
   question: "Gdzie chcesz wykonać posadzkę?",
   description: "Najpierw wybierz typ pomieszczenia. Kolejne warianty mogą być aktywne albo oznaczone jako „Wkrótce”.",
   is_active: true,
   next_label: "Dalej",
-} as const
+}
 
 export const fallbackShopConfiguratorConfig: ShopConfiguratorConfig = {
   room_variants: [
