@@ -1,4 +1,4 @@
-import { defaultRoomStepSetting } from "@/data/shop-configurator-fallback"
+import { defaultConfiguratorMaterialEstimate, defaultRoomStepSetting } from "@/data/shop-configurator-fallback"
 import {
   ShopCatalog,
   ShopConfiguratorColorOption,
@@ -15,13 +15,6 @@ import {
 
 const roundCurrency = (value: number) => Math.round(value * 100) / 100
 const roundWeight = (value: number) => Math.round(value * 10) / 10
-
-const CONFIGURATOR_MATERIAL_ASSUMPTIONS = {
-  primerKgPerM2: 0.7,
-  primerPricePerKg: 63,
-  resinKgPerM2: 0.7,
-  resinPricePerKg: 60,
-} as const
 
 function sortByOrder<T extends { sort_order?: number }>(items: T[]) {
   return [...items].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
@@ -99,10 +92,14 @@ export function getConfiguratorTotal(config: ShopConfiguratorConfig, selections:
 }
 
 export type ConfiguratorMaterialEstimate = {
+  primerLabel: string
   primerKg: number
+  primerKgPerM2: number
   primerUnitPrice: number
   primerTotal: number
+  resinLabel: string
   resinKg: number
+  resinKgPerM2: number
   resinUnitPrice: number
   resinTotal: number
   totalKg: number
@@ -110,17 +107,21 @@ export type ConfiguratorMaterialEstimate = {
 }
 
 export function getConfiguratorMaterialEstimate(selections: ShopConfiguratorSelections): ConfiguratorMaterialEstimate {
-  const primerKg = roundWeight(selections.area * CONFIGURATOR_MATERIAL_ASSUMPTIONS.primerKgPerM2)
-  const resinKg = roundWeight(selections.area * CONFIGURATOR_MATERIAL_ASSUMPTIONS.resinKgPerM2)
-  const primerTotal = roundCurrency(primerKg * CONFIGURATOR_MATERIAL_ASSUMPTIONS.primerPricePerKg)
-  const resinTotal = roundCurrency(resinKg * CONFIGURATOR_MATERIAL_ASSUMPTIONS.resinPricePerKg)
+  const primerKg = roundWeight(selections.area * defaultConfiguratorMaterialEstimate.primer_kg_per_m2)
+  const resinKg = roundWeight(selections.area * defaultConfiguratorMaterialEstimate.resin_kg_per_m2)
+  const primerTotal = roundCurrency(primerKg * defaultConfiguratorMaterialEstimate.primer_price_per_kg)
+  const resinTotal = roundCurrency(resinKg * defaultConfiguratorMaterialEstimate.resin_price_per_kg)
 
   return {
+    primerLabel: defaultConfiguratorMaterialEstimate.primer_label,
     primerKg,
-    primerUnitPrice: CONFIGURATOR_MATERIAL_ASSUMPTIONS.primerPricePerKg,
+    primerKgPerM2: defaultConfiguratorMaterialEstimate.primer_kg_per_m2,
+    primerUnitPrice: defaultConfiguratorMaterialEstimate.primer_price_per_kg,
     primerTotal,
+    resinLabel: defaultConfiguratorMaterialEstimate.resin_label,
     resinKg,
-    resinUnitPrice: CONFIGURATOR_MATERIAL_ASSUMPTIONS.resinPricePerKg,
+    resinKgPerM2: defaultConfiguratorMaterialEstimate.resin_kg_per_m2,
+    resinUnitPrice: defaultConfiguratorMaterialEstimate.resin_price_per_kg,
     resinTotal,
     totalKg: roundWeight(primerKg + resinKg),
     totalValue: roundCurrency(primerTotal + resinTotal),

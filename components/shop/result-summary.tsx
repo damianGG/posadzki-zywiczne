@@ -22,8 +22,6 @@ interface ResultSummaryProps {
 
 export default function ResultSummary({ config, selections, resolved, total, kitItems, ctas, onMockAction }: ResultSummaryProps) {
   const materialEstimate = getConfiguratorMaterialEstimate(selections)
-  const primerLabel = kitItems.find((item) => item.id === "primer")?.label ?? "Grunt"
-  const resinLabel = kitItems.find((item) => item.id === "base-resin")?.label ?? "Posadzka żywiczna barwiona"
 
   return (
     <div className="space-y-6">
@@ -49,19 +47,21 @@ export default function ResultSummary({ config, selections, resolved, total, kit
           <div className="space-y-3 rounded-2xl border border-zinc-200 px-4 py-4">
             <div>
               <p className="font-medium text-zinc-950">Orientacyjna ilość materiałów bazowych</p>
-              <p className="mt-1 text-xs leading-5 text-zinc-500">Przyjmujemy 0,7 kg/m² dla gruntu i 0,7 kg/m² dla posadzki żywicznej.</p>
+              <p className="mt-1 text-xs leading-5 text-zinc-500">
+                Przyjmujemy {materialEstimate.primerKgPerM2.toFixed(1).replace(".", ",")} kg/m² dla gruntu i {materialEstimate.resinKgPerM2.toFixed(1).replace(".", ",")} kg/m² dla posadzki żywicznej.
+              </p>
             </div>
             <div className="space-y-3">
               <div className="rounded-2xl bg-zinc-50 px-4 py-3">
                 <div className="flex justify-between gap-4">
-                  <span>{primerLabel}</span>
+                  <span>{materialEstimate.primerLabel}</span>
                   <span className="font-medium text-zinc-950">{materialEstimate.primerKg.toFixed(1)} kg</span>
                 </div>
                 <p className="mt-1 text-xs leading-5 text-zinc-500">{materialEstimate.primerUnitPrice.toFixed(0)} zł/kg · razem {materialEstimate.primerTotal.toFixed(2)} zł</p>
               </div>
               <div className="rounded-2xl bg-zinc-50 px-4 py-3">
                 <div className="flex justify-between gap-4">
-                  <span>{resinLabel}</span>
+                  <span>{materialEstimate.resinLabel}</span>
                   <span className="font-medium text-zinc-950">{materialEstimate.resinKg.toFixed(1)} kg</span>
                 </div>
                 <p className="mt-1 text-xs leading-5 text-zinc-500">{materialEstimate.resinUnitPrice.toFixed(0)} zł/kg · razem {materialEstimate.resinTotal.toFixed(2)} zł</p>

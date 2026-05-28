@@ -9,6 +9,15 @@ export const defaultRoomStepSetting: ShopConfiguratorStepSetting = {
   next_label: "Dalej",
 }
 
+export const defaultConfiguratorMaterialEstimate = {
+  primer_label: "Grunt",
+  primer_kg_per_m2: 0.7,
+  primer_price_per_kg: 63,
+  resin_label: "Posadzka żywiczna barwiona",
+  resin_kg_per_m2: 0.7,
+  resin_price_per_kg: 60,
+} as const
+
 export const fallbackShopConfiguratorConfig: ShopConfiguratorConfig = {
   room_variants: [
     {
