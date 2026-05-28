@@ -128,7 +128,11 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
                         prose-a:text-primary
                         prose-blockquote:text-muted-foreground
                         prose-code:text-foreground
-                        prose-pre:bg-muted"
+                        prose-pre:bg-muted
+                        overflow-x-auto
+                        md:overflow-visible
+                        [&_table]:min-w-[640px]
+                        md:[&_table]:min-w-0"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
