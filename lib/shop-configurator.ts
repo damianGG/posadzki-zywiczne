@@ -14,6 +14,14 @@ import {
 } from "@/types/shop"
 
 const roundCurrency = (value: number) => Math.round(value * 100) / 100
+const roundWeight = (value: number) => Math.round(value * 10) / 10
+
+const CONFIGURATOR_MATERIAL_ASSUMPTIONS = {
+  primerKgPerM2: 0.7,
+  primerPricePerKg: 63,
+  resinKgPerM2: 0.7,
+  resinPricePerKg: 60,
+} as const
 
 function sortByOrder<T extends { sort_order?: number }>(items: T[]) {
   return [...items].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
@@ -88,6 +96,35 @@ export function getConfiguratorTotal(config: ShopConfiguratorConfig, selections:
   const finishTotal = finishVariant ? finishVariant.price_from * selections.area : 0
   const plinthTotal = selections.wantsPlinth ? config.plinth.price_per_mb * selections.plinthLengthMb : 0
   return roundCurrency(finishTotal + plinthTotal)
+}
+
+export type ConfiguratorMaterialEstimate = {
+  primerKg: number
+  primerUnitPrice: number
+  primerTotal: number
+  resinKg: number
+  resinUnitPrice: number
+  resinTotal: number
+  totalKg: number
+  totalValue: number
+}
+
+export function getConfiguratorMaterialEstimate(selections: ShopConfiguratorSelections): ConfiguratorMaterialEstimate {
+  const primerKg = roundWeight(selections.area * CONFIGURATOR_MATERIAL_ASSUMPTIONS.primerKgPerM2)
+  const resinKg = roundWeight(selections.area * CONFIGURATOR_MATERIAL_ASSUMPTIONS.resinKgPerM2)
+  const primerTotal = roundCurrency(primerKg * CONFIGURATOR_MATERIAL_ASSUMPTIONS.primerPricePerKg)
+  const resinTotal = roundCurrency(resinKg * CONFIGURATOR_MATERIAL_ASSUMPTIONS.resinPricePerKg)
+
+  return {
+    primerKg,
+    primerUnitPrice: CONFIGURATOR_MATERIAL_ASSUMPTIONS.primerPricePerKg,
+    primerTotal,
+    resinKg,
+    resinUnitPrice: CONFIGURATOR_MATERIAL_ASSUMPTIONS.resinPricePerKg,
+    resinTotal,
+    totalKg: roundWeight(primerKg + resinKg),
+    totalValue: roundCurrency(primerTotal + resinTotal),
+  }
 }
 
 export function getVisibleKitItems(config: ShopConfiguratorConfig, selections: ShopConfiguratorSelections) {

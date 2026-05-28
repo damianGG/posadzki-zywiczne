@@ -8,7 +8,7 @@ import {
   ShopConfiguratorKitItem,
   ShopConfiguratorSelections,
 } from "@/types/shop"
-import { ResolvedOptionLookup } from "@/lib/shop-configurator"
+import { getConfiguratorMaterialEstimate, ResolvedOptionLookup } from "@/lib/shop-configurator"
 
 interface ResultSummaryProps {
   config: ShopConfiguratorConfig
@@ -21,6 +21,10 @@ interface ResultSummaryProps {
 }
 
 export default function ResultSummary({ config, selections, resolved, total, kitItems, ctas, onMockAction }: ResultSummaryProps) {
+  const materialEstimate = getConfiguratorMaterialEstimate(selections)
+  const primerLabel = kitItems.find((item) => item.id === "primer")?.label ?? "Grunt"
+  const resinLabel = kitItems.find((item) => item.id === "base-resin")?.label ?? "Posadzka żywiczna barwiona"
+
   return (
     <div className="space-y-6">
       <Card className="rounded-3xl border-zinc-200 shadow-sm">
@@ -42,6 +46,34 @@ export default function ResultSummary({ config, selections, resolved, total, kit
             <div className="flex justify-between gap-4"><span>Metry bieżące cokołu</span><span className="font-medium text-zinc-950">{selections.plinthLengthMb.toFixed(0)} mb</span></div>
           ) : null}
           <div className="rounded-2xl bg-zinc-50 px-4 py-3 text-sm leading-6 text-zinc-600">{config.messages.result_allowance_message}</div>
+          <div className="space-y-3 rounded-2xl border border-zinc-200 px-4 py-4">
+            <div>
+              <p className="font-medium text-zinc-950">Orientacyjna ilość materiałów bazowych</p>
+              <p className="mt-1 text-xs leading-5 text-zinc-500">Przyjmujemy 0,7 kg/m² dla gruntu i 0,7 kg/m² dla posadzki żywicznej.</p>
+            </div>
+            <div className="space-y-3">
+              <div className="rounded-2xl bg-zinc-50 px-4 py-3">
+                <div className="flex justify-between gap-4">
+                  <span>{primerLabel}</span>
+                  <span className="font-medium text-zinc-950">{materialEstimate.primerKg.toFixed(1)} kg</span>
+                </div>
+                <p className="mt-1 text-xs leading-5 text-zinc-500">{materialEstimate.primerUnitPrice.toFixed(0)} zł/kg · razem {materialEstimate.primerTotal.toFixed(2)} zł</p>
+              </div>
+              <div className="rounded-2xl bg-zinc-50 px-4 py-3">
+                <div className="flex justify-between gap-4">
+                  <span>{resinLabel}</span>
+                  <span className="font-medium text-zinc-950">{materialEstimate.resinKg.toFixed(1)} kg</span>
+                </div>
+                <p className="mt-1 text-xs leading-5 text-zinc-500">{materialEstimate.resinUnitPrice.toFixed(0)} zł/kg · razem {materialEstimate.resinTotal.toFixed(2)} zł</p>
+              </div>
+            </div>
+            <div className="flex justify-between gap-4 border-t border-zinc-200 pt-3">
+              <span>Razem materiały bazowe</span>
+              <span className="font-medium text-zinc-950">
+                {materialEstimate.totalKg.toFixed(1)} kg · {materialEstimate.totalValue.toFixed(2)} zł
+              </span>
+            </div>
+          </div>
           <div className="flex items-center justify-between rounded-2xl bg-zinc-950 px-4 py-4 text-white">
             <span>Szacunkowa wartość</span>
             <span className="text-xl font-semibold">{total.toFixed(2)} zł</span>
