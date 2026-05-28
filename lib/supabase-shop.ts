@@ -1,12 +1,20 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js"
 
 import { fallbackShopCatalog } from "@/data/shop-fallback"
-import { ShopBundle, ShopCatalog, ShopProduct, ShopRecommendationRule } from "@/types/shop"
+import {
+  ShopBundle,
+  ShopCatalog,
+  ShopConfiguratorConfig,
+  ShopProduct,
+  ShopRecommendationRule,
+} from "@/types/shop"
 
 interface FetchOptions {
   includeInactive?: boolean
   useAdmin?: boolean
 }
+
+const CONFIG_KEY = "kit-configurator"
 
 export function isShopSupabaseAdminConfigured() {
   return Boolean((process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL) && process.env.SUPABASE_SERVICE_ROLE_KEY)
@@ -87,14 +95,37 @@ export async function getAllShopRecommendationRules(options: FetchOptions = {}) 
   return { success: true, data: (data as ShopRecommendationRule[]) ?? [] }
 }
 
+export async function getShopConfiguratorConfig(options: FetchOptions = {}) {
+  const supabase = options.useAdmin ? getSupabaseAdmin() : getSupabasePublic()
+  if (!supabase) {
+    return { success: true, data: fallbackShopCatalog.configuratorConfig }
+  }
+
+  const { data, error } = await supabase
+    .from("shop_configurations")
+    .select("config")
+    .eq("config_key", CONFIG_KEY)
+    .maybeSingle()
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  return {
+    success: true,
+    data: ((data?.config as ShopConfiguratorConfig | undefined) ?? fallbackShopCatalog.configuratorConfig),
+  }
+}
+
 export async function getShopCatalog(): Promise<ShopCatalog> {
-  const [productsResult, bundlesResult, recommendationRulesResult] = await Promise.all([
+  const [productsResult, bundlesResult, recommendationRulesResult, configuratorConfigResult] = await Promise.all([
     getAllShopProducts(),
     getAllShopBundles(),
     getAllShopRecommendationRules(),
+    getShopConfiguratorConfig(),
   ])
 
-  if (!productsResult.success || !bundlesResult.success || !recommendationRulesResult.success) {
+  if (!productsResult.success || !bundlesResult.success || !recommendationRulesResult.success || !configuratorConfigResult.success) {
     return fallbackShopCatalog
   }
 
@@ -102,6 +133,7 @@ export async function getShopCatalog(): Promise<ShopCatalog> {
     products: productsResult.data ?? [],
     bundles: bundlesResult.data ?? [],
     recommendationRules: recommendationRulesResult.data ?? [],
+    configuratorConfig: configuratorConfigResult.data ?? fallbackShopCatalog.configuratorConfig,
   }
 }
 
@@ -111,11 +143,7 @@ export async function createShopProduct(data: ShopProduct) {
     return { success: false, error: "Supabase not configured" }
   }
 
-  const { data: result, error } = await supabase
-    .from("shop_products")
-    .insert(data)
-    .select()
-    .single()
+  const { data: result, error } = await supabase.from("shop_products").insert(data).select().single()
 
   if (error) {
     return { success: false, error: error.message }
@@ -150,11 +178,7 @@ export async function createShopBundle(data: ShopBundle) {
     return { success: false, error: "Supabase not configured" }
   }
 
-  const { data: result, error } = await supabase
-    .from("shop_bundles")
-    .insert(data)
-    .select()
-    .single()
+  const { data: result, error } = await supabase.from("shop_bundles").insert(data).select().single()
 
   if (error) {
     return { success: false, error: error.message }
@@ -189,11 +213,7 @@ export async function createShopRecommendationRule(data: ShopRecommendationRule)
     return { success: false, error: "Supabase not configured" }
   }
 
-  const { data: result, error } = await supabase
-    .from("shop_recommendation_rules")
-    .insert(data)
-    .select()
-    .single()
+  const { data: result, error } = await supabase.from("shop_recommendation_rules").insert(data).select().single()
 
   if (error) {
     return { success: false, error: error.message }
@@ -220,4 +240,30 @@ export async function updateShopRecommendationRule(ruleId: string, updates: Part
   }
 
   return { success: true, data: result as ShopRecommendationRule }
+}
+
+export async function upsertShopConfiguratorConfig(config: ShopConfiguratorConfig) {
+  const supabase = getSupabaseAdmin()
+  if (!supabase) {
+    return { success: false, error: "Supabase not configured" }
+  }
+
+  const { data: result, error } = await supabase
+    .from("shop_configurations")
+    .upsert(
+      {
+        config_key: CONFIG_KEY,
+        config,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "config_key" }
+    )
+    .select("config")
+    .single()
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+
+  return { success: true, data: (result?.config as ShopConfiguratorConfig | undefined) ?? config }
 }

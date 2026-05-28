@@ -8,18 +8,21 @@ import {
   getAllShopBundles,
   getAllShopProducts,
   getAllShopRecommendationRules,
+  getShopConfiguratorConfig,
   isShopSupabaseAdminConfigured,
   updateShopBundle,
   updateShopProduct,
   updateShopRecommendationRule,
+  upsertShopConfiguratorConfig,
 } from "@/lib/supabase-shop"
 
 export async function GET() {
   try {
-    const [products, bundles, recommendationRules] = await Promise.all([
+    const [products, bundles, recommendationRules, configuratorConfig] = await Promise.all([
       getAllShopProducts({ includeInactive: true, useAdmin: true }),
       getAllShopBundles({ includeInactive: true, useAdmin: true }),
       getAllShopRecommendationRules({ includeInactive: true, useAdmin: true }),
+      getShopConfiguratorConfig({ useAdmin: true }),
     ])
 
     return NextResponse.json({
@@ -28,7 +31,15 @@ export async function GET() {
       recommendationRules: recommendationRules.success
         ? recommendationRules.data ?? []
         : fallbackShopCatalog.recommendationRules,
-      fallbackMode: !isShopSupabaseAdminConfigured() || !products.success || !bundles.success || !recommendationRules.success,
+      configuratorConfig: configuratorConfig.success
+        ? configuratorConfig.data ?? fallbackShopCatalog.configuratorConfig
+        : fallbackShopCatalog.configuratorConfig,
+      fallbackMode:
+        !isShopSupabaseAdminConfigured() ||
+        !products.success ||
+        !bundles.success ||
+        !recommendationRules.success ||
+        !configuratorConfig.success,
     })
   } catch (error) {
     console.error("Error loading shop admin data", error)
@@ -57,6 +68,9 @@ export async function POST(request: NextRequest) {
       case "recommendation-rule":
         result = await createShopRecommendationRule(data)
         break
+      case "config":
+        result = await upsertShopConfiguratorConfig(data)
+        break
       default:
         return NextResponse.json({ error: "Nieobsługiwany typ rekordu" }, { status: 400 })
     }
@@ -77,7 +91,7 @@ export async function PUT(request: NextRequest) {
     const body = await request.json()
     const { type, id, updates } = body
 
-    if (!type || !id || !updates) {
+    if (!type || (!id && type !== "config") || !updates) {
       return NextResponse.json({ error: "Brak wymaganych pól" }, { status: 400 })
     }
 
@@ -92,6 +106,9 @@ export async function PUT(request: NextRequest) {
         break
       case "recommendation-rule":
         result = await updateShopRecommendationRule(id, updates)
+        break
+      case "config":
+        result = await upsertShopConfiguratorConfig(updates)
         break
       default:
         return NextResponse.json({ error: "Nieobsługiwany typ rekordu" }, { status: 400 })

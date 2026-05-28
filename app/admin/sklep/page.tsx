@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
-import { ShopBundle, ShopProduct, ShopRecommendationRule } from "@/types/shop"
+import { ShopBundle, ShopConfiguratorConfig, ShopProduct, ShopRecommendationRule } from "@/types/shop"
 
 type ProductDraft = ShopProduct & {
   tagsText: string
@@ -27,6 +27,18 @@ type BundleDraft = ShopBundle & {
 
 type RuleDraft = ShopRecommendationRule & {
   recommendedIdsText: string
+}
+
+type ConfigDraft = ShopConfiguratorConfig & {
+  roomVariantsText: string
+  stepSettingsText: string
+  substrateOptionsText: string
+  finishVariantsText: string
+  floorColorsText: string
+  flakeColorsText: string
+  kitItemsText: string
+  ctaButtonsText: string
+  quickChoicesText: string
 }
 
 const stringifyJson = (value: unknown) => JSON.stringify(value ?? [], null, 2)
@@ -62,6 +74,26 @@ const mapRuleDraft = (rule: ShopRecommendationRule): RuleDraft => ({
   recommendedIdsText: (rule.recommended_product_ids ?? []).join(", "),
 })
 
+const mapConfigDraft = (config: ShopConfiguratorConfig): ConfigDraft => ({
+  ...config,
+  roomVariantsText: stringifyJson(config.room_variants),
+  stepSettingsText: stringifyJson(config.steps),
+  substrateOptionsText: stringifyJson(config.substrate_options),
+  finishVariantsText: stringifyJson(config.finish_variants),
+  floorColorsText: stringifyJson(config.floor_colors),
+  flakeColorsText: stringifyJson(config.flake_colors),
+  kitItemsText: stringifyJson(config.kit_items),
+  ctaButtonsText: stringifyJson(config.cta_buttons),
+  quickChoicesText: (config.area.quick_choices ?? []).join(", "),
+})
+
+type SaveRecordPayloadMap = {
+  product: Record<string, unknown>
+  bundle: Record<string, unknown>
+  "recommendation-rule": Record<string, unknown>
+  config: ShopConfiguratorConfig
+}
+
 export default function AdminShopPage() {
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -72,6 +104,7 @@ export default function AdminShopPage() {
   const [products, setProducts] = useState<ProductDraft[]>([])
   const [bundles, setBundles] = useState<BundleDraft[]>([])
   const [rules, setRules] = useState<RuleDraft[]>([])
+  const [configDraft, setConfigDraft] = useState<ConfigDraft | null>(null)
 
   const fetchData = useCallback(async () => {
     try {
@@ -86,6 +119,7 @@ export default function AdminShopPage() {
       setProducts((data.products || []).map(mapProductDraft))
       setBundles((data.bundles || []).map(mapBundleDraft))
       setRules((data.recommendationRules || []).map(mapRuleDraft))
+      setConfigDraft(mapConfigDraft(data.configuratorConfig))
       setFallbackMode(Boolean(data.fallbackMode))
     } catch (error) {
       setMessage({ type: "error", text: error instanceof Error ? error.message : "Błąd ładowania danych" })
@@ -97,7 +131,6 @@ export default function AdminShopPage() {
   useEffect(() => {
     const token = sessionStorage.getItem("admin_token")
     if (!token) {
-      // Existing admin login flow starts on the realizacje add route.
       router.push("/admin/realizacje/dodaj")
       return
     }
@@ -131,7 +164,15 @@ export default function AdminShopPage() {
     setRules((current) => current.map((rule) => (rule.rule_id === ruleId ? { ...rule, ...patch } : rule)))
   }
 
-  const saveRecord = async (type: "product" | "bundle" | "recommendation-rule", id: string, updates: Record<string, unknown>) => {
+  const updateConfigDraft = (patch: Partial<ConfigDraft>) => {
+    setConfigDraft((current) => (current ? { ...current, ...patch } : current))
+  }
+
+  const saveRecord = async <TType extends keyof SaveRecordPayloadMap>(
+    type: TType,
+    id: string,
+    updates: SaveRecordPayloadMap[TType]
+  ) => {
     try {
       setSavingId(id)
       setMessage(null)
@@ -150,6 +191,9 @@ export default function AdminShopPage() {
 
       setMessage({ type: "success", text: "Zmiany zostały zapisane." })
       setFallbackMode(false)
+      if (type === "config") {
+        setConfigDraft(mapConfigDraft(data.data))
+      }
     } catch (error) {
       setMessage({ type: "error", text: error instanceof Error ? error.message : "Błąd zapisu" })
     } finally {
@@ -215,6 +259,46 @@ export default function AdminShopPage() {
       is_active: Boolean(rule.is_active),
       display_order: toNumber(rule.display_order),
     })
+  }
+
+  const handleSaveConfig = () => {
+    if (!configDraft) {
+      return
+    }
+
+    try {
+      const nextConfig: ShopConfiguratorConfig = {
+        room_variants: JSON.parse(configDraft.roomVariantsText || "[]"),
+        steps: JSON.parse(configDraft.stepSettingsText || "[]"),
+        substrate_options: JSON.parse(configDraft.substrateOptionsText || "[]"),
+        finish_variants: JSON.parse(configDraft.finishVariantsText || "[]"),
+        floor_colors: JSON.parse(configDraft.floorColorsText || "[]"),
+        flake_colors: JSON.parse(configDraft.flakeColorsText || "[]"),
+        kit_items: JSON.parse(configDraft.kitItemsText || "[]"),
+        cta_buttons: JSON.parse(configDraft.ctaButtonsText || "[]"),
+        area: {
+          ...configDraft.area,
+          quick_choices: parseCsv(configDraft.quickChoicesText).map((item) => Number(item)).filter((item) => Number.isFinite(item)),
+          min: toNumber(configDraft.area.min),
+          max: toNumber(configDraft.area.max),
+          step: toNumber(configDraft.area.step),
+        },
+        plinth: {
+          ...configDraft.plinth,
+          price_per_mb: toNumber(configDraft.plinth.price_per_mb),
+        },
+        messages: {
+          ...configDraft.messages,
+        },
+      }
+
+      void saveRecord("config", "kit-configurator", nextConfig)
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: `Konfiguracja konfiguratora musi mieć poprawny JSON. ${error instanceof Error ? error.message : ""}`.trim(),
+      })
+    }
   }
 
   const createRecord = async (type: "product" | "bundle" | "recommendation-rule") => {
@@ -293,21 +377,21 @@ export default function AdminShopPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-orange-50 py-8 px-4">
-      <div className="max-w-7xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-orange-50 px-4 py-8">
+      <div className="mx-auto max-w-7xl space-y-8">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-2">
             <Link href="/admin" className="inline-flex items-center gap-2 text-sm text-zinc-600 hover:text-zinc-900">
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="h-4 w-4" />
               Powrót do panelu admina
             </Link>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-violet-100 text-violet-700 flex items-center justify-center">
-                <ShoppingBag className="w-6 h-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
+                <ShoppingBag className="h-6 w-6" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-zinc-900">Sklep MVP</h1>
-                <p className="text-zinc-600">Produkty, zestawy i ręczne reguły rekomendacji.</p>
+                <p className="text-zinc-600">Produkty, zestawy, reguły oraz konfiguracja nowego konfiguratora.</p>
               </div>
             </div>
           </div>
@@ -316,15 +400,15 @@ export default function AdminShopPage() {
               <Link href="/sklep">Zobacz storefront</Link>
             </Button>
             <Button onClick={() => createRecord("product")}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Dodaj produkt
             </Button>
             <Button variant="outline" onClick={() => createRecord("bundle")}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Dodaj zestaw
             </Button>
             <Button variant="outline" onClick={() => createRecord("recommendation-rule")}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="mr-2 h-4 w-4" />
               Dodaj regułę
             </Button>
           </div>
@@ -333,7 +417,7 @@ export default function AdminShopPage() {
         {fallbackMode && (
           <Alert>
             <AlertDescription>
-              Panel działa aktualnie na danych fallback. Aby zapisy były trwałe, uruchom migrację `003_shop_mvp.sql` i ustaw Supabase.
+              Panel działa aktualnie na danych fallback. Aby zapisy były trwałe, uruchom migracje `003_shop_mvp.sql` oraz `004_shop_configurator_config.sql` i ustaw Supabase.
             </AlertDescription>
           </Alert>
         )}
@@ -350,6 +434,166 @@ export default function AdminShopPage() {
           </Card>
         ) : (
           <div className="space-y-10">
+            {configDraft ? (
+              <section className="space-y-4">
+                <div>
+                  <h2 className="text-2xl font-semibold text-zinc-900">Konfigurator krok po kroku</h2>
+                  <p className="text-zinc-600">Tutaj administrator zarządza krokami, wariantami wykończenia, kolorami, komunikatami, CTA i aktywnością całego flow.</p>
+                </div>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Treści i ustawienia główne</CardTitle>
+                    <CardDescription>Najważniejsze pola tekstowe oraz ustawienia metrażu i cokołu.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label>Badge</Label>
+                        <Input value={configDraft.messages.badge} onChange={(event) => updateConfigDraft({ messages: { ...configDraft.messages, badge: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Etykieta sekcji pomieszczenia</Label>
+                        <Input value={configDraft.messages.room_section_label} onChange={(event) => updateConfigDraft({ messages: { ...configDraft.messages, room_section_label: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Tytuł</Label>
+                        <Input value={configDraft.messages.title} onChange={(event) => updateConfigDraft({ messages: { ...configDraft.messages, title: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Opis hero</Label>
+                        <Textarea value={configDraft.messages.description} onChange={(event) => updateConfigDraft({ messages: { ...configDraft.messages, description: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Tytuł wyniku</Label>
+                        <Input value={configDraft.messages.result_title} onChange={(event) => updateConfigDraft({ messages: { ...configDraft.messages, result_title: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Opis wyniku</Label>
+                        <Input value={configDraft.messages.result_description} onChange={(event) => updateConfigDraft({ messages: { ...configDraft.messages, result_description: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Komunikat o naddatku materiału</Label>
+                        <Textarea value={configDraft.messages.result_allowance_message} onChange={(event) => updateConfigDraft({ messages: { ...configDraft.messages, result_allowance_message: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Komunikat CTA mock</Label>
+                        <Textarea value={configDraft.messages.mock_cta_message} onChange={(event) => updateConfigDraft({ messages: { ...configDraft.messages, mock_cta_message: event.target.value } })} />
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label>Label pola metrażu</Label>
+                        <Input value={configDraft.area.label} onChange={(event) => updateConfigDraft({ area: { ...configDraft.area, label: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Szybkie wybory m² (CSV)</Label>
+                        <Input value={configDraft.quickChoicesText} onChange={(event) => updateConfigDraft({ quickChoicesText: event.target.value })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Minimalny metraż</Label>
+                        <Input type="number" value={configDraft.area.min} onChange={(event) => updateConfigDraft({ area: { ...configDraft.area, min: Number(event.target.value) } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Maksymalny metraż</Label>
+                        <Input type="number" value={configDraft.area.max} onChange={(event) => updateConfigDraft({ area: { ...configDraft.area, max: Number(event.target.value) } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Krok inputa</Label>
+                        <Input type="number" value={configDraft.area.step} onChange={(event) => updateConfigDraft({ area: { ...configDraft.area, step: Number(event.target.value) } })} />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Opis kroku metrażu</Label>
+                        <Textarea value={configDraft.area.helper_text} onChange={(event) => updateConfigDraft({ area: { ...configDraft.area, helper_text: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Komunikat pod inputem metrażu</Label>
+                        <Textarea value={configDraft.area.allowance_message} onChange={(event) => updateConfigDraft({ area: { ...configDraft.area, allowance_message: event.target.value } })} />
+                      </div>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="space-y-2 md:col-span-2">
+                        <Label>Pytanie o cokół</Label>
+                        <Input value={configDraft.plinth.question} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, question: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Etykieta opcji NIE</Label>
+                        <Input value={configDraft.plinth.no_option_label} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, no_option_label: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Etykieta opcji TAK</Label>
+                        <Input value={configDraft.plinth.yes_option_label} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, yes_option_label: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Opis opcji NIE</Label>
+                        <Textarea value={configDraft.plinth.no_option_description} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, no_option_description: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Opis opcji TAK</Label>
+                        <Textarea value={configDraft.plinth.yes_option_description} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, yes_option_description: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Label pola długości cokołu</Label>
+                        <Input value={configDraft.plinth.length_label} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, length_label: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Podpowiedź dla długości</Label>
+                        <Input value={configDraft.plinth.length_hint} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, length_hint: event.target.value } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Cena za mb</Label>
+                        <Input type="number" value={configDraft.plinth.price_per_mb} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, price_per_mb: Number(event.target.value) } })} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Jednostka cokołu</Label>
+                        <Input value={configDraft.plinth.unit_label} onChange={(event) => updateConfigDraft({ plinth: { ...configDraft.plinth, unit_label: event.target.value } })} />
+                      </div>
+                      <div className="flex items-center justify-between rounded-lg border p-3 md:col-span-2">
+                        <div>
+                          <p className="font-medium">Aktywny krok cokołu</p>
+                          <p className="text-sm text-zinc-500">Pozwala chwilowo wyłączyć cały krok.</p>
+                        </div>
+                        <Switch checked={configDraft.plinth.enabled} onCheckedChange={(checked) => updateConfigDraft({ plinth: { ...configDraft.plinth, enabled: checked } })} />
+                      </div>
+                    </div>
+
+                    <Button onClick={handleSaveConfig} disabled={savingId === "kit-configurator"}>
+                      <Save className="mr-2 h-4 w-4" />
+                      {savingId === "kit-configurator" ? "Zapisywanie..." : "Zapisz ustawienia konfiguratora"}
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                <div className="grid gap-4 xl:grid-cols-2">
+                  {[
+                    ["roomVariantsText", "Warianty pomieszczeń (JSON)"],
+                    ["stepSettingsText", "Kroki konfiguratora (JSON)"],
+                    ["substrateOptionsText", "Opcje podłoża (JSON)"],
+                    ["finishVariantsText", "Warianty wykończenia (JSON)"],
+                    ["floorColorsText", "Kolory posadzki (JSON)"],
+                    ["flakeColorsText", "Kolory płatków (JSON)"],
+                    ["kitItemsText", "Elementy zestawu (JSON)"],
+                    ["ctaButtonsText", "CTA (JSON)"],
+                  ].map(([field, label]) => (
+                    <Card key={field}>
+                      <CardHeader>
+                        <CardTitle>{label}</CardTitle>
+                        <CardDescription>Edytowalne dane źródłowe dla storefrontu.</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Textarea
+                          value={configDraft[field as keyof ConfigDraft] as string}
+                          onChange={(event) => updateConfigDraft({ [field]: event.target.value } as Partial<ConfigDraft>)}
+                          className="min-h-[260px] font-mono text-xs"
+                        />
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
             <section className="space-y-4">
               <div>
                 <h2 className="text-2xl font-semibold text-zinc-900">Produkty</h2>
@@ -424,7 +668,7 @@ export default function AdminShopPage() {
                         </div>
                       </div>
                       <Button onClick={() => handleSaveProduct(product)} disabled={savingId === product.product_id}>
-                        <Save className="w-4 h-4 mr-2" />
+                        <Save className="mr-2 h-4 w-4" />
                         {savingId === product.product_id ? "Zapisywanie..." : "Zapisz produkt"}
                       </Button>
                     </CardContent>
@@ -512,7 +756,7 @@ export default function AdminShopPage() {
                         </div>
                       </div>
                       <Button onClick={() => handleSaveBundle(bundle)} disabled={savingId === bundle.variant_id}>
-                        <Save className="w-4 h-4 mr-2" />
+                        <Save className="mr-2 h-4 w-4" />
                         {savingId === bundle.variant_id ? "Zapisywanie..." : "Zapisz zestaw"}
                       </Button>
                     </CardContent>
@@ -576,7 +820,7 @@ export default function AdminShopPage() {
                         </div>
                       </div>
                       <Button onClick={() => handleSaveRule(rule)} disabled={savingId === rule.rule_id}>
-                        <Save className="w-4 h-4 mr-2" />
+                        <Save className="mr-2 h-4 w-4" />
                         {savingId === rule.rule_id ? "Zapisywanie..." : "Zapisz regułę"}
                       </Button>
                     </CardContent>

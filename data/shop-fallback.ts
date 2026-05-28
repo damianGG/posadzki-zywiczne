@@ -1,6 +1,8 @@
+import { fallbackShopConfiguratorConfig } from "@/data/shop-configurator-fallback"
 import { ShopCatalog } from "@/types/shop"
 
 export const fallbackShopCatalog: ShopCatalog = {
+  configuratorConfig: fallbackShopConfiguratorConfig,
   products: [
     {
       product_id: "grunt-epoksydowy",
