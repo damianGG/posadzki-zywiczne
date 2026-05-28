@@ -13,6 +13,14 @@ import {
 } from "@/types/shop"
 
 const roundCurrency = (value: number) => Math.round(value * 100) / 100
+const defaultRoomStep: ShopConfiguratorStepSetting = {
+  id: "room",
+  title: "Pomieszczenie",
+  question: "Gdzie chcesz wykonać posadzkę?",
+  description: "Najpierw wybierz typ pomieszczenia. Kolejne warianty mogą być aktywne albo oznaczone jako „Wkrótce”.",
+  is_active: true,
+  next_label: "Dalej",
+}
 
 function sortByOrder<T extends { sort_order?: number }>(items: T[]) {
   return [...items].sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
@@ -31,10 +39,15 @@ export function getPrimaryRoomVariant(config: ShopConfiguratorConfig) {
 }
 
 export function getStepSettings(config: ShopConfiguratorConfig, requiresFlakeColor: boolean) {
-  return sortByOrder(config.steps)
+  const configuredSteps = sortByOrder(config.steps)
     .filter((step) => step.is_active !== false)
     .filter((step) => step.id !== "flake-color" || requiresFlakeColor)
     .filter((step) => step.id !== "plinth" || config.plinth.enabled)
+
+  const roomStep = configuredSteps.find((step) => step.id === "room") ?? defaultRoomStep
+  const remainingSteps = configuredSteps.filter((step) => step.id !== "room")
+
+  return [roomStep, ...remainingSteps]
 }
 
 export function getSubstrateOptions(config: ShopConfiguratorConfig) {
@@ -104,6 +117,8 @@ export function isStepComplete(config: ShopConfiguratorConfig, stepId: ShopConfi
   const finishVariant = findFinishVariant(config, selections.finishVariantId)
 
   switch (stepId) {
+    case "room":
+      return Boolean(selections.roomVariantId)
     case "substrate":
       return Boolean(selections.substrateId)
     case "finish":
@@ -127,12 +142,15 @@ export function isStepComplete(config: ShopConfiguratorConfig, stepId: ShopConfi
 }
 
 export function getPreviewHeading(step: ShopConfiguratorStepSetting, selections: ShopConfiguratorSelections, config: ShopConfiguratorConfig) {
+  const roomVariant = getActiveRoomVariants(config).find((item) => item.id === selections.roomVariantId)
   const substrate = findSubstrate(config, selections.substrateId)
   const finish = findFinishVariant(config, selections.finishVariantId)
   const floorColor = findFloorColor(config, selections.floorColorId)
   const flakeColor = findFlakeColor(config, selections.flakeColorId)
 
   switch (step.id) {
+    case "room":
+      return roomVariant?.label || step.question
     case "substrate":
       return substrate?.label || step.question
     case "finish":
@@ -152,7 +170,10 @@ export function getPreviewHeading(step: ShopConfiguratorStepSetting, selections:
   }
 }
 
-export function getRoomVariantName(config: ShopConfiguratorConfig, roomVariantId: string) {
+export function getRoomVariantName(config: ShopConfiguratorConfig, roomVariantId: string | null) {
+  if (!roomVariantId) {
+    return ""
+  }
   const roomVariant = getActiveRoomVariants(config).find((item) => item.id === roomVariantId)
   return roomVariant?.label ?? roomVariantId
 }

@@ -33,6 +33,7 @@ VALUES (
       }
     ],
     "steps": [
+      {"id": "room", "title": "Pomieszczenie", "question": "Gdzie chcesz wykonać posadzkę?", "description": "Najpierw wybierz typ pomieszczenia. Kolejne warianty mogą być aktywne albo oznaczone jako „Wkrótce”.", "is_active": true, "next_label": "Dalej"},
       {"id": "substrate", "title": "Podłoże", "question": "Jak wygląda podłoże?", "description": "Wybierz najbliższy opis. Dzięki temu pokażemy bezpieczny wariant zestawu.", "helper_text": "Jeśli nie masz pewności, wybierz opcję „Nie wiem”.", "is_active": true, "next_label": "Dalej"},
       {"id": "finish", "title": "Wykończenie", "question": "Jaki efekt wykończenia chcesz uzyskać?", "description": "Prosty wybór między estetyką, antypoślizgiem i wariantem z płatkami dekoracyjnymi.", "is_active": true, "next_label": "Dalej"},
       {"id": "floor-color", "title": "Kolor posadzki", "question": "Wybierz kolor posadzki", "description": "Kolory są definiowane w konfiguracji i można je dowolnie włączać lub układać.", "is_active": true, "next_label": "Dalej"},

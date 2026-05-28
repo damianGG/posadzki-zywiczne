@@ -1,6 +1,6 @@
 export type ShopPricingModel = "fixed" | "unit" | "m2" | "mb"
 export type ShopQuantityType = "fixed" | "per_m2" | "per_10m2"
-export type ShopConfiguratorStepId = "substrate" | "finish" | "floor-color" | "flake-color" | "area" | "plinth" | "result"
+export type ShopConfiguratorStepId = "room" | "substrate" | "finish" | "floor-color" | "flake-color" | "area" | "plinth" | "result"
 export type ShopConfiguratorOptionVisibility = "always" | "with-flakes" | "with-plinth" | "variant-match"
 export type ShopConfiguratorRoomStatus = "active" | "coming-soon" | "inactive"
 
@@ -206,7 +206,7 @@ export interface ShopCartSummary {
 }
 
 export interface ShopConfiguratorSelections {
-  roomVariantId: string
+  roomVariantId: string | null
   substrateId: string | null
   finishVariantId: string | null
   floorColorId: string | null

@@ -24,6 +24,14 @@ export const fallbackShopConfiguratorConfig: ShopConfiguratorConfig = {
   ],
   steps: [
     {
+      id: "room",
+      title: "Pomieszczenie",
+      question: "Gdzie chcesz wykonać posadzkę?",
+      description: "Najpierw wybierz typ pomieszczenia. Kolejne warianty mogą być aktywne albo oznaczone jako „Wkrótce”.",
+      is_active: true,
+      next_label: "Dalej",
+    },
+    {
       id: "substrate",
       title: "Podłoże",
       question: "Jak wygląda podłoże?",

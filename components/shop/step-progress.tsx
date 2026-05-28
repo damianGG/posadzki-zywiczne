@@ -24,7 +24,7 @@ export default function StepProgress({ steps, activeStepId }: StepProgressProps)
         <span>{steps[activeIndex]?.title}</span>
       </div>
       <Progress value={progressValue} className="h-2 bg-zinc-200 [&>div]:bg-zinc-950" />
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="flex gap-2 overflow-x-auto pb-1 md:flex-wrap md:overflow-visible">
         {steps.map((step, index) => {
           const isActive = step.id === activeStepId
           const isDone = index < activeIndex
