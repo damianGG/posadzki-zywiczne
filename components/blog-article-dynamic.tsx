@@ -12,6 +12,10 @@ interface BlogArticleDynamicProps {
 }
 
 export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
+  const articleContent = post.content
+    .replace(/<table\b([^>]*)>/g, '<div class="overflow-x-auto my-6 -mx-4 px-4 sm:mx-0 sm:px-0"><table$1>')
+    .replace(/<\/table>/g, "</table></div>")
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -128,8 +132,10 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
                         prose-a:text-primary
                         prose-blockquote:text-muted-foreground
                         prose-code:text-foreground
-                        prose-pre:bg-muted"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+                        prose-pre:bg-muted
+                        [&_table]:my-0
+                        [&_table]:min-w-[640px]"
+          dangerouslySetInnerHTML={{ __html: articleContent }}
         />
 
         {/* Article Footer */}
