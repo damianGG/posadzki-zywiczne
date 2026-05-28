@@ -111,7 +111,7 @@ export function getConfiguratorMaterialEstimate(selections: ShopConfiguratorSele
   const resinKg = roundWeight(selections.area * defaultConfiguratorMaterialEstimate.resin_kg_per_m2)
   const primerTotal = roundCurrency(primerKg * defaultConfiguratorMaterialEstimate.primer_price_per_kg)
   const resinTotal = roundCurrency(resinKg * defaultConfiguratorMaterialEstimate.resin_price_per_kg)
-  const totalKg = roundWeight(selections.area * (defaultConfiguratorMaterialEstimate.primer_kg_per_m2 + defaultConfiguratorMaterialEstimate.resin_kg_per_m2))
+  const totalKg = roundWeight(primerKg + resinKg)
 
   return {
     primerLabel: defaultConfiguratorMaterialEstimate.primer_label,

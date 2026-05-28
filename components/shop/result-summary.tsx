@@ -23,6 +23,7 @@ interface ResultSummaryProps {
 export default function ResultSummary({ config, selections, resolved, total, kitItems, ctas, onMockAction }: ResultSummaryProps) {
   const materialEstimate = getConfiguratorMaterialEstimate(selections)
   const formatOneDecimal = (value: number) => value.toFixed(1).replace(".", ",")
+  const formatCurrency = (value: number) => value.toFixed(2).replace(".", ",")
 
   return (
     <div className="space-y-6">
@@ -56,28 +57,28 @@ export default function ResultSummary({ config, selections, resolved, total, kit
               <div className="rounded-2xl bg-zinc-50 px-4 py-3">
                 <div className="flex justify-between gap-4">
                   <span>{materialEstimate.primerLabel}</span>
-                  <span className="font-medium text-zinc-950">{materialEstimate.primerKg.toFixed(1)} kg</span>
+                  <span className="font-medium text-zinc-950">{formatOneDecimal(materialEstimate.primerKg)} kg</span>
                 </div>
-                <p className="mt-1 text-xs leading-5 text-zinc-500">{materialEstimate.primerUnitPrice.toFixed(0)} zł/kg · razem {materialEstimate.primerTotal.toFixed(2)} zł</p>
+                <p className="mt-1 text-xs leading-5 text-zinc-500">{materialEstimate.primerUnitPrice.toFixed(0)} zł/kg · razem {formatCurrency(materialEstimate.primerTotal)} zł</p>
               </div>
               <div className="rounded-2xl bg-zinc-50 px-4 py-3">
                 <div className="flex justify-between gap-4">
                   <span>{materialEstimate.resinLabel}</span>
-                  <span className="font-medium text-zinc-950">{materialEstimate.resinKg.toFixed(1)} kg</span>
+                  <span className="font-medium text-zinc-950">{formatOneDecimal(materialEstimate.resinKg)} kg</span>
                 </div>
-                <p className="mt-1 text-xs leading-5 text-zinc-500">{materialEstimate.resinUnitPrice.toFixed(0)} zł/kg · razem {materialEstimate.resinTotal.toFixed(2)} zł</p>
+                <p className="mt-1 text-xs leading-5 text-zinc-500">{materialEstimate.resinUnitPrice.toFixed(0)} zł/kg · razem {formatCurrency(materialEstimate.resinTotal)} zł</p>
               </div>
             </div>
             <div className="flex justify-between gap-4 border-t border-zinc-200 pt-3">
               <span>Razem materiały bazowe</span>
               <span className="font-medium text-zinc-950">
-                {materialEstimate.totalKg.toFixed(1)} kg · {materialEstimate.totalValue.toFixed(2)} zł
+                {formatOneDecimal(materialEstimate.totalKg)} kg · {formatCurrency(materialEstimate.totalValue)} zł
               </span>
             </div>
           </div>
           <div className="flex items-center justify-between rounded-2xl bg-zinc-950 px-4 py-4 text-white">
             <span>Szacunkowa wartość</span>
-            <span className="text-xl font-semibold">{total.toFixed(2)} zł</span>
+            <span className="text-xl font-semibold">{formatCurrency(total)} zł</span>
           </div>
         </CardContent>
       </Card>
