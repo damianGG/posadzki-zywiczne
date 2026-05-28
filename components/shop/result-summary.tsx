@@ -22,6 +22,7 @@ interface ResultSummaryProps {
 
 export default function ResultSummary({ config, selections, resolved, total, kitItems, ctas, onMockAction }: ResultSummaryProps) {
   const materialEstimate = getConfiguratorMaterialEstimate(selections)
+  const formatOneDecimal = (value: number) => value.toFixed(1).replace(".", ",")
 
   return (
     <div className="space-y-6">
@@ -48,7 +49,7 @@ export default function ResultSummary({ config, selections, resolved, total, kit
             <div>
               <p className="font-medium text-zinc-950">Orientacyjna ilość materiałów bazowych</p>
               <p className="mt-1 text-xs leading-5 text-zinc-500">
-                Przyjmujemy {materialEstimate.primerKgPerM2.toFixed(1).replace(".", ",")} kg/m² dla gruntu i {materialEstimate.resinKgPerM2.toFixed(1).replace(".", ",")} kg/m² dla posadzki żywicznej.
+                Przyjmujemy {formatOneDecimal(materialEstimate.primerKgPerM2)} kg/m² dla gruntu i {formatOneDecimal(materialEstimate.resinKgPerM2)} kg/m² dla posadzki żywicznej.
               </p>
             </div>
             <div className="space-y-3">
