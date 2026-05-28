@@ -1,5 +1,6 @@
-import { defaultConfiguratorMaterialEstimate, defaultRoomStepSetting } from "@/data/shop-configurator-fallback"
+import { defaultConfiguratorMaterialEstimate, defaultRoomStepSetting, fallbackShopConfiguratorConfig } from "@/data/shop-configurator-fallback"
 import {
+  ShopConfiguratorAccessoryOption,
   ShopCatalog,
   ShopConfiguratorColorOption,
   ShopConfiguratorConfig,
@@ -21,7 +22,33 @@ function sortByOrder<T extends { sort_order?: number }>(items: T[]) {
 }
 
 export function getConfiguratorConfig(catalog: ShopCatalog) {
-  return catalog.configuratorConfig
+  const config = catalog.configuratorConfig
+
+  return {
+    ...fallbackShopConfiguratorConfig,
+    ...config,
+    room_variants: config.room_variants ?? fallbackShopConfiguratorConfig.room_variants,
+    steps: config.steps ?? fallbackShopConfiguratorConfig.steps,
+    substrate_options: config.substrate_options ?? fallbackShopConfiguratorConfig.substrate_options,
+    finish_variants: config.finish_variants ?? fallbackShopConfiguratorConfig.finish_variants,
+    floor_colors: config.floor_colors ?? fallbackShopConfiguratorConfig.floor_colors,
+    flake_colors: config.flake_colors ?? fallbackShopConfiguratorConfig.flake_colors,
+    accessory_options: config.accessory_options ?? fallbackShopConfiguratorConfig.accessory_options,
+    kit_items: config.kit_items ?? fallbackShopConfiguratorConfig.kit_items,
+    cta_buttons: config.cta_buttons ?? fallbackShopConfiguratorConfig.cta_buttons,
+    area: {
+      ...fallbackShopConfiguratorConfig.area,
+      ...config.area,
+    },
+    plinth: {
+      ...fallbackShopConfiguratorConfig.plinth,
+      ...config.plinth,
+    },
+    messages: {
+      ...fallbackShopConfiguratorConfig.messages,
+      ...config.messages,
+    },
+  }
 }
 
 export function getActiveRoomVariants(config: ShopConfiguratorConfig) {
@@ -62,6 +89,10 @@ export function getFloorColors(config: ShopConfiguratorConfig) {
 
 export function getFlakeColors(config: ShopConfiguratorConfig) {
   return sortByOrder(config.flake_colors.filter((item) => item.is_active !== false))
+}
+
+export function getAccessoryOptions(config: ShopConfiguratorConfig) {
+  return sortByOrder((config.accessory_options ?? []).filter((item) => item.is_active !== false))
 }
 
 export function getActiveCtas(config: ShopConfiguratorConfig) {
@@ -220,14 +251,18 @@ export type ResolvedOptionLookup = {
   finishVariant: ShopConfiguratorFinishVariant | null
   floorColor: ShopConfiguratorColorOption | null
   flakeColor: ShopConfiguratorFlakeColorOption | null
+  accessories: ShopConfiguratorAccessoryOption[]
 }
 
 export function resolveSelections(config: ShopConfiguratorConfig, selections: ShopConfiguratorSelections): ResolvedOptionLookup {
+  const accessoriesById = new Map(getAccessoryOptions(config).map((item) => [item.id, item] as const))
+
   return {
     roomVariant: getActiveRoomVariants(config).find((item) => item.id === selections.roomVariantId),
     substrate: findSubstrate(config, selections.substrateId),
     finishVariant: findFinishVariant(config, selections.finishVariantId),
     floorColor: findFloorColor(config, selections.floorColorId),
     flakeColor: findFlakeColor(config, selections.flakeColorId),
+    accessories: selections.accessoryIds.map((id) => accessoriesById.get(id)).filter(Boolean) as ShopConfiguratorAccessoryOption[],
   }
 }

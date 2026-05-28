@@ -36,6 +36,7 @@ type ConfigDraft = ShopConfiguratorConfig & {
   finishVariantsText: string
   floorColorsText: string
   flakeColorsText: string
+  accessoryOptionsText: string
   kitItemsText: string
   ctaButtonsText: string
   quickChoicesText: string
@@ -82,6 +83,7 @@ const mapConfigDraft = (config: ShopConfiguratorConfig): ConfigDraft => ({
   finishVariantsText: stringifyJson(config.finish_variants),
   floorColorsText: stringifyJson(config.floor_colors),
   flakeColorsText: stringifyJson(config.flake_colors),
+  accessoryOptionsText: stringifyJson(config.accessory_options),
   kitItemsText: stringifyJson(config.kit_items),
   ctaButtonsText: stringifyJson(config.cta_buttons),
   quickChoicesText: (config.area.quick_choices ?? []).join(", "),
@@ -274,6 +276,7 @@ export default function AdminShopPage() {
         finish_variants: JSON.parse(configDraft.finishVariantsText || "[]"),
         floor_colors: JSON.parse(configDraft.floorColorsText || "[]"),
         flake_colors: JSON.parse(configDraft.flakeColorsText || "[]"),
+        accessory_options: JSON.parse(configDraft.accessoryOptionsText || "[]"),
         kit_items: JSON.parse(configDraft.kitItemsText || "[]"),
         cta_buttons: JSON.parse(configDraft.ctaButtonsText || "[]"),
         area: {
@@ -573,6 +576,7 @@ export default function AdminShopPage() {
                     ["finishVariantsText", "Warianty wykończenia (JSON)"],
                     ["floorColorsText", "Kolory posadzki (JSON)"],
                     ["flakeColorsText", "Kolory płatków (JSON)"],
+                    ["accessoryOptionsText", "Akcesoria dodatkowe (JSON)"],
                     ["kitItemsText", "Elementy zestawu (JSON)"],
                     ["ctaButtonsText", "CTA (JSON)"],
                   ].map(([field, label]) => (

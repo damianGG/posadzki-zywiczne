@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { ShopCatalog, ShopConfiguratorSelections } from "@/types/shop"
 import {
+  getAccessoryOptions,
   getActiveCtas,
   getActiveRoomVariants,
   getConfiguratorConfig,
@@ -43,6 +44,7 @@ export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
     finishVariantId: null,
     floorColorId: null,
     flakeColorId: null,
+    accessoryIds: [],
     area: config.area.quick_choices[0] ?? config.area.min,
     wantsPlinth: null,
     plinthLengthMb: 10,
@@ -56,6 +58,7 @@ export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
   const activeStepIndex = Math.max(steps.findIndex((step) => step.id === activeStepId), 0)
   const activeStep = steps[activeStepIndex] ?? steps[0]
   const total = useMemo(() => getConfiguratorTotal(config, selections), [config, selections])
+  const accessories = useMemo(() => getAccessoryOptions(config), [config])
   const kitItems = useMemo(() => getVisibleKitItems(config, selections), [config, selections])
   const ctas = useMemo(() => getActiveCtas(config), [config])
 
@@ -227,8 +230,17 @@ export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
                   selections={selections}
                   resolved={resolved}
                   total={total}
+                  accessories={accessories}
                   kitItems={kitItems}
                   ctas={ctas}
+                  onAccessoryToggle={(accessoryId) =>
+                    setSelections((current) => ({
+                      ...current,
+                      accessoryIds: current.accessoryIds.includes(accessoryId)
+                        ? current.accessoryIds.filter((id) => id !== accessoryId)
+                        : [...current.accessoryIds, accessoryId],
+                    }))
+                  }
                   onMockAction={(label) => setMockMessage(`${label}: ${config.messages.mock_cta_message}`)}
                 />
               ) : null}

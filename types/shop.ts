@@ -113,6 +113,11 @@ export interface ShopConfiguratorFlakeColorOption extends ShopConfiguratorOption
   swatch_colors?: string[]
 }
 
+export interface ShopConfiguratorAccessoryOption extends ShopConfiguratorOptionBase {
+  recommendation?: string
+  recommended?: boolean
+}
+
 export interface ShopConfiguratorKitItem {
   id: string
   label: string
@@ -174,6 +179,7 @@ export interface ShopConfiguratorConfig {
   finish_variants: ShopConfiguratorFinishVariant[]
   floor_colors: ShopConfiguratorColorOption[]
   flake_colors: ShopConfiguratorFlakeColorOption[]
+  accessory_options: ShopConfiguratorAccessoryOption[]
   kit_items: ShopConfiguratorKitItem[]
   cta_buttons: ShopConfiguratorCtaButton[]
   area: ShopConfiguratorAreaSettings
@@ -211,6 +217,7 @@ export interface ShopConfiguratorSelections {
   finishVariantId: string | null
   floorColorId: string | null
   flakeColorId: string | null
+  accessoryIds: string[]
   area: number
   wantsPlinth: boolean | null
   plinthLengthMb: number

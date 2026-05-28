@@ -1,8 +1,10 @@
 import { ExternalLink } from "lucide-react"
 
+import OptionCard from "@/components/shop/option-card"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
+  ShopConfiguratorAccessoryOption,
   ShopConfiguratorConfig,
   ShopConfiguratorCtaButton,
   ShopConfiguratorKitItem,
@@ -15,12 +17,24 @@ interface ResultSummaryProps {
   selections: ShopConfiguratorSelections
   resolved: ResolvedOptionLookup
   total: number
+  accessories: ShopConfiguratorAccessoryOption[]
   kitItems: ShopConfiguratorKitItem[]
   ctas: ShopConfiguratorCtaButton[]
+  onAccessoryToggle: (accessoryId: string) => void
   onMockAction: (label: string) => void
 }
 
-export default function ResultSummary({ config, selections, resolved, total, kitItems, ctas, onMockAction }: ResultSummaryProps) {
+export default function ResultSummary({
+  config,
+  selections,
+  resolved,
+  total,
+  accessories,
+  kitItems,
+  ctas,
+  onAccessoryToggle,
+  onMockAction,
+}: ResultSummaryProps) {
   const materialEstimate = getConfiguratorMaterialEstimate(selections)
   const formatOneDecimal = (value: number) => value.toFixed(1).replace(".", ",")
   const formatCurrency = (value: number) => value.toFixed(2).replace(".", ",")
@@ -45,6 +59,12 @@ export default function ResultSummary({ config, selections, resolved, total, kit
           {selections.wantsPlinth ? (
             <div className="flex justify-between gap-4"><span>Metry bieżące cokołu</span><span className="font-medium text-zinc-950">{selections.plinthLengthMb.toFixed(0)} mb</span></div>
           ) : null}
+          <div className="flex justify-between gap-4">
+            <span>Akcesoria dodatkowe</span>
+            <span className="text-right font-medium text-zinc-950">
+              {resolved.accessories.length ? resolved.accessories.map((item) => item.label).join(", ") : "Brak"}
+            </span>
+          </div>
           <div className="rounded-2xl bg-zinc-50 px-4 py-3 text-sm leading-6 text-zinc-600">{config.messages.result_allowance_message}</div>
           <div className="space-y-3 rounded-2xl border border-zinc-200 px-4 py-4">
             <div>
@@ -97,6 +117,33 @@ export default function ResultSummary({ config, selections, resolved, total, kit
           ))}
         </CardContent>
       </Card>
+
+      {accessories.length ? (
+        <Card className="rounded-3xl border-zinc-200 shadow-sm">
+          <CardHeader>
+            <CardTitle>Dobierz akcesoria do zestawu</CardTitle>
+            <CardDescription>Na końcu możesz od razu zaznaczyć akcesoria pomocne przy aplikacji. Pod każdą opcją pokazujemy krótką rekomendację.</CardDescription>
+          </CardHeader>
+          <CardContent className="grid gap-3 md:grid-cols-2">
+            {accessories.map((accessory) => (
+              <OptionCard
+                key={accessory.id}
+                title={accessory.label}
+                description={accessory.description}
+                badge={accessory.recommended ? "Rekomendowane" : undefined}
+                selected={selections.accessoryIds.includes(accessory.id)}
+                className="min-h-[156px]"
+                footer={
+                  accessory.recommendation ? (
+                    <p className="text-xs leading-5 text-zinc-500">{accessory.recommendation}</p>
+                  ) : undefined
+                }
+                onClick={() => onAccessoryToggle(accessory.id)}
+              />
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
 
       <div className="space-y-3">
         {ctas.map((cta) => (
