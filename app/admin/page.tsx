@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Image as ImageIcon, Share2, ArrowRight, Calculator, Images, ShoppingBag } from 'lucide-react';
+import { Image as ImageIcon, Share2, ArrowRight, Calculator, Images, ShoppingBag, FileText } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminPage() {
@@ -87,6 +87,24 @@ export default function AdminPage() {
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Twórz i publikuj posty na Google Business, Instagram, Facebook i innych platformach z pomocą AI.
+              </p>
+            </Card>
+          </Link>
+
+          {/* Blog Card */}
+          <Link href="/admin/blog">
+            <Card className="p-6 hover:shadow-xl transition-all cursor-pointer group">
+              <div className="flex items-start justify-between mb-4">
+                <div className="p-3 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg group-hover:bg-indigo-200 transition-colors">
+                  <FileText className="w-6 h-6 text-indigo-600 dark:text-indigo-400" />
+                </div>
+                <ArrowRight className="w-5 h-5 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                Blog
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Generuj artykuły z AI, edytuj prompt, zarządzaj zdjęciami i publikacją wpisów.
               </p>
             </Card>
           </Link>
