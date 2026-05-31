@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import BlogEditor from '@/components/admin/blog-editor';
 import { Card, CardContent } from '@/components/ui/card';
+import type { BlogPostRow } from '@/lib/supabase-blog';
 
 export default function EditBlogPostPage() {
   const params = useParams<{ id: string }>();
-  const [post, setPost] = useState<Record<string, any> | null>(null);
+  const [post, setPost] = useState<BlogPostRow | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 

@@ -30,10 +30,10 @@ type BlogStatus = 'draft' | 'published';
 interface BlogEditorProps {
   mode: 'create' | 'edit';
   postId?: string;
-  initialData?: BlogEditorInitialData | null;
+  initialData?: PartialBlogPostRow | null;
 }
 
-type BlogEditorInitialData = Partial<BlogPostRow>;
+type PartialBlogPostRow = Partial<BlogPostRow>;
 
 interface BlogEditorState {
   slug: string;
@@ -70,7 +70,7 @@ const SECTION_FIELDS: Array<{ key: keyof BlogArticleSections; label: string }> =
   { key: 'summaryRecommendation', label: '10. Podsumowanie i rekomendacja' },
 ];
 
-function createInitialState(data?: BlogEditorInitialData | null): BlogEditorState {
+function createInitialState(data?: PartialBlogPostRow | null): BlogEditorState {
   const gallery = Array.isArray(data?.gallery) ? data.gallery : [];
   const mainUrl = data?.image?.url;
   const normalizedFaqItems = normalizeFaqItems(data?.faq_items);
