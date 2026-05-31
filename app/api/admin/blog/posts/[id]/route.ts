@@ -13,6 +13,7 @@ import {
   type BlogPromptContext,
 } from '@/lib/blog-content';
 import {
+  BLOG_POSTS_TABLE_UNAVAILABLE_ERROR,
   deleteDatabaseBlogPost,
   getDatabaseBlogPostById,
   getUniqueBlogSlug,
@@ -69,20 +70,27 @@ function normalizePromptContext(value: unknown): BlogPromptContext {
 }
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const post = await getDatabaseBlogPostById(id);
+  try {
+    const { id } = await params;
+    const post = await getDatabaseBlogPostById(id, { throwOnMissingTable: true });
 
-  if (!post) {
-    return NextResponse.json({ success: false, error: 'Nie znaleziono wpisu' }, { status: 404 });
+    if (!post) {
+      return NextResponse.json({ success: false, error: 'Nie znaleziono wpisu' }, { status: 404 });
+    }
+
+    return NextResponse.json({ success: true, post });
+  } catch (error) {
+    console.error('Error loading blog post:', error);
+    const message = error instanceof Error ? error.message : 'Nie udało się pobrać wpisu';
+    const status = message === BLOG_POSTS_TABLE_UNAVAILABLE_ERROR ? 503 : 500;
+    return NextResponse.json({ success: false, error: message }, { status });
   }
-
-  return NextResponse.json({ success: true, post });
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params;
-    const existing = await getDatabaseBlogPostById(id);
+    const existing = await getDatabaseBlogPostById(id, { throwOnMissingTable: true });
 
     if (!existing) {
       return NextResponse.json({ success: false, error: 'Nie znaleziono wpisu' }, { status: 404 });
@@ -139,7 +147,9 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     });
 
     if (!result.success) {
-      return NextResponse.json({ success: false, error: result.error || 'Nie udało się zaktualizować wpisu' }, { status: 500 });
+      const error = result.error || 'Nie udało się zaktualizować wpisu';
+      const status = error === BLOG_POSTS_TABLE_UNAVAILABLE_ERROR ? 503 : 500;
+      return NextResponse.json({ success: false, error }, { status });
     }
 
     return NextResponse.json({ success: true, post: result.data });
@@ -154,7 +164,9 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
   const result = await deleteDatabaseBlogPost(id);
 
   if (!result.success) {
-    return NextResponse.json({ success: false, error: result.error || 'Nie udało się usunąć wpisu' }, { status: 500 });
+    const error = result.error || 'Nie udało się usunąć wpisu';
+    const status = error === BLOG_POSTS_TABLE_UNAVAILABLE_ERROR ? 503 : 500;
+    return NextResponse.json({ success: false, error }, { status });
   }
 
   return NextResponse.json({ success: true });

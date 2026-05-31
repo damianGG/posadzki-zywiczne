@@ -8,6 +8,15 @@ import {
 } from '@/lib/blog-content';
 import { getSupabaseAdmin, getSupabasePublic } from '@/lib/supabase-realizacje';
 
+type SupabaseErrorLike = {
+  code?: string;
+  message?: string;
+} | null;
+
+const BLOG_POSTS_TABLE_NAME = 'blog_posts';
+const BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE = 'PGRST205';
+export const BLOG_POSTS_TABLE_UNAVAILABLE_ERROR = `Tabela ${BLOG_POSTS_TABLE_NAME} nie jest jeszcze dostępna w Supabase. Uruchom migrację supabase/migrations/005_blog_posts.sql.`;
+
 export interface BlogPostRow {
   id: string;
   slug: string;
@@ -64,6 +73,34 @@ function isBlogPostRow(value: unknown): value is BlogPostRow {
   return Boolean(value && typeof value === 'object' && 'slug' in value && 'title' in value);
 }
 
+function isBlogPostsTableUnavailable(error: SupabaseErrorLike): boolean {
+  const message = error?.message || '';
+
+  return error?.code === BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE
+    || message.includes(`Could not find the table 'public.${BLOG_POSTS_TABLE_NAME}' in the schema cache`);
+}
+
+function getBlogPostsErrorMessage(error: SupabaseErrorLike, fallback: string): string {
+  if (isBlogPostsTableUnavailable(error)) {
+    return BLOG_POSTS_TABLE_UNAVAILABLE_ERROR;
+  }
+
+  return error?.message || fallback;
+}
+
+function logBlogPostsReadError(context: string, error: SupabaseErrorLike) {
+  if (!error) {
+    return;
+  }
+
+  if (isBlogPostsTableUnavailable(error)) {
+    console.warn(`${BLOG_POSTS_TABLE_UNAVAILABLE_ERROR} (${context})`);
+    return;
+  }
+
+  console.error(`Error ${context}:`, error);
+}
+
 export function mapBlogRowToPost(row: BlogPostRow): BlogPost {
   const author = row.author && typeof row.author === 'object'
     ? { ...DEFAULT_BLOG_AUTHOR, ...row.author }
@@ -103,6 +140,7 @@ export function mapBlogRowToPost(row: BlogPostRow): BlogPost {
 export async function listDatabaseBlogPosts(options?: {
   status?: 'published' | 'draft';
   includeDrafts?: boolean;
+  throwOnMissingTable?: boolean;
 }): Promise<BlogPostRow[]> {
   const supabase = options?.includeDrafts ? getSupabaseAdmin() : getSupabasePublic();
 
@@ -121,7 +159,11 @@ export async function listDatabaseBlogPosts(options?: {
   const { data, error } = await query;
 
   if (error) {
-    console.error('Error listing database blog posts:', error);
+    if (isBlogPostsTableUnavailable(error) && options?.throwOnMissingTable) {
+      throw new Error(BLOG_POSTS_TABLE_UNAVAILABLE_ERROR);
+    }
+
+    logBlogPostsReadError('listing database blog posts', error);
     return [];
   }
 
@@ -144,14 +186,14 @@ export async function getDatabaseBlogPostBySlug(slug: string, includeDrafts = fa
   const { data, error } = await query.maybeSingle();
 
   if (error) {
-    console.error('Error loading blog post by slug:', error);
+    logBlogPostsReadError('loading blog post by slug', error);
     return null;
   }
 
   return isBlogPostRow(data) ? data : null;
 }
 
-export async function getDatabaseBlogPostById(id: string): Promise<BlogPostRow | null> {
+export async function getDatabaseBlogPostById(id: string, options?: { throwOnMissingTable?: boolean }): Promise<BlogPostRow | null> {
   const supabase = getSupabaseAdmin();
 
   if (!supabase) {
@@ -161,7 +203,11 @@ export async function getDatabaseBlogPostById(id: string): Promise<BlogPostRow |
   const { data, error } = await supabase.from('blog_posts').select('*').eq('id', id).maybeSingle();
 
   if (error) {
-    console.error('Error loading blog post by id:', error);
+    if (isBlogPostsTableUnavailable(error) && options?.throwOnMissingTable) {
+      throw new Error(BLOG_POSTS_TABLE_UNAVAILABLE_ERROR);
+    }
+
+    logBlogPostsReadError('loading blog post by id', error);
     return null;
   }
 
@@ -182,8 +228,13 @@ export async function createDatabaseBlogPost(input: BlogPostInput): Promise<{ su
     .single();
 
   if (error) {
-    console.error('Error creating blog post:', error);
-    return { success: false, error: error.message };
+    const message = getBlogPostsErrorMessage(error, 'Nie udało się zapisać wpisu blogowego');
+    if (isBlogPostsTableUnavailable(error)) {
+      console.warn(`${message} (creating blog post)`);
+    } else {
+      console.error('Error creating blog post:', error);
+    }
+    return { success: false, error: message };
   }
 
   return { success: true, data: data as BlogPostRow };
@@ -204,8 +255,13 @@ export async function updateDatabaseBlogPost(id: string, input: Partial<BlogPost
     .single();
 
   if (error) {
-    console.error('Error updating blog post:', error);
-    return { success: false, error: error.message };
+    const message = getBlogPostsErrorMessage(error, 'Nie udało się zaktualizować wpisu blogowego');
+    if (isBlogPostsTableUnavailable(error)) {
+      console.warn(`${message} (updating blog post)`);
+    } else {
+      console.error('Error updating blog post:', error);
+    }
+    return { success: false, error: message };
   }
 
   return { success: true, data: data as BlogPostRow };
@@ -221,8 +277,13 @@ export async function deleteDatabaseBlogPost(id: string): Promise<{ success: boo
   const { error } = await supabase.from('blog_posts').delete().eq('id', id);
 
   if (error) {
-    console.error('Error deleting blog post:', error);
-    return { success: false, error: error.message };
+    const message = getBlogPostsErrorMessage(error, 'Nie udało się usunąć wpisu blogowego');
+    if (isBlogPostsTableUnavailable(error)) {
+      console.warn(`${message} (deleting blog post)`);
+    } else {
+      console.error('Error deleting blog post:', error);
+    }
+    return { success: false, error: message };
   }
 
   return { success: true };
@@ -249,7 +310,11 @@ export async function getUniqueBlogSlug(baseSlug: string, excludeId?: string): P
     const { data, error } = await query.maybeSingle();
 
     if (error && error.code !== 'PGRST116') {
-      console.error('Error checking blog slug:', error);
+      if (isBlogPostsTableUnavailable(error)) {
+        console.warn(`${BLOG_POSTS_TABLE_UNAVAILABLE_ERROR} (checking blog slug)`);
+      } else {
+        console.error('Error checking blog slug:', error);
+      }
       return slug;
     }
 

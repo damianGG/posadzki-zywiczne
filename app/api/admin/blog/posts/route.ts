@@ -13,6 +13,7 @@ import {
   type BlogPromptContext,
 } from '@/lib/blog-content';
 import {
+  BLOG_POSTS_TABLE_UNAVAILABLE_ERROR,
   createDatabaseBlogPost,
   getUniqueBlogSlug,
   listDatabaseBlogPosts,
@@ -69,11 +70,13 @@ function normalizePromptContext(value: unknown): BlogPromptContext {
 
 export async function GET() {
   try {
-    const posts = await listDatabaseBlogPosts({ includeDrafts: true });
+    const posts = await listDatabaseBlogPosts({ includeDrafts: true, throwOnMissingTable: true });
     return NextResponse.json({ success: true, posts });
   } catch (error) {
     console.error('Error listing admin blog posts:', error);
-    return NextResponse.json({ success: false, error: 'Nie udało się pobrać wpisów bloga' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Nie udało się pobrać wpisów bloga';
+    const status = message === BLOG_POSTS_TABLE_UNAVAILABLE_ERROR ? 503 : 500;
+    return NextResponse.json({ success: false, error: message }, { status });
   }
 }
 
@@ -133,7 +136,9 @@ export async function POST(request: NextRequest) {
     });
 
     if (!result.success) {
-      return NextResponse.json({ success: false, error: result.error || 'Nie udało się zapisać wpisu' }, { status: 500 });
+      const error = result.error || 'Nie udało się zapisać wpisu';
+      const status = error === BLOG_POSTS_TABLE_UNAVAILABLE_ERROR ? 503 : 500;
+      return NextResponse.json({ success: false, error }, { status });
     }
 
     return NextResponse.json({ success: true, post: result.data });

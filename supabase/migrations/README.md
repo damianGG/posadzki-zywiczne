@@ -1,6 +1,6 @@
-# Supabase Migrations for Social Media Integration
+# Supabase Migrations
 
-This directory contains SQL migrations for the social media integration feature.
+This directory contains SQL migrations for Supabase-backed features in the application.
 
 ## Migrations
 
@@ -10,13 +10,19 @@ Creates the core tables for social media functionality:
 - `oauth_tokens` - Stores OAuth authentication tokens
 - `social_media_logs` - Audit log for all operations
 
+### 005_blog_posts.sql
+Creates the `blog_posts` table used by the admin blog workflow:
+- stores generated and manually edited blog articles
+- keeps prompt context, article sections, FAQ items, SEO metadata, and image gallery data
+- enables public read access only for published posts while service-role server routes handle admin writes
+
 ## How to Apply Migrations
 
 ### Option 1: Supabase Dashboard (Recommended)
 
 1. Go to your Supabase project dashboard
 2. Navigate to **SQL Editor**
-3. Copy the contents of `001_social_media_tables.sql`
+3. Copy the contents of the migration you want to apply, for example `001_social_media_tables.sql` or `005_blog_posts.sql`
 4. Paste into the SQL Editor
 5. Click **Run** to execute the migration
 
