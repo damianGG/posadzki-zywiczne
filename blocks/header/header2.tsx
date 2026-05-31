@@ -28,6 +28,8 @@ interface NavigationItem {
     description?: string
     image?: string
     items?: NavigationSubItem[]
+    badge?: string
+    disabled?: boolean
 }
 
 export const Header2 = () => {
@@ -49,8 +51,9 @@ export const Header2 = () => {
         },
         {
             title: "Sklep",
-            href: "/sklep",
             description: "",
+            badge: "Dostępny wkrótce",
+            disabled: true,
         },
         {
             title: "Balkony i Tarasy",
@@ -139,15 +142,31 @@ export const Header2 = () => {
                                 <NavigationMenuItem key={item.title} className="relative" onMouseLeave={() => setHoveredSubItem(null)}>
                                     {item.href ? (
                                         <Link href={item.href} passHref>
-                                            <Button variant="ghost" size="sm" className="text-sm relative">
-                                                {item.title}
-                                                {(item.title === "Galeria" || item.title === "Realizacje") && (
-                                                    <span className="absolute -top-1 -right-1 bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
-                                                        NEW
-                                                    </span>
-                                                )}
+                                            <Button variant="ghost" size="sm" className="text-sm">
+                                                <span className="flex items-center gap-2">
+                                                    {item.title}
+                                                    {item.badge ? (
+                                                        <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white">
+                                                            {item.badge}
+                                                        </span>
+                                                    ) : null}
+                                                </span>
                                             </Button>
                                         </Link>
+                                    ) : item.disabled ? (
+                                        <span
+                                            aria-disabled="true"
+                                            className="inline-flex h-9 cursor-not-allowed items-center rounded-md px-3 text-sm text-muted-foreground opacity-70"
+                                        >
+                                            <span className="flex items-center gap-2">
+                                                {item.title}
+                                                {item.badge ? (
+                                                    <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white">
+                                                        {item.badge}
+                                                    </span>
+                                                ) : null}
+                                            </span>
+                                        </span>
                                     ) : (
                                         <>
                                             <NavigationMenuTrigger
@@ -241,21 +260,30 @@ export const Header2 = () => {
                 <div className="container py-4 space-y-4">
                     {navigationItems.map((item) => (
                         <div key={item.title}>
-                            <Link
-                                href={item.href ?? "#"}
-                                className="flex justify-between items-center py-2 relative"
-                                onClick={() => setOpen(false)}
-                            >
-                                <span className="text-base font-medium flex items-center gap-2">
-                                    {item.title}
-                                    {(item.title === "Galeria" || item.title === "Realizacje") && (
-                                        <span className="bg-gradient-to-r from-purple-600 to-pink-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse">
-                                            NEW
-                                        </span>
-                                    )}
-                                </span>
-                                <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
-                            </Link>
+                            {item.href ? (
+                                <Link
+                                    href={item.href}
+                                    className="flex items-center justify-between py-2"
+                                    onClick={() => setOpen(false)}
+                                >
+                                    <span className="text-base font-medium">{item.title}</span>
+                                    <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
+                                </Link>
+                            ) : (
+                                <div
+                                    aria-disabled="true"
+                                    className="flex items-center justify-between py-2 text-muted-foreground opacity-70"
+                                >
+                                    <span className="flex items-center gap-2 text-base font-medium">
+                                        {item.title}
+                                        {item.badge ? (
+                                            <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white">
+                                                {item.badge}
+                                            </span>
+                                        ) : null}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     ))}
                     <div className="pt-4 border-t space-y-3">
