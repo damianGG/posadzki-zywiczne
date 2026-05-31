@@ -226,6 +226,7 @@ export async function deleteDatabaseBlogPost(id: string): Promise<{ success: boo
 
 export async function getUniqueBlogSlug(baseSlug: string, excludeId?: string): Promise<string> {
   const supabase = getSupabaseAdmin();
+  const maxSlugAttempts = 100;
 
   if (!supabase) {
     return baseSlug;
@@ -234,7 +235,7 @@ export async function getUniqueBlogSlug(baseSlug: string, excludeId?: string): P
   let slug = baseSlug;
   let counter = 2;
 
-  while (true) {
+  while (counter <= maxSlugAttempts) {
     let query = supabase.from('blog_posts').select('id').eq('slug', slug);
 
     if (excludeId) {
@@ -255,4 +256,6 @@ export async function getUniqueBlogSlug(baseSlug: string, excludeId?: string): P
     slug = `${baseSlug}-${counter}`;
     counter += 1;
   }
+
+  throw new Error('Nie udało się wygenerować unikalnego slugu wpisu blogowego');
 }

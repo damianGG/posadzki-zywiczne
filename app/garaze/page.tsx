@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const revalidate = 60
+export const revalidate = 30
 
 export default async function Home() {
     const latestPosts = await getLatestBlogPosts(3)

@@ -13,8 +13,10 @@ import { Textarea } from '@/components/ui/textarea';
 import CloudinaryUploadWidget from '@/components/admin/cloudinary-upload-widget';
 import {
   buildPromptFromTemplate,
+  createBlogFaqId,
   DEFAULT_BLOG_PROMPT_TEMPLATE,
   normalizeArticleSections,
+  normalizeFaqItems,
   slugifyBlogText,
   type BlogArticleSections,
   type BlogFaqItem,
@@ -68,6 +70,7 @@ const SECTION_FIELDS: Array<{ key: keyof BlogArticleSections; label: string }> =
 function createInitialState(data?: Record<string, any> | null): BlogEditorState {
   const gallery = Array.isArray(data?.gallery) ? data.gallery : [];
   const mainUrl = data?.image?.url;
+  const normalizedFaqItems = normalizeFaqItems(data?.faq_items);
   const images = gallery.length > 0
     ? gallery.map((image: BlogImageItem) => ({ ...image, isMain: image.url === mainUrl }))
     : data?.image?.url
@@ -108,7 +111,7 @@ function createInitialState(data?: Record<string, any> | null): BlogEditorState 
       additionalNotes: data?.prompt_context?.additionalNotes || '',
     },
     articleSections: normalizeArticleSections(data?.article_sections),
-    faqItems: Array.isArray(data?.faq_items) && data.faq_items.length > 0 ? data.faq_items : [{ question: '', answer: '' }],
+    faqItems: normalizedFaqItems.length > 0 ? normalizedFaqItems : [{ id: createBlogFaqId(), question: '', answer: '' }],
     images,
   };
 }
@@ -182,7 +185,7 @@ export default function BlogEditor({ mode, postId, initialData }: BlogEditorProp
   const addFaqItem = () => {
     setFormState((prev) => ({
       ...prev,
-      faqItems: [...prev.faqItems, { question: '', answer: '' }],
+      faqItems: [...prev.faqItems, { id: createBlogFaqId(), question: '', answer: '' }],
     }));
   };
 
@@ -619,7 +622,7 @@ export default function BlogEditor({ mode, postId, initialData }: BlogEditorProp
           </CardHeader>
           <CardContent className="space-y-4">
             {formState.faqItems.map((item, index) => (
-              <div key={`${index}-${item.question}`} className="border rounded-lg p-4 space-y-3">
+              <div key={item.id || `${index}`} className="border rounded-lg p-4 space-y-3">
                 <div>
                   <Label>Pytanie #{index + 1}</Label>
                   <Input value={item.question} onChange={(e) => handleFaqChange(index, 'question', e.target.value)} />

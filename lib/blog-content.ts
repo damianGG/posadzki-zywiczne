@@ -30,6 +30,7 @@ export interface BlogArticleSections {
 }
 
 export interface BlogFaqItem {
+  id?: string;
   question: string;
   answer: string;
 }
@@ -102,6 +103,41 @@ W artykule:
 * stosuj język naturalny i konwersacyjny.
 
 Celem artykułu jest bycie najlepszym źródłem wiedzy dla AI Google oraz dla użytkownika szukającego odpowiedzi.`;
+
+export const BLOG_GENERATION_RESPONSE_FORMAT = `{
+  "title": "SEO title",
+  "excerpt": "2-3 zdania streszczenia",
+  "category": "Porady",
+  "tags": ["tag1", "tag2"],
+  "keywords": ["fraza 1", "fraza 2"],
+  "metaTitle": "...",
+  "metaDescription": "...",
+  "ogTitle": "...",
+  "ogDescription": "...",
+  "imageAlt": "...",
+  "imageCaption": "...",
+  "sections": {
+    "quickAnswer": "...",
+    "whyClientsAsk": "...",
+    "experienceFromProjects": "...",
+    "numbersAndCosts": "...",
+    "whenRecommended": "...",
+    "whenNotRecommended": "...",
+    "alternativesComparison": "...",
+    "investorMistakes": "...",
+    "faqLead": "krótkie wprowadzenie do sekcji FAQ",
+    "summaryRecommendation": "..."
+  },
+  "faq": [
+    { "question": "...", "answer": "..." },
+    { "question": "...", "answer": "..." },
+    { "question": "...", "answer": "..." },
+    { "question": "...", "answer": "..." }
+  ]
+}`;
+
+// Keep room for numeric suffixes like "-12" while staying comfortably below common URL slug limits.
+const MAX_BLOG_SLUG_LENGTH = 96;
 
 const SECTION_TITLES: Record<keyof BlogArticleSections, string> = {
   quickAnswer: 'Krótka odpowiedź na pytanie klienta',
@@ -183,7 +219,11 @@ export function slugifyBlogText(value: string): string {
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '')
-    .slice(0, 96);
+    .slice(0, MAX_BLOG_SLUG_LENGTH);
+}
+
+export function createBlogFaqId(): string {
+  return `faq-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 export function buildPromptFromTemplate(template: string, context: BlogPromptContext): string {
@@ -238,12 +278,15 @@ export function normalizeFaqItems(value: unknown): BlogFaqItem[] {
 
       const question = 'question' in item ? String(item.question || '').trim() : '';
       const answer = 'answer' in item ? String(item.answer || '').trim() : '';
+      const id = 'id' in item && typeof item.id === 'string' && item.id.trim()
+        ? item.id.trim()
+        : createBlogFaqId();
 
       if (!question || !answer) {
         return null;
       }
 
-      return { question, answer };
+      return { id, question, answer };
     })
     .filter((item): item is BlogFaqItem => item !== null);
 }

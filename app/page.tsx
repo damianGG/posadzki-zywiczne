@@ -18,7 +18,7 @@ import BenefitsSection from "./garaze/components/BenefitsSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
 import { getLatestBlogPosts } from "@/lib/blog"
 
-export const revalidate = 60
+export const revalidate = 30
 
 export default async function Home() {
   const latestPosts = await getLatestBlogPosts(3)

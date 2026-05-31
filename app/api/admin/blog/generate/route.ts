@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
 import {
+  BLOG_GENERATION_RESPONSE_FORMAT,
   buildPromptFromTemplate,
   normalizeArticleSections,
   normalizeFaqItems,
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
         },
         {
           role: 'user',
-          content: `${resolvedPrompt}\n\nZwróć JSON w formacie:\n{\n  "title": "SEO title",\n  "excerpt": "2-3 zdania streszczenia",\n  "category": "Porady",\n  "tags": ["tag1", "tag2"],\n  "keywords": ["fraza 1", "fraza 2"],\n  "metaTitle": "...",\n  "metaDescription": "...",\n  "ogTitle": "...",\n  "ogDescription": "...",\n  "imageAlt": "...",\n  "imageCaption": "...",\n  "sections": {\n    "quickAnswer": "...",\n    "whyClientsAsk": "...",\n    "experienceFromProjects": "...",\n    "numbersAndCosts": "...",\n    "whenRecommended": "...",\n    "whenNotRecommended": "...",\n    "alternativesComparison": "...",\n    "investorMistakes": "...",\n    "faqLead": "krótkie wprowadzenie do sekcji FAQ",\n    "summaryRecommendation": "..."\n  },\n  "faq": [\n    { "question": "...", "answer": "..." },\n    { "question": "...", "answer": "..." },\n    { "question": "...", "answer": "..." },\n    { "question": "...", "answer": "..." }\n  ]\n}`,
+          content: `${resolvedPrompt}\n\nZwróć JSON w formacie:\n${BLOG_GENERATION_RESPONSE_FORMAT}`,
         },
       ],
     });
