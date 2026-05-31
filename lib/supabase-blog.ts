@@ -15,7 +15,8 @@ type SupabaseErrorLike = {
 
 const BLOG_POSTS_TABLE_NAME = 'blog_posts';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE = 'PGRST205';
-const BLOG_POSTS_TABLE_SCHEMA_CACHE_MESSAGE = `Could not find the table 'public.${BLOG_POSTS_TABLE_NAME}' in the schema cache`;
+const BLOG_POSTS_TABLE_SCHEMA_CACHE_PREFIX = 'Could not find the table';
+const BLOG_POSTS_TABLE_SCHEMA_CACHE_TARGET = `public.${BLOG_POSTS_TABLE_NAME}`;
 export const BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE = `Tabela ${BLOG_POSTS_TABLE_NAME} nie jest jeszcze dostępna w Supabase. Uruchom migrację supabase/migrations/005_blog_posts.sql.`;
 
 export interface BlogPostRow {
@@ -81,7 +82,15 @@ function isBlogPostsTableUnavailable(error: SupabaseErrorLike): boolean {
     return true;
   }
 
-  return !error?.code && message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_MESSAGE);
+  const matchedFallback = !error?.code
+    && message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_PREFIX)
+    && message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_TARGET);
+
+  if (matchedFallback) {
+    console.warn(`Detected fallback Supabase schema-cache error for ${BLOG_POSTS_TABLE_NAME}: ${message}`);
+  }
+
+  return matchedFallback;
 }
 
 function getBlogPostsErrorMessage(error: SupabaseErrorLike, fallback: string): string {
