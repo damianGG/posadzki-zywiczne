@@ -14,10 +14,11 @@ type SupabaseErrorDetails = {
 };
 
 const BLOG_POSTS_TABLE_NAME = 'blog_posts';
+const BLOG_POSTS_MIGRATION_PATH = 'supabase/migrations/005_blog_posts.sql';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE = 'PGRST205';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_HINT = 'schema cache';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_TARGET = `public.${BLOG_POSTS_TABLE_NAME}`;
-export const BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE = `Tabela ${BLOG_POSTS_TABLE_NAME} nie jest jeszcze dostępna w Supabase. Uruchom migrację supabase/migrations/005_blog_posts.sql.`;
+export const BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE = `Tabela ${BLOG_POSTS_TABLE_NAME} nie jest jeszcze dostępna w Supabase. Uruchom migrację ${BLOG_POSTS_MIGRATION_PATH}.`;
 
 export class BlogPostsTableUnavailableError extends Error {
   constructor() {
@@ -98,7 +99,7 @@ function isBlogPostsTableUnavailable(error: SupabaseErrorDetails): boolean {
   return matchedFallback;
 }
 
-function getBlogPostsErrorMessage(error: SupabaseErrorDetails, fallback: string, tableUnavailable = isBlogPostsTableUnavailable(error)): string {
+function getBlogPostsErrorMessage(error: SupabaseErrorDetails, fallback: string, tableUnavailable: boolean): string {
   if (tableUnavailable) {
     return BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE;
   }
