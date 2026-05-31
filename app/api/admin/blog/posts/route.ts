@@ -24,7 +24,7 @@ function normalizeImages(value: unknown): BlogImageItem[] {
   }
 
   return value
-    .map((image) => {
+    .map<BlogImageItem | null>((image) => {
       if (!image || typeof image !== 'object') {
         return null;
       }
