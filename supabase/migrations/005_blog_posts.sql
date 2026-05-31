@@ -35,10 +35,13 @@ CREATE POLICY "Allow public read access to published blog posts"
   FOR SELECT
   USING (status = 'published');
 
+-- Admin CRUD goes through Next.js server routes using the Supabase service role key,
+-- so we intentionally keep write access limited to the service role instead of browser auth.
 CREATE POLICY "Allow service role full access to blog posts"
   ON blog_posts
   FOR ALL
-  USING (auth.role() = 'service_role');
+  USING (auth.role() = 'service_role')
+  WITH CHECK (auth.role() = 'service_role');
 
 CREATE TRIGGER update_blog_posts_updated_at
   BEFORE UPDATE ON blog_posts

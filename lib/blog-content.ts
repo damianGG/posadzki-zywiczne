@@ -223,7 +223,11 @@ export function slugifyBlogText(value: string): string {
 }
 
 export function createBlogFaqId(): string {
-  return `faq-${Math.random().toString(36).slice(2, 10)}`;
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+
+  return `faq-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 export function buildPromptFromTemplate(template: string, context: BlogPromptContext): string {

@@ -257,5 +257,5 @@ export async function getUniqueBlogSlug(baseSlug: string, excludeId?: string): P
     counter += 1;
   }
 
-  throw new Error('Nie udało się wygenerować unikalnego slugu wpisu blogowego');
+  throw new Error(`Nie udało się wygenerować unikalnego slugu wpisu blogowego po ${maxSlugAttempts} próbach`);
 }

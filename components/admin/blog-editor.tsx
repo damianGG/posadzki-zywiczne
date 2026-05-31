@@ -150,7 +150,7 @@ export default function BlogEditor({ mode, postId, initialData }: BlogEditorProp
 
   const uploadFolder = useMemo(() => {
     const base = slugifyBlogText(formState.slug || formState.title || formState.promptContext.topic || 'artykul-blogowy');
-    return `blog/${base || 'artykul-blogowy'}`;
+    return `blog/${base}`;
   }, [formState.slug, formState.title, formState.promptContext.topic]);
 
   const handlePromptContextChange = (field: keyof BlogPromptContext, value: string) => {
