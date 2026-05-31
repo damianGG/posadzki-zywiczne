@@ -8,10 +8,10 @@ import {
 } from '@/lib/blog-content';
 import { getSupabaseAdmin, getSupabasePublic } from '@/lib/supabase-realizacje';
 
-type SupabaseErrorLike = {
+type SupabaseErrorDetails = {
   code?: string;
   message?: string;
-} | null;
+};
 
 const BLOG_POSTS_TABLE_NAME = 'blog_posts';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE = 'PGRST205';
@@ -82,7 +82,7 @@ function isBlogPostRow(value: unknown): value is BlogPostRow {
   return Boolean(value && typeof value === 'object' && 'slug' in value && 'title' in value);
 }
 
-function isBlogPostsTableUnavailable(error: SupabaseErrorLike): boolean {
+function isBlogPostsTableUnavailable(error: SupabaseErrorDetails): boolean {
   if (error?.code === BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE) {
     return true;
   }
@@ -98,19 +98,15 @@ function isBlogPostsTableUnavailable(error: SupabaseErrorLike): boolean {
   return matchedFallback;
 }
 
-function getBlogPostsErrorMessage(error: SupabaseErrorLike, fallback: string): string {
-  if (isBlogPostsTableUnavailable(error)) {
+function getBlogPostsErrorMessage(error: SupabaseErrorDetails, fallback: string, tableUnavailable = isBlogPostsTableUnavailable(error)): string {
+  if (tableUnavailable) {
     return BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE;
   }
 
   return error?.message || fallback;
 }
 
-function logBlogPostsReadError(context: string, error: SupabaseErrorLike) {
-  if (!error) {
-    return;
-  }
-
+function logBlogPostsReadError(context: string, error: SupabaseErrorDetails) {
   if (isBlogPostsTableUnavailable(error)) {
     console.warn(`${BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE} (${context})`);
     return;
@@ -246,8 +242,8 @@ export async function createDatabaseBlogPost(input: BlogPostInput): Promise<{ su
     .single();
 
   if (error) {
-    const message = getBlogPostsErrorMessage(error, 'Nie udało się zapisać wpisu blogowego');
     const tableUnavailable = isBlogPostsTableUnavailable(error);
+    const message = getBlogPostsErrorMessage(error, 'Nie udało się zapisać wpisu blogowego', tableUnavailable);
     if (tableUnavailable) {
       console.warn(`${message} (creating blog post)`);
     } else {
@@ -274,8 +270,8 @@ export async function updateDatabaseBlogPost(id: string, input: Partial<BlogPost
     .single();
 
   if (error) {
-    const message = getBlogPostsErrorMessage(error, 'Nie udało się zaktualizować wpisu blogowego');
     const tableUnavailable = isBlogPostsTableUnavailable(error);
+    const message = getBlogPostsErrorMessage(error, 'Nie udało się zaktualizować wpisu blogowego', tableUnavailable);
     if (tableUnavailable) {
       console.warn(`${message} (updating blog post)`);
     } else {
@@ -297,8 +293,8 @@ export async function deleteDatabaseBlogPost(id: string): Promise<{ success: boo
   const { error } = await supabase.from('blog_posts').delete().eq('id', id);
 
   if (error) {
-    const message = getBlogPostsErrorMessage(error, 'Nie udało się usunąć wpisu blogowego');
     const tableUnavailable = isBlogPostsTableUnavailable(error);
+    const message = getBlogPostsErrorMessage(error, 'Nie udało się usunąć wpisu blogowego', tableUnavailable);
     if (tableUnavailable) {
       console.warn(`${message} (deleting blog post)`);
     } else {
