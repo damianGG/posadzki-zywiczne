@@ -51,7 +51,6 @@ export const Header2 = () => {
         },
         {
             title: "Sklep",
-            description: "",
             badge: "Dostępny wkrótce",
             disabled: true,
         },
@@ -110,6 +109,15 @@ export const Header2 = () => {
         },
     }
 
+    const navigationBadgeClassName =
+        "rounded-full bg-zinc-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white"
+
+    const renderBadge = (badge?: string) =>
+        badge ? <span className={navigationBadgeClassName}>{badge}</span> : null
+
+    const getDisabledNavigationAriaLabel = (item: NavigationItem) =>
+        item.badge ? `${item.title} - ${item.badge}` : item.title
+
     return (
         <header
             className={`sticky top-0 left-0 z-40 w-full bg-zinc-50`}
@@ -140,33 +148,27 @@ export const Header2 = () => {
                         <NavigationMenuList className="flex justify-center gap-2 flex-row">
                             {navigationItems.map((item) => (
                                 <NavigationMenuItem key={item.title} className="relative" onMouseLeave={() => setHoveredSubItem(null)}>
-                                    {item.href ? (
-                                        <Link href={item.href} passHref>
-                                            <Button variant="ghost" size="sm" className="text-sm">
-                                                <span className="flex items-center gap-2">
-                                                    {item.title}
-                                                    {item.badge ? (
-                                                        <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white">
-                                                            {item.badge}
-                                                        </span>
-                                                    ) : null}
-                                                </span>
-                                            </Button>
-                                        </Link>
-                                    ) : item.disabled ? (
-                                        <span
+                                    {item.disabled ? (
+                                        <button
+                                            type="button"
                                             aria-disabled="true"
+                                            aria-label={getDisabledNavigationAriaLabel(item)}
                                             className="inline-flex h-9 cursor-not-allowed items-center rounded-md px-3 text-sm text-muted-foreground opacity-70"
                                         >
                                             <span className="flex items-center gap-2">
                                                 {item.title}
-                                                {item.badge ? (
-                                                    <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white">
-                                                        {item.badge}
-                                                    </span>
-                                                ) : null}
+                                                {renderBadge(item.badge)}
                                             </span>
-                                        </span>
+                                        </button>
+                                    ) : item.href ? (
+                                        <Link href={item.href} passHref>
+                                            <Button variant="ghost" size="sm" className="text-sm">
+                                                <span className="flex items-center gap-2">
+                                                    {item.title}
+                                                    {renderBadge(item.badge)}
+                                                </span>
+                                            </Button>
+                                        </Link>
                                     ) : (
                                         <>
                                             <NavigationMenuTrigger
@@ -260,7 +262,19 @@ export const Header2 = () => {
                 <div className="container py-4 space-y-4">
                     {navigationItems.map((item) => (
                         <div key={item.title}>
-                            {item.href ? (
+                            {item.disabled ? (
+                                <button
+                                    type="button"
+                                    aria-disabled="true"
+                                    aria-label={getDisabledNavigationAriaLabel(item)}
+                                    className="flex w-full items-center justify-between py-2 text-left text-muted-foreground opacity-70"
+                                >
+                                    <span className="flex items-center gap-2 text-base font-medium">
+                                        {item.title}
+                                        {renderBadge(item.badge)}
+                                    </span>
+                                </button>
+                            ) : item.href ? (
                                 <Link
                                     href={item.href}
                                     className="flex items-center justify-between py-2"
@@ -271,16 +285,11 @@ export const Header2 = () => {
                                 </Link>
                             ) : (
                                 <div
-                                    aria-disabled="true"
-                                    className="flex items-center justify-between py-2 text-muted-foreground opacity-70"
+                                    className="flex items-center justify-between py-2 text-muted-foreground"
                                 >
                                     <span className="flex items-center gap-2 text-base font-medium">
                                         {item.title}
-                                        {item.badge ? (
-                                            <span className="rounded-full bg-zinc-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white">
-                                                {item.badge}
-                                            </span>
-                                        ) : null}
+                                        {renderBadge(item.badge)}
                                     </span>
                                 </div>
                             )}
