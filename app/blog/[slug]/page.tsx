@@ -10,7 +10,7 @@ interface BlogPostPageProps {
 }
 
 export async function generateStaticParams() {
-    const posts = getAllBlogPosts()
+    const posts = await getAllBlogPosts()
     return posts.map((post) => ({
         slug: post.id,
     }))
@@ -18,7 +18,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
     const { slug } = await params
-    const post = getBlogPostBySlug(slug)
+    const post = await getBlogPostBySlug(slug)
 
     if (!post) {
         return {
@@ -58,11 +58,11 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
         },
     }
 }
-export const dynamic = "force-static"
+export const revalidate = 60
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
     const { slug } = await params
-    const post = getBlogPostBySlug(slug)
+    const post = await getBlogPostBySlug(slug)
 
     if (!post) {
         notFound()

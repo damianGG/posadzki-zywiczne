@@ -16,12 +16,12 @@ import ProblemSolutionSection from "./garaze/components/issuse-solution";
 import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-renovation-timeline";
 import BenefitsSection from "./garaze/components/BenefitsSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
-import { getLatestBlogPosts, getBlogPostsByCategories } from "@/lib/blog"
+import { getLatestBlogPosts } from "@/lib/blog"
 
-export const dynamic = "force-static"
+export const revalidate = 60
 
-export default function Home() {
-  const latestPosts = getLatestBlogPosts(3)
+export default async function Home() {
+  const latestPosts = await getLatestBlogPosts(3)
 
   return (
     <>

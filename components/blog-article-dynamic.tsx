@@ -118,6 +118,26 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
           <figcaption className="text-sm text-muted-foreground mt-2 text-center">{post.image.caption}</figcaption>
         </div>
 
+        {post.gallery && post.gallery.length > 1 && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold mb-4">Zdjęcia z realizacji</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {post.gallery
+                .filter((imageUrl) => imageUrl !== post.image.url)
+                .map((imageUrl) => (
+                  <div key={imageUrl} className="relative aspect-[4/3] overflow-hidden rounded-lg border">
+                    <Image
+                      src={imageUrl}
+                      alt={post.image.alt}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ))}
+            </div>
+          </section>
+        )}
+
         {/* Article Content */}
         <div
           className="prose prose-lg max-w-none dark:prose-invert 

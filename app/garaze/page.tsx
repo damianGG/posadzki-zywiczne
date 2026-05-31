@@ -14,7 +14,7 @@ import type { Metadata } from 'next'
 import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-renovation-timeline";
 import BlogPreviewSection from "@/components/blog-preview-section";
 
-import { getLatestBlogPosts, getBlogPostsByCategories } from "@/lib/blog"
+import { getLatestBlogPosts } from "@/lib/blog"
 
 export const metadata: Metadata = {
   title: "Posadzki Żywiczne do Garaży | Wytrzymałe i Odporne",
@@ -40,11 +40,10 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = "force-static"
+export const revalidate = 60
 
-export default function Home() {
-    const latestPosts = getLatestBlogPosts(3)
-    const postsByCategory = getBlogPostsByCategories()
+export default async function Home() {
+    const latestPosts = await getLatestBlogPosts(3)
 
     return (
         <>
