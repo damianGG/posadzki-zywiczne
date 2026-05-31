@@ -19,6 +19,13 @@ const BLOG_POSTS_TABLE_SCHEMA_CACHE_PREFIX = 'Could not find the table';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_TARGET = `public.${BLOG_POSTS_TABLE_NAME}`;
 export const BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE = `Tabela ${BLOG_POSTS_TABLE_NAME} nie jest jeszcze dostępna w Supabase. Uruchom migrację supabase/migrations/005_blog_posts.sql.`;
 
+export class BlogPostsTableUnavailableError extends Error {
+  constructor() {
+    super(BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE);
+    this.name = 'BlogPostsTableUnavailableError';
+  }
+}
+
 export interface BlogPostRow {
   id: string;
   slug: string;
@@ -76,12 +83,11 @@ function isBlogPostRow(value: unknown): value is BlogPostRow {
 }
 
 function isBlogPostsTableUnavailable(error: SupabaseErrorLike): boolean {
-  const message = error?.message || '';
-
   if (error?.code === BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE) {
     return true;
   }
 
+  const message = error?.message || '';
   const matchedFallback = !error?.code
     && message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_PREFIX)
     && message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_TARGET);
@@ -173,7 +179,7 @@ export async function listDatabaseBlogPosts(options?: {
 
   if (error) {
     if (isBlogPostsTableUnavailable(error) && options?.throwOnMissingTable) {
-      throw new Error(BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE);
+      throw new BlogPostsTableUnavailableError();
     }
 
     logBlogPostsReadError('listing database blog posts', error);
@@ -217,7 +223,7 @@ export async function getDatabaseBlogPostById(id: string, options?: { throwOnMis
 
   if (error) {
     if (isBlogPostsTableUnavailable(error) && options?.throwOnMissingTable) {
-      throw new Error(BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE);
+      throw new BlogPostsTableUnavailableError();
     }
 
     logBlogPostsReadError('loading blog post by id', error);

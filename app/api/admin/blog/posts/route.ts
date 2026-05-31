@@ -14,6 +14,7 @@ import {
 } from '@/lib/blog-content';
 import {
   BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE,
+  BlogPostsTableUnavailableError,
   createDatabaseBlogPost,
   getUniqueBlogSlug,
   listDatabaseBlogPosts,
@@ -75,7 +76,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error listing admin blog posts:', error);
     const message = error instanceof Error ? error.message : 'Nie udało się pobrać wpisów bloga';
-    const status = message === BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE ? 503 : 500;
+    const status = error instanceof BlogPostsTableUnavailableError ? 503 : 500;
     return NextResponse.json({ success: false, error: message }, { status });
   }
 }
