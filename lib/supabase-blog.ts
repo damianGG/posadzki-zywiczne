@@ -15,7 +15,8 @@ type SupabaseErrorLike = {
 
 const BLOG_POSTS_TABLE_NAME = 'blog_posts';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE = 'PGRST205';
-export const BLOG_POSTS_TABLE_UNAVAILABLE_ERROR = `Tabela ${BLOG_POSTS_TABLE_NAME} nie jest jeszcze dostępna w Supabase. Uruchom migrację supabase/migrations/005_blog_posts.sql.`;
+const BLOG_POSTS_TABLE_SCHEMA_CACHE_MESSAGE = `Could not find the table 'public.${BLOG_POSTS_TABLE_NAME}' in the schema cache`;
+export const BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE = `Tabela ${BLOG_POSTS_TABLE_NAME} nie jest jeszcze dostępna w Supabase. Uruchom migrację supabase/migrations/005_blog_posts.sql.`;
 
 export interface BlogPostRow {
   id: string;
@@ -76,13 +77,16 @@ function isBlogPostRow(value: unknown): value is BlogPostRow {
 function isBlogPostsTableUnavailable(error: SupabaseErrorLike): boolean {
   const message = error?.message || '';
 
-  return error?.code === BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE
-    || message.includes(`Could not find the table 'public.${BLOG_POSTS_TABLE_NAME}' in the schema cache`);
+  if (error?.code === BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE) {
+    return true;
+  }
+
+  return !error?.code && message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_MESSAGE);
 }
 
 function getBlogPostsErrorMessage(error: SupabaseErrorLike, fallback: string): string {
   if (isBlogPostsTableUnavailable(error)) {
-    return BLOG_POSTS_TABLE_UNAVAILABLE_ERROR;
+    return BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE;
   }
 
   return error?.message || fallback;
@@ -94,7 +98,7 @@ function logBlogPostsReadError(context: string, error: SupabaseErrorLike) {
   }
 
   if (isBlogPostsTableUnavailable(error)) {
-    console.warn(`${BLOG_POSTS_TABLE_UNAVAILABLE_ERROR} (${context})`);
+    console.warn(`${BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE} (${context})`);
     return;
   }
 
@@ -160,7 +164,7 @@ export async function listDatabaseBlogPosts(options?: {
 
   if (error) {
     if (isBlogPostsTableUnavailable(error) && options?.throwOnMissingTable) {
-      throw new Error(BLOG_POSTS_TABLE_UNAVAILABLE_ERROR);
+      throw new Error(BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE);
     }
 
     logBlogPostsReadError('listing database blog posts', error);
@@ -204,7 +208,7 @@ export async function getDatabaseBlogPostById(id: string, options?: { throwOnMis
 
   if (error) {
     if (isBlogPostsTableUnavailable(error) && options?.throwOnMissingTable) {
-      throw new Error(BLOG_POSTS_TABLE_UNAVAILABLE_ERROR);
+      throw new Error(BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE);
     }
 
     logBlogPostsReadError('loading blog post by id', error);
@@ -229,7 +233,8 @@ export async function createDatabaseBlogPost(input: BlogPostInput): Promise<{ su
 
   if (error) {
     const message = getBlogPostsErrorMessage(error, 'Nie udało się zapisać wpisu blogowego');
-    if (isBlogPostsTableUnavailable(error)) {
+    const tableUnavailable = isBlogPostsTableUnavailable(error);
+    if (tableUnavailable) {
       console.warn(`${message} (creating blog post)`);
     } else {
       console.error('Error creating blog post:', error);
@@ -256,7 +261,8 @@ export async function updateDatabaseBlogPost(id: string, input: Partial<BlogPost
 
   if (error) {
     const message = getBlogPostsErrorMessage(error, 'Nie udało się zaktualizować wpisu blogowego');
-    if (isBlogPostsTableUnavailable(error)) {
+    const tableUnavailable = isBlogPostsTableUnavailable(error);
+    if (tableUnavailable) {
       console.warn(`${message} (updating blog post)`);
     } else {
       console.error('Error updating blog post:', error);
@@ -278,7 +284,8 @@ export async function deleteDatabaseBlogPost(id: string): Promise<{ success: boo
 
   if (error) {
     const message = getBlogPostsErrorMessage(error, 'Nie udało się usunąć wpisu blogowego');
-    if (isBlogPostsTableUnavailable(error)) {
+    const tableUnavailable = isBlogPostsTableUnavailable(error);
+    if (tableUnavailable) {
       console.warn(`${message} (deleting blog post)`);
     } else {
       console.error('Error deleting blog post:', error);
@@ -311,7 +318,7 @@ export async function getUniqueBlogSlug(baseSlug: string, excludeId?: string): P
 
     if (error && error.code !== 'PGRST116') {
       if (isBlogPostsTableUnavailable(error)) {
-        console.warn(`${BLOG_POSTS_TABLE_UNAVAILABLE_ERROR} (checking blog slug)`);
+        console.warn(`${BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE} (checking blog slug)`);
       } else {
         console.error('Error checking blog slug:', error);
       }

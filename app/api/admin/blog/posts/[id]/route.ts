@@ -13,7 +13,7 @@ import {
   type BlogPromptContext,
 } from '@/lib/blog-content';
 import {
-  BLOG_POSTS_TABLE_UNAVAILABLE_ERROR,
+  BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE,
   deleteDatabaseBlogPost,
   getDatabaseBlogPostById,
   getUniqueBlogSlug,
@@ -82,7 +82,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ id: st
   } catch (error) {
     console.error('Error loading blog post:', error);
     const message = error instanceof Error ? error.message : 'Nie udało się pobrać wpisu';
-    const status = message === BLOG_POSTS_TABLE_UNAVAILABLE_ERROR ? 503 : 500;
+    const status = message === BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE ? 503 : 500;
     return NextResponse.json({ success: false, error: message }, { status });
   }
 }
@@ -148,7 +148,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
     if (!result.success) {
       const error = result.error || 'Nie udało się zaktualizować wpisu';
-      const status = error === BLOG_POSTS_TABLE_UNAVAILABLE_ERROR ? 503 : 500;
+      const status = error === BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE ? 503 : 500;
       return NextResponse.json({ success: false, error }, { status });
     }
 
@@ -165,7 +165,7 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
 
   if (!result.success) {
     const error = result.error || 'Nie udało się usunąć wpisu';
-    const status = error === BLOG_POSTS_TABLE_UNAVAILABLE_ERROR ? 503 : 500;
+    const status = error === BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE ? 503 : 500;
     return NextResponse.json({ success: false, error }, { status });
   }
 
