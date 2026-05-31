@@ -287,7 +287,7 @@ export function normalizeFaqItems(value: unknown): BlogFaqItem[] {
   }
 
   return value
-    .map((item) => {
+    .map<BlogFaqItem | null>((item) => {
       if (!item || typeof item !== 'object') {
         return null;
       }

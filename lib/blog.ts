@@ -30,6 +30,8 @@ export interface BlogPost {
     metaDescription: string;
     keywords: string[];
     canonicalUrl: string;
+    ogTitle?: string;
+    ogDescription?: string;
   };
   featured: boolean;
   status: 'published' | 'draft';
