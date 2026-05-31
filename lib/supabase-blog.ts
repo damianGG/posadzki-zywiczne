@@ -15,7 +15,7 @@ type SupabaseErrorLike = {
 
 const BLOG_POSTS_TABLE_NAME = 'blog_posts';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_CODE = 'PGRST205';
-const BLOG_POSTS_TABLE_SCHEMA_CACHE_PREFIX = 'Could not find the table';
+const BLOG_POSTS_TABLE_SCHEMA_CACHE_HINT = 'schema cache';
 const BLOG_POSTS_TABLE_SCHEMA_CACHE_TARGET = `public.${BLOG_POSTS_TABLE_NAME}`;
 export const BLOG_POSTS_TABLE_UNAVAILABLE_MESSAGE = `Tabela ${BLOG_POSTS_TABLE_NAME} nie jest jeszcze dostępna w Supabase. Uruchom migrację supabase/migrations/005_blog_posts.sql.`;
 
@@ -88,8 +88,7 @@ function isBlogPostsTableUnavailable(error: SupabaseErrorLike): boolean {
   }
 
   const message = error?.message || '';
-  const matchedFallback = !error?.code
-    && message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_PREFIX)
+  const matchedFallback = message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_HINT)
     && message.includes(BLOG_POSTS_TABLE_SCHEMA_CACHE_TARGET);
 
   if (matchedFallback) {
