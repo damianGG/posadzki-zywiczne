@@ -98,7 +98,7 @@ function mergeBlogPosts(databasePosts: BlogPost[], filePosts: BlogPost[]) {
 }
 
 export async function getAllBlogPosts(): Promise<BlogPost[]> {
-  const [databaseRows] = await Promise.all([listDatabaseBlogPosts({ status: 'published' })]);
+  const databaseRows = await listDatabaseBlogPosts({ status: 'published' });
   const databasePosts = databaseRows.map(mapBlogRowToPost);
   const filePosts = readFileSystemBlogPosts();
 

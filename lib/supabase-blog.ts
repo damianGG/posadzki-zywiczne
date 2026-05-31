@@ -65,13 +65,17 @@ function isBlogPostRow(value: unknown): value is BlogPostRow {
 }
 
 export function mapBlogRowToPost(row: BlogPostRow): BlogPost {
+  const author = row.author && typeof row.author === 'object'
+    ? { ...DEFAULT_BLOG_AUTHOR, ...row.author }
+    : DEFAULT_BLOG_AUTHOR;
+
   return {
     id: row.slug,
     slug: row.slug,
     title: row.title,
     excerpt: row.excerpt,
     content: row.content_html,
-    author: row.author || DEFAULT_BLOG_AUTHOR,
+    author,
     publishedAt: row.published_at || row.created_at,
     updatedAt: row.updated_at,
     category: row.category,
@@ -257,5 +261,5 @@ export async function getUniqueBlogSlug(baseSlug: string, excludeId?: string): P
     counter += 1;
   }
 
-  throw new Error(`Nie udało się wygenerować unikalnego slugu wpisu blogowego po ${maxSlugAttempts} próbach`);
+  throw new Error(`Nie udało się wygenerować unikalnego slugu dla '${baseSlug}' po ${maxSlugAttempts} próbach`);
 }

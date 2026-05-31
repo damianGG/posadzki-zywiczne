@@ -138,6 +138,11 @@ export const BLOG_GENERATION_RESPONSE_FORMAT = `{
 
 // Keep room for numeric suffixes like "-12" while staying comfortably below common URL slug limits.
 const MAX_BLOG_SLUG_LENGTH = 96;
+const POLISH_CHAR_MAP: Record<string, string> = {
+  ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z',
+  Ą: 'a', Ć: 'c', Ę: 'e', Ł: 'l', Ń: 'n', Ó: 'o', Ś: 's', Ź: 'z', Ż: 'z',
+};
+const POLISH_CHAR_REGEX = /[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g;
 
 const SECTION_TITLES: Record<keyof BlogArticleSections, string> = {
   quickAnswer: 'Krótka odpowiedź na pytanie klienta',
@@ -205,15 +210,8 @@ function renderTextBlock(text: string): string {
 }
 
 export function slugifyBlogText(value: string): string {
-  const polishChars: Record<string, string> = {
-    ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z',
-    Ą: 'a', Ć: 'c', Ę: 'e', Ł: 'l', Ń: 'n', Ó: 'o', Ś: 's', Ź: 'z', Ż: 'z',
-  };
-
   return value
-    .split('')
-    .map((char) => polishChars[char] || char)
-    .join('')
+    .replace(POLISH_CHAR_REGEX, (char) => POLISH_CHAR_MAP[char] || char)
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   title TEXT NOT NULL,
   excerpt TEXT NOT NULL,
   content_html TEXT NOT NULL DEFAULT '',
-  author JSONB NOT NULL DEFAULT '{"name":"Damian","avatar":"/profilowe.png?height=40&width=40","bio":"Wykonawca specjalizujący się w posadzkach żywicznych, balkonach, tarasach i garażach"}'::jsonb,
+  author JSONB NOT NULL DEFAULT '{}'::jsonb,
   category TEXT NOT NULL DEFAULT 'Porady',
   tags TEXT[] NOT NULL DEFAULT '{}',
   read_time TEXT NOT NULL DEFAULT '1 min',

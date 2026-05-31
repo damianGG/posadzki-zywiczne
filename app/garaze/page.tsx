@@ -1,20 +1,20 @@
 
 
-import HeroMainPage from "@/app/garaze/components/hero_mainpage";
-import { Feature5 } from "@/blocks/feature/feature5";
-import { CTA2 } from "@/blocks/cta/cta2";
-import { FAQ2 } from "./components/faq2";
-import { Contact1 } from "@/blocks/contact/contact1";
-import { Feature3 } from "./components/feature3";
-import ProblemSolutionSection from "./components/issuse-solution";
-import BenefitsSection from "./components/BenefitsSection";
-import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
+import HeroMainPage from '@/app/garaze/components/hero_mainpage';
+import { Feature5 } from '@/blocks/feature/feature5';
+import { CTA2 } from '@/blocks/cta/cta2';
+import { FAQ2 } from './components/faq2';
+import { Contact1 } from '@/blocks/contact/contact1';
+import { Feature3 } from './components/feature3';
+import ProblemSolutionSection from './components/issuse-solution';
+import BenefitsSection from './components/BenefitsSection';
+import SocialProofSection from '@/blocks/socialproofsection/SocialProofSection';
 
-import type { Metadata } from 'next'
-import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-renovation-timeline";
-import BlogPreviewSection from "@/components/blog-preview-section";
+import type { Metadata } from 'next';
+import ScrollDrivenRenovationTimeline from '@/components/blocks/scroll-driven-renovation-timeline';
+import BlogPreviewSection from '@/components/blog-preview-section';
 
-import { getLatestBlogPosts } from "@/lib/blog"
+import { getLatestBlogPosts } from '@/lib/blog';
 
 export const metadata: Metadata = {
   title: "Posadzki Żywiczne do Garaży | Wytrzymałe i Odporne",

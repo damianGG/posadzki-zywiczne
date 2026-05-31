@@ -23,14 +23,17 @@ import {
   type BlogImageItem,
   type BlogPromptContext,
 } from '@/lib/blog-content';
+import type { BlogPostRow } from '@/lib/supabase-blog';
 
 type BlogStatus = 'draft' | 'published';
 
 interface BlogEditorProps {
   mode: 'create' | 'edit';
   postId?: string;
-  initialData?: Record<string, any> | null;
+  initialData?: BlogEditorInitialData | null;
 }
+
+type BlogEditorInitialData = Partial<BlogPostRow>;
 
 interface BlogEditorState {
   slug: string;
@@ -67,7 +70,7 @@ const SECTION_FIELDS: Array<{ key: keyof BlogArticleSections; label: string }> =
   { key: 'summaryRecommendation', label: '10. Podsumowanie i rekomendacja' },
 ];
 
-function createInitialState(data?: Record<string, any> | null): BlogEditorState {
+function createInitialState(data?: BlogEditorInitialData | null): BlogEditorState {
   const gallery = Array.isArray(data?.gallery) ? data.gallery : [];
   const mainUrl = data?.image?.url;
   const normalizedFaqItems = normalizeFaqItems(data?.faq_items);
