@@ -138,6 +138,7 @@ export const BLOG_GENERATION_RESPONSE_FORMAT = `{
 
 // Keep room for numeric suffixes like "-12" while staying comfortably below common URL slug limits.
 const MAX_BLOG_SLUG_LENGTH = 96;
+const BLOG_READ_WORDS_PER_MINUTE = 180;
 const POLISH_CHAR_MAP: Record<string, string> = {
   ą: 'a', ć: 'c', ę: 'e', ł: 'l', ń: 'n', ó: 'o', ś: 's', ź: 'z', ż: 'z',
   Ą: 'a', Ć: 'c', Ę: 'e', Ł: 'l', Ń: 'n', Ó: 'o', Ś: 's', Ź: 'z', Ż: 'z',
@@ -221,11 +222,11 @@ export function slugifyBlogText(value: string): string {
 }
 
 export function createBlogFaqId(): string {
-  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
-    return crypto.randomUUID();
+  if (!globalThis.crypto?.randomUUID) {
+    throw new Error('Brak wsparcia dla crypto.randomUUID podczas generowania identyfikatora FAQ');
   }
 
-  return `faq-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  return globalThis.crypto.randomUUID();
 }
 
 export function buildPromptFromTemplate(template: string, context: BlogPromptContext): string {
@@ -331,7 +332,7 @@ export function estimateReadTime(value: string): string {
     .split(/\s+/)
     .filter(Boolean).length;
 
-  const minutes = Math.max(1, Math.ceil(words / 180));
+  const minutes = Math.max(1, Math.ceil(words / BLOG_READ_WORDS_PER_MINUTE));
   return `${minutes} min`;
 }
 
