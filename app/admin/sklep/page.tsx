@@ -421,10 +421,10 @@ export default function AdminShopPage() {
             page_description: "Krótki opis produktu.",
             meta_title: "Nowy produkt | Sklep",
             meta_description: "Meta opis nowego produktu.",
-            image_url: "/placeholder.svg",
+            image_url: "/garage.jpg",
             gallery: [
-              { url: "/placeholder.svg", alt: "Nowy produkt - zdjęcie główne" },
-              { url: "/placeholder.svg", alt: "Nowy produkt - detal produktu" },
+              { url: "/garage.jpg", alt: "Nowy produkt - zdjęcie główne" },
+              { url: "/kuchnia.jpg", alt: "Nowy produkt - detal produktu" },
             ],
             variants: [
               {
@@ -889,9 +889,10 @@ export default function AdminShopPage() {
                                   alt: `${product.name} - galeria ${currentGallery.length + index + 1}`,
                                 }))
                                 const nextGallery = [...currentGallery, ...uploadedItems]
+                                const nextMainImageUrl = product.image_url || uploadedItems[0]?.url
                                 updateProduct(product.product_id, {
                                   galleryText: stringifyJson(nextGallery),
-                                  image_url: product.image_url || uploadedItems[0]?.url,
+                                  image_url: nextMainImageUrl,
                                 })
                               } catch {
                                 setMessage({
