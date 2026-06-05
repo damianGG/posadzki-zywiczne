@@ -102,6 +102,8 @@ type SaveRecordPayloadMap = {
   config: ShopConfiguratorConfig
 }
 
+type AdminSectionId = "configurator" | "products" | "bundles" | "rules"
+
 export default function AdminShopPage() {
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -113,6 +115,7 @@ export default function AdminShopPage() {
   const [bundles, setBundles] = useState<BundleDraft[]>([])
   const [rules, setRules] = useState<RuleDraft[]>([])
   const [configDraft, setConfigDraft] = useState<ConfigDraft | null>(null)
+  const [activeSection, setActiveSection] = useState<AdminSectionId>("configurator")
 
   const fetchData = useCallback(async () => {
     try {
@@ -158,6 +161,15 @@ export default function AdminShopPage() {
   const sortedRules = useMemo(
     () => [...rules].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0)),
     [rules]
+  )
+  const sectionTabs = useMemo(
+    () => [
+      { id: "configurator" as const, label: "Konfigurator", count: configDraft ? 1 : 0 },
+      { id: "products" as const, label: "Produkty", count: sortedProducts.length },
+      { id: "bundles" as const, label: "Zestawy", count: sortedBundles.length },
+      { id: "rules" as const, label: "Reguły", count: sortedRules.length },
+    ],
+    [configDraft, sortedBundles.length, sortedProducts.length, sortedRules.length]
   )
 
   const updateProduct = (productId: string, patch: Partial<ProductDraft>) => {
@@ -495,7 +507,21 @@ export default function AdminShopPage() {
           </Card>
         ) : (
           <div className="space-y-10">
-            {configDraft ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Zakładki konfiguracji</CardTitle>
+                <CardDescription>Przełączaj sekcje, żeby nie przewijać całej strony.</CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-wrap gap-2">
+                {sectionTabs.map((tab) => (
+                  <Button key={tab.id} variant={activeSection === tab.id ? "default" : "outline"} onClick={() => setActiveSection(tab.id)}>
+                    {tab.label} ({tab.count})
+                  </Button>
+                ))}
+              </CardContent>
+            </Card>
+
+            {configDraft && activeSection === "configurator" ? (
               <section className="space-y-4">
                 <div>
                   <h2 className="text-2xl font-semibold text-zinc-900">Konfigurator krok po kroku</h2>
@@ -656,7 +682,7 @@ export default function AdminShopPage() {
               </section>
             ) : null}
 
-            <section className="space-y-4">
+            <section className={activeSection === "products" ? "space-y-4" : "hidden"}>
               <div>
                 <h2 className="text-2xl font-semibold text-zinc-900">Produkty</h2>
                 <p className="text-zinc-600">Produkty bazowe, dodatki i akcesoria z konfiguracją publikacji w wyniku flow, treści SEO, galerii i wariantów.</p>
@@ -812,7 +838,7 @@ export default function AdminShopPage() {
               </div>
             </section>
 
-            <section className="space-y-4">
+            <section className={activeSection === "bundles" ? "space-y-4" : "hidden"}>
               <div>
                 <h2 className="text-2xl font-semibold text-zinc-900">Zestawy</h2>
                 <p className="text-zinc-600">Warianty oparte o metraż z listą elementów w zestawie i rekomendowanych dodatków.</p>
@@ -900,7 +926,7 @@ export default function AdminShopPage() {
               </div>
             </section>
 
-            <section className="space-y-4">
+            <section className={activeSection === "rules" ? "space-y-4" : "hidden"}>
               <div>
                 <h2 className="text-2xl font-semibold text-zinc-900">Reguły rekomendacji</h2>
                 <p className="text-zinc-600">Proste, ręczne reguły zależne od pomieszczenia i progu metrażu.</p>
