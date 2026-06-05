@@ -1,11 +1,12 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { KeyboardEvent, useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Plus, Save, ShoppingBag } from "lucide-react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import CloudinaryUploadWidget from "@/components/admin/cloudinary-upload-widget"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -17,6 +18,12 @@ import { ShopBundle, ShopConfiguratorConfig, ShopProduct, ShopRecommendationRule
 type ProductDraft = ShopProduct & {
   tagsText: string
   roomTypesText: string
+  galleryText: string
+  variantsText: string
+  specificationsText: string
+  technicalDocumentsText: string
+  applicationStepsText: string
+  faqItemsText: string
 }
 
 type BundleDraft = ShopBundle & {
@@ -42,6 +49,10 @@ type ConfigDraft = ShopConfiguratorConfig & {
   quickChoicesText: string
 }
 
+interface CloudinaryUploadResult {
+  url: string
+}
+
 const stringifyJson = (value: unknown) => JSON.stringify(value ?? [], null, 2)
 const parseCsv = (value: string) => value.split(",").map((item) => item.trim()).filter(Boolean)
 const toNumber = (value: string | number | null | undefined) => {
@@ -61,6 +72,12 @@ const mapProductDraft = (product: ShopProduct): ProductDraft => ({
   ...product,
   tagsText: (product.tags ?? []).join(", "),
   roomTypesText: (product.applicable_room_types ?? []).join(", "),
+  galleryText: stringifyJson(product.gallery ?? []),
+  variantsText: stringifyJson(product.variants ?? []),
+  specificationsText: stringifyJson(product.specifications ?? []),
+  technicalDocumentsText: stringifyJson(product.technical_documents ?? []),
+  applicationStepsText: stringifyJson(product.application_steps ?? []),
+  faqItemsText: stringifyJson(product.faq_items ?? []),
 })
 
 const mapBundleDraft = (bundle: ShopBundle): BundleDraft => ({
@@ -96,6 +113,8 @@ type SaveRecordPayloadMap = {
   config: ShopConfiguratorConfig
 }
 
+type AdminSectionId = "configurator" | "products" | "bundles" | "rules"
+
 export default function AdminShopPage() {
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -107,6 +126,7 @@ export default function AdminShopPage() {
   const [bundles, setBundles] = useState<BundleDraft[]>([])
   const [rules, setRules] = useState<RuleDraft[]>([])
   const [configDraft, setConfigDraft] = useState<ConfigDraft | null>(null)
+  const [activeSection, setActiveSection] = useState<AdminSectionId>("configurator")
 
   const fetchData = useCallback(async () => {
     try {
@@ -153,6 +173,43 @@ export default function AdminShopPage() {
     () => [...rules].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0)),
     [rules]
   )
+  const sectionTabs = useMemo(
+    () => [
+      { id: "configurator" as const, label: "Konfigurator", count: configDraft ? 1 : 0 },
+      { id: "products" as const, label: "Produkty", count: sortedProducts.length },
+      { id: "bundles" as const, label: "Zestawy", count: sortedBundles.length },
+      { id: "rules" as const, label: "Reguły", count: sortedRules.length },
+    ],
+    [configDraft, sortedBundles.length, sortedProducts.length, sortedRules.length]
+  )
+  const handleSectionTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, currentTabId: AdminSectionId) => {
+    const currentIndex = sectionTabs.findIndex((tab) => tab.id === currentTabId)
+    if (currentIndex < 0) {
+      return
+    }
+
+    let nextIndex: number | null = null
+    if (event.key === "ArrowRight") {
+      nextIndex = (currentIndex + 1) % sectionTabs.length
+    } else if (event.key === "ArrowLeft") {
+      nextIndex = (currentIndex - 1 + sectionTabs.length) % sectionTabs.length
+    } else if (event.key === "Home") {
+      nextIndex = 0
+    } else if (event.key === "End") {
+      nextIndex = sectionTabs.length - 1
+    }
+
+    if (nextIndex === null) {
+      return
+    }
+    event.preventDefault()
+    const nextTabId = sectionTabs[nextIndex].id
+
+    requestAnimationFrame(() => {
+      const nextTab = document.getElementById(`shop-tab-${nextTabId}`)
+      nextTab?.focus()
+    })
+  }
 
   const updateProduct = (productId: string, patch: Partial<ProductDraft>) => {
     setProducts((current) => current.map((product) => (product.product_id === productId ? { ...product, ...patch } : product)))
@@ -204,21 +261,86 @@ export default function AdminShopPage() {
   }
 
   const handleSaveProduct = (product: ProductDraft) => {
-    void saveRecord("product", product.product_id, {
-      name: product.name,
-      short_name: product.short_name || null,
-      description: product.description,
-      category: product.category,
-      price: toNumber(product.price),
-      pricing_model: product.pricing_model,
-      unit_label: product.unit_label || null,
-      image_url: product.image_url || null,
-      tags: parseCsv(product.tagsText),
-      applicable_room_types: parseCsv(product.roomTypesText),
-      is_featured: Boolean(product.is_featured),
-      is_active: Boolean(product.is_active),
-      display_order: toNumber(product.display_order),
-    })
+    try {
+      let gallery
+      let variants
+      let specifications
+      let technicalDocuments
+      let applicationSteps
+      let faqItems
+
+      try {
+        gallery = JSON.parse(product.galleryText || "[]")
+      } catch {
+        throw new Error('Pole Galeria (JSON) ma niepoprawny format. Oczekiwany format: [{"url":"...","alt":"..."}].')
+      }
+
+      try {
+        variants = JSON.parse(product.variantsText || "[]")
+      } catch {
+        throw new Error('Pole Warianty produktu (JSON) ma niepoprawny format. Oczekiwany format: [{"id":"...","name":"...","price":0}].')
+      }
+
+      try {
+        specifications = JSON.parse(product.specificationsText || "[]")
+      } catch {
+        throw new Error('Pole Dane techniczne (JSON) ma niepoprawny format. Oczekiwany format: [{"label":"...","value":"..."}].')
+      }
+
+      try {
+        technicalDocuments = JSON.parse(product.technicalDocumentsText || "[]")
+      } catch {
+        throw new Error('Pole Karty techniczne i dokumenty (JSON) ma niepoprawny format. Oczekiwany format: [{"label":"...","url":"..."}].')
+      }
+
+      try {
+        applicationSteps = JSON.parse(product.applicationStepsText || "[]")
+      } catch {
+        throw new Error('Pole Sposób aplikacji (JSON) ma niepoprawny format. Oczekiwany format: [{"title":"...","description":"..."}].')
+      }
+
+      try {
+        faqItems = JSON.parse(product.faqItemsText || "[]")
+      } catch {
+        throw new Error('Pole Q&A produktu (JSON) ma niepoprawny format. Oczekiwany format: [{"question":"...","answer":"..."}].')
+      }
+
+      void saveRecord("product", product.product_id, {
+        name: product.name,
+        short_name: product.short_name || null,
+        description: product.description,
+        category: product.category,
+        price: toNumber(product.price),
+        pricing_model: product.pricing_model,
+        unit_label: product.unit_label || null,
+        image_url: product.image_url || null,
+        tags: parseCsv(product.tagsText),
+        applicable_room_types: parseCsv(product.roomTypesText),
+        is_featured: Boolean(product.is_featured),
+        is_active: Boolean(product.is_active),
+        display_order: toNumber(product.display_order),
+        show_in_configurator_result: Boolean(product.show_in_configurator_result),
+        result_display_order: toNumber(product.result_display_order),
+        result_display_type: product.result_display_type || "card",
+        slug: product.slug || null,
+        page_title: product.page_title || null,
+        page_description: product.page_description || null,
+        meta_title: product.meta_title || null,
+        meta_description: product.meta_description || null,
+        video_url: product.video_url || null,
+        gallery,
+        variants,
+        specifications,
+        technical_documents: technicalDocuments,
+        application_steps: applicationSteps,
+        faq_items: faqItems,
+      })
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: `Błąd zapisu dla ${product.name}. ${error instanceof Error ? error.message : "Sprawdź format JSON."}`.trim(),
+      })
+    }
   }
 
   const handleSaveBundle = (bundle: BundleDraft) => {
@@ -322,6 +444,53 @@ export default function AdminShopPage() {
             is_featured: false,
             is_active: true,
             display_order: products.length + 1,
+            show_in_configurator_result: true,
+            result_display_order: products.length + 1,
+            result_display_type: "card",
+            slug: `produkt-${timestamp}`,
+            page_title: "Nowy produkt",
+            page_description: "Krótki opis produktu.",
+            meta_title: "Nowy produkt | Sklep",
+            meta_description: "Meta opis nowego produktu.",
+            image_url: "/garage.jpg",
+            video_url: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
+            gallery: [
+              { url: "/garage.jpg", alt: "Nowy produkt - zdjęcie główne" },
+              { url: "/kuchnia.jpg", alt: "Nowy produkt - detal produktu" },
+            ],
+            variants: [
+              {
+                id: `wariant-standard-${timestamp}`,
+                name: "Wariant standard",
+                description: "Bazowy wariant produktu do codziennego zastosowania.",
+                price: 0,
+                pricing_model: "fixed",
+                unit_label: "zł / zamówienie",
+                is_active: true,
+                display_order: 1,
+              },
+              {
+                id: `wariant-premium-${timestamp}`,
+                name: "Wariant premium",
+                description: "Wariant o podwyższonych parametrach i wykończeniu.",
+                price: 0,
+                pricing_model: "fixed",
+                unit_label: "zł / zamówienie",
+                is_active: true,
+                display_order: 2,
+              },
+            ],
+            specifications: [
+              { label: "Zastosowanie", value: "Przykładowe zastosowanie produktu" },
+              { label: "Jednostka rozliczenia", value: "zamówienie" },
+              { label: "Czas realizacji", value: "3-5 dni roboczych" },
+            ],
+            technical_documents: [{ label: "Karta techniczna PDF", url: "https://example.com/karta-techniczna.pdf" }],
+            application_steps: [
+              { title: "Krok 1", description: "Przygotuj podłoże zgodnie z instrukcją." },
+              { title: "Krok 2", description: "Wymieszaj produkt i nałóż równą warstwę." },
+            ],
+            faq_items: [{ question: "Czy mogę aplikować samodzielnie?", answer: "Tak, przy zachowaniu zaleceń producenta." }],
           }
         : type === "bundle"
           ? {
@@ -421,6 +590,7 @@ export default function AdminShopPage() {
           <Alert>
             <AlertDescription>
               Panel działa aktualnie na danych fallback. Aby zapisy były trwałe, uruchom migracje `003_shop_mvp.sql` oraz `004_shop_configurator_config.sql` i ustaw Supabase.
+              Dla rozszerzonych funkcji produktów uruchom również migracje `005_shop_products_content_and_variants.sql` i `006_shop_products_landing_content.sql` (po `003_shop_mvp.sql` i `004_shop_configurator_config.sql`).
             </AlertDescription>
           </Alert>
         )}
@@ -437,8 +607,36 @@ export default function AdminShopPage() {
           </Card>
         ) : (
           <div className="space-y-10">
-            {configDraft ? (
-              <section className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Zakładki konfiguracji</CardTitle>
+                <CardDescription>Przełączaj sekcje, żeby nie przewijać całej strony.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <nav aria-label="Sekcje edycji sklepu">
+                  <div className="flex flex-wrap gap-2" role="tablist">
+                    {sectionTabs.map((tab) => (
+                      <Button
+                        key={tab.id}
+                        id={`shop-tab-${tab.id}`}
+                        role="tab"
+                        aria-controls={`shop-panel-${tab.id}`}
+                        aria-selected={activeSection === tab.id}
+                        tabIndex={activeSection === tab.id ? 0 : -1}
+                        variant={activeSection === tab.id ? "default" : "outline"}
+                        onClick={() => setActiveSection(tab.id)}
+                        onKeyDown={(event) => handleSectionTabKeyDown(event, tab.id)}
+                      >
+                        {tab.label} ({tab.count})
+                      </Button>
+                    ))}
+                  </div>
+                </nav>
+              </CardContent>
+            </Card>
+
+            {configDraft && activeSection === "configurator" ? (
+              <section className="space-y-4" role="tabpanel" id="shop-panel-configurator" aria-labelledby="shop-tab-configurator">
                 <div>
                   <h2 className="text-2xl font-semibold text-zinc-900">Konfigurator krok po kroku</h2>
                   <p className="text-zinc-600">Tutaj administrator zarządza krokami, wariantami wykończenia, kolorami, komunikatami, CTA i aktywnością całego flow.</p>
@@ -598,14 +796,15 @@ export default function AdminShopPage() {
               </section>
             ) : null}
 
-            <section className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-semibold text-zinc-900">Produkty</h2>
-                <p className="text-zinc-600">Produkty bazowe, dodatki i akcesoria, które mogą być polecane lub sprzedawane osobno.</p>
-              </div>
-              <div className="grid gap-4 xl:grid-cols-2">
-                {sortedProducts.map((product) => (
-                  <Card key={product.product_id}>
+            {activeSection === "products" ? (
+              <section className="space-y-4" role="tabpanel" id="shop-panel-products" aria-labelledby="shop-tab-products">
+                <div>
+                  <h2 className="text-2xl font-semibold text-zinc-900">Produkty</h2>
+                  <p className="text-zinc-600">Produkty bazowe, dodatki i akcesoria z konfiguracją publikacji w wyniku flow, treści SEO, galerii i wariantów.</p>
+                </div>
+                <div className="grid gap-4 xl:grid-cols-2">
+                  {sortedProducts.map((product) => (
+                    <Card key={product.product_id}>
                     <CardHeader>
                       <CardTitle>{product.name}</CardTitle>
                       <CardDescription>ID: {product.product_id}</CardDescription>
@@ -641,8 +840,57 @@ export default function AdminShopPage() {
                           <Textarea value={product.description} onChange={(event) => updateProduct(product.product_id, { description: event.target.value })} />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <Label>URL obrazka</Label>
-                          <Input value={product.image_url || ""} onChange={(event) => updateProduct(product.product_id, { image_url: event.target.value })} />
+                          <Label>Obraz główny</Label>
+                          <div className="space-y-2">
+                            <Input value={product.image_url || ""} onChange={(event) => updateProduct(product.product_id, { image_url: event.target.value })} />
+                            <CloudinaryUploadWidget
+                              maxFiles={1}
+                              folder="shop/products"
+                              disabled={savingId === product.product_id}
+                              onUploadComplete={(results: CloudinaryUploadResult[]) => {
+                                const uploadedUrl = results[0]?.url
+                                if (!uploadedUrl) {
+                                  return
+                                }
+                                updateProduct(product.product_id, { image_url: uploadedUrl })
+                              }}
+                            />
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Slug strony produktu</Label>
+                          <Input value={product.slug || ""} onChange={(event) => updateProduct(product.product_id, { slug: event.target.value })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Typ prezentacji w wyniku</Label>
+                          <select
+                            value={product.result_display_type || "card"}
+                            onChange={(event) => updateProduct(product.product_id, { result_display_type: event.target.value as ShopProduct["result_display_type"] })}
+                            className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          >
+                            <option value="card">card</option>
+                            <option value="compact">compact</option>
+                          </select>
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Tytuł strony produktu</Label>
+                          <Input value={product.page_title || ""} onChange={(event) => updateProduct(product.product_id, { page_title: event.target.value })} />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Opis strony produktu</Label>
+                          <Textarea value={product.page_description || ""} onChange={(event) => updateProduct(product.product_id, { page_description: event.target.value })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Meta title</Label>
+                          <Input value={product.meta_title || ""} onChange={(event) => updateProduct(product.product_id, { meta_title: event.target.value })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Meta description</Label>
+                          <Textarea value={product.meta_description || ""} onChange={(event) => updateProduct(product.product_id, { meta_description: event.target.value })} />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Wideo produktu (URL YouTube/Vimeo)</Label>
+                          <Input value={product.video_url || ""} onChange={(event) => updateProduct(product.product_id, { video_url: event.target.value })} />
                         </div>
                         <div className="space-y-2">
                           <Label>Tagi (CSV)</Label>
@@ -655,6 +903,90 @@ export default function AdminShopPage() {
                         <div className="space-y-2">
                           <Label>Kolejność</Label>
                           <Input type="number" value={product.display_order ?? 0} onChange={(event) => updateProduct(product.product_id, { display_order: Number(event.target.value) })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Kolejność w wyniku konfiguratora</Label>
+                          <Input
+                            type="number"
+                            value={product.result_display_order ?? 0}
+                            onChange={(event) => updateProduct(product.product_id, { result_display_order: Number(event.target.value) })}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Galeria (JSON)</Label>
+                          <Textarea
+                            value={product.galleryText}
+                            onChange={(event) => updateProduct(product.product_id, { galleryText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                          <CloudinaryUploadWidget
+                            maxFiles={10}
+                            folder="shop/products"
+                            disabled={savingId === product.product_id}
+                            onUploadComplete={(results: CloudinaryUploadResult[]) => {
+                              let currentGallery: Array<{ url: string; alt?: string }>
+                              try {
+                                currentGallery = JSON.parse(product.galleryText || "[]")
+                              } catch {
+                                setMessage({
+                                  type: "error",
+                                  text: `Nie udało się dodać zdjęć do galerii produktu ${product.name}. Najpierw popraw format JSON galerii.`,
+                                })
+                                return
+                              }
+
+                              const uploadedItems = results.map((result, index) => ({
+                                url: result.url,
+                                alt: `${product.name} - galeria ${currentGallery.length + index + 1}`,
+                              }))
+                              const nextGallery = [...currentGallery, ...uploadedItems]
+                              const nextImageUrl = !product.image_url && uploadedItems[0]?.url ? uploadedItems[0].url : undefined
+                              updateProduct(product.product_id, {
+                                galleryText: stringifyJson(nextGallery),
+                                ...(nextImageUrl ? { image_url: nextImageUrl } : {}),
+                              })
+                            }}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Warianty produktu (JSON)</Label>
+                          <Textarea
+                            value={product.variantsText}
+                            onChange={(event) => updateProduct(product.product_id, { variantsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Dane techniczne (JSON)</Label>
+                          <Textarea
+                            value={product.specificationsText}
+                            onChange={(event) => updateProduct(product.product_id, { specificationsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Karty techniczne i dokumenty (JSON)</Label>
+                          <Textarea
+                            value={product.technicalDocumentsText}
+                            onChange={(event) => updateProduct(product.product_id, { technicalDocumentsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Sposób aplikacji (JSON)</Label>
+                          <Textarea
+                            value={product.applicationStepsText}
+                            onChange={(event) => updateProduct(product.product_id, { applicationStepsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Q&A produktu (JSON)</Label>
+                          <Textarea
+                            value={product.faqItemsText}
+                            onChange={(event) => updateProduct(product.product_id, { faqItemsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
                         </div>
                         <div className="flex items-center justify-between rounded-lg border p-3">
                           <div>
@@ -670,25 +1002,37 @@ export default function AdminShopPage() {
                           </div>
                           <Switch checked={product.is_featured === true} onCheckedChange={(checked) => updateProduct(product.product_id, { is_featured: checked })} />
                         </div>
+                        <div className="flex items-center justify-between rounded-lg border p-3">
+                          <div>
+                            <p className="font-medium">Pokaż na końcu flow</p>
+                            <p className="text-sm text-zinc-500">Produkt może pojawić się w ostatnim kroku konfiguratora.</p>
+                          </div>
+                          <Switch
+                            checked={product.show_in_configurator_result === true}
+                            onCheckedChange={(checked) => updateProduct(product.product_id, { show_in_configurator_result: checked })}
+                          />
+                        </div>
                       </div>
                       <Button onClick={() => handleSaveProduct(product)} disabled={savingId === product.product_id}>
                         <Save className="mr-2 h-4 w-4" />
                         {savingId === product.product_id ? "Zapisywanie..." : "Zapisz produkt"}
                       </Button>
                     </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
-            <section className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-semibold text-zinc-900">Zestawy</h2>
-                <p className="text-zinc-600">Warianty oparte o metraż z listą elementów w zestawie i rekomendowanych dodatków.</p>
-              </div>
-              <div className="grid gap-4 xl:grid-cols-2">
-                {sortedBundles.map((bundle) => (
-                  <Card key={bundle.variant_id}>
+            {activeSection === "bundles" ? (
+              <section className="space-y-4" role="tabpanel" id="shop-panel-bundles" aria-labelledby="shop-tab-bundles">
+                <div>
+                  <h2 className="text-2xl font-semibold text-zinc-900">Zestawy</h2>
+                  <p className="text-zinc-600">Warianty oparte o metraż z listą elementów w zestawie i rekomendowanych dodatków.</p>
+                </div>
+                <div className="grid gap-4 xl:grid-cols-2">
+                  {sortedBundles.map((bundle) => (
+                    <Card key={bundle.variant_id}>
                     <CardHeader>
                       <CardTitle>{bundle.name}</CardTitle>
                       <CardDescription>ID: {bundle.variant_id}</CardDescription>
@@ -764,19 +1108,21 @@ export default function AdminShopPage() {
                         {savingId === bundle.variant_id ? "Zapisywanie..." : "Zapisz zestaw"}
                       </Button>
                     </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
-            <section className="space-y-4">
-              <div>
-                <h2 className="text-2xl font-semibold text-zinc-900">Reguły rekomendacji</h2>
-                <p className="text-zinc-600">Proste, ręczne reguły zależne od pomieszczenia i progu metrażu.</p>
-              </div>
-              <div className="grid gap-4 xl:grid-cols-2">
-                {sortedRules.map((rule) => (
-                  <Card key={rule.rule_id}>
+            {activeSection === "rules" ? (
+              <section className="space-y-4" role="tabpanel" id="shop-panel-rules" aria-labelledby="shop-tab-rules">
+                <div>
+                  <h2 className="text-2xl font-semibold text-zinc-900">Reguły rekomendacji</h2>
+                  <p className="text-zinc-600">Proste, ręczne reguły zależne od pomieszczenia i progu metrażu.</p>
+                </div>
+                <div className="grid gap-4 xl:grid-cols-2">
+                  {sortedRules.map((rule) => (
+                    <Card key={rule.rule_id}>
                     <CardHeader>
                       <CardTitle>{rule.name}</CardTitle>
                       <CardDescription>ID: {rule.rule_id}</CardDescription>
@@ -828,10 +1174,11 @@ export default function AdminShopPage() {
                         {savingId === rule.rule_id ? "Zapisywanie..." : "Zapisz regułę"}
                       </Button>
                     </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            ) : null}
           </div>
         )}
       </div>

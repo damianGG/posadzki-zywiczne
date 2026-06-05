@@ -3,6 +3,43 @@ export type ShopQuantityType = "fixed" | "per_m2" | "per_10m2"
 export type ShopConfiguratorStepId = "room" | "substrate" | "finish" | "floor-color" | "flake-color" | "area" | "plinth" | "result"
 export type ShopConfiguratorOptionVisibility = "always" | "with-flakes" | "with-plinth" | "variant-match"
 export type ShopConfiguratorRoomStatus = "active" | "coming-soon" | "inactive"
+export type ShopProductResultDisplayType = "card" | "compact"
+
+export interface ShopProductGalleryItem {
+  url: string
+  alt?: string
+}
+
+export interface ShopProductVariant {
+  id: string
+  name: string
+  description?: string
+  price?: number
+  pricing_model?: ShopPricingModel
+  unit_label?: string
+  is_active?: boolean
+  display_order?: number
+}
+
+export interface ShopProductSpecification {
+  label: string
+  value: string
+}
+
+export interface ShopProductTechnicalDocument {
+  label: string
+  url: string
+}
+
+export interface ShopProductApplicationStep {
+  title: string
+  description: string
+}
+
+export interface ShopProductFaqItem {
+  question: string
+  answer: string
+}
 
 export interface ShopProduct {
   id?: string
@@ -20,6 +57,21 @@ export interface ShopProduct {
   is_featured?: boolean
   is_active?: boolean
   display_order?: number
+  show_in_configurator_result?: boolean
+  result_display_order?: number
+  result_display_type?: ShopProductResultDisplayType
+  slug?: string
+  page_title?: string
+  page_description?: string
+  meta_title?: string
+  meta_description?: string
+  gallery?: ShopProductGalleryItem[]
+  variants?: ShopProductVariant[]
+  specifications?: ShopProductSpecification[]
+  video_url?: string
+  technical_documents?: ShopProductTechnicalDocument[]
+  application_steps?: ShopProductApplicationStep[]
+  faq_items?: ShopProductFaqItem[]
 }
 
 export interface ShopBundleItem {

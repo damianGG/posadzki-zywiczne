@@ -1,4 +1,5 @@
 import { ExternalLink } from "lucide-react"
+import Link from "next/link"
 
 import OptionCard from "@/components/shop/option-card"
 import { Button } from "@/components/ui/button"
@@ -9,8 +10,11 @@ import {
   ShopConfiguratorCtaButton,
   ShopConfiguratorKitItem,
   ShopConfiguratorSelections,
+  ShopProduct,
 } from "@/types/shop"
 import { getConfiguratorMaterialEstimate, ResolvedOptionLookup } from "@/lib/shop-configurator"
+import { formatProductPricing } from "@/lib/shop-engine"
+import { getProductSlug } from "@/lib/shop-products"
 
 interface ResultSummaryProps {
   config: ShopConfiguratorConfig
@@ -18,6 +22,7 @@ interface ResultSummaryProps {
   resolved: ResolvedOptionLookup
   total: number
   accessories: ShopConfiguratorAccessoryOption[]
+  standaloneProducts: ShopProduct[]
   kitItems: ShopConfiguratorKitItem[]
   ctas: ShopConfiguratorCtaButton[]
   onAccessoryToggle: (accessoryId: string) => void
@@ -30,6 +35,7 @@ export default function ResultSummary({
   resolved,
   total,
   accessories,
+  standaloneProducts,
   kitItems,
   ctas,
   onAccessoryToggle,
@@ -140,6 +146,32 @@ export default function ResultSummary({
                 }
                 onClick={() => onAccessoryToggle(accessory.id)}
               />
+            ))}
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {standaloneProducts.length ? (
+        <Card className="rounded-3xl border-zinc-200 shadow-sm">
+          <CardHeader>
+            <CardTitle>Produkty dodatkowe na końcu konfiguracji</CardTitle>
+            <CardDescription>Lista jest w pełni konfigurowana w panelu admin i może być dowolnie ukrywana lub sortowana.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {standaloneProducts.map((product) => (
+              <div key={product.product_id} className="flex flex-col gap-3 rounded-2xl border border-zinc-200 px-4 py-4 md:flex-row md:items-center md:justify-between">
+                <div className="space-y-1">
+                  <p className="font-medium text-zinc-950">{product.name}</p>
+                  <p className="text-sm text-zinc-600">{product.description}</p>
+                  <p className="text-xs text-zinc-500">{formatProductPricing(product)}</p>
+                </div>
+                <Button asChild variant={product.result_display_type === "compact" ? "outline" : "default"}>
+                  <Link href={`/sklep/${getProductSlug(product)}`}>
+                    Zobacz produkt
+                    <ExternalLink className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
             ))}
           </CardContent>
         </Card>
