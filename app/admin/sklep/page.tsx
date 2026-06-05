@@ -889,7 +889,7 @@ export default function AdminShopPage() {
                           <Textarea value={product.meta_description || ""} onChange={(event) => updateProduct(product.product_id, { meta_description: event.target.value })} />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <Label>Wideo produktu (URL YouTube/Vimeo lub MP4)</Label>
+                          <Label>Wideo produktu (URL YouTube/Vimeo)</Label>
                           <Input value={product.video_url || ""} onChange={(event) => updateProduct(product.product_id, { video_url: event.target.value })} />
                         </div>
                         <div className="space-y-2">
