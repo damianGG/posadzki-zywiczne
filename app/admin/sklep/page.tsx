@@ -211,6 +211,28 @@ export default function AdminShopPage() {
 
   const handleSaveProduct = (product: ProductDraft) => {
     try {
+      let gallery
+      let variants
+      let specifications
+
+      try {
+        gallery = JSON.parse(product.galleryText || "[]")
+      } catch {
+        throw new Error('Pole Galeria (JSON) ma niepoprawny format. Oczekiwany format: [{"url":"...","alt":"..."}].')
+      }
+
+      try {
+        variants = JSON.parse(product.variantsText || "[]")
+      } catch {
+        throw new Error('Pole Warianty produktu (JSON) ma niepoprawny format. Oczekiwany format: [{"id":"...","name":"...","price":0}].')
+      }
+
+      try {
+        specifications = JSON.parse(product.specificationsText || "[]")
+      } catch {
+        throw new Error('Pole Dane techniczne (JSON) ma niepoprawny format. Oczekiwany format: [{"label":"...","value":"..."}].')
+      }
+
       void saveRecord("product", product.product_id, {
         name: product.name,
         short_name: product.short_name || null,
@@ -233,14 +255,14 @@ export default function AdminShopPage() {
         page_description: product.page_description || null,
         meta_title: product.meta_title || null,
         meta_description: product.meta_description || null,
-        gallery: JSON.parse(product.galleryText || "[]"),
-        variants: JSON.parse(product.variantsText || "[]"),
-        specifications: JSON.parse(product.specificationsText || "[]"),
+        gallery,
+        variants,
+        specifications,
       })
     } catch (error) {
       setMessage({
         type: "error",
-        text: `Pola gallery / variants / specifications dla ${product.name} muszą zawierać poprawny JSON. ${error instanceof Error ? error.message : ""}`.trim(),
+        text: `Błąd zapisu dla ${product.name}. ${error instanceof Error ? error.message : "Sprawdź format JSON."}`.trim(),
       })
     }
   }
@@ -349,7 +371,7 @@ export default function AdminShopPage() {
             show_in_configurator_result: true,
             result_display_order: products.length + 1,
             result_display_type: "card",
-            slug: `nowy-produkt-${timestamp}`,
+            slug: `produkt-${timestamp}`,
             page_title: "Nowy produkt",
             page_description: "Krótki opis produktu.",
             meta_title: "Nowy produkt | Sklep",
@@ -456,8 +478,7 @@ export default function AdminShopPage() {
           <Alert>
             <AlertDescription>
               Panel działa aktualnie na danych fallback. Aby zapisy były trwałe, uruchom migracje `003_shop_mvp.sql` oraz `004_shop_configurator_config.sql` i ustaw Supabase.
-              {` `}
-              Dla rozszerzonych produktów uruchom też `005_shop_products_content_and_variants.sql`.
+              Dla rozszerzonych funkcji produktów uruchom również migrację `005_shop_products_content_and_variants.sql` (po `003_shop_mvp.sql` i `004_shop_configurator_config.sql`).
             </AlertDescription>
           </Alert>
         )}
@@ -687,10 +708,14 @@ export default function AdminShopPage() {
                         </div>
                         <div className="space-y-2">
                           <Label>Typ prezentacji w wyniku</Label>
-                          <Input
+                          <select
                             value={product.result_display_type || "card"}
                             onChange={(event) => updateProduct(product.product_id, { result_display_type: event.target.value as ShopProduct["result_display_type"] })}
-                          />
+                            className="h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                          >
+                            <option value="card">card</option>
+                            <option value="compact">compact</option>
+                          </select>
                         </div>
                         <div className="space-y-2 md:col-span-2">
                           <Label>Tytuł strony produktu</Label>
@@ -724,7 +749,7 @@ export default function AdminShopPage() {
                           <Label>Kolejność w wyniku konfiguratora</Label>
                           <Input
                             type="number"
-                            value={product.result_display_order ?? product.display_order ?? 0}
+                            value={product.result_display_order ?? 0}
                             onChange={(event) => updateProduct(product.product_id, { result_display_order: Number(event.target.value) })}
                           />
                         </div>

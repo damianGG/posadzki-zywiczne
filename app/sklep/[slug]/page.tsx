@@ -102,8 +102,8 @@ export default async function ShopProductPage({ params }: ShopProductPageProps) 
             {product.gallery?.length ? (
               <div className="grid gap-4 md:grid-cols-2">
                 {product.gallery.map((item, index) => (
-                  <div key={`${item.url}-${index}`} className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-                    <Image src={item.url} alt={item.alt || product.name} width={720} height={480} className="h-64 w-full object-cover" />
+                  <div key={index} className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+                    <Image src={item.url} alt={item.alt || product.name} width={720} height={480} className="h-auto w-full object-cover" />
                   </div>
                 ))}
               </div>
@@ -136,7 +136,7 @@ export default async function ShopProductPage({ params }: ShopProductPageProps) 
                 <h2 className="text-xl font-semibold">Dane techniczne</h2>
                 <div className="space-y-2 rounded-2xl border border-zinc-200 p-4">
                   {product.specifications.map((item, index) => (
-                    <div key={`${item.label}-${index}`} className="flex flex-col justify-between gap-1 border-b border-zinc-100 pb-2 last:border-b-0 last:pb-0 md:flex-row">
+                    <div key={index} className="flex flex-col justify-between gap-1 border-b border-zinc-100 pb-2 last:border-b-0 last:pb-0 md:flex-row">
                       <span className="text-sm text-zinc-500">{item.label}</span>
                       <span className="text-sm font-medium text-zinc-900">{item.value}</span>
                     </div>

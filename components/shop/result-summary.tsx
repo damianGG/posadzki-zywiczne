@@ -155,7 +155,7 @@ export default function ResultSummary({
         <Card className="rounded-3xl border-zinc-200 shadow-sm">
           <CardHeader>
             <CardTitle>Produkty dodatkowe na końcu konfiguracji</CardTitle>
-            <CardDescription>Lista jest w pełni konfigurowana w panelu admina i może być dowolnie ukrywana lub sortowana.</CardDescription>
+            <CardDescription>Lista jest w pełni konfigurowana w panelu admin i może być dowolnie ukrywana lub sortowana.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {standaloneProducts.map((product) => (

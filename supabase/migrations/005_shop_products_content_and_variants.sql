@@ -16,7 +16,7 @@ ALTER TABLE shop_products
 UPDATE shop_products
 SET
   show_in_configurator_result = COALESCE(show_in_configurator_result, false),
-  result_display_order = COALESCE(result_display_order, display_order, 0),
+  result_display_order = COALESCE(display_order, 0),
   slug = COALESCE(NULLIF(slug, ''), product_id),
   page_title = COALESCE(NULLIF(page_title, ''), name),
   page_description = COALESCE(NULLIF(page_description, ''), description),
