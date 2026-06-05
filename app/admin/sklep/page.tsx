@@ -884,11 +884,14 @@ export default function AdminShopPage() {
                             onUploadComplete={(results: CloudinaryUploadResult[]) => {
                               try {
                                 const currentGallery = JSON.parse(product.galleryText || "[]")
-                                const uploadedItems = results.map((result) => ({ url: result.url, alt: product.name }))
+                                const uploadedItems = results.map((result, index) => ({
+                                  url: result.url,
+                                  alt: `${product.name} - galeria ${currentGallery.length + index + 1}`,
+                                }))
                                 const nextGallery = [...currentGallery, ...uploadedItems]
                                 updateProduct(product.product_id, {
                                   galleryText: stringifyJson(nextGallery),
-                                  image_url: product.image_url || uploadedItems[0]?.url || product.image_url,
+                                  image_url: product.image_url || uploadedItems[0]?.url,
                                 })
                               } catch {
                                 setMessage({
