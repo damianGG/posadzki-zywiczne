@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { KeyboardEvent, useCallback, useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Plus, Save, ShoppingBag } from "lucide-react"
@@ -171,6 +171,34 @@ export default function AdminShopPage() {
     ],
     [configDraft, sortedBundles.length, sortedProducts.length, sortedRules.length]
   )
+  const handleSectionTabKeyDown = (event: KeyboardEvent<HTMLButtonElement>, currentTabId: AdminSectionId) => {
+    const currentIndex = sectionTabs.findIndex((tab) => tab.id === currentTabId)
+    if (currentIndex < 0) {
+      return
+    }
+
+    let nextIndex: number | null = null
+    if (event.key === "ArrowRight") {
+      nextIndex = (currentIndex + 1) % sectionTabs.length
+    } else if (event.key === "ArrowLeft") {
+      nextIndex = (currentIndex - 1 + sectionTabs.length) % sectionTabs.length
+    } else if (event.key === "Home") {
+      nextIndex = 0
+    } else if (event.key === "End") {
+      nextIndex = sectionTabs.length - 1
+    }
+
+    if (nextIndex === null) {
+      return
+    }
+    event.preventDefault()
+    const nextTabId = sectionTabs[nextIndex].id
+
+    requestAnimationFrame(() => {
+      const nextTab = document.getElementById(`shop-tab-${nextTabId}`)
+      nextTab?.focus()
+    })
+  }
 
   const updateProduct = (productId: string, patch: Partial<ProductDraft>) => {
     setProducts((current) => current.map((product) => (product.product_id === productId ? { ...product, ...patch } : product)))
@@ -512,17 +540,31 @@ export default function AdminShopPage() {
                 <CardTitle>Zakładki konfiguracji</CardTitle>
                 <CardDescription>Przełączaj sekcje, żeby nie przewijać całej strony.</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-wrap gap-2">
-                {sectionTabs.map((tab) => (
-                  <Button key={tab.id} variant={activeSection === tab.id ? "default" : "outline"} onClick={() => setActiveSection(tab.id)}>
-                    {tab.label} ({tab.count})
-                  </Button>
-                ))}
+              <CardContent>
+                <nav aria-label="Sekcje edycji sklepu">
+                  <div className="flex flex-wrap gap-2" role="tablist">
+                    {sectionTabs.map((tab) => (
+                      <Button
+                        key={tab.id}
+                        id={`shop-tab-${tab.id}`}
+                        role="tab"
+                        aria-controls={`shop-panel-${tab.id}`}
+                        aria-selected={activeSection === tab.id}
+                        tabIndex={activeSection === tab.id ? 0 : -1}
+                        variant={activeSection === tab.id ? "default" : "outline"}
+                        onClick={() => setActiveSection(tab.id)}
+                        onKeyDown={(event) => handleSectionTabKeyDown(event, tab.id)}
+                      >
+                        {tab.label} ({tab.count})
+                      </Button>
+                    ))}
+                  </div>
+                </nav>
               </CardContent>
             </Card>
 
             {configDraft && activeSection === "configurator" ? (
-              <section className="space-y-4">
+              <section className="space-y-4" role="tabpanel" id="shop-panel-configurator" aria-labelledby="shop-tab-configurator">
                 <div>
                   <h2 className="text-2xl font-semibold text-zinc-900">Konfigurator krok po kroku</h2>
                   <p className="text-zinc-600">Tutaj administrator zarządza krokami, wariantami wykończenia, kolorami, komunikatami, CTA i aktywnością całego flow.</p>
@@ -682,14 +724,15 @@ export default function AdminShopPage() {
               </section>
             ) : null}
 
-            <section className={activeSection === "products" ? "space-y-4" : "hidden"}>
-              <div>
-                <h2 className="text-2xl font-semibold text-zinc-900">Produkty</h2>
-                <p className="text-zinc-600">Produkty bazowe, dodatki i akcesoria z konfiguracją publikacji w wyniku flow, treści SEO, galerii i wariantów.</p>
-              </div>
-              <div className="grid gap-4 xl:grid-cols-2">
-                {sortedProducts.map((product) => (
-                  <Card key={product.product_id}>
+            {activeSection === "products" ? (
+              <section className="space-y-4" role="tabpanel" id="shop-panel-products" aria-labelledby="shop-tab-products">
+                <div>
+                  <h2 className="text-2xl font-semibold text-zinc-900">Produkty</h2>
+                  <p className="text-zinc-600">Produkty bazowe, dodatki i akcesoria z konfiguracją publikacji w wyniku flow, treści SEO, galerii i wariantów.</p>
+                </div>
+                <div className="grid gap-4 xl:grid-cols-2">
+                  {sortedProducts.map((product) => (
+                    <Card key={product.product_id}>
                     <CardHeader>
                       <CardTitle>{product.name}</CardTitle>
                       <CardDescription>ID: {product.product_id}</CardDescription>
@@ -833,19 +876,21 @@ export default function AdminShopPage() {
                         {savingId === product.product_id ? "Zapisywanie..." : "Zapisz produkt"}
                       </Button>
                     </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
-            <section className={activeSection === "bundles" ? "space-y-4" : "hidden"}>
-              <div>
-                <h2 className="text-2xl font-semibold text-zinc-900">Zestawy</h2>
-                <p className="text-zinc-600">Warianty oparte o metraż z listą elementów w zestawie i rekomendowanych dodatków.</p>
-              </div>
-              <div className="grid gap-4 xl:grid-cols-2">
-                {sortedBundles.map((bundle) => (
-                  <Card key={bundle.variant_id}>
+            {activeSection === "bundles" ? (
+              <section className="space-y-4" role="tabpanel" id="shop-panel-bundles" aria-labelledby="shop-tab-bundles">
+                <div>
+                  <h2 className="text-2xl font-semibold text-zinc-900">Zestawy</h2>
+                  <p className="text-zinc-600">Warianty oparte o metraż z listą elementów w zestawie i rekomendowanych dodatków.</p>
+                </div>
+                <div className="grid gap-4 xl:grid-cols-2">
+                  {sortedBundles.map((bundle) => (
+                    <Card key={bundle.variant_id}>
                     <CardHeader>
                       <CardTitle>{bundle.name}</CardTitle>
                       <CardDescription>ID: {bundle.variant_id}</CardDescription>
@@ -921,19 +966,21 @@ export default function AdminShopPage() {
                         {savingId === bundle.variant_id ? "Zapisywanie..." : "Zapisz zestaw"}
                       </Button>
                     </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            ) : null}
 
-            <section className={activeSection === "rules" ? "space-y-4" : "hidden"}>
-              <div>
-                <h2 className="text-2xl font-semibold text-zinc-900">Reguły rekomendacji</h2>
-                <p className="text-zinc-600">Proste, ręczne reguły zależne od pomieszczenia i progu metrażu.</p>
-              </div>
-              <div className="grid gap-4 xl:grid-cols-2">
-                {sortedRules.map((rule) => (
-                  <Card key={rule.rule_id}>
+            {activeSection === "rules" ? (
+              <section className="space-y-4" role="tabpanel" id="shop-panel-rules" aria-labelledby="shop-tab-rules">
+                <div>
+                  <h2 className="text-2xl font-semibold text-zinc-900">Reguły rekomendacji</h2>
+                  <p className="text-zinc-600">Proste, ręczne reguły zależne od pomieszczenia i progu metrażu.</p>
+                </div>
+                <div className="grid gap-4 xl:grid-cols-2">
+                  {sortedRules.map((rule) => (
+                    <Card key={rule.rule_id}>
                     <CardHeader>
                       <CardTitle>{rule.name}</CardTitle>
                       <CardDescription>ID: {rule.rule_id}</CardDescription>
@@ -985,10 +1032,11 @@ export default function AdminShopPage() {
                         {savingId === rule.rule_id ? "Zapisywanie..." : "Zapisz regułę"}
                       </Button>
                     </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </section>
+                    </Card>
+                  ))}
+                </div>
+              </section>
+            ) : null}
           </div>
         )}
       </div>
