@@ -30,6 +30,7 @@ import {
   isStepComplete,
   resolveSelections,
 } from "@/lib/shop-configurator"
+import { getResultStepProducts } from "@/lib/shop-products"
 
 interface KitConfiguratorProps {
   catalog: ShopCatalog
@@ -59,6 +60,7 @@ export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
   const activeStep = steps[activeStepIndex] ?? steps[0]
   const total = useMemo(() => getConfiguratorTotal(config, selections), [config, selections])
   const accessories = useMemo(() => getAccessoryOptions(config), [config])
+  const standaloneProducts = useMemo(() => getResultStepProducts(catalog), [catalog])
   const kitItems = useMemo(() => getVisibleKitItems(config, selections), [config, selections])
   const ctas = useMemo(() => getActiveCtas(config), [config])
 
@@ -231,6 +233,7 @@ export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
                   resolved={resolved}
                   total={total}
                   accessories={accessories}
+                  standaloneProducts={standaloneProducts}
                   kitItems={kitItems}
                   ctas={ctas}
                   onAccessoryToggle={(accessoryId) =>

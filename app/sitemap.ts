@@ -1,6 +1,8 @@
 import type { MetadataRoute } from "next"
 import { getAllPosts } from "@/lib/posts-json"
 import { getAllRealizacje } from "@/lib/realizacje"
+import { getProductSlug, getPublishedShopProducts } from "@/lib/shop-products"
+import { getShopCatalog } from "@/lib/supabase-shop"
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://posadzkizywiczne.com"
@@ -12,6 +14,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const allRealizacje = await getAllRealizacje()
   console.log("[v0] getAllRealizacje returned:", allRealizacje.length, "realizacje")
+  const shopCatalog = await getShopCatalog()
+  const shopProducts = getPublishedShopProducts(shopCatalog)
 
   const posts = allPosts.map((post) => {
     console.log("[v0] Processing post:", post.slug, post.title)
@@ -54,6 +58,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     lastModified: new Date(realizacja.date),
     changeFrequency: "monthly" as const,
     priority: 0.8,
+  }))
+
+  const productPages = shopProducts.map((product) => ({
+    url: `${base}/sklep/${getProductSlug(product)}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.7,
   }))
 
   return [
@@ -119,5 +130,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
     ...posts,
     ...realizacje,
+    ...productPages,
   ]
 }

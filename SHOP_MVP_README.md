@@ -7,7 +7,11 @@
 - logika doboru zestawów i rekomendacji w `lib/shop-engine.ts`,
 - prosty koszyk zapytaniowy z wysyłką na `/api/shop/inquiry`,
 - panel admina `/admin/sklep` do zarządzania produktami, zestawami i regułami rekomendacji,
-- migracja Supabase `supabase/migrations/003_shop_mvp.sql`.
+- strony produktów pod `/sklep/[slug]` z treścią, SEO, galerią i wariantami,
+- migracje Supabase:
+  - `supabase/migrations/003_shop_mvp.sql`,
+  - `supabase/migrations/004_shop_configurator_config.sql`,
+  - `supabase/migrations/005_shop_products_content_and_variants.sql`.
 
 ## Model MVP
 
@@ -17,6 +21,12 @@ Tabela `shop_products` przechowuje produkty bazowe, dodatki i akcesoria. Cena mo
 - za sztukę (`unit`),
 - za m² (`m2`),
 - za metr bieżący (`mb`).
+
+Dodatkowo produkt może mieć:
+- flagę publikacji na końcu flow konfiguratora (`show_in_configurator_result`),
+- osobną kolejność i typ prezentacji w wyniku (`result_display_order`, `result_display_type`),
+- pola SEO i treści strony (`slug`, `page_title`, `page_description`, `meta_title`, `meta_description`),
+- galerię, warianty i dane techniczne (`gallery`, `variants`, `specifications`).
 
 ### Zestawy
 Tabela `shop_bundles` przechowuje warianty typu Start / Trwałość+ / Premium. Każdy zestaw ma:
@@ -30,7 +40,7 @@ Tabela `shop_recommendation_rules` pozwala przypisać produkty polecane do typu 
 
 ## Jak uruchomić
 
-1. Uruchom migrację `003_shop_mvp.sql` w Supabase.
+1. Uruchom migracje `003_shop_mvp.sql`, `004_shop_configurator_config.sql` i `005_shop_products_content_and_variants.sql` w Supabase.
 2. Upewnij się, że w `.env` są ustawione:
    - `NEXT_PUBLIC_SUPABASE_URL` lub `SUPABASE_URL`,
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`,

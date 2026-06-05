@@ -17,6 +17,9 @@ import { ShopBundle, ShopConfiguratorConfig, ShopProduct, ShopRecommendationRule
 type ProductDraft = ShopProduct & {
   tagsText: string
   roomTypesText: string
+  galleryText: string
+  variantsText: string
+  specificationsText: string
 }
 
 type BundleDraft = ShopBundle & {
@@ -61,6 +64,9 @@ const mapProductDraft = (product: ShopProduct): ProductDraft => ({
   ...product,
   tagsText: (product.tags ?? []).join(", "),
   roomTypesText: (product.applicable_room_types ?? []).join(", "),
+  galleryText: stringifyJson(product.gallery ?? []),
+  variantsText: stringifyJson(product.variants ?? []),
+  specificationsText: stringifyJson(product.specifications ?? []),
 })
 
 const mapBundleDraft = (bundle: ShopBundle): BundleDraft => ({
@@ -204,21 +210,39 @@ export default function AdminShopPage() {
   }
 
   const handleSaveProduct = (product: ProductDraft) => {
-    void saveRecord("product", product.product_id, {
-      name: product.name,
-      short_name: product.short_name || null,
-      description: product.description,
-      category: product.category,
-      price: toNumber(product.price),
-      pricing_model: product.pricing_model,
-      unit_label: product.unit_label || null,
-      image_url: product.image_url || null,
-      tags: parseCsv(product.tagsText),
-      applicable_room_types: parseCsv(product.roomTypesText),
-      is_featured: Boolean(product.is_featured),
-      is_active: Boolean(product.is_active),
-      display_order: toNumber(product.display_order),
-    })
+    try {
+      void saveRecord("product", product.product_id, {
+        name: product.name,
+        short_name: product.short_name || null,
+        description: product.description,
+        category: product.category,
+        price: toNumber(product.price),
+        pricing_model: product.pricing_model,
+        unit_label: product.unit_label || null,
+        image_url: product.image_url || null,
+        tags: parseCsv(product.tagsText),
+        applicable_room_types: parseCsv(product.roomTypesText),
+        is_featured: Boolean(product.is_featured),
+        is_active: Boolean(product.is_active),
+        display_order: toNumber(product.display_order),
+        show_in_configurator_result: Boolean(product.show_in_configurator_result),
+        result_display_order: toNumber(product.result_display_order),
+        result_display_type: product.result_display_type || "card",
+        slug: product.slug || null,
+        page_title: product.page_title || null,
+        page_description: product.page_description || null,
+        meta_title: product.meta_title || null,
+        meta_description: product.meta_description || null,
+        gallery: JSON.parse(product.galleryText || "[]"),
+        variants: JSON.parse(product.variantsText || "[]"),
+        specifications: JSON.parse(product.specificationsText || "[]"),
+      })
+    } catch (error) {
+      setMessage({
+        type: "error",
+        text: `Pola gallery / variants / specifications dla ${product.name} muszą zawierać poprawny JSON. ${error instanceof Error ? error.message : ""}`.trim(),
+      })
+    }
   }
 
   const handleSaveBundle = (bundle: BundleDraft) => {
@@ -322,6 +346,17 @@ export default function AdminShopPage() {
             is_featured: false,
             is_active: true,
             display_order: products.length + 1,
+            show_in_configurator_result: true,
+            result_display_order: products.length + 1,
+            result_display_type: "card",
+            slug: `nowy-produkt-${timestamp}`,
+            page_title: "Nowy produkt",
+            page_description: "Krótki opis produktu.",
+            meta_title: "Nowy produkt | Sklep",
+            meta_description: "Meta opis nowego produktu.",
+            gallery: [],
+            variants: [],
+            specifications: [],
           }
         : type === "bundle"
           ? {
@@ -421,6 +456,8 @@ export default function AdminShopPage() {
           <Alert>
             <AlertDescription>
               Panel działa aktualnie na danych fallback. Aby zapisy były trwałe, uruchom migracje `003_shop_mvp.sql` oraz `004_shop_configurator_config.sql` i ustaw Supabase.
+              {` `}
+              Dla rozszerzonych produktów uruchom też `005_shop_products_content_and_variants.sql`.
             </AlertDescription>
           </Alert>
         )}
@@ -601,7 +638,7 @@ export default function AdminShopPage() {
             <section className="space-y-4">
               <div>
                 <h2 className="text-2xl font-semibold text-zinc-900">Produkty</h2>
-                <p className="text-zinc-600">Produkty bazowe, dodatki i akcesoria, które mogą być polecane lub sprzedawane osobno.</p>
+                <p className="text-zinc-600">Produkty bazowe, dodatki i akcesoria z konfiguracją publikacji w wyniku flow, treści SEO, galerii i wariantów.</p>
               </div>
               <div className="grid gap-4 xl:grid-cols-2">
                 {sortedProducts.map((product) => (
@@ -645,6 +682,33 @@ export default function AdminShopPage() {
                           <Input value={product.image_url || ""} onChange={(event) => updateProduct(product.product_id, { image_url: event.target.value })} />
                         </div>
                         <div className="space-y-2">
+                          <Label>Slug strony produktu</Label>
+                          <Input value={product.slug || ""} onChange={(event) => updateProduct(product.product_id, { slug: event.target.value })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Typ prezentacji w wyniku</Label>
+                          <Input
+                            value={product.result_display_type || "card"}
+                            onChange={(event) => updateProduct(product.product_id, { result_display_type: event.target.value as ShopProduct["result_display_type"] })}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Tytuł strony produktu</Label>
+                          <Input value={product.page_title || ""} onChange={(event) => updateProduct(product.product_id, { page_title: event.target.value })} />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Opis strony produktu</Label>
+                          <Textarea value={product.page_description || ""} onChange={(event) => updateProduct(product.product_id, { page_description: event.target.value })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Meta title</Label>
+                          <Input value={product.meta_title || ""} onChange={(event) => updateProduct(product.product_id, { meta_title: event.target.value })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Meta description</Label>
+                          <Textarea value={product.meta_description || ""} onChange={(event) => updateProduct(product.product_id, { meta_description: event.target.value })} />
+                        </div>
+                        <div className="space-y-2">
                           <Label>Tagi (CSV)</Label>
                           <Input value={product.tagsText} onChange={(event) => updateProduct(product.product_id, { tagsText: event.target.value })} />
                         </div>
@@ -655,6 +719,38 @@ export default function AdminShopPage() {
                         <div className="space-y-2">
                           <Label>Kolejność</Label>
                           <Input type="number" value={product.display_order ?? 0} onChange={(event) => updateProduct(product.product_id, { display_order: Number(event.target.value) })} />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Kolejność w wyniku konfiguratora</Label>
+                          <Input
+                            type="number"
+                            value={product.result_display_order ?? product.display_order ?? 0}
+                            onChange={(event) => updateProduct(product.product_id, { result_display_order: Number(event.target.value) })}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Galeria (JSON)</Label>
+                          <Textarea
+                            value={product.galleryText}
+                            onChange={(event) => updateProduct(product.product_id, { galleryText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Warianty produktu (JSON)</Label>
+                          <Textarea
+                            value={product.variantsText}
+                            onChange={(event) => updateProduct(product.product_id, { variantsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Dane techniczne (JSON)</Label>
+                          <Textarea
+                            value={product.specificationsText}
+                            onChange={(event) => updateProduct(product.product_id, { specificationsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
                         </div>
                         <div className="flex items-center justify-between rounded-lg border p-3">
                           <div>
@@ -669,6 +765,16 @@ export default function AdminShopPage() {
                             <p className="text-sm text-zinc-500">Dodatkowo wyróżniony w panelu.</p>
                           </div>
                           <Switch checked={product.is_featured === true} onCheckedChange={(checked) => updateProduct(product.product_id, { is_featured: checked })} />
+                        </div>
+                        <div className="flex items-center justify-between rounded-lg border p-3">
+                          <div>
+                            <p className="font-medium">Pokaż na końcu flow</p>
+                            <p className="text-sm text-zinc-500">Produkt może pojawić się w ostatnim kroku konfiguratora.</p>
+                          </div>
+                          <Switch
+                            checked={product.show_in_configurator_result === true}
+                            onCheckedChange={(checked) => updateProduct(product.product_id, { show_in_configurator_result: checked })}
+                          />
                         </div>
                       </div>
                       <Button onClick={() => handleSaveProduct(product)} disabled={savingId === product.product_id}>
