@@ -882,24 +882,27 @@ export default function AdminShopPage() {
                             folder="shop/products"
                             disabled={savingId === product.product_id}
                             onUploadComplete={(results: CloudinaryUploadResult[]) => {
+                              let currentGallery: Array<{ url: string; alt?: string }>
                               try {
-                                const currentGallery = JSON.parse(product.galleryText || "[]")
-                                const uploadedItems = results.map((result, index) => ({
-                                  url: result.url,
-                                  alt: `${product.name} - galeria ${currentGallery.length + index + 1}`,
-                                }))
-                                const nextGallery = [...currentGallery, ...uploadedItems]
-                                const nextMainImageUrl = product.image_url || uploadedItems[0]?.url
-                                updateProduct(product.product_id, {
-                                  galleryText: stringifyJson(nextGallery),
-                                  image_url: nextMainImageUrl,
-                                })
+                                currentGallery = JSON.parse(product.galleryText || "[]")
                               } catch {
                                 setMessage({
                                   type: "error",
                                   text: `Nie udało się dodać zdjęć do galerii produktu ${product.name}. Najpierw popraw format JSON galerii.`,
                                 })
+                                return
                               }
+
+                              const uploadedItems = results.map((result, index) => ({
+                                url: result.url,
+                                alt: `${product.name} - galeria ${currentGallery.length + index + 1}`,
+                              }))
+                              const nextGallery = [...currentGallery, ...uploadedItems]
+                              const nextImageUrl = !product.image_url && uploadedItems[0]?.url ? uploadedItems[0].url : undefined
+                              updateProduct(product.product_id, {
+                                galleryText: stringifyJson(nextGallery),
+                                ...(nextImageUrl ? { image_url: nextImageUrl } : {}),
+                              })
                             }}
                           />
                         </div>
