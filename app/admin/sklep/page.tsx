@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, Plus, Save, ShoppingBag } from "lucide-react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import CloudinaryUploadWidget from "@/components/admin/cloudinary-upload-widget"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -43,6 +44,10 @@ type ConfigDraft = ShopConfiguratorConfig & {
   kitItemsText: string
   ctaButtonsText: string
   quickChoicesText: string
+}
+
+interface CloudinaryUploadResult {
+  url: string
 }
 
 const stringifyJson = (value: unknown) => JSON.stringify(value ?? [], null, 2)
@@ -416,9 +421,38 @@ export default function AdminShopPage() {
             page_description: "Krótki opis produktu.",
             meta_title: "Nowy produkt | Sklep",
             meta_description: "Meta opis nowego produktu.",
-            gallery: [],
-            variants: [],
-            specifications: [],
+            image_url: "/placeholder.svg",
+            gallery: [
+              { url: "/placeholder.svg", alt: "Nowy produkt - zdjęcie główne" },
+              { url: "/placeholder.svg", alt: "Nowy produkt - detal produktu" },
+            ],
+            variants: [
+              {
+                id: `wariant-standard-${timestamp}`,
+                name: "Wariant standard",
+                description: "Bazowy wariant produktu do codziennego zastosowania.",
+                price: 0,
+                pricing_model: "fixed",
+                unit_label: "zł / zamówienie",
+                is_active: true,
+                display_order: 1,
+              },
+              {
+                id: `wariant-premium-${timestamp}`,
+                name: "Wariant premium",
+                description: "Wariant o podwyższonych parametrach i wykończeniu.",
+                price: 0,
+                pricing_model: "fixed",
+                unit_label: "zł / zamówienie",
+                is_active: true,
+                display_order: 2,
+              },
+            ],
+            specifications: [
+              { label: "Zastosowanie", value: "Przykładowe zastosowanie produktu" },
+              { label: "Jednostka rozliczenia", value: "zamówienie" },
+              { label: "Czas realizacji", value: "3-5 dni roboczych" },
+            ],
           }
         : type === "bundle"
           ? {
@@ -768,8 +802,22 @@ export default function AdminShopPage() {
                           <Textarea value={product.description} onChange={(event) => updateProduct(product.product_id, { description: event.target.value })} />
                         </div>
                         <div className="space-y-2 md:col-span-2">
-                          <Label>URL obrazka</Label>
-                          <Input value={product.image_url || ""} onChange={(event) => updateProduct(product.product_id, { image_url: event.target.value })} />
+                          <Label>Obraz główny</Label>
+                          <div className="space-y-2">
+                            <Input value={product.image_url || ""} onChange={(event) => updateProduct(product.product_id, { image_url: event.target.value })} />
+                            <CloudinaryUploadWidget
+                              maxFiles={1}
+                              folder="shop/products"
+                              disabled={savingId === product.product_id}
+                              onUploadComplete={(results: CloudinaryUploadResult[]) => {
+                                const uploadedUrl = results[0]?.url
+                                if (!uploadedUrl) {
+                                  return
+                                }
+                                updateProduct(product.product_id, { image_url: uploadedUrl })
+                              }}
+                            />
+                          </div>
                         </div>
                         <div className="space-y-2">
                           <Label>Slug strony produktu</Label>
@@ -828,6 +876,27 @@ export default function AdminShopPage() {
                             value={product.galleryText}
                             onChange={(event) => updateProduct(product.product_id, { galleryText: event.target.value })}
                             className="min-h-[120px] font-mono text-xs"
+                          />
+                          <CloudinaryUploadWidget
+                            maxFiles={10}
+                            folder="shop/products"
+                            disabled={savingId === product.product_id}
+                            onUploadComplete={(results: CloudinaryUploadResult[]) => {
+                              try {
+                                const currentGallery = JSON.parse(product.galleryText || "[]")
+                                const uploadedItems = results.map((result) => ({ url: result.url, alt: product.name }))
+                                const nextGallery = [...currentGallery, ...uploadedItems]
+                                updateProduct(product.product_id, {
+                                  galleryText: stringifyJson(nextGallery),
+                                  image_url: product.image_url || uploadedItems[0]?.url || product.image_url,
+                                })
+                              } catch {
+                                setMessage({
+                                  type: "error",
+                                  text: `Nie udało się dodać zdjęć do galerii produktu ${product.name}. Najpierw popraw format JSON galerii.`,
+                                })
+                              }
+                            }}
                           />
                         </div>
                         <div className="space-y-2 md:col-span-2">
