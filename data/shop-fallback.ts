@@ -26,6 +26,7 @@ export const fallbackShopCatalog: ShopCatalog = {
       meta_title: "Grunt epoksydowy | Sklep posadzek żywicznych",
       meta_description: "Sprawdź grunt epoksydowy do przygotowania podłoża pod system żywiczny.",
       gallery: [{ url: "/placeholder.svg", alt: "Grunt epoksydowy" }],
+      video_url: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
       variants: [
         {
           id: "grunt-standard",
@@ -41,6 +42,35 @@ export const fallbackShopCatalog: ShopCatalog = {
       specifications: [
         { label: "Zastosowanie", value: "Przygotowanie podłoża betonowego" },
         { label: "Jednostka rozliczenia", value: "m²" },
+        { label: "Czas schnięcia", value: "6-8 godzin przy 20°C" },
+      ],
+      technical_documents: [
+        { label: "Karta techniczna PDF", url: "https://example.com/grunt-epoksydowy-karta-techniczna.pdf" },
+        { label: "Karta charakterystyki", url: "https://example.com/grunt-epoksydowy-msds.pdf" },
+      ],
+      application_steps: [
+        {
+          title: "Przygotowanie podłoża",
+          description: "Podłoże musi być suche, nośne i odkurzone. Usuń mleczko cementowe oraz luźne fragmenty.",
+        },
+        {
+          title: "Mieszanie składników",
+          description: "Wymieszaj składnik A ze składnikiem B zgodnie z kartą techniczną, wolnoobrotowym mieszadłem przez 2-3 minuty.",
+        },
+        {
+          title: "Aplikacja gruntu",
+          description: "Nakładaj równomiernie wałkiem lub raklą, zachowując zalecane zużycie i unikając kałuż materiału.",
+        },
+      ],
+      faq_items: [
+        {
+          question: "Czy grunt jest konieczny przy nowym betonie?",
+          answer: "Tak, grunt stabilizuje chłonność podłoża i poprawia przyczepność kolejnych warstw systemu żywicznego.",
+        },
+        {
+          question: "Kiedy można nakładać kolejną warstwę?",
+          answer: "Kolejną warstwę nakładaj po pełnym związaniu gruntu, zwykle po 6-8 godzinach w temperaturze pokojowej.",
+        },
       ],
     },
     {

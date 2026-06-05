@@ -24,6 +24,29 @@ interface ShopProductPageProps {
   }>
 }
 
+function getVideoEmbedUrl(value: string) {
+  try {
+    const url = new URL(value)
+    const host = url.hostname.replace(/^www\./, "")
+    if (host === "youtube.com" || host === "m.youtube.com") {
+      const videoId = url.searchParams.get("v")
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null
+    }
+    if (host === "youtu.be") {
+      const videoId = url.pathname.slice(1)
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null
+    }
+    if (host === "vimeo.com") {
+      const videoId = url.pathname.slice(1)
+      return videoId ? `https://player.vimeo.com/video/${videoId}` : null
+    }
+  } catch {
+    return null
+  }
+
+  return null
+}
+
 export async function generateStaticParams() {
   const catalog = await getShopCatalog()
   return getPublishedShopProducts(catalog).map((product) => ({
@@ -78,6 +101,7 @@ export default async function ShopProductPage({ params }: ShopProductPageProps) 
   }
 
   const productUrl = new URL(`/sklep/${getProductSlug(product)}`, baseUrl).toString()
+  const productVideoEmbedUrl = product.video_url ? getVideoEmbedUrl(product.video_url) : null
   const breadcrumbSchema = getBreadcrumbSchema([
     { name: "Strona główna", url: baseUrl.toString() },
     { name: "Sklep", url: new URL("/sklep", baseUrl).toString() },
@@ -139,6 +163,75 @@ export default async function ShopProductPage({ params }: ShopProductPageProps) 
                     <div key={index} className="flex flex-col justify-between gap-1 border-b border-zinc-100 pb-2 last:border-b-0 last:pb-0 md:flex-row">
                       <span className="text-sm text-zinc-500">{item.label}</span>
                       <span className="text-sm font-medium text-zinc-900">{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {product.video_url ? (
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold">Wideo produktu</h2>
+                {productVideoEmbedUrl ? (
+                  <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-black">
+                    <iframe
+                      src={productVideoEmbedUrl}
+                      title={`Wideo produktu ${product.name}`}
+                      className="aspect-video w-full"
+                      loading="lazy"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowFullScreen
+                    />
+                  </div>
+                ) : (
+                  <p className="text-sm text-zinc-600">
+                    <a href={product.video_url} target="_blank" rel="noreferrer" className="text-zinc-900 underline">
+                      Obejrzyj materiał wideo
+                    </a>
+                  </p>
+                )}
+              </div>
+            ) : null}
+
+            {product.technical_documents?.length ? (
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold">Karty techniczne i dokumenty</h2>
+                <ul className="space-y-2 rounded-2xl border border-zinc-200 p-4">
+                  {product.technical_documents.map((item, index) => (
+                    <li key={index}>
+                      <a href={item.url} target="_blank" rel="noreferrer" className="text-sm text-zinc-900 underline">
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
+            {product.application_steps?.length ? (
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold">Sposób aplikacji</h2>
+                <ol className="space-y-3 rounded-2xl border border-zinc-200 p-4">
+                  {product.application_steps.map((item, index) => (
+                    <li key={index} className="space-y-1">
+                      <p className="text-sm font-medium text-zinc-900">
+                        {index + 1}. {item.title}
+                      </p>
+                      <p className="text-sm text-zinc-600">{item.description}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            ) : null}
+
+            {product.faq_items?.length ? (
+              <div className="space-y-3">
+                <h2 className="text-xl font-semibold">Pytania i odpowiedzi</h2>
+                <div className="space-y-3">
+                  {product.faq_items.map((item, index) => (
+                    <div key={index} className="rounded-2xl border border-zinc-200 p-4">
+                      <p className="text-sm font-medium text-zinc-900">{item.question}</p>
+                      <p className="mt-1 text-sm text-zinc-600">{item.answer}</p>
                     </div>
                   ))}
                 </div>

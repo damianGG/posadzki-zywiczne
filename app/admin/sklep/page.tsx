@@ -21,6 +21,9 @@ type ProductDraft = ShopProduct & {
   galleryText: string
   variantsText: string
   specificationsText: string
+  technicalDocumentsText: string
+  applicationStepsText: string
+  faqItemsText: string
 }
 
 type BundleDraft = ShopBundle & {
@@ -72,6 +75,9 @@ const mapProductDraft = (product: ShopProduct): ProductDraft => ({
   galleryText: stringifyJson(product.gallery ?? []),
   variantsText: stringifyJson(product.variants ?? []),
   specificationsText: stringifyJson(product.specifications ?? []),
+  technicalDocumentsText: stringifyJson(product.technical_documents ?? []),
+  applicationStepsText: stringifyJson(product.application_steps ?? []),
+  faqItemsText: stringifyJson(product.faq_items ?? []),
 })
 
 const mapBundleDraft = (bundle: ShopBundle): BundleDraft => ({
@@ -259,6 +265,9 @@ export default function AdminShopPage() {
       let gallery
       let variants
       let specifications
+      let technicalDocuments
+      let applicationSteps
+      let faqItems
 
       try {
         gallery = JSON.parse(product.galleryText || "[]")
@@ -276,6 +285,24 @@ export default function AdminShopPage() {
         specifications = JSON.parse(product.specificationsText || "[]")
       } catch {
         throw new Error('Pole Dane techniczne (JSON) ma niepoprawny format. Oczekiwany format: [{"label":"...","value":"..."}].')
+      }
+
+      try {
+        technicalDocuments = JSON.parse(product.technicalDocumentsText || "[]")
+      } catch {
+        throw new Error('Pole Karty techniczne i dokumenty (JSON) ma niepoprawny format. Oczekiwany format: [{"label":"...","url":"..."}].')
+      }
+
+      try {
+        applicationSteps = JSON.parse(product.applicationStepsText || "[]")
+      } catch {
+        throw new Error('Pole Sposób aplikacji (JSON) ma niepoprawny format. Oczekiwany format: [{"title":"...","description":"..."}].')
+      }
+
+      try {
+        faqItems = JSON.parse(product.faqItemsText || "[]")
+      } catch {
+        throw new Error('Pole Q&A produktu (JSON) ma niepoprawny format. Oczekiwany format: [{"question":"...","answer":"..."}].')
       }
 
       void saveRecord("product", product.product_id, {
@@ -300,9 +327,13 @@ export default function AdminShopPage() {
         page_description: product.page_description || null,
         meta_title: product.meta_title || null,
         meta_description: product.meta_description || null,
+        video_url: product.video_url || null,
         gallery,
         variants,
         specifications,
+        technical_documents: technicalDocuments,
+        application_steps: applicationSteps,
+        faq_items: faqItems,
       })
     } catch (error) {
       setMessage({
@@ -422,6 +453,7 @@ export default function AdminShopPage() {
             meta_title: "Nowy produkt | Sklep",
             meta_description: "Meta opis nowego produktu.",
             image_url: "/garage.jpg",
+            video_url: "https://www.youtube.com/watch?v=ysz5S6PUM-U",
             gallery: [
               { url: "/garage.jpg", alt: "Nowy produkt - zdjęcie główne" },
               { url: "/kuchnia.jpg", alt: "Nowy produkt - detal produktu" },
@@ -453,6 +485,12 @@ export default function AdminShopPage() {
               { label: "Jednostka rozliczenia", value: "zamówienie" },
               { label: "Czas realizacji", value: "3-5 dni roboczych" },
             ],
+            technical_documents: [{ label: "Karta techniczna PDF", url: "https://example.com/karta-techniczna.pdf" }],
+            application_steps: [
+              { title: "Krok 1", description: "Przygotuj podłoże zgodnie z instrukcją." },
+              { title: "Krok 2", description: "Wymieszaj produkt i nałóż równą warstwę." },
+            ],
+            faq_items: [{ question: "Czy mogę aplikować samodzielnie?", answer: "Tak, przy zachowaniu zaleceń producenta." }],
           }
         : type === "bundle"
           ? {
@@ -552,7 +590,7 @@ export default function AdminShopPage() {
           <Alert>
             <AlertDescription>
               Panel działa aktualnie na danych fallback. Aby zapisy były trwałe, uruchom migracje `003_shop_mvp.sql` oraz `004_shop_configurator_config.sql` i ustaw Supabase.
-              Dla rozszerzonych funkcji produktów uruchom również migrację `005_shop_products_content_and_variants.sql` (po `003_shop_mvp.sql` i `004_shop_configurator_config.sql`).
+              Dla rozszerzonych funkcji produktów uruchom również migracje `005_shop_products_content_and_variants.sql` i `006_shop_products_landing_content.sql` (po `003_shop_mvp.sql` i `004_shop_configurator_config.sql`).
             </AlertDescription>
           </Alert>
         )}
@@ -850,6 +888,10 @@ export default function AdminShopPage() {
                           <Label>Meta description</Label>
                           <Textarea value={product.meta_description || ""} onChange={(event) => updateProduct(product.product_id, { meta_description: event.target.value })} />
                         </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Wideo produktu (URL YouTube/Vimeo lub MP4)</Label>
+                          <Input value={product.video_url || ""} onChange={(event) => updateProduct(product.product_id, { video_url: event.target.value })} />
+                        </div>
                         <div className="space-y-2">
                           <Label>Tagi (CSV)</Label>
                           <Input value={product.tagsText} onChange={(event) => updateProduct(product.product_id, { tagsText: event.target.value })} />
@@ -919,6 +961,30 @@ export default function AdminShopPage() {
                           <Textarea
                             value={product.specificationsText}
                             onChange={(event) => updateProduct(product.product_id, { specificationsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Karty techniczne i dokumenty (JSON)</Label>
+                          <Textarea
+                            value={product.technicalDocumentsText}
+                            onChange={(event) => updateProduct(product.product_id, { technicalDocumentsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Sposób aplikacji (JSON)</Label>
+                          <Textarea
+                            value={product.applicationStepsText}
+                            onChange={(event) => updateProduct(product.product_id, { applicationStepsText: event.target.value })}
+                            className="min-h-[120px] font-mono text-xs"
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Q&A produktu (JSON)</Label>
+                          <Textarea
+                            value={product.faqItemsText}
+                            onChange={(event) => updateProduct(product.product_id, { faqItemsText: event.target.value })}
                             className="min-h-[120px] font-mono text-xs"
                           />
                         </div>

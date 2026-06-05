@@ -26,6 +26,21 @@ export interface ShopProductSpecification {
   value: string
 }
 
+export interface ShopProductTechnicalDocument {
+  label: string
+  url: string
+}
+
+export interface ShopProductApplicationStep {
+  title: string
+  description: string
+}
+
+export interface ShopProductFaqItem {
+  question: string
+  answer: string
+}
+
 export interface ShopProduct {
   id?: string
   product_id: string
@@ -53,6 +68,10 @@ export interface ShopProduct {
   gallery?: ShopProductGalleryItem[]
   variants?: ShopProductVariant[]
   specifications?: ShopProductSpecification[]
+  video_url?: string
+  technical_documents?: ShopProductTechnicalDocument[]
+  application_steps?: ShopProductApplicationStep[]
+  faq_items?: ShopProductFaqItem[]
 }
 
 export interface ShopBundleItem {
