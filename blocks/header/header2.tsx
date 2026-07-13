@@ -229,7 +229,7 @@ export const Header2 = () => {
 
                 {/* CTA BUTTONS - PRAWA STRONA */}
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" className="hidden bg-white sm:flex hover:bg-zinc-100" asChild>
+                    <Button variant="outline" size="sm" className="hidden sm:flex bg-white hover:bg-zinc-100" asChild>
                         <Link href="/kontakt">Skontaktuj się</Link>
                     </Button>
                     <Button
