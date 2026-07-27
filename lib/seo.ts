@@ -1,3 +1,5 @@
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site-config";
+
 export function articleJsonLd(p: {
   url: string;
   title: string;
@@ -17,23 +19,24 @@ export function articleJsonLd(p: {
     image: p.images ?? [],
     publisher: {
       "@type": "Organization",
-      name: p.publisherName ?? "Posadzki Żywiczne",
-      logo: p.publisherLogo
-        ? { "@type": "ImageObject", url: p.publisherLogo }
-        : { "@type": "ImageObject", url: "https://posadzkizywiczne.com/images/logo.png" }
+      name: p.publisherName ?? SITE_NAME,
+      logo: {
+        "@type": "ImageObject",
+        url: p.publisherLogo ?? absoluteUrl("/images/logo.png"),
+      },
     },
     datePublished: p.datePublished,
-    dateModified: p.dateModified ?? p.datePublished
+    dateModified: p.dateModified ?? p.datePublished,
   };
 }
 
 export function getDefaultSEOConfig() {
   return {
-    siteName: "Posadzki Żywiczne",
-    siteUrl: "https://posadzkizywiczne.com",
+    siteName: SITE_NAME,
+    siteUrl: SITE_URL,
     defaultTitle: "Posadzki żywiczne | Garaże, kuchnie, balkony, tarasy | Gwarancja",
-    defaultDescription: "Wykonujemy trwałe i estetyczne posadzki żywiczne w garażach, kuchniach, łazienkach, piwnicach, halach oraz na balkonach i tarasach.",
-    defaultImage: "https://posadzkizywiczne.com/images/home-banner.jpg",
+    defaultDescription: SITE_DESCRIPTION,
+    defaultImage: absoluteUrl("/images/home-banner.jpg"),
     locale: "pl_PL",
   };
 }
@@ -46,8 +49,12 @@ export function generatePageMetadata(params: {
   image?: string;
 }) {
   const config = getDefaultSEOConfig();
-  const canonicalUrl = `${config.siteUrl}${params.path}`;
-  const imageUrl = params.image || config.defaultImage;
+  const canonicalUrl = absoluteUrl(params.path);
+  const imageUrl = params.image
+    ? params.image.startsWith("http")
+      ? params.image
+      : absoluteUrl(params.image)
+    : config.defaultImage;
 
   return {
     title: params.title,
@@ -59,7 +66,7 @@ export function generatePageMetadata(params: {
       url: canonicalUrl,
       siteName: config.siteName,
       locale: config.locale,
-      type: 'website' as const,
+      type: "website" as const,
       images: [
         {
           url: imageUrl,
@@ -70,7 +77,7 @@ export function generatePageMetadata(params: {
       ],
     },
     twitter: {
-      card: 'summary_large_image' as const,
+      card: "summary_large_image" as const,
       title: params.title,
       description: params.description,
       images: [imageUrl],
@@ -80,4 +87,3 @@ export function generatePageMetadata(params: {
     },
   };
 }
-

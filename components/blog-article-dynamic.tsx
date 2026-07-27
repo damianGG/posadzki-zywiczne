@@ -6,36 +6,40 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import type { BlogPost } from "@/lib/blog"
+import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site-config"
 
 interface BlogArticleDynamicProps {
   post: BlogPost
 }
 
 export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
+  const canonicalUrl = `${SITE_URL}/blog/${post.id}`
+  const imageUrl = post.image.url.startsWith("http") ? post.image.url : absoluteUrl(post.image.url)
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
     description: post.excerpt,
-    image: post.image.url,
+    image: imageUrl,
     author: {
       "@type": "Person",
       name: post.author.name,
-      url: `https://posadzkizywiczne.com/autor/${post.author.name.toLowerCase().replace(/\s+/g, "-")}`,
     },
     publisher: {
       "@type": "Organization",
-      name: "Posadzki Żywiczne",
+      "@id": `${SITE_URL}/#organization`,
+      name: SITE_NAME,
       logo: {
         "@type": "ImageObject",
-        url: "https://posadzkizywiczne.pl/logo.png",
+        url: absoluteUrl("/images/logo.png"),
       },
     },
     datePublished: post.publishedAt,
-    dateModified: post.updatedAt,
+    dateModified: post.updatedAt || post.publishedAt,
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": post.seo.canonicalUrl,
+      "@id": canonicalUrl,
     },
   }
 
@@ -44,24 +48,18 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <article className="max-w-4xl mx-auto px-4 py-8">
-        {/* Breadcrumbs */}
         <nav className="mb-8" aria-label="Breadcrumb">
           <ol className="flex items-center space-x-2 text-sm text-muted-foreground">
             <li>
-              <Link href="/" className="hover:text-primary">
-                Strona główna
-              </Link>
+              <Link href="/" className="hover:text-primary">Strona główna</Link>
             </li>
             <li className="before:content-['/'] before:mx-2">
-              <Link href="/blog" className="hover:text-primary">
-                Blog
-              </Link>
+              <Link href="/blog" className="hover:text-primary">Blog</Link>
             </li>
             <li className="before:content-['/'] before:mx-2 text-foreground">{post.title}</li>
           </ol>
         </nav>
 
-        {/* Back to blog */}
         <Button variant="ghost" asChild className="mb-8 pl-0">
           <Link href="/blog" className="flex items-center">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -69,14 +67,9 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
           </Link>
         </Button>
 
-        {/* Article Header */}
         <header className="mb-8">
-          <div className="mb-4">
-            <Badge>{post.category}</Badge>
-          </div>
-
+          <div className="mb-4"><Badge>{post.category}</Badge></div>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-tight">{post.title}</h1>
-
           <p className="text-xl text-muted-foreground mb-6 leading-relaxed">{post.excerpt}</p>
 
           <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-t border-b">
@@ -105,7 +98,6 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
           </div>
         </header>
 
-        {/* Featured Image */}
         <div className="mb-12">
           <Image
             src={post.image.url || "/placeholder.svg"}
@@ -118,25 +110,11 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
           <figcaption className="text-sm text-muted-foreground mt-2 text-center">{post.image.caption}</figcaption>
         </div>
 
-        {/* Article Content */}
         <div
-          className="prose prose-lg max-w-none dark:prose-invert 
-                        prose-headings:text-foreground 
-                        prose-p:text-foreground 
-                        prose-li:text-foreground 
-                        prose-strong:text-foreground
-                        prose-a:text-primary
-                        prose-blockquote:text-muted-foreground
-                        prose-code:text-foreground
-                        prose-pre:bg-muted
-                        overflow-x-auto
-                        md:overflow-visible
-                        [&_table]:min-w-[640px]
-                        md:[&_table]:min-w-0"
+          className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-primary prose-blockquote:text-muted-foreground prose-code:text-foreground prose-pre:bg-muted overflow-x-auto md:overflow-visible [&_table]:min-w-[640px] md:[&_table]:min-w-0"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
 
-        {/* Article Footer */}
         <footer className="mt-12 pt-8 border-t">
           <Card>
             <CardHeader>
@@ -146,9 +124,7 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
               </CardDescription>
             </CardHeader>
             <CardFooter>
-              <Button asChild>
-                <Link href="/kontakt">Skontaktuj się z nami</Link>
-              </Button>
+              <Button asChild><Link href="/kontakt">Skontaktuj się z nami</Link></Button>
             </CardFooter>
           </Card>
         </footer>
