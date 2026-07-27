@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Check, MoveRight, PhoneCall } from "lucide-react";
 import HeroAnimatedTitle from "@/components/HeroAnimatedTitle";
 
-
 export default function HeroMainPage() {
     return (
         <div className="relative w-full min-h-screen">
@@ -14,6 +13,7 @@ export default function HeroMainPage() {
                     alt="Posadzka żywiczna w garażu - przykładowa realizacja"
                     fill
                     priority
+                    fetchPriority="high"
                     sizes="100vw"
                     className="object-cover object-right"
                 />
