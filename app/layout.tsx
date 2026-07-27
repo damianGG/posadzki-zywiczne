@@ -1,4 +1,3 @@
-import { Inter } from "next/font/google";
 import "./globals.css";
 import { Footer1 } from "@/blocks/footer/footer1";
 import { Analytics } from "@vercel/analytics/react";
@@ -18,12 +17,6 @@ import {
   SITE_URL,
   absoluteUrl,
 } from "@/lib/site-config";
-
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  preload: true,
-});
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
 const defaultTitle = "Posadzki żywiczne | Garaże, kuchnie, balkony, tarasy | Gwarancja";
@@ -67,6 +60,10 @@ export const metadata: Metadata = {
   },
 };
 
+function serializeJsonLd(value: unknown) {
+  return JSON.stringify(value).replace(/</g, "\\u003c");
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -82,24 +79,18 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
 
-        <Script
-          id="organization-schema"
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(organizationSchema) }}
         />
-        <Script
-          id="website-schema"
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(websiteSchema) }}
         />
-        <Script
-          id="local-business-schema"
+        <script
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
+            __html: serializeJsonLd({
               "@context": "https://schema.org",
               "@graph": localBusinessSchema.map(({ "@context": _context, ...schema }) => schema),
             }),
@@ -129,7 +120,7 @@ export default function RootLayout({
 
       <Script
         id="clarity-script"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
         dangerouslySetInnerHTML={{
           __html: `
             (function(c,l,a,r,i,t,y){
@@ -141,7 +132,7 @@ export default function RootLayout({
         }}
       />
 
-      <body className={inter.className}>
+      <body className="font-sans">
         <Header2 />
         {children}
         <SpeedInsights />
