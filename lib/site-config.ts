@@ -1,3 +1,4 @@
+// Shared production URLs and business details used by metadata and structured data.
 export const SITE_URL = "https://www.posadzkizywiczne.com";
 
 export const SITE_NAME = "Posadzki Żywiczne";
