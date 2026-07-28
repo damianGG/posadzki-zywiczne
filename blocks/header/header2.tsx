@@ -123,7 +123,7 @@ export const Header2 = () => {
             className={`sticky top-0 left-0 z-40 w-full bg-zinc-50`}
         >
 
-            <div className="container relative mx-auto min-h-20 flex items-center justify-between">
+            <div className="relative mx-auto flex min-h-20 max-w-7xl items-center justify-between px-4 md:px-8">
                 {/* LOGO/BRAND - DODANE */}
                 <div className="flex items-center">
                     <Link href="/" className="flex items-center space-x-2">
@@ -229,8 +229,8 @@ export const Header2 = () => {
 
                 {/* CTA BUTTONS - PRAWA STRONA */}
                 <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
-                        <Link href="/kontakt">Kontakt</Link>
+                    <Button variant="outline" size="sm" className="hidden sm:flex bg-white hover:bg-zinc-100" asChild>
+                        <Link href="/kontakt">Skontaktuj się</Link>
                     </Button>
                     <Button
                         size="sm"
@@ -259,7 +259,7 @@ export const Header2 = () => {
                 variants={menuVariants}
                 style={{ overflow: "hidden" }}
             >
-                <div className="container py-4 space-y-4">
+                <div className="mx-auto max-w-7xl space-y-4 px-4 py-4 md:px-8">
                     {navigationItems.map((item) => (
                         <div key={item.title}>
                             {item.disabled ? (
@@ -297,7 +297,7 @@ export const Header2 = () => {
                     ))}
                     <div className="pt-4 border-t space-y-3">
                         <Button variant="outline" className="w-full bg-transparent" asChild>
-                            <Link href="/kontakt">Kontakt</Link>
+                            <Link href="/kontakt">Skontaktuj się</Link>
                         </Button>
                         <Button className="w-full" asChild>
                             <Link href="/kontakt">Bezpłatna konsultacja</Link>
