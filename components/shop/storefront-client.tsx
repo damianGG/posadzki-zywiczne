@@ -8,5 +8,6 @@ interface StorefrontClientProps {
 }
 
 export default function StorefrontClient({ initialCatalog }: StorefrontClientProps) {
-  return <KitConfigurator catalog={initialCatalog} />
+  const colorId = typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get("kolor")
+  return <KitConfigurator catalog={initialCatalog} initialFloorColorId={colorId} />
 }

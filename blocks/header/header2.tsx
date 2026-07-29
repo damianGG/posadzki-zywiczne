@@ -50,6 +50,11 @@ export const Header2 = () => {
             description: "",
         },
         {
+            title: "Kolory",
+            href: "/kolory-posadzek",
+            description: "",
+        },
+        {
             title: "Sklep",
             badge: "Dostępny wkrótce",
             disabled: true,

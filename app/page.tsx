@@ -16,6 +16,8 @@ import ProblemSolutionSection from "./garaze/components/issuse-solution";
 import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-renovation-timeline";
 import BenefitsSection from "./garaze/components/BenefitsSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { getLatestBlogPosts, getBlogPostsByCategories } from "@/lib/blog"
 
 export const dynamic = "force-static"
@@ -29,6 +31,12 @@ export default function Home() {
       <ProblemSolutionSection />
       <ScrollDrivenRenovationTimeline />
       <BenefitsSection />
+      <section className="bg-zinc-50 py-16">
+        <div className="container mx-auto flex max-w-5xl flex-col items-start gap-5 px-4 md:flex-row md:items-center md:justify-between">
+          <div><h2 className="text-3xl font-bold tracking-tight">Zobacz dostępne kolory posadzek</h2><p className="mt-2 text-zinc-600">Wzornik, płatki dekoracyjne i zdjęcia rzeczywistych realizacji.</p></div>
+          <Button asChild size="lg"><Link href="/kolory-posadzek">Przejdź do wzornika</Link></Button>
+        </div>
+      </section>
       <FAQ2 />
       <BlogPreviewSection
         posts={latestPosts}

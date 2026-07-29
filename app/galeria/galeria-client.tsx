@@ -16,6 +16,8 @@ interface GalleryImage {
   realizacjaTitle: string;
   realizacjaSlug: string;
   category: RealizacjaCategory;
+  color?: string;
+  finish?: string;
 }
 
 interface GaleriaClientProps {
@@ -26,6 +28,17 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [colorFilter, setColorFilter] = useState("all");
+  const [finishFilter, setFinishFilter] = useState("all");
+  const categories = useMemo(() => [...new Set(images.map((image) => image.category))], [images]);
+  const colors = useMemo(() => [...new Set(images.map((image) => image.color).filter(Boolean))] as string[], [images]);
+  const finishes = useMemo(() => [...new Set(images.map((image) => image.finish).filter(Boolean))] as string[], [images]);
+  const filteredImages = useMemo(() => images.filter((image) =>
+    (categoryFilter === "all" || image.category === categoryFilter) &&
+    (colorFilter === "all" || image.color === colorFilter) &&
+    (finishFilter === "all" || image.finish === finishFilter)
+  ), [images, categoryFilter, colorFilter, finishFilter]);
   
   // Embla carousel for mobile - vertical axis
   const [emblaRef, emblaApi] = useEmblaCarousel({ 
@@ -36,9 +49,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
   });
 
   // Pre-compute which images are Cloudinary URLs to avoid repeated checks
-  const imageCloudinaryStatus = useMemo(() => {
-    return images.map(img => isCloudinaryUrl(img.url));
-  }, [images]);
+  const imageCloudinaryStatus = useMemo(() => filteredImages.map(img => isCloudinaryUrl(img.url)), [filteredImages]);
 
   // Generate tiny blur placeholder for Cloudinary images
   const getBlurDataURL = useCallback((url: string, isCloudinary: boolean) => {
@@ -105,17 +116,17 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     if (emblaApi && isMobile) {
       emblaApi.scrollPrev();
     } else {
-      setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+      setCurrentIndex((prev) => (prev === 0 ? filteredImages.length - 1 : prev - 1));
     }
-  }, [emblaApi, isMobile, images.length]);
+  }, [emblaApi, isMobile, filteredImages.length]);
 
   const goToNext = useCallback(() => {
     if (emblaApi && isMobile) {
       emblaApi.scrollNext();
     } else {
-      setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+      setCurrentIndex((prev) => (prev === filteredImages.length - 1 ? 0 : prev + 1));
     }
-  }, [emblaApi, isMobile, images.length]);
+  }, [emblaApi, isMobile, filteredImages.length]);
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -163,7 +174,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
       }
       
       const img = new Image();
-      const imageUrl = images[wrappedIndex].url;
+      const imageUrl = filteredImages[wrappedIndex].url;
       
       // Use Cloudinary loader for optimization if applicable
       if (imageCloudinaryStatus[wrappedIndex]) {
@@ -185,9 +196,9 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     for (let i = 1; i <= 5; i++) {
       preloadImage(currentIndex + i);
     }
-  }, [currentIndex, isOpen, images, imageCloudinaryStatus, isMobile]);
+  }, [currentIndex, isOpen, filteredImages, imageCloudinaryStatus, isMobile]);
 
-  if (images.length === 0) {
+  if (filteredImages.length === 0) {
     return (
       <section className="w-full py-16">
         <div className="container mx-auto px-4">
@@ -199,15 +210,29 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
     );
   }
 
-  const currentImage = images[currentIndex];
+  const currentImage = filteredImages[currentIndex];
 
   return (
     <>
       {/* Gallery Grid */}
       <section className="w-full py-16">
         <div className="container mx-auto px-4">
+          <div className="mb-8 grid gap-3 sm:grid-cols-3">
+            <select aria-label="Filtruj po typie pomieszczenia" className="rounded-lg border border-gray-300 bg-white px-3 py-2" value={categoryFilter} onChange={(event) => { setCategoryFilter(event.target.value); setCurrentIndex(0); }}>
+              <option value="all">Wszystkie pomieszczenia</option>
+              {categories.map((category) => <option key={category} value={category}>{getCategoryDisplayName(category)}</option>)}
+            </select>
+            <select aria-label="Filtruj po kolorze" className="rounded-lg border border-gray-300 bg-white px-3 py-2" value={colorFilter} onChange={(event) => { setColorFilter(event.target.value); setCurrentIndex(0); }}>
+              <option value="all">Wszystkie kolory</option>
+              {colors.map((color) => <option key={color} value={color}>{color}</option>)}
+            </select>
+            <select aria-label="Filtruj po wykończeniu" className="rounded-lg border border-gray-300 bg-white px-3 py-2" value={finishFilter} onChange={(event) => { setFinishFilter(event.target.value); setCurrentIndex(0); }}>
+              <option value="all">Wszystkie wykończenia</option>
+              {finishes.map((finish) => <option key={finish} value={finish}>{finish}</option>)}
+            </select>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {images.map((image, index) => (
+            {filteredImages.map((image, index) => (
               <div
                 key={index}
                 className="relative aspect-square rounded-lg overflow-hidden shadow-md cursor-pointer group"
@@ -256,7 +281,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
 
           {/* Image counter */}
           <div className="absolute top-4 left-4 text-white text-sm md:text-base z-20 bg-black/50 backdrop-blur-sm px-3 py-2 rounded-lg">
-            {currentIndex + 1} / {images.length}
+            {currentIndex + 1} / {filteredImages.length}
           </div>
 
           {/* Image info - bottom left */}
@@ -279,7 +304,7 @@ export default function GaleriaClient({ images }: GaleriaClientProps) {
           {isMobile ? (
             <div className="overflow-hidden h-full w-full" ref={emblaRef}>
               <div className="flex flex-col h-full">
-                {images.map((image, index) => (
+                {filteredImages.map((image, index) => (
                   <div 
                     key={index} 
                     className="flex-[0_0_100%] min-h-0 relative"
