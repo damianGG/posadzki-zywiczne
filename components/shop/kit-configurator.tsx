@@ -33,9 +33,10 @@ import {
 
 interface KitConfiguratorProps {
   catalog: ShopCatalog
+  initialFloorColorId?: string | null
 }
 
-export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
+export default function KitConfigurator({ catalog, initialFloorColorId }: KitConfiguratorProps) {
   const config = useMemo(() => getConfiguratorConfig(catalog), [catalog])
   const activeRoomVariants = useMemo(() => getActiveRoomVariants(config), [config])
   const [selections, setSelections] = useState<ShopConfiguratorSelections>({
@@ -73,6 +74,12 @@ export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
       setActiveStepId(steps[0]?.id ?? "substrate")
     }
   }, [activeStepId, steps])
+
+  useEffect(() => {
+    if (initialFloorColorId && getFloorColors(config).some((color) => color.id === initialFloorColorId)) {
+      setSelections((current) => ({ ...current, floorColorId: initialFloorColorId }))
+    }
+  }, [config, initialFloorColorId])
 
   if (!activeStep) {
     return null
