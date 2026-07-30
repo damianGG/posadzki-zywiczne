@@ -32,6 +32,17 @@ import confetti from "canvas-confetti"
 // Constants
 const PLACEHOLDER_IMAGE = "/placeholder.svg"
 const FINAL_PRICE_NOTE = "Cena końcowa zawiera dojazd, materiał i robociznę."
+const tryParseJson = (text: string, status: number, responseContentType: string) => {
+    try {
+        return JSON.parse(text) as { success?: boolean; message?: string }
+    } catch (error) {
+        console.error(
+            `Email send JSON parse failed (status ${status}, content-type: ${responseContentType}).`,
+            error,
+        )
+        return null
+    }
+}
 
 interface PriceRange {
     min_m2: number
@@ -1649,7 +1660,24 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                     }),
                 })
 
-                const result = await response.json()
+                const responseText = await response.text()
+                const contentType = response.headers.get("content-type") || "unknown"
+                const fallbackErrorMessage = `Błąd wysyłania emaila (status ${response.status}).`
+
+                if (!response.ok) {
+                    const errorResult = tryParseJson(responseText, response.status, contentType)
+
+                    throw new Error(errorResult?.message || fallbackErrorMessage)
+                }
+
+                const result = tryParseJson(responseText, response.status, contentType)
+
+                if (!result) {
+                    console.error(
+                        `Email send received non-JSON response body (status ${response.status}, content-type: ${contentType}).`,
+                    )
+                    throw new Error(`Nieprawidłowa odpowiedź serwera (${response.status}).`)
+                }
 
                 if (result.success) {
                     // Uruchom konfetti po wysłaniu emaila
