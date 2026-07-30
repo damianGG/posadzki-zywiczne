@@ -14,12 +14,61 @@ function KonkursForm() {
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<{
-    type: "success" | "error" | null
+    type: "success" | "error" | "exists" | null
     message: string
     code?: string
   }>({ type: null, message: "" })
+  const [isResending, setIsResending] = useState(false)
 
   const { executeRecaptcha } = useGoogleReCaptcha()
+
+  const handleResendEmail = async () => {
+    setIsResending(true)
+    
+    try {
+      if (!executeRecaptcha) {
+        setSubmitStatus({
+          type: "error",
+          message: "reCAPTCHA nie jest gotowa. Spróbuj ponownie za chwilę.",
+        })
+        setIsResending(false)
+        return
+      }
+
+      // Get reCAPTCHA token
+      const recaptchaToken = await executeRecaptcha("resend_code")
+
+      const response = await fetch("/api/resend-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, recaptchaToken }),
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSubmitStatus({
+          type: "success",
+          message: "Email został wysłany ponownie!",
+          code: data.code,
+        })
+      } else {
+        setSubmitStatus({
+          type: "error",
+          message: data.message,
+        })
+      }
+    } catch (error) {
+      setSubmitStatus({
+        type: "error",
+        message: "Wystąpił błąd. Spróbuj ponownie później.",
+      })
+    } finally {
+      setIsResending(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -50,13 +99,21 @@ function KonkursForm() {
       const data = await response.json()
 
       if (data.success) {
-        setSubmitStatus({
-          type: "success",
-          message: data.message,
-          code: data.code,
-        })
-        setName("")
-        setEmail("")
+        if (data.alreadyExists) {
+          setSubmitStatus({
+            type: "exists",
+            message: "Ten adres email ma już przypisany kod konkursowy.",
+            code: data.code,
+          })
+        } else {
+          setSubmitStatus({
+            type: "success",
+            message: data.message,
+            code: data.code,
+          })
+          setName("")
+          setEmail("")
+        }
       } else {
         setSubmitStatus({
           type: "error",
@@ -190,6 +247,56 @@ function KonkursForm() {
                   >
                     Zamknij
                   </Button>
+                </div>
+              ) : submitStatus.type === "exists" ? (
+                <div className="bg-blue-50 border-2 border-blue-500 rounded-xl p-8 text-center">
+                  <div className="w-16 h-16 bg-blue-500 text-white rounded-full flex items-center justify-center text-3xl mx-auto mb-4" role="img" aria-label="Informacja">
+                    ℹ️
+                  </div>
+                  <h4 className="text-2xl font-bold text-blue-700 mb-3">Email już zarejestrowany</h4>
+                  <p className="text-blue-700 mb-4">{submitStatus.message}</p>
+                  {submitStatus.code && (
+                    <div className="bg-white rounded-lg p-6 mt-4 mb-6">
+                      <p className="text-gray-600 text-sm mb-2">Twój kod konkursowy:</p>
+                      <p className="text-4xl font-bold text-purple-600 font-mono tracking-wider">
+                        {submitStatus.code}
+                      </p>
+                    </div>
+                  )}
+                  <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-4 mb-6">
+                    <p className="text-yellow-800 text-sm">
+                      Jeśli nie otrzymałeś emaila z kodem, możesz wysłać go ponownie:
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <Button
+                      onClick={handleResendEmail}
+                      disabled={isResending}
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                    >
+                      {isResending ? (
+                        <>
+                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                          Wysyłanie...
+                        </>
+                      ) : (
+                        <>
+                          📧 Wyślij email ponownie
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setSubmitStatus({ type: null, message: "" })
+                        setName("")
+                        setEmail("")
+                      }}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      Zamknij
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
