@@ -1,0 +1,218 @@
+╔════════════════════════════════════════════════════════════════╗
+║           SZABLON NOWEJ REALIZACJI - QUICK REFERENCE           ║
+║                    Skopiuj i wypełnij                          ║
+╚════════════════════════════════════════════════════════════════╝
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📌 PODSTAWOWE INFORMACJE
+
+PROJEKT: _________________________________________________
+         (np. "Garaż dwustanowiskowy" lub "Posadzka w mieszkaniu")
+
+LOKALIZACJA: _____________________________________________
+            (np. "Warszawa, Mokotów" lub "Kraków")
+
+DATA REALIZACJI: _________________________________________
+                (np. "październik 2024" lub "2024-10-15")
+
+KATEGORIA (wybierz jedną):
+  [ ] Mieszkania i domy
+  [ ] Balkony i tarasy  
+  [ ] Kuchnie
+  [ ] Pomieszczenia czyste (garaże, hale, warsztaty)
+  [ ] Schody
+
+TYP PROJEKTU (wybierz jeden):
+  [ ] Indywidualna (dom prywatny/mieszkanie)
+  [ ] Komercyjna (firma/obiekt publiczny)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📝 OPIS PROJEKTU (2-4 zdania)
+
+Napisz szczegółowy opis używając konkretnych słów kluczowych, 
+lokalizacji i parametrów technicznych:
+
+__________________________________________________________________
+__________________________________________________________________
+__________________________________________________________________
+__________________________________________________________________
+
+WSKAZÓWKA: Dobre słowa kluczowe to: epoksyd, poliuretan, posadzka 
+żywiczna, system, odporność, antypoślizg, wodoszczelność + lokalizacja
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔧 SZCZEGÓŁY TECHNICZNE
+
+POWIERZCHNIA: ____________________________________________
+             (np. "40 m²", "25 m²", "15 m²")
+
+SYSTEM/MATERIAŁ: _________________________________________
+                (np. "Epoksyd z posypką kwarcową", 
+                 "Poliuretan UV", "Epoksyd samopoziomujący")
+
+KOLOR (opcjonalnie): _____________________________________
+                    (np. "Szary RAL 7037", "Biały", "Beżowy")
+
+CZAS REALIZACJI (opcjonalnie): ___________________________
+                               (np. "3 dni", "2 dni robocze")
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✨ CECHY I ZALETY PROJEKTU (minimum 5 punktów)
+
+1. __________________________________________________________
+
+2. __________________________________________________________
+
+3. __________________________________________________________
+
+4. __________________________________________________________
+
+5. __________________________________________________________
+
+6. __________________________________________________________
+
+7. __________________________________________________________
+
+PRZYKŁADY: 
+- Wysoka odporność na ścieranie
+- Łatwe utrzymanie czystości
+- Estetyczny wygląd
+- Odporność na plamy olejowe
+- Antypoślizgowa powierzchnia
+- Bezspoinowa powierzchnia
+- Kompatybilność z ogrzewaniem podłogowym
+- Odporność na UV
+- Wodoszczelność
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🏷️ TAGI (5-10 krótkich słów, oddzielone przecinkami)
+
+__________________________________________________________________
+
+PRZYKŁADY:
+- Garaż: garaż, epoksyd, antypoślizg, dwustanowiskowy, posypka kwarcowa
+- Balkon: balkon, poliuretan, UV, wodoszczelność, antypoślizg
+- Mieszkanie: mieszkanie, salon, epoksyd, nowoczesna, gładka
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🔍 FRAZY SEO (3-5 fraz, które klienci wpisują w Google)
+
+1. __________________________________________________________
+
+2. __________________________________________________________
+
+3. __________________________________________________________
+
+4. __________________________________________________________
+
+5. __________________________________________________________
+
+PRZYKŁADY:
+- "posadzka żywiczna garaż"
+- "epoksyd garaż Warszawa"
+- "posadzka balkon wodoszczelna"
+- "renowacja balkonu Kraków"
+- "posadzka salon nowoczesna"
+
+WSKAZÓWKA: Używaj Google Search Console lub KeywordTool.io
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💬 OPINIA KLIENTA (opcjonalnie, ale bardzo wartościowa!)
+
+TREŚĆ OPINII:
+"_________________________________________________________________
+__________________________________________________________________
+__________________________________________________________________"
+
+AUTOR: ______________________________________________________
+      (np. "Pan Tomasz, Warszawa" - imię + miasto)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📷 ZDJĘCIA
+
+ZDJĘCIE GŁÓWNE (nazwa pliku):
+__________________________________________________________________
+
+GALERIA - DODATKOWE ZDJĘCIA (nazwy plików, oddzielone przecinkami):
+__________________________________________________________________
+__________________________________________________________________
+
+SCHEMAT NAZEWNICTWA:
+kategoria-lokalizacja-rok-opis.jpg
+
+PRZYKŁADY:
+- garaz-warszawa-2024-main.jpg
+- garaz-warszawa-2024-1.jpg
+- balkon-krakow-2024-przed.jpg
+- balkon-krakow-2024-po.jpg
+- mieszkanie-rzeszow-2024-salon.jpg
+
+WYMAGANIA:
+✓ Format: JPG lub PNG
+✓ Rozmiar: 1200-2000px szerokość
+✓ Wielkość: max 2 MB na zdjęcie
+✓ Minimum: 1 główne + 3 do galerii
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 FOLDER NA ZDJĘCIA (wybierz gdzie wgrać):
+
+  [ ] /public/garaz/         - dla garaży i hal
+  [ ] /public/mieszkanie/    - dla mieszkań i domów
+  [ ] /public/balkon/        - dla balkonów
+  [ ] /public/taras/         - dla tarasów
+  [ ] /public/kuchnia/       - dla kuchni
+  [ ] /public/schody/        - dla schodów
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ CHECKLIST - SPRAWDŹ PRZED WYSŁANIEM
+
+  [ ] Mam minimum 1 dobre zdjęcie główne
+  [ ] Mam 3-6 zdjęć do galerii
+  [ ] Wypełniłem nazwę projektu
+  [ ] Podałem lokalizację (miasto, dzielnica)
+  [ ] Dodałem datę realizacji
+  [ ] Wybrałem kategorię
+  [ ] Wybrałem typ projektu (indywidualna/komercyjna)
+  [ ] Napisałem opis 2-4 zdania
+  [ ] Podałem powierzchnię
+  [ ] Podałem system/materiał
+  [ ] Wymieniłem 5-7 cech/zalet
+  [ ] Dodałem 5-10 tagów
+  [ ] Dodałem 3-5 fraz SEO
+  [ ] (Opcjonalnie) Dodałem opinię klienta
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 JAK WYSŁAĆ?
+
+OPCJA 1 - EMAIL:
+1. Wypełnij ten formularz
+2. Załącz zdjęcia (ZIP lub pojedynczo)
+3. Wyślij na: [adres email]
+
+OPCJA 2 - GOOGLE DRIVE:
+1. Utwórz folder z nazwą projektu
+2. Wgraj zdjęcia
+3. Dodaj ten wypełniony plik
+4. Udostępnij link
+
+OPCJA 3 - BEZPOŚREDNIO W GITHUB:
+1. Wgraj zdjęcia do odpowiedniego folderu w /public/
+2. Utwórz plik JSON (zobacz PRZEWODNIK_DODAWANIA_REALIZACJI.md)
+3. Commit i push
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 PEŁNA DOKUMENTACJA: PRZEWODNIK_DODAWANIA_REALIZACJI.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
