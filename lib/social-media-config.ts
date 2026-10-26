@@ -141,9 +141,8 @@ export function getSocialMediaConfig(): SocialMediaConfig {
       secret: getEnvVar('CRON_SECRET', false),
     },
     
-    supabase: {
-      url: getEnvVar('SUPABASE_URL'),
-      serviceRoleKey: getEnvVar('SUPABASE_SERVICE_ROLE_KEY'),
+    database: {
+      url: getEnvVar('NEON_DATABASE_URL'),
     },
     
     cloudinary: {

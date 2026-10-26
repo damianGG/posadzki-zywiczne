@@ -6,7 +6,7 @@ import {
     getAllRoomTypes,
     getAllConcreteStates,
     getAllStepConfigs,
-} from "@/lib/supabase-calculator"
+} from "@/lib/neon-calculator"
 
 interface CalculatorData {
     surfaceTypes: any[]

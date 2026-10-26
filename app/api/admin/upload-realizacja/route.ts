@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { createRealizacja, RealizacjaData } from '@/lib/supabase-realizacje';
+import { createRealizacja, RealizacjaData } from '@/lib/neon-realizacje';
 import { getProjectTypeFromCategory, getFolderTypeFromCategory } from '@/lib/realizacje-category-mapping';
 
 // Configure route for larger payloads and longer execution

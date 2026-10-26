@@ -5,7 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { listRealizacje } from '@/lib/supabase-realizacje';
+import { listRealizacje } from '@/lib/neon-realizacje';
 
 export async function GET(request: NextRequest) {
   try {

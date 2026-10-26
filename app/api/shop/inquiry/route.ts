@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 
 import { getCartSummary, getRoomTypeLabel } from "@/lib/shop-engine"
-import { getShopCatalog } from "@/lib/supabase-shop"
+import { getShopCatalog } from "@/lib/neon-shop"
 import type { ShopInquiryPayload } from "@/types/shop"
 
 const formatCurrency = (value: number) => `${value.toFixed(2)} zł`

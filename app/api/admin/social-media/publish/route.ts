@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { google } from 'googleapis';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+import { query, queryOne } from '@/lib/db';
 
 /**
  * POST /api/admin/social-media/publish
@@ -11,7 +8,6 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const body = await request.json();
     const { post_id, target_accounts } = body;
 
@@ -23,13 +19,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the post
-    const { data: post, error: fetchError } = await supabase
-      .from('social_media_posts')
-      .select('*')
-      .eq('id', post_id)
-      .single();
+    const post = await queryOne<any>('select * from social_media_posts where id::text = $1', [String(post_id)]);
 
-    if (fetchError || !post) {
+    if (!post) {
       return NextResponse.json(
         { success: false, error: 'Post not found' },
         { status: 404 }
@@ -49,13 +41,10 @@ export async function POST(request: NextRequest) {
     
     if (accountIds.length === 0) {
       // Fallback to all accounts if none specified
-      const { data: tokens } = await supabase
-        .from('oauth_tokens')
-        .select('id')
-        .eq('platform', post.platform);
-      
-      if (tokens && tokens.length > 0) {
-        accountIds.push(...tokens.map((t: any) => t.id));
+      const tokens = await query<{ id: string }>('select id from oauth_tokens where platform = $1', [post.platform]);
+
+      if (tokens.length > 0) {
+        accountIds.push(...tokens.map((t) => t.id));
       }
     }
 
@@ -114,15 +103,18 @@ export async function POST(request: NextRequest) {
     const allSucceeded = publishResults.every(r => r.success);
     const allFailed = publishResults.every(r => !r.success);
 
-    await supabase
-      .from('social_media_posts')
-      .update({
-        status: allSucceeded ? 'published' : (allFailed ? 'failed' : 'published'),
-        published_at: allSucceeded ? new Date().toISOString() : null,
-        published_url: publishResults.find(r => r.success)?.url || null,
-        error_message: hasError ? errorMessage : null,
-      })
-      .eq('id', post_id);
+    await query(
+      `update social_media_posts
+       set status = $1, published_at = $2, platform_url = $3, platform_response = $4::jsonb, updated_at = now()
+       where id::text = $5`,
+      [
+        allSucceeded ? 'published' : (allFailed ? 'failed' : 'published'),
+        allSucceeded ? new Date().toISOString() : null,
+        publishResults.find(r => r.success)?.url || null,
+        JSON.stringify(hasError ? { error: errorMessage } : null),
+        String(post_id),
+      ]
+    );
 
     return NextResponse.json({
       success: !allFailed,
@@ -145,23 +137,11 @@ export async function POST(request: NextRequest) {
  */
 async function publishToGoogleBusiness(post: any, accountId?: string): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const tokenData = accountId
+      ? await queryOne<any>("select * from oauth_tokens where platform = 'google_business' and id::text = $1", [accountId])
+      : await queryOne<any>("select * from oauth_tokens where platform = 'google_business' limit 1");
 
-    // Fetch OAuth token for Google Business (specific account if provided)
-    let query = supabase
-      .from('oauth_tokens')
-      .select('*')
-      .eq('platform', 'google_business');
-    
-    if (accountId) {
-      query = query.eq('id', accountId);
-    }
-
-    const { data: tokenData, error: tokenError } = accountId
-      ? await query.maybeSingle()
-      : await query.single();
-
-    if (tokenError || !tokenData) {
+    if (!tokenData) {
       return {
         success: false,
         error: 'Google Business Profile not connected. Please connect in settings.',
@@ -265,14 +245,10 @@ async function refreshGoogleToken(tokenData: any): Promise<{ success: boolean; a
     const { credentials } = await oauth2Client.refreshAccessToken();
 
     // Update token in database
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    await supabase
-      .from('oauth_tokens')
-      .update({
-        access_token: credentials.access_token,
-        expires_at: new Date(credentials.expiry_date!).toISOString(),
-      })
-      .eq('id', tokenData.id);
+    await query(
+      'update oauth_tokens set access_token = $1, expires_at = $2, updated_at = now() where id = $3',
+      [credentials.access_token, new Date(credentials.expiry_date!).toISOString(), tokenData.id]
+    );
 
     return {
       success: true,

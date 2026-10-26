@@ -6,7 +6,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { deleteRealizacja, getRealizacjaBySlug } from '@/lib/supabase-realizacje';
+import { deleteRealizacja, getRealizacjaBySlug } from '@/lib/neon-realizacje';
 
 // Configure Cloudinary
 cloudinary.config({

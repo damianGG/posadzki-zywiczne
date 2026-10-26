@@ -420,7 +420,7 @@ export default function AdminShopPage() {
         {fallbackMode && (
           <Alert>
             <AlertDescription>
-              Panel działa aktualnie na danych fallback. Aby zapisy były trwałe, uruchom migracje `003_shop_mvp.sql` oraz `004_shop_configurator_config.sql` i ustaw Supabase.
+              Panel działa aktualnie na danych fallback. Aby zapisy były trwałe, upewnij się, że baza Neon jest skonfigurowana (zmienna NEON_DATABASE_URL) i zawiera tabele sklepu.
             </AlertDescription>
           </Alert>
         )}

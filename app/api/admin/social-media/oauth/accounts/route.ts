@@ -1,8 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { query } from '@/lib/db';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+interface OAuthTokenRow {
+  id: string;
+  platform: string;
+  platform_user_id: string | null;
+  platform_user_info: { account_name?: string; email?: string } | null;
+  created_at: string;
+}
 
 /**
  * GET /api/admin/social-media/oauth/accounts
@@ -10,31 +15,21 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const { searchParams } = new URL(request.url);
     const platform = searchParams.get('platform') || 'google_business';
 
-    // Fetch all tokens for the platform
-    const { data: tokens, error } = await supabase
-      .from('oauth_tokens')
-      .select('id, platform, account_info, created_at')
-      .eq('platform', platform)
-      .order('created_at', { ascending: false });
+    const tokens = await query<OAuthTokenRow & Record<string, unknown>>(
+      `select id, platform, platform_user_id, platform_user_info, created_at
+       from oauth_tokens where platform = $1 order by created_at desc`,
+      [platform]
+    );
 
-    if (error) {
-      return NextResponse.json(
-        { success: false, error: error.message },
-        { status: 500 }
-      );
-    }
-
-    // Format accounts with user-friendly info
-    const accounts = (tokens || []).map((token) => ({
+    const accounts = tokens.map((token) => ({
       id: token.id,
       platform: token.platform,
-      account_id: token.account_info?.account_id || 'unknown',
-      account_name: token.account_info?.account_name || 'Nieznane konto',
-      email: token.account_info?.email || '',
+      account_id: token.platform_user_id || 'unknown',
+      account_name: token.platform_user_info?.account_name || 'Nieznane konto',
+      email: token.platform_user_info?.email || '',
       connected_at: token.created_at,
     }));
 

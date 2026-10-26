@@ -1,5 +1,5 @@
 import { Realizacja, RealizacjaCategory, RealizacjeMetadata } from '@/types/realizacje';
-import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB, RealizacjaData } from './supabase-realizacje';
+import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB, RealizacjaData } from './neon-realizacje';
 
 /**
  * Map RealizacjaData from Supabase to Realizacja type

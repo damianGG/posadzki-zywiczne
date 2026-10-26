@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
-import { createClient } from '@supabase/supabase-js';
+import { queryOne } from '@/lib/db';
 import type { GeneratePostRequest, GeneratePostResponse, SocialMediaPlatform } from '@/types/social-media';
 
 // Dynamic route configuration
@@ -15,12 +15,6 @@ if (process.env.OPENAI_API_KEY) {
     apiKey: process.env.OPENAI_API_KEY,
   });
 }
-
-// Initialize Supabase client
-const supabase = createClient(
-  process.env.SUPABASE_URL || '',
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ''
-);
 
 // Platform-specific content guidelines
 const PLATFORM_GUIDELINES = {
@@ -92,20 +86,21 @@ export async function POST(request: NextRequest) {
     // Get realizacja data if provided
     let realizacjaData: any = null;
     if (realizacja_id) {
-      const { data, error } = await supabase
-        .from('realizacje')
-        .select('*')
-        .eq('id', realizacja_id)
-        .single();
-
-      if (error) {
+      try {
+        realizacjaData = await queryOne('select * from realizacje where id::text = $1', [realizacja_id]);
+      } catch (error: any) {
         return NextResponse.json(
           { success: false, error: `Failed to fetch realizacja: ${error.message}` },
-          { status: 404 }
+          { status: 500 }
         );
       }
 
-      realizacjaData = data;
+      if (!realizacjaData) {
+        return NextResponse.json(
+          { success: false, error: 'Failed to fetch realizacja: not found' },
+          { status: 404 }
+        );
+      }
     }
 
     // Get platform guidelines
