@@ -36,6 +36,8 @@ interface GalleryImage {
   realizacjaTitle: string;
   realizacjaSlug: string;
   category: RealizacjaCategory;
+  color?: string;
+  finish?: string;
 }
 
 export default async function GaleriaPage() {
@@ -52,6 +54,8 @@ export default async function GaleriaPage() {
         realizacjaTitle: realizacja.title,
         realizacjaSlug: realizacja.slug,
         category: realizacja.category,
+        color: realizacja.details.color,
+        finish: realizacja.details.system,
       });
     }
     
@@ -66,6 +70,8 @@ export default async function GaleriaPage() {
           realizacjaTitle: realizacja.title,
           realizacjaSlug: realizacja.slug,
           category: realizacja.category,
+          color: realizacja.details.color,
+          finish: realizacja.details.system,
         });
       }
     });
