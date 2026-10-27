@@ -7,7 +7,7 @@ export const metadata: Metadata = generatePageMetadata({
     "Posadzki żywiczne na balkony i tarasy. Wodoodporne, odporne na warunki atmosferyczne i estetyczne rozwiązanie. Sprawdź naszą ofertę!",
   keywords: "posadzki żywiczne balkony, tarasy, posadzki zewnętrzne, wodoodporne posadzki",
   path: "/posadzki-zywiczne-na-balkony",
-  image: "/images/posadzki-balkony-tarasy.jpg",
+  image: "/remont-balkon.webp",
 });
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
