@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getAllBlogPosts } from "@/lib/blog";
 import { getAllRealizacje } from "@/lib/realizacje";
 import { SITE_URL } from "@/lib/site-config";
+import { stoneCities } from "@/lib/stone-cities";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const allPosts = getAllBlogPosts();
@@ -36,7 +37,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/kontakt",
     "/realizacje",
     "/blog",
+    "/kamienny-dywan",
   ].map((path) => ({ url: `${SITE_URL}${path}` }));
 
-  return [...staticPages, ...posts, ...realizacje];
+  const cityPages = stoneCities.map(city => ({ url: `${SITE_URL}/kamienny-dywan/${city.slug}` }));
+  return [...staticPages, ...cityPages, ...posts, ...realizacje];
 }
