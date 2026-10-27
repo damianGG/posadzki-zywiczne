@@ -92,10 +92,10 @@ export default function Home() {
                 <Link href="/kontakt" className="font-medium text-primary underline-offset-4 hover:underline">
                   prześlij zdjęcia i metraż do wyceny
                 </Link>.
-                Zobacz również poradnik o{" "}
-                <Link href="/blog/posadzki-zywiczne-rzeszow" className="font-medium text-primary underline-offset-4 hover:underline">posadzkach żywicznych w Rzeszowie</Link>
+                Sprawdź też ofertę w{" "}
+                <Link href="/posadzki-zywiczne/rzeszow" className="font-medium text-primary underline-offset-4 hover:underline">posadzkach żywicznych w Rzeszowie</Link>
                 {" "}oraz{" "}
-                <Link href="/blog/posadzki-zywiczne-krakow" className="font-medium text-primary underline-offset-4 hover:underline">posadzkach żywicznych w Krakowie</Link>.
+                <Link href="/posadzki-zywiczne/krakow" className="font-medium text-primary underline-offset-4 hover:underline">posadzkach żywicznych w Krakowie</Link>.
               </p>
             </section>
             <ProblemSolutionSection />
