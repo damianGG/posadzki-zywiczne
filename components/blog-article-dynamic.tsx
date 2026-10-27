@@ -32,7 +32,7 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
       name: SITE_NAME,
       logo: {
         "@type": "ImageObject",
-        url: absoluteUrl("/images/logo.png"),
+        url: absoluteUrl("/posadzkizywiczne.com_logo.png"),
       },
     },
     datePublished: post.publishedAt,

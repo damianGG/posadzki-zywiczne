@@ -2,6 +2,7 @@ import { getAllRealizacje } from '@/lib/realizacje';
 import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
 import { Metadata } from 'next';
+import { absoluteUrl } from '@/lib/site-config';
 import { Suspense } from 'react';
 import GaleriaClient from './galeria-client';
 import { RealizacjaCategory } from '@/types/realizacje';
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Galeria Zdjęć - Posadzki Żywiczne | Wszystkie Realizacje',
     description: 'Zobacz pełną galerię zdjęć naszych realizacji posadzek żywicznych.',
-    url: 'https://posadzkizywiczne.com/galeria',
+    url: absoluteUrl("/galeria"),
     images: [
       {
         url: 'https://posadzkizywiczne.com/garaz/garaz-zywica-2.jpg',
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: 'https://posadzkizywiczne.com/galeria',
+    canonical: absoluteUrl("/galeria"),
   },
 };
 

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { absoluteUrl } from "@/lib/site-config"
 import { notFound } from "next/navigation"
 import BlogArticleDynamic from "@/components/blog-article-dynamic"
 import { getBlogPostBySlug, getAllBlogPosts } from "@/lib/blog"
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
             type: "article",
             publishedTime: post.publishedAt,
             authors: [post.author.name],
-            url: post.seo.canonicalUrl,
+            url: absoluteUrl(`/blog/${slug}`),
             images: [
                 {
                     url: post.image.url,
@@ -54,7 +55,7 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
             images: [post.image.url],
         },
         alternates: {
-            canonical: post.seo.canonicalUrl,
+            canonical: absoluteUrl(`/blog/${slug}`),
         },
     }
 }

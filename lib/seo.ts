@@ -22,7 +22,7 @@ export function articleJsonLd(p: {
       name: p.publisherName ?? SITE_NAME,
       logo: {
         "@type": "ImageObject",
-        url: p.publisherLogo ?? absoluteUrl("/images/logo.png"),
+        url: p.publisherLogo ?? absoluteUrl("/posadzkizywiczne.com_logo.png"),
       },
     },
     datePublished: p.datePublished,
@@ -36,7 +36,7 @@ export function getDefaultSEOConfig() {
     siteUrl: SITE_URL,
     defaultTitle: "Posadzki żywiczne Rzeszów i Kraków | Garaże, balkony, hale",
     defaultDescription: SITE_DESCRIPTION,
-    defaultImage: absoluteUrl("/images/home-banner.jpg"),
+    defaultImage: absoluteUrl("/garaz/garaz-zywica-2.jpg"),
     locale: "pl_PL",
   };
 }

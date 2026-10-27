@@ -27,6 +27,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import type { BlogPost } from "@/lib/blog"
+import { POSTS_PER_PAGE } from "@/lib/blog-pagination"
 
 const tagIcons = {
   dom: { icon: Home, label: "Dom", color: "bg-blue-100 text-blue-700 hover:bg-blue-200" },
@@ -40,16 +41,17 @@ const tagIcons = {
   wytrzymałość: { icon: Shield, label: "Wytrzymałość", color: "bg-red-100 text-red-700 hover:bg-red-200" },
 }
 
-const POSTS_PER_PAGE = 6
-
 interface AllBlogPostsProps {
   posts: BlogPost[]
+  initialPage: number
 }
 
-export default function AllBlogPosts({ posts }: AllBlogPostsProps) {
+export default function AllBlogPosts({ posts, initialPage }: AllBlogPostsProps) {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [filterPage, setFilterPage] = useState(1)
+  const isFiltering = searchTerm.trim().length > 0 || selectedTags.length > 0
+  const currentPage = isFiltering ? filterPage : initialPage
 
   const filteredPosts = useMemo(() => {
     return posts.filter((post) => {
@@ -69,18 +71,18 @@ export default function AllBlogPosts({ posts }: AllBlogPostsProps) {
 
   const handleTagToggle = (tag: string) => {
     setSelectedTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]))
-    setCurrentPage(1)
+    setFilterPage(1)
   }
 
   const handleSearchChange = (value: string) => {
     setSearchTerm(value)
-    setCurrentPage(1)
+    setFilterPage(1)
   }
 
   const clearAllFilters = () => {
     setSearchTerm("")
     setSelectedTags([])
-    setCurrentPage(1)
+    setFilterPage(1)
   }
 
   return (
@@ -247,15 +249,21 @@ export default function AllBlogPosts({ posts }: AllBlogPostsProps) {
           {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex justify-center items-center space-x-2">
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                aria-label="Poprzednia strona"
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
+              {currentPage === 1 ? (
+                <Button variant="outline" size="icon" disabled aria-label="Poprzednia strona">
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+              ) : isFiltering ? (
+                <Button variant="outline" size="icon" onClick={() => setFilterPage((prev) => Math.max(prev - 1, 1))} aria-label="Poprzednia strona">
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button variant="outline" size="icon" asChild>
+                  <Link href={currentPage === 2 ? "/blog" : `/blog?page=${currentPage - 1}`} aria-label="Poprzednia strona">
+                    <ChevronLeft className="h-4 w-4" />
+                  </Link>
+                </Button>
+              )}
 
               <div className="flex space-x-1">
                 {(() => {
@@ -311,30 +319,42 @@ export default function AllBlogPosts({ posts }: AllBlogPostsProps) {
                         </span>
                       )
                     }
-                    return (
+                    return isFiltering ? (
                       <Button
                         key={page}
                         variant={currentPage === page ? "default" : "outline"}
                         size="sm"
-                        onClick={() => setCurrentPage(page as number)}
+                        onClick={() => setFilterPage(page as number)}
                         className="w-10"
                       >
                         {page}
+                      </Button>
+                    ) : (
+                      <Button key={page} variant={currentPage === page ? "default" : "outline"} size="sm" asChild className="w-10">
+                        <Link href={page === 1 ? "/blog" : `/blog?page=${page}`} aria-current={currentPage === page ? "page" : undefined}>
+                          {page}
+                        </Link>
                       </Button>
                     )
                   })
                 })()}
               </div>
 
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                aria-label="Następna strona"
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+              {currentPage === totalPages ? (
+                <Button variant="outline" size="icon" disabled aria-label="Następna strona">
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              ) : isFiltering ? (
+                <Button variant="outline" size="icon" onClick={() => setFilterPage((prev) => Math.min(prev + 1, totalPages))} aria-label="Następna strona">
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button variant="outline" size="icon" asChild>
+                  <Link href={`/blog?page=${currentPage + 1}`} aria-label="Następna strona">
+                    <ChevronRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              )}
             </div>
           )}
         </>

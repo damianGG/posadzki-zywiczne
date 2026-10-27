@@ -11,6 +11,7 @@ import BenefitsSection from "./components/BenefitsSection";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 import type { Metadata } from 'next'
+import { absoluteUrl } from "@/lib/site-config";
 import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-renovation-timeline";
 import BlogPreviewSection from "@/components/blog-preview-section";
 
@@ -25,10 +26,10 @@ export const metadata: Metadata = {
     title: "Posadzki Żywiczne do Garaży | Wytrzymałe i Odporne",
     description:
       "Oferujemy trwałe i odporne posadzki żywiczne do garaży. Wytrzymałość na obciążenia i estetyczny wygląd. Sprawdź ofertę!",
-    url: "https://posadzkizywiczne.com/garaze",
+    url: absoluteUrl("/garaze"),
     images: [
       {
-        url: "https://posadzkizywiczne.com/images/posadzki-garaz.jpg",
+        url: absoluteUrl("/garaz/garaz-zywica-2.jpg"),
         width: 1200,
         height: 630,
         alt: "Posadzki Żywiczne do Garaży",
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: "https://posadzkizywiczne.com/garaze",
+    canonical: absoluteUrl("/garaze"),
   },
 };
 
