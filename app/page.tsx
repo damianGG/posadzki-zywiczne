@@ -6,8 +6,9 @@ import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
 import { getLatestBlogPosts } from "@/lib/blog";
 import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
+import RelatedRealizations from "@/components/related-realizations";
 
-export const dynamic = "force-static";
+export const revalidate = 300;
 
 export default function Home() {
   const latestPosts = getLatestBlogPosts(3);
@@ -18,6 +19,7 @@ export default function Home() {
       <Feature5 />
       <SocialProofSection />
       <StoneCarpetTeaser />
+      <RelatedRealizations title="Zobacz efekty naszych prac" />
       <BlogPreviewSection
         posts={latestPosts}
         title="Poradniki o posadzkach żywicznych"

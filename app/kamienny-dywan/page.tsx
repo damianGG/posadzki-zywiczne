@@ -2,6 +2,9 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight, PhoneCall } from "lucide-react"
 import { stoneCities } from "@/lib/stone-cities"
+import RelatedRealizations from "@/components/related-realizations"
+
+export const revalidate = 300;
 import { absoluteUrl, SITE_PHONE } from "@/lib/site-config"
 
 export const metadata: Metadata = {
@@ -30,5 +33,6 @@ export default function StoneHub() {
       <section><h2 className="mb-3 text-3xl font-semibold">Kamienny dywan – miasta Podkarpacia</h2><p className="mb-5 text-muted-foreground">Poniżej opisujemy odrębne zagadnienia wykonawcze istotne przy zleceniach w miastach powyżej 10 tys. mieszkańców. Jest to wykaz obszaru zainteresowania ofertą, a nie lista oddziałów lub zrealizowanych inwestycji.</p><ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{stoneCities.map(city => <li key={city.slug}><Link className="flex items-center justify-between gap-2 rounded-lg border p-4 hover:border-primary hover:text-primary" href={`/kamienny-dywan/${city.slug}`}>Kamienny dywan {city.name}<ArrowRight className="h-4 w-4 shrink-0" /></Link></li>)}</ul></section>
       <section className="rounded-xl bg-muted/30 p-7"><h2 className="mb-2 text-2xl font-semibold">Wybierasz nawierzchnię na balkon lub taras?</h2><p className="mb-3">Porównaj kamienny dywan z innymi <Link className="text-primary underline" href="/posadzki-zywiczne-na-balkony">systemami żywicznymi na tarasy i balkony</Link> oraz przeczytaj o <Link className="text-primary underline" href="/blog/czy-posadzka-zywiczna-nadaje-sie-na-taras">doborze żywicy na zewnątrz</Link>.</p><Link href="/kontakt" className="font-semibold text-primary underline">Poproś o ocenę podłoża i wycenę</Link></section>
     </article>
+  <RelatedRealizations category="balkony-tarasy" title="Zdjęcia wykonanych balkonów i tarasów" />
   </main>
 }

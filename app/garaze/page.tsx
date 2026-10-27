@@ -14,6 +14,7 @@ import type { Metadata } from 'next'
 import { absoluteUrl } from "@/lib/site-config";
 import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-renovation-timeline";
 import BlogPreviewSection from "@/components/blog-preview-section";
+import RelatedRealizations from "@/components/related-realizations";
 
 import { getLatestBlogPosts, getBlogPostsByCategories } from "@/lib/blog"
 
@@ -41,7 +42,7 @@ export const metadata: Metadata = {
   },
 };
 
-export const dynamic = "force-static"
+export const revalidate = 300
 
 export default function Home() {
     const latestPosts = getLatestBlogPosts(3)
@@ -54,6 +55,7 @@ export default function Home() {
             <ScrollDrivenRenovationTimeline />
             <BenefitsSection />
             <FAQ2 />
+            <RelatedRealizations category="garaze" title="Nasze posadzki w garażach — zdjęcia realizacji" />
             <BlogPreviewSection
                 posts={latestPosts}
                 title="Najnowsze Artykuły o Posadzkach"

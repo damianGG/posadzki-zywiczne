@@ -4,9 +4,11 @@ import { notFound } from "next/navigation"
 import { MapPin, ArrowRight } from "lucide-react"
 import { stoneCities, findStoneCity } from "@/lib/stone-cities"
 import { absoluteUrl } from "@/lib/site-config"
+import RelatedRealizations from "@/components/related-realizations"
 
 interface Props { params: Promise<{ city: string }> }
 export const dynamicParams = false
+export const revalidate = 300
 export function generateStaticParams() { return stoneCities.map(({ slug }) => ({ city: slug })) }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -43,6 +45,7 @@ export default async function StoneCarpetCityPage({ params }: Props) {
         <Link href="/kontakt" className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-3 font-semibold text-primary-foreground">Przejdź do kontaktu <ArrowRight className="h-4 w-4" /></Link>
       </section>
     </article>
+    <RelatedRealizations city={city.name} category="balkony-tarasy" title={"Realizacje balkonów i tarasów — " + city.name} />
     <aside className="mt-12 border-t pt-8" aria-label="Powiązane lokalizacje"><h2 className="mb-4 text-lg font-semibold">Sprawdź pobliskie miasta</h2><ul className="flex flex-wrap gap-3">{nearby.map(c => <li key={c.slug}><Link href={`/kamienny-dywan/${c.slug}`} className="rounded-md border px-4 py-2 hover:border-primary">{c.name}</Link></li>)}<li><Link href="/kamienny-dywan" className="rounded-md border px-4 py-2 hover:border-primary">Pozostałe miasta</Link></li></ul></aside>
   </main>
 }
