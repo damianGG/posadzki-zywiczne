@@ -20,7 +20,7 @@ import {
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
 const defaultTitle = "Posadzki żywiczne | Garaże, kuchnie, balkony, tarasy | Gwarancja";
-const homeBannerUrl = absoluteUrl("/images/home-banner.jpg");
+const homeBannerUrl = absoluteUrl("/garaz/garaz-zywica-2.jpg");
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
