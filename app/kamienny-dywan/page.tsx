@@ -181,44 +181,22 @@ export default function StoneCarpetPage() {
             </div>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[530px] lg:max-w-none" aria-label="Dekoracyjna wizualizacja struktury kruszywa; nie jest zdjęciem realizacji">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-300 p-4 shadow-2xl shadow-black/30 sm:p-7">
-              <div
-                className="absolute inset-0 opacity-90"
-                style={{
-                  backgroundColor: "#d4d4d8",
-                  backgroundImage: [
-                    "radial-gradient(ellipse 18px 14px at 14% 19%, #71717a 98%, transparent 100%)",
-                    "radial-gradient(ellipse 19px 15px at 43% 27%, #e4e4e7 98%, transparent 100%)",
-                    "radial-gradient(ellipse 17px 14px at 76% 15%, #a1a1aa 98%, transparent 100%)",
-                    "radial-gradient(ellipse 16px 13px at 32% 69%, #f4f4f5 98%, transparent 100%)",
-                    "radial-gradient(ellipse 19px 14px at 83% 74%, #52525b 98%, transparent 100%)",
-                    "radial-gradient(ellipse 18px 14px at 61% 88%, #fafafa 98%, transparent 100%)",
-                  ].join(", "),
-                  backgroundSize: "82px 76px",
-                  transform: "rotate(-11deg) scale(1.2)",
-                }}
-                aria-hidden="true"
+
+          <div className="relative mx-auto w-full max-w-[530px] lg:max-w-none">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-800 shadow-2xl shadow-black/30">
+              <Image
+                src="/kamienny-dywan/schody-kamienny-dywan-realizacja.webp"
+                alt="Schody wejściowe wykończone ciemnoszarą dekoracyjną nawierzchnią z kruszywa i żywicy"
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 45vw"
+                className="object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-zinc-950/60" aria-hidden="true" />
-              <div className="relative flex h-full flex-col justify-between">
-                <span className="w-fit rounded-full border border-white/50 bg-zinc-900/70 px-4 py-2 text-xs font-medium text-white backdrop-blur">
-                  Wizualizacja struktury kruszywa
-                </span>
-                <div className="rounded-2xl border border-white/30 bg-zinc-900/85 p-6 text-white backdrop-blur-sm">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-300">Wybierz charakter wykończenia</p>
-                  <p className="mt-2 text-2xl font-semibold tracking-tight">Kruszywo. Kolor. Faktura.</p>
-                  <div className="mt-5 flex items-center gap-3" aria-hidden="true">
-                    {["#f4f4f5", "#d4d4d8", "#a1a1aa", "#71717a", "#3f3f46"].map(color => (
-                      <span key={color} className="h-7 w-7 rounded-full border-2 border-white/20 shadow-inner" style={{ backgroundColor: color }} />
-                    ))}
-                  </div>
-                </div>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-zinc-950/85 via-zinc-950/35 to-transparent p-6 pt-28 text-white sm:p-8 sm:pt-32">
+                <p className="text-xs font-semibold uppercase tracking-[0.17em] text-zinc-200">Zdjęcie realizacji</p>
+                <p className="mt-2 text-2xl font-semibold">Schody wejściowe</p>
+                <p className="mt-2 max-w-sm text-sm text-zinc-200">Ciemnoszara nawierzchnia z kruszywa i żywicy</p>
               </div>
-            </div>
-            <div className="absolute -bottom-5 -left-4 hidden rounded-xl bg-background px-5 py-4 text-foreground shadow-lg sm:block">
-              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Galeria realizacji</p>
-              <p className="mt-1 text-sm font-semibold">Twoje zdjęcia dodamy tutaj</p>
             </div>
           </div>
         </div>
@@ -380,28 +358,32 @@ export default function StoneCarpetPage() {
             </p>
           </div>
         </div>
-        {stoneCarpetGallery.length ? (
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {stoneCarpetGallery.map(photo => (
-              <figure key={photo.src} className="overflow-hidden rounded-2xl border border-border bg-white">
-                <div className="relative aspect-[4/3]">
-                  <Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />
-                </div>
-                <figcaption className="p-5 text-sm font-medium text-muted-foreground">{photo.caption}</figcaption>
-              </figure>
-            ))}
-          </div>
-        ) : (
-          <div className="mt-10 grid gap-4 md:grid-cols-3">
-            {["Tarasy", "Balkony", "Schody"].map(name => (
+
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {stoneCarpetGallery.map(photo => (
+            <figure key={photo.src} className="overflow-hidden rounded-2xl border border-border bg-white">
+              <div className="relative aspect-[4/3]">
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover object-center"
+                />
+              </div>
+              <figcaption className="p-5 text-sm font-medium text-muted-foreground">{photo.caption}</figcaption>
+            </figure>
+          ))}
+          {["Tarasy", "Balkony", "Schody"]
+            .slice(0, Math.max(0, 3 - stoneCarpetGallery.length))
+            .map(name => (
               <div key={name} className="flex aspect-[4/3] flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-muted/60 p-8 text-center">
                 <Images className="h-9 w-9 text-muted-foreground" aria-hidden="true" />
                 <h3 className="mt-5 text-xl font-semibold">{name}</h3>
                 <p className="mt-2 max-w-[15rem] text-sm leading-relaxed text-muted-foreground">Miejsce na zdjęcia naszych realizacji</p>
               </div>
             ))}
-          </div>
-        )}
+        </div>
         <p className="mt-5 text-sm text-muted-foreground">
           Zdjęcia balkonów z innych systemów żywicznych znajdziesz w <Link href="/realizacje" className="font-semibold underline underline-offset-4 hover:text-foreground">portfolio firmy</Link>.
           Nie oznaczamy ich jako realizacji kamiennego dywanu.
