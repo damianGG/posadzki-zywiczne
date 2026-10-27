@@ -30,6 +30,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/",
     "/posadzki-zywiczne-na-balkony",
     "/garaze",
+    "/posadzki-zywiczne/rzeszow",
+    "/posadzki-zywiczne/krakow",
     "/kuchnia-salon",
     "/pomieszczenia-czyste",
     "/kalkulator",
