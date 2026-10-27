@@ -14,6 +14,15 @@ const nextConfig = {
     reactStrictMode: true,
     // Ensure proper caching headers
     poweredByHeader: false,
+    async redirects() {
+        return [
+            {
+                source: '/blog/posadzki-zywiczne-sokolow-glogów-rzeszow-okolice',
+                destination: '/blog/posadzki-zywiczne-sokolow-glogow-rzeszow-okolice',
+                permanent: true,
+            },
+        ];
+    },
     // Compress all responses
     compress: true,
     // Configure external image domains
