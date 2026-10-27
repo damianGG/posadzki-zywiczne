@@ -27,10 +27,10 @@ export const Footer1 = () => {
     // },
     {
       title: "Firma",
-      description: "Wytrzymałe, odporno posadzki żywiczne",
+      description: "Trwałe posadzki żywiczne dopasowane do obiektu",
       items: [
         {
-          title: "Stronga główna",
+          title: "Strona główna",
           href: "/",
         },
         {
@@ -40,6 +40,14 @@ export const Footer1 = () => {
         {
           title: "Garaże",
           href: "/garaze",
+        },
+        {
+          title: "Posadzki żywiczne Rzeszów",
+          href: "/posadzki-zywiczne/rzeszow",
+        },
+        {
+          title: "Posadzki żywiczne Kraków",
+          href: "/posadzki-zywiczne/krakow",
         },
         {
           title: "Pomieszczenia czyste",
@@ -63,7 +71,7 @@ export const Footer1 = () => {
                 PosadzkiZywiczne.Com
               </h2>
               <p className="text-lg max-w-lg leading-relaxed tracking-tight text-background/75 text-left">
-                Wytrzymałe, odporno posadzki żywiczne
+                Trwałe posadzki żywiczne dopasowane do obiektu
               </p>
             </div>
             <div className="flex gap-20 flex-row">

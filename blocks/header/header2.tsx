@@ -65,6 +65,14 @@ export const Header2 = () => {
             description: "",
         },
         {
+            title: "Gdzie działamy",
+            description: "Realizacje i wyceny posadzek żywicznych",
+            items: [
+                { title: "Posadzki żywiczne Rzeszów", href: "/posadzki-zywiczne/rzeszow", image: "/garage.jpg" },
+                { title: "Posadzki żywiczne Kraków", href: "/posadzki-zywiczne/krakow", image: "/garage.jpg" },
+            ],
+        },
+        {
             title: "Pomieszczenia Czyste",
             href: "/pomieszczenia-czyste",
             description: "",
@@ -175,7 +183,7 @@ export const Header2 = () => {
                                                 className="font-medium text-sm"
                                                 onMouseEnter={() => {
                                                     if (item.items && item.items.length > 0) {
-                                                        setHoveredSubItem(item.items[2])
+                                                        setHoveredSubItem(item.items[0])
                                                     }
                                                 }}
                                             >
@@ -284,13 +292,20 @@ export const Header2 = () => {
                                     <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
                                 </Link>
                             ) : (
-                                <div
-                                    className="flex items-center justify-between py-2 text-muted-foreground"
-                                >
-                                    <span className="flex items-center gap-2 text-base font-medium">
-                                        {item.title}
-                                        {renderBadge(item.badge)}
-                                    </span>
+                                <div className="space-y-2 py-2">
+                                    <span className="text-base font-medium text-muted-foreground">{item.title}</span>
+                                    <div className="ml-4 flex flex-col gap-2">
+                                        {item.items?.map(subItem => (
+                                            <Link
+                                                key={subItem.href}
+                                                href={subItem.href}
+                                                className="block py-1 text-sm font-medium"
+                                                onClick={() => setOpen(false)}
+                                            >
+                                                {subItem.title}
+                                            </Link>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>
