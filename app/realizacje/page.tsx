@@ -2,6 +2,7 @@ import { getAllRealizacje } from '@/lib/realizacje';
 import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
 import { Metadata } from 'next';
+import { absoluteUrl } from '@/lib/site-config';
 import { Suspense } from 'react';
 import RealizacjeClient from './realizacje-client';
 
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Nasze Realizacje - Posadzki Żywiczne | Portfolio Projektów',
     description: 'Zobacz nasze najnowsze realizacje posadzek żywicznych w domach, garażach, na balkonach i tarasach.',
-    url: 'https://posadzkizywiczne.com/realizacje',
+    url: absoluteUrl("/realizacje"),
     images: [
       {
         url: 'https://posadzkizywiczne.com/garaz/garaz-zywica-2.jpg',
@@ -26,7 +27,7 @@ export const metadata: Metadata = {
     ],
   },
   alternates: {
-    canonical: 'https://posadzkizywiczne.com/realizacje',
+    canonical: absoluteUrl("/realizacje"),
   },
 };
 
