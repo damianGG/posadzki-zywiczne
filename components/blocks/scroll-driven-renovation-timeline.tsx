@@ -220,9 +220,9 @@ export default function ScrollDrivenRenovationTimeline() {
       {/* Hero Section */}
       <div className="flex items-center justify-center bg-gradient-to-br from-blue-50 via-white to-green-50 px-4">
         <div className="text-center space-y-4 md:space-y-6 max-w-4xl mx-auto">
-          <h1 className="text-3xl md:text-5xl font-bold text-gray-900 mb-2 md:mb-4 mt-24">
+          <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-2 md:mb-4 mt-24">
             Proces realizacji remontu garażu
-          </h1>
+          </h2>
           <p className="text-lg md:text-xl text-gray-600 mb-4 md:mb-6">
             Kompleksowy remont z profesjonalną posadzką żywiczną
           </p>

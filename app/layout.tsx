@@ -19,7 +19,7 @@ import {
 } from "@/lib/site-config";
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
-const defaultTitle = "Posadzki żywiczne | Garaże, kuchnie, balkony, tarasy | Gwarancja";
+const defaultTitle = "Posadzki żywiczne Rzeszów i Kraków | Garaże, balkony, hale";
 const homeBannerUrl = absoluteUrl("/images/home-banner.jpg");
 
 export const metadata: Metadata = {
