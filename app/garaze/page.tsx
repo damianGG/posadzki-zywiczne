@@ -49,7 +49,7 @@ export default function Home() {
 
     return (
         <>
-            <HeroMainPage />
+            <HeroMainPage variant="garage" />
             <ProblemSolutionSection />
             <ScrollDrivenRenovationTimeline />
             <BenefitsSection />
