@@ -5,6 +5,7 @@ import { Contact1 } from "@/blocks/contact/contact1";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
 import { getLatestBlogPosts } from "@/lib/blog";
+import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
 
 export const dynamic = "force-static";
 
@@ -16,6 +17,7 @@ export default function Home() {
       <HeroMainPage variant="home" />
       <Feature5 />
       <SocialProofSection />
+      <StoneCarpetTeaser />
       <BlogPreviewSection
         posts={latestPosts}
         title="Poradniki o posadzkach żywicznych"

@@ -6,6 +6,7 @@ import { CTA2 } from "@/blocks/cta/cta2";
 
 import { FAQ2 } from "@/blocks/faq/faq2";
 import { Contact1 } from "@/blocks/contact/contact1";
+import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
 
 import { Feature3 } from "@/blocks/feature/feature3";
 
@@ -22,6 +23,7 @@ export default function Home() {
             <HeroMainPage />
             <ProblemSolutionSection />
             <BenefitsSection />
+            <StoneCarpetTeaser />
             <Feature3 />
             {/* <Feature4 /> */}
             <FAQ2 />
