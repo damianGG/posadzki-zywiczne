@@ -34,6 +34,12 @@ export interface BlogPost {
   status: "published" | "draft"
 }
 
+/** Only fields displayed by the blog index; never hydrate full article HTML. */
+export type BlogPostSummary = Pick<
+  BlogPost,
+  "id" | "title" | "excerpt" | "category" | "tags" | "publishedAt" | "readTime" | "image"
+> & { author: Pick<BlogPost["author"], "name"> }
+
 const dataBlogDirectory = path.join(process.cwd(), "data/blog")
 const contentPostsDirectory = path.join(process.cwd(), "content/posts")
 
