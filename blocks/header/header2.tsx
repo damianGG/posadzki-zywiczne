@@ -78,8 +78,8 @@ export const Header2 = () => {
             description: "",
         },
         {
-            title: "Kuchnia i Salon",
-            href: "/kuchnia-salon",
+            title: "Kamienny dywan",
+            href: "/kamienny-dywan",
             description: "",
         },
     ]
