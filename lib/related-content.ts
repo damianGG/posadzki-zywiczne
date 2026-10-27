@@ -42,7 +42,14 @@ export function getRelatedArticles(post: BlogPost, allPosts: BlogPost[], limit =
 }
 
 export function getRelatedService(post: BlogPost): { href: string; title: string; description: string } | null {
-  const topic = normalize([post.title, post.category, ...post.tags].join(" "))
+  const topic = normalize([post.title, post.excerpt, post.category, ...post.tags, post.content.slice(0, 2000)].join(" "))
+  if (/kamienn(y|ego|ym|e) dywan/.test(topic)) {
+    return {
+      href: "/kamienny-dywan",
+      title: "Kamienny dywan na taras i schody",
+      description: "Poznaj budowę systemu, wymagania hydroizolacji i poradniki dla miast Podkarpacia.",
+    }
+  }
   if (/balkon|taras|kamienny dywan/.test(topic)) {
     return {
       href: "/posadzki-zywiczne-na-balkony",
