@@ -7,6 +7,9 @@ import { CTA2 } from "@/blocks/cta/cta2";
 import { FAQ2 } from "@/blocks/faq/faq2";
 import { Contact1 } from "@/blocks/contact/contact1";
 import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
+import RelatedRealizations from "@/components/related-realizations";
+
+export const revalidate = 300;
 
 import { Feature3 } from "@/blocks/feature/feature3";
 
@@ -24,6 +27,7 @@ export default function Home() {
             <ProblemSolutionSection />
             <BenefitsSection />
             <StoneCarpetTeaser />
+            <RelatedRealizations category="balkony-tarasy" title="Nasze realizacje balkonów i tarasów" />
             <Feature3 />
             {/* <Feature4 /> */}
             <FAQ2 />

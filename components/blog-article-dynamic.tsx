@@ -7,6 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import type { BlogPost } from "@/lib/blog"
 import RelatedContent from "@/components/related-content"
+import RelatedRealizations from "@/components/related-realizations"
+import { stoneCities } from "@/lib/stone-cities"
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site-config"
 
 interface BlogArticleDynamicProps {
@@ -16,6 +18,7 @@ interface BlogArticleDynamicProps {
 
 export default function BlogArticleDynamic({ post, allPosts }: BlogArticleDynamicProps) {
   const [beforeRelated, afterRelated] = post.content.split("<!-- related-content -->")
+  const localCity = stoneCities.find(city => post.id === "posadzki-zywiczne-" + city.slug)
   const canonicalUrl = `${SITE_URL}/blog/${post.id}`
   const imageUrl = post.image.url.startsWith("http") ? post.image.url : absoluteUrl(post.image.url)
 
@@ -123,6 +126,7 @@ export default function BlogArticleDynamic({ post, allPosts }: BlogArticleDynami
           <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground" dangerouslySetInnerHTML={{ __html: afterRelated }} />
         )}
 
+        {localCity && <RelatedRealizations city={localCity.name} title={"Realizacje — " + localCity.name} />}
         <footer className="mt-12 pt-8 border-t">
           <Card>
             <CardHeader>
