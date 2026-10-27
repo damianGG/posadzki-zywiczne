@@ -7,7 +7,7 @@ export const metadata: Metadata = generatePageMetadata({
     "Skontaktuj się z PosadzkiŻywiczne.com, aby uzyskać darmową wycenę i szczegóły oferty. Zadzwoń lub napisz do nas już dziś!",
   keywords: "kontakt posadzki żywiczne, zapytania, wycena posadzek żywicznych",
   path: "/kontakt",
-  image: "/images/kontakt.jpg",
+  image: "/garaz/garaz-zywica-2.jpg",
 });
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

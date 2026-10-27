@@ -8,7 +8,7 @@ export const metadata: Metadata = generatePageMetadata({
   keywords:
     "podłoga żywiczna kuchnia, posadzka żywiczna salon, posadzka żywiczna dom, posadzka żywiczna mieszkanie, podłoga bez fug, posadzka żywiczna Rzeszów, posadzka żywiczna Kraków",
   path: "/kuchnia-salon",
-  image: "/images/posadzki-kuchnia-salon.jpg",
+  image: "/kuchnia.jpg",
 });
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
