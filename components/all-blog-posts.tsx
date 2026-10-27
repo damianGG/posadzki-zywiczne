@@ -26,7 +26,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import type { BlogPost } from "@/lib/blog"
+import type { BlogPostSummary } from "@/lib/blog"
 import { POSTS_PER_PAGE } from "@/lib/blog-pagination"
 
 const tagIcons = {
@@ -42,7 +42,7 @@ const tagIcons = {
 }
 
 interface AllBlogPostsProps {
-  posts: BlogPost[]
+  posts: BlogPostSummary[]
   initialPage: number
 }
 

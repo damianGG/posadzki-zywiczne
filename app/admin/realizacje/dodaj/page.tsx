@@ -171,6 +171,9 @@ export default function DodajRealizacjePage() {
       aiFormData.append('type', formData.type);
       aiFormData.append('category', formData.category);
       if (formData.area) aiFormData.append('area', formData.area);
+      if (formData.technology) aiFormData.append('technology', formData.technology);
+      if (formData.color) aiFormData.append('color', formData.color);
+      if (formData.duration) aiFormData.append('duration', formData.duration);
       if (formData.aiPrompt) aiFormData.append('aiPrompt', formData.aiPrompt);
 
       // Call AI generation API
@@ -212,7 +215,7 @@ export default function DodajRealizacjePage() {
       }));
 
       // Show success message
-      alert('✨ Treść została wygenerowana przez AI! Możesz ją teraz edytować przed zapisaniem.');
+      alert('✨ Szkic wygenerowany. Sprawdź wszystkie fakty przed zapisaniem.\n' + (result.warnings || []).join('\n'));
 
     } catch (error) {
       let errorMsg = 'Nieznany błąd';
@@ -222,7 +225,7 @@ export default function DodajRealizacjePage() {
         
         // Add helpful context for common errors
         if (error.message.includes('504') || error.message.includes('Gateway Timeout')) {
-          errorMsg = 'Przekroczono limit czasu generowania (timeout). AI generuje dużo treści (900-1200 słów), co może zająć do 60 sekund. Spróbuj ponownie za chwilę.';
+          errorMsg = 'Przekroczono limit czasu generowania (timeout). Generowanie szkicu może potrwać do 60 sekund. Spróbuj ponownie za chwilę.';
         } else if (error.message.includes('Failed to fetch')) {
           errorMsg = 'Błąd połączenia z serwerem. Sprawdź połączenie internetowe i spróbuj ponownie.';
         }
@@ -502,7 +505,7 @@ export default function DodajRealizacjePage() {
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                       Wypełnij <strong className="text-purple-600 dark:text-purple-400">lokalizację*</strong>, <strong className="text-purple-600 dark:text-purple-400">typ projektu*</strong>, <strong className="text-purple-600 dark:text-purple-400">kategorię*</strong> i opcjonalnie <strong className="text-purple-600 dark:text-purple-400">krótki opis dla AI</strong>, 
-                      a AI wygeneruje profesjonalny tytuł, opis, FAQ, słowa kluczowe i wszystkie metadane SEO!
+                      a AI wygeneruje szkic opisu i metadanych SEO. Nie uzupełni niepodanej technologii, koloru ani czasu realizacji.
                     </p>
                     <p className="text-xs text-amber-600 dark:text-amber-400 mb-4">
                       ⏱️ Generowanie treści zajmuje 30-60 sekund. Proszę czekać...
@@ -558,7 +561,7 @@ export default function DodajRealizacjePage() {
                     className="mt-1 border-purple-200 focus:border-purple-500 dark:border-purple-700"
                   />
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                    💡 Ten opis pomoże AI wygenerować bardziej precyzyjną treść artykułu
+                    💡 Opisz wyłącznie fakty z budowy: stan podłoża, etapy, użyte materiały i wynik. Wszystkie treści AI sprawdź przed publikacją.
                   </p>
                 </div>
 

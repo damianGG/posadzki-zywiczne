@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import AllBlogPosts from "@/components/all-blog-posts"
-import { getAllBlogPosts } from "@/lib/blog"
+import { getAllBlogPosts, type BlogPostSummary } from "@/lib/blog"
 import { POSTS_PER_PAGE } from "@/lib/blog-pagination"
 import { absoluteUrl } from "@/lib/site-config"
 
@@ -29,7 +29,17 @@ export async function generateMetadata({ searchParams }: BlogPageProps): Promise
 }
 
 export default async function BlogPage({ searchParams }: BlogPageProps) {
-  const posts = getAllBlogPosts()
+  const posts: BlogPostSummary[] = getAllBlogPosts().map(post => ({
+    id: post.id,
+    title: post.title,
+    excerpt: post.excerpt,
+    category: post.category,
+    tags: post.tags,
+    publishedAt: post.publishedAt,
+    readTime: post.readTime,
+    image: post.image,
+    author: { name: post.author.name },
+  }))
   const { page: rawPage } = await searchParams
   const page = parsePage(rawPage)
   const totalPages = Math.max(1, Math.ceil(posts.length / POSTS_PER_PAGE))
