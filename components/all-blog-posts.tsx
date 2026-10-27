@@ -263,7 +263,7 @@ export default function AllBlogPosts({ posts, initialPage }: AllBlogPostsProps) 
                     <ChevronLeft className="h-4 w-4" />
                   </Link>
                 </Button>
-              )
+              )}
 
               <div className="flex space-x-1">
                 {(() => {
@@ -354,7 +354,7 @@ export default function AllBlogPosts({ posts, initialPage }: AllBlogPostsProps) 
                     <ChevronRight className="h-4 w-4" />
                   </Link>
                 </Button>
-              )
+              )}
             </div>
           )}
         </>
