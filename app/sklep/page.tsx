@@ -9,7 +9,7 @@ import {
   getSubstrateOptions,
 } from "@/lib/shop-configurator"
 import { getBreadcrumbSchema } from "@/lib/structured-data"
-import { getShopCatalog } from "@/lib/supabase-shop"
+import { getShopCatalog } from "@/lib/neon-shop"
 
 const defaultBaseUrl = "https://posadzkizywiczne.com"
 const baseUrl = (() => {

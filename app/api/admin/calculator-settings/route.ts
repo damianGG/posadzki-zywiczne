@@ -17,7 +17,7 @@ import {
   createService,
   createRoomType,
   createConcreteState,
-} from "@/lib/supabase-calculator"
+} from "@/lib/neon-calculator"
 
 // GET - Fetch all calculator settings
 export async function GET(request: NextRequest) {

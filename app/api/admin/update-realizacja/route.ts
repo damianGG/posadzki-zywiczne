@@ -5,7 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
-import { updateRealizacja, getRealizacjaBySlug } from '@/lib/supabase-realizacje';
+import { updateRealizacja, getRealizacjaBySlug } from '@/lib/neon-realizacje';
 import { getProjectTypeFromCategory } from '@/lib/realizacje-category-mapping';
 
 // Configure Cloudinary

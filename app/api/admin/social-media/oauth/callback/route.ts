@@ -1,9 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { google } from 'googleapis';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+import { query } from '@/lib/db';
 
 /**
  * GET /api/admin/social-media/oauth/callback
@@ -57,20 +54,27 @@ export async function GET(request: NextRequest) {
     }
 
     // Save to database
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    const { error: dbError } = await supabase.from('oauth_tokens').upsert({
-      platform: 'google_business',
-      access_token: tokens.access_token!,
-      refresh_token: tokens.refresh_token!,
-      expires_at: new Date(tokens.expiry_date!).toISOString(),
-      platform_user_id: accountId,
-      platform_username: accountName,
-    }, {
-      onConflict: 'platform',
-    });
-
-    if (dbError) {
+    try {
+      await query(
+        `insert into oauth_tokens (platform, access_token, refresh_token, expires_at, platform_user_id, platform_user_info)
+         values ($1, $2, $3, $4, $5, $6::jsonb)
+         on conflict (platform) do update set
+           access_token = excluded.access_token,
+           refresh_token = excluded.refresh_token,
+           expires_at = excluded.expires_at,
+           platform_user_id = excluded.platform_user_id,
+           platform_user_info = excluded.platform_user_info,
+           updated_at = now()`,
+        [
+          'google_business',
+          tokens.access_token!,
+          tokens.refresh_token ?? null,
+          new Date(tokens.expiry_date!).toISOString(),
+          accountId,
+          JSON.stringify({ account_id: accountId, account_name: accountName }),
+        ]
+      );
+    } catch (dbError) {
       console.error('Database error:', dbError);
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/admin?oauth=error&message=db_error`);
     }

@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { type SupabaseClient, createClient } from "@supabase/supabase-js"
+import { isDatabaseConfigured, query } from "@/lib/db"
 import { promises as fs } from "fs"
 import path from "path"
 
@@ -8,22 +8,6 @@ const ENTRIES_CACHE_TTL_MS = 60_000
 let cachedNormalizedEntries: string[] | null = null
 let cachedEntriesMtimeMs: number | null = null
 let cachedEntriesCheckedAt = 0
-
-function getSupabaseClient(): SupabaseClient | null {
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    return null
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false,
-    },
-  })
-}
 
 async function readNormalizedEntries(): Promise<string[]> {
   const now = Date.now()
@@ -63,21 +47,14 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ valid: false }, { status: 400 })
     }
 
-    const supabase = getSupabaseClient()
-
-    if (supabase) {
-      const { data, error } = await supabase
-        .from("contest_entries")
-        .select("code")
-        .eq("code", normalizedCode)
-        .limit(1)
-
-      if (error) {
-        console.error("Discount verification failed (Supabase query error):", error)
+    if (isDatabaseConfigured()) {
+      try {
+        const rows = await query("select code from contest_entries where code = $1 limit 1", [normalizedCode])
+        return NextResponse.json({ valid: rows.length > 0 })
+      } catch (error) {
+        console.error("Discount verification failed (database query error):", error)
         return NextResponse.json({ valid: false }, { status: 500 })
       }
-
-      return NextResponse.json({ valid: (data ?? []).length > 0 })
     }
 
     const normalizedEntries = await readNormalizedEntries()

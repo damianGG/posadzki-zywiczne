@@ -6,17 +6,12 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { updateRow } from '@/lib/db';
 
 // Configure route
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 export const maxDuration = 30;
-
-// Initialize Supabase client
-const supabaseUrl = process.env.SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 export async function POST(request: NextRequest) {
   try {
@@ -47,23 +42,15 @@ export async function POST(request: NextRequest) {
       alt: img.alt || `${data.slug} - zdjęcie realizacji`,
     }));
 
-    // Update the realizacja in Supabase with images
-    const { data: updatedRealizacja, error } = await supabase
-      .from('realizacje')
-      .update({
-        images: {
-          main: mainImage,
-          gallery: gallery,
-        },
-        updated_at: new Date().toISOString(),
-      })
-      .eq('slug', data.slug)
-      .select()
-      .single();
+    const updatedRealizacja = await updateRow('realizacje', 'slug', data.slug, {
+      images: {
+        main: mainImage,
+        gallery: gallery,
+      },
+    });
 
-    if (error) {
-      console.error('❌ Error updating realizacja with images:', error);
-      throw new Error(`Nie udało się zaktualizować realizacji: ${error.message}`);
+    if (!updatedRealizacja) {
+      throw new Error('Nie udało się zaktualizować realizacji: nie znaleziono wpisu');
     }
 
     console.log('✅ Successfully added images to realizacja');

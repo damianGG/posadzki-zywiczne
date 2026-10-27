@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+import { insertRow, query, queryOne } from '@/lib/db';
 
 /**
  * GET /api/admin/social-media/posts
@@ -10,54 +7,49 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const { searchParams } = new URL(request.url);
 
     const platform = searchParams.get('platform');
     const status = searchParams.get('status');
     const realizacja_id = searchParams.get('realizacja_id');
-    const page = parseInt(searchParams.get('page') || '1');
-    const perPage = parseInt(searchParams.get('per_page') || '20');
+    const page = Math.max(parseInt(searchParams.get('page') || '1') || 1, 1);
+    const perPage = Math.min(Math.max(parseInt(searchParams.get('per_page') || '20') || 20, 1), 100);
 
-    let query = supabase
-      .from('social_media_posts')
-      .select('*', { count: 'exact' })
-      .order('created_at', { ascending: false });
-
-    // Apply filters
+    const conditions: string[] = [];
+    const params: unknown[] = [];
     if (platform) {
-      query = query.eq('platform', platform);
+      params.push(platform);
+      conditions.push(`platform = $${params.length}`);
     }
     if (status) {
-      query = query.eq('status', status);
+      params.push(status);
+      conditions.push(`status = $${params.length}`);
     }
     if (realizacja_id) {
-      query = query.eq('realizacja_id', realizacja_id);
+      params.push(realizacja_id);
+      conditions.push(`realizacja_id = $${params.length}`);
     }
+    const where = conditions.length ? `where ${conditions.join(' and ')}` : '';
 
-    // Pagination
-    const from = (page - 1) * perPage;
-    const to = from + perPage - 1;
-    query = query.range(from, to);
+    const countRow = await queryOne<{ count: number }>(
+      `select count(*) as count from social_media_posts ${where}`,
+      params
+    );
+    const count = countRow?.count ?? 0;
 
-    const { data: posts, error, count } = await query;
-
-    if (error) {
-      console.error('Error fetching posts:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to fetch posts' },
-        { status: 500 }
-      );
-    }
+    const posts = await query(
+      `select * from social_media_posts ${where} order by created_at desc limit $${params.length + 1} offset $${params.length + 2}`,
+      [...params, perPage, (page - 1) * perPage]
+    );
 
     return NextResponse.json({
       success: true,
-      posts: posts || [],
+      posts,
       pagination: {
         page,
         per_page: perPage,
-        total: count || 0,
-        total_pages: Math.ceil((count || 0) / perPage),
+        total: count,
+        total_pages: Math.ceil(count / perPage),
       },
     });
   } catch (error) {
@@ -75,7 +67,6 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const body = await request.json();
 
     const {
@@ -91,7 +82,6 @@ export async function POST(request: NextRequest) {
       scheduled_at,
     } = body;
 
-    // Validation
     if (!platform) {
       return NextResponse.json(
         { success: false, error: 'Platform is required' },
@@ -106,11 +96,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Insert post
-    const { data: post, error } = await supabase
-      .from('social_media_posts')
-      .insert({
+    try {
+      const post = await insertRow('social_media_posts', {
         platform,
+        post_type: body.post_type || 'photo',
         content,
         hashtags: hashtags || [],
         images: images || [],
@@ -120,22 +109,16 @@ export async function POST(request: NextRequest) {
         platform_metadata: platform_metadata || {},
         status,
         scheduled_at,
-      })
-      .select()
-      .single();
+      });
 
-    if (error) {
+      return NextResponse.json({ success: true, post });
+    } catch (error) {
       console.error('Error creating post:', error);
       return NextResponse.json(
         { success: false, error: 'Failed to create post' },
         { status: 500 }
       );
     }
-
-    return NextResponse.json({
-      success: true,
-      post,
-    });
   } catch (error) {
     console.error('Error in POST /api/admin/social-media/posts:', error);
     return NextResponse.json(

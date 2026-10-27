@@ -9,12 +9,12 @@ import {
   getAllShopProducts,
   getAllShopRecommendationRules,
   getShopConfiguratorConfig,
-  isShopSupabaseAdminConfigured,
+  isShopDatabaseConfigured,
   updateShopBundle,
   updateShopProduct,
   updateShopRecommendationRule,
   upsertShopConfiguratorConfig,
-} from "@/lib/supabase-shop"
+} from "@/lib/neon-shop"
 
 export async function GET() {
   try {
@@ -35,7 +35,7 @@ export async function GET() {
         ? configuratorConfig.data ?? fallbackShopCatalog.configuratorConfig
         : fallbackShopCatalog.configuratorConfig,
       fallbackMode:
-        !isShopSupabaseAdminConfigured() ||
+        !isShopDatabaseConfigured() ||
         !products.success ||
         !bundles.success ||
         !recommendationRules.success ||

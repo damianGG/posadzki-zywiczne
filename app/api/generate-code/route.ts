@@ -1,6 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
-import { type SupabaseClient, createClient } from "@supabase/supabase-js"
+import { isDatabaseConfigured, query, queryOne } from "@/lib/db"
 import { promises as fs } from "fs"
 import path from "path"
 import crypto from "crypto"
@@ -27,27 +27,15 @@ const isServerless = () => {
   )
 }
 
-function getSupabaseClient(): SupabaseClient | null {
-  const supabaseUrl = process.env.SUPABASE_URL
-  const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-  if (!supabaseUrl || !supabaseServiceRoleKey) {
-    return null
-  }
-
-  return createClient(supabaseUrl, supabaseServiceRoleKey)
-}
-
-async function verifySupabaseConnection(client: SupabaseClient) {
-  const { error } = await client.from("contest_entries").select("code").limit(1)
-
-  if (error?.code === "42P01") {
-    throw new Error(
-      "Brak tabeli contest_entries w Supabase. Utwórz ją (kolumny: email text, name text, code text, timestamp text) lub zaktualizuj migracje."
-    )
-  }
-
-  if (error) {
+async function verifyDatabaseConnection() {
+  try {
+    await query("select code from contest_entries limit 1")
+  } catch (error) {
+    if ((error as { code?: string }).code === "42P01") {
+      throw new Error(
+        "Brak tabeli contest_entries w bazie Neon. Utwórz ją (kolumny: email text, name text, code text, timestamp text) lub zaktualizuj migracje."
+      )
+    }
     throw error
   }
 }
@@ -186,29 +174,26 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const supabase = getSupabaseClient()
-
-    if (!supabase) {
+    if (!isDatabaseConfigured()) {
       return NextResponse.json(
         {
           success: false,
-          message:
-            "Brak konfiguracji Supabase. Ustaw SUPABASE_URL oraz SUPABASE_SERVICE_ROLE_KEY i spróbuj ponownie.",
+          message: "Brak konfiguracji bazy danych. Ustaw NEON_DATABASE_URL i spróbuj ponownie.",
         },
         { status: 500 }
       )
     }
 
     try {
-      await verifySupabaseConnection(supabase)
+      await verifyDatabaseConnection()
     } catch (connectionError) {
-      console.error("Supabase connection error:", connectionError)
+      console.error("Database connection error:", connectionError)
       const detailedMessage =
-        connectionError instanceof Error ? connectionError.message : "Nieznany błąd połączenia z Supabase."
+        connectionError instanceof Error ? connectionError.message : "Nieznany błąd połączenia z bazą danych."
       return NextResponse.json(
         {
           success: false,
-          message: `Nie udało się nawiązać połączenia z bazą danych Supabase: ${detailedMessage}`,
+          message: `Nie udało się nawiązać połączenia z bazą danych Neon: ${detailedMessage}`,
         },
         { status: 500 }
       )
@@ -229,15 +214,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Check if email already exists in Supabase
-    const { data: existingEntry, error: existingEntryError } = await supabase
-      .from("contest_entries")
-      .select("email, name, code")
-      .eq("email", email)
-      .maybeSingle()
-
-    if (existingEntryError) {
-      console.error("Error checking existing entry in Supabase:", existingEntryError)
+    let existingEntry: { email: string; name: string; code: string } | null
+    try {
+      existingEntry = await queryOne<{ email: string; name: string; code: string }>(
+        "select email, name, code from contest_entries where email = $1 limit 1",
+        [email]
+      )
+    } catch (existingEntryError) {
+      console.error("Error checking existing entry in database:", existingEntryError)
       return NextResponse.json(
         { success: false, message: "Wystąpił błąd podczas sprawdzania zgłoszenia. Spróbuj ponownie." },
         { status: 500 }
@@ -267,15 +251,12 @@ export async function POST(request: NextRequest) {
     let code = generateUniqueCode()
     let attempts = 0
 
-    // Ensure code is unique in Supabase
+    // Ensure code is unique in the database
     while (attempts < MAX_CODE_GENERATION_ATTEMPTS) {
-      const { data: codeCheck, error: codeError } = await supabase
-        .from("contest_entries")
-        .select("code")
-        .eq("code", code)
-        .maybeSingle()
-
-      if (codeError) {
+      let codeCheck: { code: string } | null
+      try {
+        codeCheck = await queryOne<{ code: string }>("select code from contest_entries where code = $1 limit 1", [code])
+      } catch (codeError) {
         console.error("Error checking code uniqueness:", codeError)
         return NextResponse.json(
           { success: false, message: "Wystąpił błąd podczas generowania kodu. Spróbuj ponownie." },
@@ -306,11 +287,15 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     }
 
-    // Save to Supabase
-    const { error: insertError } = await supabase.from("contest_entries").insert(newEntry)
-
-    if (insertError) {
-      console.error("Error inserting entry to Supabase:", insertError)
+    try {
+      await query('insert into contest_entries (email, name, code, "timestamp") values ($1, $2, $3, $4)', [
+        newEntry.email,
+        newEntry.name,
+        newEntry.code,
+        newEntry.timestamp,
+      ])
+    } catch (insertError) {
+      console.error("Error inserting entry to database:", insertError)
       return NextResponse.json(
         { success: false, message: "Wystąpił błąd podczas zapisywania zgłoszenia. Spróbuj ponownie." },
         { status: 500 }
@@ -319,7 +304,7 @@ export async function POST(request: NextRequest) {
 
     // Save locally as fallback (only in non-serverless environments)
     // In serverless environments (Vercel, AWS Lambda), the filesystem is read-only
-    // and Supabase is the primary/only storage
+    // and the database is the primary/only storage
     if (!isServerless()) {
       try {
         const entries = await readEntries()

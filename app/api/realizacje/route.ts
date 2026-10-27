@@ -6,7 +6,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { listRealizacje } from '@/lib/supabase-realizacje';
+import { listRealizacje } from '@/lib/neon-realizacje';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

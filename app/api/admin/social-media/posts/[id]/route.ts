@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+import { query, queryOne, updateRow } from '@/lib/db';
 
 /**
  * GET /api/admin/social-media/posts/[id]
@@ -13,27 +10,18 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const { id } = await context.params;
 
-    const { data: post, error } = await supabase
-      .from('social_media_posts')
-      .select('*')
-      .eq('id', id)
-      .single();
+    const post = await queryOne('select * from social_media_posts where id::text = $1', [id]);
 
-    if (error) {
-      console.error('Error fetching post:', error);
+    if (!post) {
       return NextResponse.json(
         { success: false, error: 'Post not found' },
         { status: 404 }
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      post,
-    });
+    return NextResponse.json({ success: true, post });
   } catch (error) {
     console.error('Error in GET /api/admin/social-media/posts/[id]:', error);
     return NextResponse.json(
@@ -52,7 +40,6 @@ export async function PUT(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const { id } = await context.params;
     const body = await request.json();
 
@@ -70,8 +57,7 @@ export async function PUT(
       error_message,
     } = body;
 
-    // Build update object (only include provided fields)
-    const updates: any = {};
+    const updates: Record<string, unknown> = {};
     if (content !== undefined) updates.content = content;
     if (hashtags !== undefined) updates.hashtags = hashtags;
     if (images !== undefined) updates.images = images;
@@ -81,28 +67,19 @@ export async function PUT(
     if (status !== undefined) updates.status = status;
     if (scheduled_at !== undefined) updates.scheduled_at = scheduled_at;
     if (published_at !== undefined) updates.published_at = published_at;
-    if (published_url !== undefined) updates.published_url = published_url;
-    if (error_message !== undefined) updates.error_message = error_message;
+    if (published_url !== undefined) updates.platform_url = published_url;
+    if (error_message !== undefined) updates.platform_response = { error: error_message };
 
-    const { data: post, error } = await supabase
-      .from('social_media_posts')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
+    const post = await updateRow('social_media_posts', 'id', id, updates);
 
-    if (error) {
-      console.error('Error updating post:', error);
+    if (!post) {
       return NextResponse.json(
-        { success: false, error: 'Failed to update post' },
-        { status: 500 }
+        { success: false, error: 'Post not found' },
+        { status: 404 }
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      post,
-    });
+    return NextResponse.json({ success: true, post });
   } catch (error) {
     console.error('Error in PUT /api/admin/social-media/posts/[id]:', error);
     return NextResponse.json(
@@ -121,21 +98,9 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
     const { id } = await context.params;
 
-    const { error } = await supabase
-      .from('social_media_posts')
-      .delete()
-      .eq('id', id);
-
-    if (error) {
-      console.error('Error deleting post:', error);
-      return NextResponse.json(
-        { success: false, error: 'Failed to delete post' },
-        { status: 500 }
-      );
-    }
+    await query('delete from social_media_posts where id::text = $1', [id]);
 
     return NextResponse.json({
       success: true,
