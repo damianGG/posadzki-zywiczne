@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { absoluteUrl } from "@/lib/site-config"
 import AllBlogPosts from "@/components/all-blog-posts"
 import { getAllBlogPosts } from "@/lib/blog"
 
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
     keywords:
         "blog posadzki żywiczne, artykuły o posadzkach, porady ekspertów, przewodniki posadzki, posadzki epoksydowe",
     alternates: {
-        canonical: "https://posadzkizywiczne.com/blog",
+        canonical: absoluteUrl("/blog"),
     },
 }
 

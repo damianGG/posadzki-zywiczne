@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Metadata } from 'next';
+import { SITE_URL, absoluteUrl } from '@/lib/site-config';
 import { Badge } from '@/components/ui/badge';
 import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
@@ -39,10 +40,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: realizacja.title,
       description: realizacja.description,
-      url: `https://posadzkizywiczne.com/realizacje/${slug}`,
+      url: `${SITE_URL}/realizacje/${slug}`,
       images: [
         {
-          url: `https://posadzkizywiczne.com${realizacja.images.main}`,
+          url: absoluteUrl(realizacja.images.main),
           width: 1200,
           height: 630,
           alt: realizacja.title,
@@ -52,7 +53,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: realizacja.date,
     },
     alternates: {
-      canonical: `https://posadzkizywiczne.com/realizacje/${slug}`,
+      canonical: `${SITE_URL}/realizacje/${slug}`,
     },
   };
 }
@@ -77,7 +78,7 @@ export default async function RealizacjaDetailPage({ params }: Props) {
     '@type': 'Article',
     headline: realizacja.title,
     description: realizacja.description,
-    image: `https://posadzkizywiczne.com${realizacja.images.main}`,
+    image: absoluteUrl(realizacja.images.main),
     datePublished: realizacja.date,
     author: {
       '@type': 'Organization',
