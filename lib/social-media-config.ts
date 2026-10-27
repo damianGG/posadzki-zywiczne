@@ -57,10 +57,9 @@ export interface SocialMediaConfig {
     secret: string;
   };
   
-  // Supabase
-  supabase: {
+  // Neon Postgres
+  database: {
     url: string;
-    serviceRoleKey: string;
   };
   
   // Cloudinary
@@ -202,9 +201,9 @@ export function validateSocialMediaConfig(): void {
       throw new Error('OpenAI API key is required for AI content generation');
     }
     
-    // Check Supabase (required for data storage)
-    if (!config.supabase.url || !config.supabase.serviceRoleKey) {
-      throw new Error('Supabase configuration is required');
+    // Check Neon (required for data storage)
+    if (!config.database.url) {
+      throw new Error('Neon database configuration (NEON_DATABASE_URL) is required');
     }
     
     // Check Cloudinary (required for image management)
