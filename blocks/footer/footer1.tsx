@@ -54,8 +54,8 @@ export const Footer1 = () => {
           href: "/pomieszczenia-czyste",
         },
         {
-          title: "Kuchnia i Salon",
-          href: "/kuchnia-salon",
+          title: "Kamienny dywan",
+          href: "/kamienny-dywan",
         },
       ],
     },
