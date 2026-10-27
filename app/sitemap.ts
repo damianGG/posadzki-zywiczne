@@ -1,26 +1,18 @@
 import type { MetadataRoute } from "next";
-import { getAllPosts } from "@/lib/posts-json";
+import { getAllBlogPosts } from "@/lib/blog";
 import { getAllRealizacje } from "@/lib/realizacje";
 import { SITE_URL } from "@/lib/site-config";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const allPosts = getAllPosts();
+  const allPosts = getAllBlogPosts();
   const allRealizacje = await getAllRealizacje();
 
   const posts = allPosts.map((post) => {
-    let lastModified: Date | undefined;
-
-    if (post.updated?.trim()) {
-      const updatedDate = new Date(post.updated);
-      if (!Number.isNaN(updatedDate.getTime())) lastModified = updatedDate;
-    } else if (post.date?.trim()) {
-      const publishedDate = new Date(post.date);
-      if (!Number.isNaN(publishedDate.getTime())) lastModified = publishedDate;
-    }
+    const updated = new Date(post.updatedAt || post.publishedAt);
 
     return {
-      url: `${SITE_URL}/blog/${post.slug}`,
-      ...(lastModified ? { lastModified } : {}),
+      url: `${SITE_URL}/blog/${post.id}`,
+      ...(!Number.isNaN(updated.getTime()) ? { lastModified: updated } : {}),
     };
   });
 
