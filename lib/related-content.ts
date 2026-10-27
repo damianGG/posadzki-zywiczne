@@ -42,6 +42,15 @@ export function getRelatedArticles(post: BlogPost, allPosts: BlogPost[], limit =
 }
 
 export function getRelatedService(post: BlogPost): { href: string; title: string; description: string } | null {
+  // The editorial city guides lead to their commercial service landing page.
+  if (post.id === "posadzki-zywiczne-rzeszow" || post.id === "posadzki-zywiczne-krakow") {
+    const rzeszow = post.id.endsWith("rzeszow");
+    return {
+      href: rzeszow ? "/posadzki-zywiczne/rzeszow" : "/posadzki-zywiczne/krakow",
+      title: rzeszow ? "Posadzki żywiczne Rzeszów – oferta" : "Posadzki żywiczne Kraków – oferta",
+      description: "Zobacz zakres prac, zdjęcia realizacji i sposób przygotowania zapytania o wycenę.",
+    };
+  }
   const topic = normalize([post.title, post.excerpt, post.category, ...post.tags, post.content.slice(0, 2000)].join(" "))
   if (/kamienn(y|ego|ym|e) dywan/.test(topic)) {
     return {
