@@ -1,176 +1,118 @@
-'use client';
-
-import { useMemo, useCallback } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { getCategoryDisplayName } from '@/lib/realizacje-helpers';
-import { Realizacja, RealizacjaCategory } from '@/types/realizacje';
+import type { Realizacja, RealizacjaCategory } from '@/types/realizacje';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { X } from 'lucide-react';
 
-interface RealizacjeClientProps {
+interface Props {
   realizacje: Realizacja[];
+  selectedCategory?: string;
 }
 
-const categories: RealizacjaCategory[] = ['schody', 'garaze', 'kuchnie', 'balkony-tarasy', 'domy-mieszkania', 'pomieszczenia-czyste'];
+const categories: RealizacjaCategory[] = [
+  'schody', 'garaze', 'kuchnie', 'balkony-tarasy',
+  'domy-mieszkania', 'pomieszczenia-czyste',
+];
 
-export default function RealizacjeClient({ realizacje }: RealizacjeClientProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  
-  // Get category from URL, validate it's a valid category
-  const categoryParam = searchParams.get('kategoria');
-  const selectedCategory: RealizacjaCategory | 'all' = 
-    categoryParam && categories.includes(categoryParam as RealizacjaCategory) 
-      ? (categoryParam as RealizacjaCategory) 
+/**
+ * Server-rendered portfolio listing. Filtering uses links to query-string URLs
+ * rather than useSearchParams, so real project links remain in the initial HTML.
+ */
+export default function RealizacjeClient({ realizacje, selectedCategory }: Props) {
+  const active: RealizacjaCategory | 'all' =
+    selectedCategory && categories.includes(selectedCategory as RealizacjaCategory)
+      ? selectedCategory as RealizacjaCategory
       : 'all';
-
-  // Update URL when category changes
-  const setSelectedCategory = useCallback((category: RealizacjaCategory | 'all') => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (category === 'all') {
-      params.delete('kategoria');
-    } else {
-      params.set('kategoria', category);
-    }
-    const queryString = params.toString();
-    const newUrl = queryString ? `/realizacje?${queryString}` : '/realizacje';
-    router.push(newUrl, { scroll: false });
-  }, [router, searchParams]);
-
-  // Filter logic
-  const filteredRealizacje = useMemo(() => {
-    return realizacje.filter((realizacja) => {
-      return selectedCategory === 'all' || realizacja.category === selectedCategory;
-    });
-  }, [realizacje, selectedCategory]);
-
-  const clearFilters = () => {
-    setSelectedCategory('all');
-  };
-
-  const hasActiveFilters = selectedCategory !== 'all';
+  const filtered = realizacje.filter(project => active === 'all' || project.category === active);
 
   return (
     <>
-      {/* Filters */}
-      <section className="w-full py-8 bg-white border-b">
+      <section className="w-full border-b bg-white py-8" aria-label="Filtrowanie realizacji">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto space-y-6">
-            {/* Category Filter */}
-            <div className="flex flex-wrap gap-2">
-              <span className="text-sm font-medium text-gray-700 self-center">Kategoria:</span>
+          <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2">
+            <span className="mr-2 text-sm font-medium text-gray-700">Kategoria:</span>
+            <Button asChild variant={active === 'all' ? 'default' : 'outline'} size="sm" className="rounded-full">
+              <Link href="/realizacje" aria-current={active === 'all' ? 'page' : undefined}>Wszystkie</Link>
+            </Button>
+            {categories.map(category => (
               <Button
-                variant={selectedCategory === 'all' ? 'default' : 'outline'}
+                asChild
+                key={category}
+                variant={active === category ? 'default' : 'outline'}
                 size="sm"
-                onClick={() => setSelectedCategory('all')}
                 className="rounded-full"
               >
-                Wszystkie
-              </Button>
-              {categories.map((category) => (
-                <Button
-                  key={category}
-                  variant={selectedCategory === category ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setSelectedCategory(category)}
-                  className="rounded-full"
+                <Link
+                  href={`/realizacje?kategoria=${category}`}
+                  aria-current={active === category ? 'page' : undefined}
                 >
                   {getCategoryDisplayName(category)}
-                </Button>
-              ))}
-            </div>
-
-            {/* Clear Filters */}
-            {hasActiveFilters && (
-              <div className="flex justify-center">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearFilters}
-                  className="text-gray-600"
-                >
-                  <X className="h-4 w-4 mr-2" />
-                  Wyczyść filtry
-                </Button>
-              </div>
-            )}
+                </Link>
+              </Button>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Results */}
       <section className="w-full py-16">
         <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto">
-            <p className="text-gray-600 mb-8">
-              Znaleziono: <span className="font-semibold">{filteredRealizacje.length}</span> {filteredRealizacje.length === 1 ? 'projekt' : 'projektów'}
+          <div className="mx-auto max-w-6xl">
+            <p className="mb-8 text-gray-600" aria-live="polite">
+              Znaleziono: <span className="font-semibold">{filtered.length}</span>{' '}
+              {filtered.length === 1 ? 'projekt' : 'projektów'}
             </p>
-
-            {filteredRealizacje.length === 0 ? (
-              <div className="text-center py-16">
+            {filtered.length === 0 ? (
+              <div className="py-16 text-center">
                 <p className="text-xl text-gray-600">
-                  Nie znaleziono projektów spełniających kryteria filtrowania.
+                  {realizacje.length === 0
+                    ? 'Obecnie przygotowujemy galerię realizacji. Skontaktuj się z nami, aby zobaczyć zdjęcia wykonanych prac.'
+                    : 'Nie znaleziono projektów w wybranej kategorii.'}
                 </p>
-                <Button onClick={clearFilters} className="mt-4">
-                  Wyczyść filtry
-                </Button>
+                {realizacje.length === 0 ? (
+                  <Button asChild className="mt-4"><Link href="/kontakt">Zapytaj o nasze realizacje</Link></Button>
+                ) : (
+                  <Button asChild className="mt-4"><Link href="/realizacje">Pokaż wszystkie</Link></Button>
+                )}
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredRealizacje.map((realizacja) => (
-                  <Link
-                    key={realizacja.slug}
-                    href={`/realizacje/${realizacja.slug}`}
-                    className="group block"
-                  >
-                    <article className="bg-white rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 h-full flex flex-col">
-                      <div className="relative h-64 overflow-hidden">
-                        <Image
-                          src={realizacja.images.main}
-                          alt={realizacja.title}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          quality={90}
-                        />
-                        <div className="absolute top-4 left-4">
-                          <Badge className="bg-blue-600 text-white hover:bg-blue-700">
-                            {getCategoryDisplayName(realizacja.category)}
-                          </Badge>
-                        </div>
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {filtered.map(project => (
+                  <Link key={project.slug} href={`/realizacje/${project.slug}`} className="group block">
+                    <article className="flex h-full flex-col overflow-hidden rounded-lg bg-white shadow-md transition-shadow hover:shadow-xl">
+                      <div className="relative h-64 overflow-hidden bg-gray-100">
+                        {project.images.main ? (
+                          <Image
+                            src={project.images.main}
+                            alt={project.title}
+                            fill
+                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            quality={85}
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-sm text-gray-600">
+                            Zdjęcia w przygotowaniu
+                          </div>
+                        )}
+                        <Badge className="absolute left-4 top-4 bg-blue-600 text-white">
+                          {getCategoryDisplayName(project.category)}
+                        </Badge>
                       </div>
-
-                      <div className="p-6 flex-1 flex flex-col">
-                        <h3 className="text-xl font-semibold mb-3 group-hover:text-blue-600 transition-colors">
-                          {realizacja.title}
-                        </h3>
-                        
-                        <p className="text-gray-600 mb-4 line-clamp-2 flex-1">
-                          {realizacja.description}
-                        </p>
-
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {realizacja.tags.slice(0, 3).map((tag) => (
-                            <Badge key={tag} variant="outline" className="text-xs">
-                              {tag}
-                            </Badge>
+                      <div className="flex flex-1 flex-col p-6">
+                        <h2 className="mb-3 text-xl font-semibold transition-colors group-hover:text-blue-600">
+                          {project.title}
+                        </h2>
+                        <p className="mb-4 line-clamp-2 flex-1 text-gray-600">{project.description}</p>
+                        <div className="mb-4 flex flex-wrap gap-2">
+                          {(project.tags || []).slice(0, 3).map(tag => (
+                            <Badge key={tag} variant="outline" className="text-xs">{tag}</Badge>
                           ))}
                         </div>
-
-                        <div className="flex flex-wrap gap-2 text-sm text-gray-500 mt-auto">
-                          <div className="flex items-center gap-1">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            <span>{realizacja.location}</span>
-                          </div>
-                          <span>•</span>
-                          <span>{realizacja.details.surface}</span>
-                        </div>
+                        <p className="text-sm text-gray-500">
+                          {project.location}
+                          {project.details.surface ? ` · ${project.details.surface}` : ''}
+                        </p>
                       </div>
                     </article>
                   </Link>
