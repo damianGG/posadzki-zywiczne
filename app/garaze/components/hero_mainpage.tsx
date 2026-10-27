@@ -51,11 +51,11 @@ export default function HeroMainPage({ variant = "home" }: HeroMainPageProps) {
                             <ul className="grid gap-2 text-sm md:text-base text-muted-foreground">
                                 <li className="flex items-center gap-2">
                                     <Check className="w-4 h-4 text-primary" />
-                                    Darmowa wycena i pomiar w 24h
+                                    Wstępna wycena na podstawie zdjęć i metrażu
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <Check className="w-4 h-4 text-primary" />
-                                    Realizacja bez bałaganu w 3-5 dni
+                                    Harmonogram prac dopasowany do podłoża i systemu
                                 </li>
                                 <li className="flex items-center gap-2">
                                     <Check className="w-4 h-4 text-primary" />

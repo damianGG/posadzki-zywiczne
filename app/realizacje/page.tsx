@@ -3,18 +3,17 @@ import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
 import { Metadata } from 'next';
 import { absoluteUrl } from '@/lib/site-config';
-import { Suspense } from 'react';
 import RealizacjeClient from './realizacje-client';
 
 // Revalidate every 60 seconds to show new realizacje
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: 'Nasze Realizacje - Posadzki Żywiczne | Portfolio Projektów',
+  title: 'Realizacje posadzek żywicznych | Zdjęcia i opis prac',
   description: 'Zobacz nasze najnowsze realizacje posadzek żywicznych w domach, garażach, na balkonach i tarasach. Profesjonalne wykonanie, gwarancja jakości.',
   keywords: 'realizacje posadzki żywiczne, portfolio posadzek, projekty epoksydowe, realizacje garaż, posadzka balkon realizacja',
   openGraph: {
-    title: 'Nasze Realizacje - Posadzki Żywiczne | Portfolio Projektów',
+    title: 'Realizacje posadzek żywicznych | Zdjęcia i opis prac',
     description: 'Zobacz nasze najnowsze realizacje posadzek żywicznych w domach, garażach, na balkonach i tarasach.',
     url: absoluteUrl("/realizacje"),
     images: [
@@ -31,7 +30,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RealizacjePage() {
+type Props = { searchParams: Promise<{ kategoria?: string | string[] }> };
+
+export default async function RealizacjePage({ searchParams }: Props) {
+  const { kategoria } = await searchParams;
+  const selectedCategory = typeof kategoria === 'string' ? kategoria : undefined;
   const allRealizacje = await getAllRealizacje();
 
   return (
@@ -51,10 +54,8 @@ export default async function RealizacjePage() {
         </div>
       </section>
 
-      {/* Client-side filtering component */}
-      <Suspense fallback={<div className="w-full py-8 text-center">Ładowanie...</div>}>
-        <RealizacjeClient realizacje={allRealizacje} />
-      </Suspense>
+      {/* Filters and cards are rendered on the server, also for search crawlers. */}
+      <RealizacjeClient realizacje={allRealizacje} selectedCategory={selectedCategory} />
 
       {/* CTA Section */}
       <CTA2 />
