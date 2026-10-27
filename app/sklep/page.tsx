@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { SITE_URL } from "@/lib/site-config"
 
 import StorefrontClient from "@/components/shop/storefront-client"
 import {
@@ -11,7 +12,7 @@ import {
 import { getBreadcrumbSchema } from "@/lib/structured-data"
 import { getShopCatalog } from "@/lib/neon-shop"
 
-const defaultBaseUrl = "https://posadzkizywiczne.com"
+const defaultBaseUrl = SITE_URL
 const baseUrl = (() => {
   try {
     return new URL(process.env.NEXT_PUBLIC_SITE_URL ?? defaultBaseUrl)
