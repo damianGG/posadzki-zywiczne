@@ -69,9 +69,11 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         notFound()
     }
 
+    const allPosts = getAllBlogPosts()
+
     return (
         <main>
-            <BlogArticleDynamic post={post} />
+            <BlogArticleDynamic post={post} allPosts={allPosts} />
         </main>
     )
 }

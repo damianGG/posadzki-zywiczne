@@ -6,13 +6,16 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import type { BlogPost } from "@/lib/blog"
+import RelatedContent from "@/components/related-content"
 import { SITE_NAME, SITE_URL, absoluteUrl } from "@/lib/site-config"
 
 interface BlogArticleDynamicProps {
   post: BlogPost
+  allPosts: BlogPost[]
 }
 
-export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
+export default function BlogArticleDynamic({ post, allPosts }: BlogArticleDynamicProps) {
+  const [beforeRelated, afterRelated] = post.content.split("<!-- related-content -->")
   const canonicalUrl = `${SITE_URL}/blog/${post.id}`
   const imageUrl = post.image.url.startsWith("http") ? post.image.url : absoluteUrl(post.image.url)
 
@@ -112,8 +115,13 @@ export default function BlogArticleDynamic({ post }: BlogArticleDynamicProps) {
 
         <div
           className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-strong:text-foreground prose-a:text-primary prose-blockquote:text-muted-foreground prose-code:text-foreground prose-pre:bg-muted overflow-x-auto md:overflow-visible [&_table]:min-w-[640px] md:[&_table]:min-w-0"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: beforeRelated }}
         />
+
+        <RelatedContent post={post} allPosts={allPosts} />
+        {afterRelated !== undefined && (
+          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:text-foreground prose-p:text-foreground" dangerouslySetInnerHTML={{ __html: afterRelated }} />
+        )}
 
         <footer className="mt-12 pt-8 border-t">
           <Card>
