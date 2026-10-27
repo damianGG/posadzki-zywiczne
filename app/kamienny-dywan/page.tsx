@@ -130,8 +130,8 @@ function structuredData(data: unknown) {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
 
-function SectionEyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-[#8b6941]">{children}</p>;
+function SectionEyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
+  return <p className={"mb-4 text-xs font-bold uppercase tracking-[0.25em] " + (light ? "text-[#ead2ab]" : "text-[#8b6941]")}>{children}</p>;
 }
 
 export default function StoneCarpetPage() {
@@ -157,8 +157,8 @@ export default function StoneCarpetPage() {
               Naturalne kruszywo · Żywica · Precyzja
             </span>
             <h1 className="mt-8 max-w-3xl text-5xl font-semibold leading-[1.06] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
-              Kamienny dywan.
-              <span className="mt-2 block font-normal italic text-[#e0c69e]">Piękno natury</span>
+              Kamienny dywan.{" "}
+              <span className="mt-2 block font-normal italic text-[#e0c69e]">Piękno natury</span>{" "}
               <span className="block">pod stopami.</span>
             </h1>
             <p className="mt-7 max-w-xl text-lg leading-relaxed text-[#d6d9ce]">
@@ -356,7 +356,7 @@ export default function StoneCarpetPage() {
 
       <section className="bg-[#1a352b] py-20 text-white md:py-28">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
-          <SectionEyebrow>Realizacja krok po kroku</SectionEyebrow>
+          <SectionEyebrow light>Realizacja krok po kroku</SectionEyebrow>
           <h2 className="max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">Dobry efekt zaczyna się <span className="text-[#e1c397]">pod powierzchnią.</span></h2>
           <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {workStages.map(stage => (
