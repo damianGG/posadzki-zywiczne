@@ -167,7 +167,7 @@ export default function StoneCarpetPage() {
               ale trwałość zaczyna się od tego, czego nie widać: podłoża i prawidłowych warstw.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link href="/kontakt" className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-zinc-950 transition hover:bg-white">
+              <Link href="/kontakt" className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-zinc-950 transition hover:bg-zinc-200">
                 Poproś o wycenę <ArrowUpRight className="h-4 w-4" />
               </Link>
               <a href={"tel:" + SITE_PHONE} className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3.5 text-sm font-semibold transition hover:bg-white/10">
@@ -477,7 +477,7 @@ export default function StoneCarpetPage() {
         <div className="mx-auto max-w-4xl px-5 md:px-8">
           <SectionEyebrow>Najczęstsze pytania</SectionEyebrow>
           <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">Warto wiedzieć <span className="text-muted-foreground">przed decyzją.</span></h2>
-          <div className="mt-9 divide-y divide-[#d6cfbf] border-y border-border">
+          <div className="mt-9 divide-y divide-border border-y border-border">
             {faqs.map((faq, index) => (
               <details key={faq.q} className="group py-6">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-5 text-left font-semibold marker:hidden [&::-webkit-details-marker]:hidden">
@@ -501,7 +501,7 @@ export default function StoneCarpetPage() {
         <ul className="mt-7 grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {stoneCities.map(city => (
             <li key={city.slug}>
-              <Link href={"/kamienny-dywan/" + city.slug} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-white p-4 text-sm font-semibold transition hover:border-[#8b6941]">
+              <Link href={"/kamienny-dywan/" + city.slug} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-white p-4 text-sm font-semibold transition hover:border-foreground/40">
                 <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-muted-foreground" />{city.name}</span>
                 <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
               </Link>
@@ -520,7 +520,7 @@ export default function StoneCarpetPage() {
             Doradzimy, czy kamienny dywan ma sens w Twoim przypadku i co trzeba uwzględnić w wycenie.
           </p>
           <div className="relative mt-8 flex flex-wrap gap-3">
-            <Link href="/kontakt" className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-bold text-zinc-950 transition hover:bg-white">
+            <Link href="/kontakt" className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-bold text-zinc-950 transition hover:bg-zinc-200">
               Poproś o wycenę <ArrowUpRight className="h-4 w-4" />
             </Link>
             <a href={"tel:" + SITE_PHONE} className="inline-flex items-center gap-2 rounded-full border border-white/35 px-7 py-3.5 font-semibold hover:bg-white/10">
