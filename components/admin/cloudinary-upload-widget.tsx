@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ImagePlus, Loader2, Upload } from 'lucide-react';
+import { Loader2, Upload } from 'lucide-react';
 
 interface CloudinaryUploadResult {
   url: string;
@@ -33,7 +33,6 @@ export default function CloudinaryUploadWidget({
   folder = 'realizacje', // Default folder, can be overridden
 }: CloudinaryUploadWidgetProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [isScriptLoaded, setIsScriptLoaded] = useState(false);
 
   // Load Cloudinary script
   const loadCloudinaryScript = () => {
@@ -47,7 +46,6 @@ export default function CloudinaryUploadWidget({
       script.src = 'https://upload-widget.cloudinary.com/global/all.js';
       script.async = true;
       script.onload = () => {
-        setIsScriptLoaded(true);
         resolve(window.cloudinary);
       };
       script.onerror = reject;
@@ -78,9 +76,9 @@ export default function CloudinaryUploadWidget({
           multiple: true,
           maxFiles: maxFiles,
           clientAllowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
-          maxFileSize: 10485760, // 10MB per file (Cloudinary free tier limit)
-          maxImageWidth: 4000,
-          maxImageHeight: 4000,
+          // Do NOT set maxImageWidth/maxImageHeight: the Upload Widget would
+          // downscale the source on the user's device before Cloudinary receives it.
+          // Upload size limits are enforced by the Cloudinary account / preset.
           cropping: false,
           folder: folder, // Use the folder prop (can be specific to realizacja)
           sources: ['local', 'url', 'camera'],
@@ -178,7 +176,7 @@ export default function CloudinaryUploadWidget({
         ☁️ Bezpośrednie przesyłanie do Cloudinary
       </p>
       <p className="text-xs text-gray-500 dark:text-gray-400">
-        Max {maxFiles} zdjęć, do 10MB każde
+        Maksymalnie {maxFiles} zdjęć. Oryginalna rozdzielczość jest zachowana; limit rozmiaru pliku zależy od ustawień konta Cloudinary.
       </p>
     </div>
   );
