@@ -1,5 +1,6 @@
 import { Realizacja, RealizacjaCategory, RealizacjeMetadata } from '@/types/realizacje';
 import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB, RealizacjaData } from './neon-realizacje';
+import { chatgptRealizacje } from './chatgpt-realizacje';
 
 /**
  * Map RealizacjaData from Supabase to Realizacja type
@@ -100,22 +101,29 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
  * This function is async and fetches from the database
  */
 export async function getAllRealizacje(): Promise<Realizacja[]> {
+  let databaseProjects: Realizacja[] = [];
   try {
     const result = await listRealizacje({
       orderBy: 'created_at',
       orderDirection: 'desc',
     });
 
-    if (!result.success || !result.data) {
+    if (result.success && result.data) {
+      databaseProjects = result.data.map(mapToRealizacja);
+    } else {
       console.error('Error loading realizacje from database:', result.error);
-      return [];
     }
-
-    return result.data.map(mapToRealizacja);
   } catch (error) {
     console.error('Error loading realizacje:', error);
-    return [];
   }
+
+  // Keep existing CMS entries authoritative if a slug is accidentally reused.
+  // GitHub-reviewed entries stay available even during a database outage.
+  const existingSlugs = new Set(databaseProjects.map(project => project.slug));
+  return [
+    ...databaseProjects,
+    ...chatgptRealizacje.filter(project => !existingSlugs.has(project.slug)),
+  ].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
 }
 
 /**
@@ -176,13 +184,13 @@ export async function getRealizacjaBySlug(slug: string): Promise<Realizacja | nu
     const result = await getRealizacjaBySlugFromDB(slug);
     
     if (!result.success || !result.data) {
-      return null;
+      return chatgptRealizacje.find(project => project.slug === slug) || null;
     }
-    
+
     return mapToRealizacja(result.data);
   } catch (error) {
     console.error(`Error loading realizacja with slug ${slug}:`, error);
-    return null;
+    return chatgptRealizacje.find(project => project.slug === slug) || null;
   }
 }
 
