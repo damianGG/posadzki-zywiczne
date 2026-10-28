@@ -1,21 +1,15 @@
-# Zdjęcia realizacji kamiennego dywanu
+# Zdjęcia kamiennego dywanu — Rzeszów i okolice
 
-Katalog dla zdjęć przesłanych przez wykonawcę (Rzeszów i okolice).
+Osiem autentycznych fotografii przekazanych przez wykonawcę, zoptymalizowanych
+do formatu AVIF (600 × 800 px, 6–12 KB na zdjęcie).
+Nazwy plików i opisy poszczególnych kart znajdują się w
+`lib/stone-carpet-gallery.ts`.
 
-Zdjęcia przygotowano do publikacji: AVIF 600 × 800 px, bez metadanych EXIF.
-Każdy plik jest osobnym kadrem prezentowanym na osobnej karcie galerii.
-Kilka ujęć może przedstawiać ten sam obiekt i nie należy sugerować, że
-każdy kadr to inny klient lub kontrakt.
+Każdy plik prezentujemy jako osobną kartę w galerii na
+`/kamienny-dywan`. Kilka zdjęć może przedstawiać tę samą inwestycję
+z różnych kątów. Z tego powodu nie należy utożsamiać liczby kart z
+liczbą niezależnych kontraktów.
 
-Przed połączeniem gałęzi z `main` trzeba dodać do tego katalogu:
-- `kamienny-dywan-schody-wejscie-grafit-rzeszow-01.avif`
-- `kamienny-dywan-schody-wejscie-grafit-rzeszow-02.avif`
-- `kamienny-dywan-schody-dlugie-budynek-rzeszow-03.avif`
-- `kamienny-dywan-schody-bez-braz-rzeszow-04.avif`
-- `kamienny-dywan-schody-bez-braz-rzeszow-05.avif`
-- `kamienny-dywan-taras-bez-rzeszow-06.avif`
-- `kamienny-dywan-taras-podest-rzeszow-07.avif`
-- `kamienny-dywan-struktura-grafit-rzeszow-08.avif`
-
-Patrz: `lib/stone-carpet-gallery.ts`. PR pozostaje roboczy do chwili
-umieszczenia tych plików w repozytorium.
+Publikowana lokalizacja: „Rzeszów i okolice” zgodnie z informacją
+od wykonawcy; dokładne miejscowości, daty, metraż i nazwy systemów
+nie zostały udokumentowane i nie należy ich dopisywać.
