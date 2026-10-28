@@ -185,10 +185,11 @@ export default function StoneCarpetPage() {
           <div className="relative mx-auto w-full max-w-[530px] lg:max-w-none">
             <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-800 shadow-2xl shadow-black/30">
               <Image
-                src="/kamienny-dywan/schody-kamienny-dywan-realizacja.webp"
+                src="/kamienny-dywan/realizacje/kamienny-dywan-schody-realizacja-hq.webp"
                 alt="Schody wejściowe wykończone ciemnoszarą dekoracyjną nawierzchnią z kruszywa i żywicy"
                 fill
                 priority
+                quality={90}
                 sizes="(max-width: 1024px) 100vw, 45vw"
                 className="object-cover object-center"
               />
@@ -369,14 +370,14 @@ export default function StoneCarpetPage() {
                 aria-label={`Powiększ zdjęcie: ${photo.title}`}
                 className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               >
-                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                <div className="relative aspect-[3/4] overflow-hidden bg-muted">
                   <Image
                     src={photo.src}
                     alt={photo.alt}
                     fill
+                    quality={90}
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.035]"
-                    priority={index === 0}
                   />
                   <span className="absolute left-3 top-3 rounded-full bg-background/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm">
                     Realizacja {String(index + 1).padStart(2, "0")}
