@@ -44,8 +44,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [
         {
           url: absoluteUrl(realizacja.images.main),
-          width: 1200,
-          height: 630,
           alt: realizacja.title,
         },
       ],
@@ -141,7 +139,7 @@ export default async function RealizacjaDetailPage({ params }: Props) {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  <span>{new Date(realizacja.date).toLocaleDateString('pl-PL', { year: 'numeric', month: 'long' })}</span>
+                  <span>Opublikowano: {new Date(realizacja.date).toLocaleDateString('pl-PL', { year: 'numeric', month: 'long' })}</span>
                 </div>
               </div>
 
