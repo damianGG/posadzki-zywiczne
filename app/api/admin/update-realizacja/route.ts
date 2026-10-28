@@ -104,7 +104,6 @@ export async function PUT(request: NextRequest) {
               folder: `realizacje/${folderName}`,
               public_id: filename,
               resource_type: 'image',
-              format: safeExtension,
             },
             (error, result) => {
               if (error) reject(error);
