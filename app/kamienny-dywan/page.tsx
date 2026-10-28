@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight, ArrowUpRight, Check, ChevronDown, Droplets, Images,
+  ArrowRight, ArrowUpRight, Check, ChevronDown, Droplets,
   Layers3, MapPin, Minus, PhoneCall, ShieldCheck, Sparkles, Sun, Waves,
 } from "lucide-react";
 import { stoneCities } from "@/lib/stone-cities";
@@ -354,35 +354,46 @@ export default function StoneCarpetPage() {
             <SectionEyebrow>Galeria realizacji</SectionEyebrow>
             <h2 className="text-4xl font-semibold tracking-tight md:text-5xl">Zobacz kamienny dywan <span className="text-muted-foreground">w praktyce.</span></h2>
             <p className="mt-5 leading-relaxed text-muted-foreground">
-              Będziemy pokazywać wyłącznie zdjęcia naszych wykonanych realizacji z opisem miejsca i zakresu prac.
+              Każde zdjęcie prezentujemy jako osobną kartę portfolio. Kadry mogą pochodzić z tej samej inwestycji. Poniżej pokazujemy schody, wejścia i tarasy z Rzeszowa i okolic.
             </p>
           </div>
         </div>
 
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {stoneCarpetGallery.map(photo => (
-            <figure key={photo.src} className="overflow-hidden rounded-2xl border border-border bg-white">
-              <div className="relative aspect-[4/3]">
-                <Image
-                  src={photo.src}
-                  alt={photo.alt}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                  className="object-cover object-center"
-                />
-              </div>
-              <figcaption className="p-5 text-sm font-medium text-muted-foreground">{photo.caption}</figcaption>
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {stoneCarpetGallery.map((photo, index) => (
+            <figure key={photo.id} className="group overflow-hidden rounded-2xl border border-border bg-background shadow-sm transition-shadow hover:shadow-md">
+              <a
+                href={photo.src}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Powiększ zdjęcie: ${photo.title}`}
+                className="block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden bg-muted">
+                  <Image
+                    src={photo.src}
+                    alt={photo.alt}
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover object-center transition-transform duration-300 group-hover:scale-[1.035]"
+                    priority={index === 0}
+                  />
+                  <span className="absolute left-3 top-3 rounded-full bg-background/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-sm">
+                    Realizacja {String(index + 1).padStart(2, "0")}
+                  </span>
+                </div>
+              </a>
+              <figcaption className="p-5">
+                <h3 className="text-base font-semibold leading-snug text-foreground">{photo.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{photo.caption}</p>
+                {photo.location && (
+                  <p className="mt-4 flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5" aria-hidden="true" /> {photo.location}
+                  </p>
+                )}
+              </figcaption>
             </figure>
           ))}
-          {["Tarasy", "Balkony", "Schody"]
-            .slice(0, Math.max(0, 3 - stoneCarpetGallery.length))
-            .map(name => (
-              <div key={name} className="flex aspect-[4/3] flex-col items-center justify-center rounded-3xl border border-dashed border-border bg-muted/60 p-8 text-center">
-                <Images className="h-9 w-9 text-muted-foreground" aria-hidden="true" />
-                <h3 className="mt-5 text-xl font-semibold">{name}</h3>
-                <p className="mt-2 max-w-[15rem] text-sm leading-relaxed text-muted-foreground">Miejsce na zdjęcia naszych realizacji</p>
-              </div>
-            ))}
         </div>
         <p className="mt-5 text-sm text-muted-foreground">
           Zdjęcia balkonów z innych systemów żywicznych znajdziesz w <Link href="/realizacje" className="font-semibold underline underline-offset-4 hover:text-foreground">portfolio firmy</Link>.
