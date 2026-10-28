@@ -1,4 +1,5 @@
 import data from "@/data/chatgpt-realizacje.json";
+import originalImageMap from "@/data/chatgpt-image-manifest.generated.json";
 import type { Realizacja, RealizacjaCategory } from "@/types/realizacje";
 
 /**
@@ -61,6 +62,21 @@ function isValidProject(item: unknown): item is Realizacja {
 // Parse as unknown and validate records, rather than trusting uploaded content.
 const rawProjects: unknown = data;
 
+const imageMap = originalImageMap as Record<string, string>;
+
+function resolvedPhoto(url: string): string {
+  return imageMap[url] || url;
+}
+
+/** Returns Cloudinary original URLs on production and local URLs in previews. */
 export const chatgptRealizacje: Realizacja[] = Array.isArray(rawProjects)
-  ? rawProjects.filter(isValidProject)
+  ? rawProjects.filter(isValidProject).map(project => ({
+      ...project,
+      images: {
+        main: resolvedPhoto(project.images.main),
+        gallery: project.images.gallery.map(image => typeof image === "string"
+          ? resolvedPhoto(image)
+          : { ...image, url: resolvedPhoto(image.url) }),
+      },
+    }))
   : [];
