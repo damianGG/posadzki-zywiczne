@@ -3,7 +3,7 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import cloudinaryLoader, { cloudinaryLoaderMobile, isCloudinaryUrl } from '@/lib/cloudinary-loader';
+import cloudinaryLoader, { isCloudinaryUrl } from '@/lib/cloudinary-loader';
 
 interface ImageGalleryProps {
   images: Array<string | { url: string; alt?: string; hidden?: boolean }>;
@@ -15,29 +15,6 @@ interface ImageGalleryProps {
 export function ImageGallery({ images, mainImage, title, filterHidden = false }: ImageGalleryProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
-  
-  // Detect if device is mobile using matchMedia for better performance
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(max-width: 767px)');
-    
-    const handleChange = (e: MediaQueryListEvent | MediaQueryList) => {
-      setIsMobile(e.matches);
-    };
-    
-    // Set initial value
-    handleChange(mediaQuery);
-    
-    // Listen for changes (modern browsers)
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
-    } else {
-      // Fallback for older browsers
-      mediaQuery.addListener(handleChange);
-      return () => mediaQuery.removeListener(handleChange);
-    }
-  }, []);
   
   // Combine main image with gallery images, filter out empty strings, duplicates, and optionally hidden images
   const allImages = useMemo(() => {
@@ -230,10 +207,10 @@ export function ImageGallery({ images, mainImage, title, filterHidden = false }:
               src={allImages[currentIndex]}
               alt={`${title} - zdjęcie ${currentIndex + 1}`}
               fill
-              className={isMobile ? "object-cover" : "object-contain"}
+              className="object-contain"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 95vw, 1200px"
               quality={95}
-              loader={imageCloudinaryStatus[currentIndex] ? (isMobile ? cloudinaryLoaderMobile : cloudinaryLoader) : undefined}
+              loader={imageCloudinaryStatus[currentIndex] ? cloudinaryLoader : undefined}
               unoptimized={!imageCloudinaryStatus[currentIndex]}
             />
           </div>
