@@ -30,13 +30,23 @@ Kilka zdjęć jednego obiektu należy zapisać pod jednym slugiem jako
 4. Przygotuj unikalny tytuł, lead, opis wykonania (bez zmyślonych etapów),
    praktyczne ograniczenia systemu, FAQ, meta opis, słowa kluczowe oraz
    dokładne teksty alt obrazów.
-5. Zapisz zdjęcia w pełnej rozdzielczości w repo lub użyj oryginalnych
+5. Zapisz zdjęcia w pełnej rozdzielczości jako oryginalne binarne pliki w
+   `public/chatgpt-realizacje/<slug>/<nazwa>.jpg`, albo użyj oryginalnych
    `https://res.cloudinary.com/<cloud>/image/upload/...` linków.
    Nie korzystaj z adresów miniaturek/wariantów `w_600`, `c_fill`,
    `q_40` jako źródeł nowej realizacji.
-6. Uzupełnij `data/chatgpt-realizacje.json` i sprawdź build Vercel.
+6. Przy zdjęciach z publicznych inwestycji upewnij się, że użytkownik ma
+   prawo publikacji, a pliki nie ujawniają danych klientów (np. EXIF GPS,
+   tablice rejestracyjne, twarze i dokumenty). Metadane GPS usuń
+   bez rekompresowania pikseli, zanim plik znajdzie się w publicznym repo.
+7. Uzupełnij `data/chatgpt-realizacje.json` i sprawdź build Vercel.
    Nie scalaj PR ze zdjęciami/treściami bez weryfikacji poprawności.
-7. Po wdrożeniu sprawdź HTTP 200, canonical, obecność w sitemapie
+8. W produkcji `prebuild` automatycznie przesyła oryginały z repo do
+   Cloudinary bez zmniejszania rozdzielczości i generuje lokalną mapę
+   adresów. Nazwa zasobu jest oparta na hashu pliku: wgranie
+   identycznego zdjęcia jest idempotentne, zmiana źródła tworzy nowy zasób.
+   W Preview pliki pozostają lokalne (brak zapisów do Cloudinary).
+9. Po wdrożeniu sprawdź HTTP 200, canonical, obecność w sitemapie
    i czy każda fotografia ładuje się z odpowiednią ostrością.
 
 ## Format danych
@@ -112,15 +122,23 @@ wypadku pomniejsza źródło **przed przesłaniem**.
 - Upload ma limity narzucone przez plan i konfigurację Cloudinary. Błąd limitu
   należy pokazać, a nie po cichu pomniejszać źródło.
 
-**Granica integracji:** aktualnie ChatGPT nie ma zainstalowanego narzędzia
-z prawem zapisu do konta Cloudinary. Można przez GitHub bezpośrednio
-publikować realizacje z wysokiej jakości załączników w repo lub z
-już przesłanych do Cloudinary oryginalnych adresów URL. Aby przesyłanie
-*bezpośrednio z rozmowy do Cloudinary* było całkowicie automatyczne,
-potrzebny jest autoryzowany kanał uploadu (np. dedykowana aplikacja
-z bezpiecznym zapisem do Cloudinary). Nie wolno udostępniać kluczy
-`CLOUDINARY_API_SECRET` w rozmowie ani odblokowywać publicznego
-endpointu publikowania bez uwierzytelnienia.
+**Ścieżka bez osobnej wtyczki Cloudinary:** ChatGPT zapisuje oryginalne
+zdjęcia i pełny wpis przez podłączony GitHub. Na produkcyjnym buildzie
+(`VERCEL_ENV=production`) skrypt
+`scripts/sync-chatgpt-cloudinary.mjs` wysyła źródłowe pliki do Cloudinary,
+wykorzystując istniejące sekretne zmienne środowiskowe Vercel. Jeśli upload
+zawiedzie, deployment kończy się błędem zamiast publikować brakujące obrazy.
+Nie przekazujemy `CLOUDINARY_API_SECRET` do rozmowy.
+
+Wersje testowe GitHub/Vercel pokazują pełne pliki lokalne. Dopiero po
+zatwierdzeniu PR i scaleniu do `main` produkcja tworzy zasoby Cloudinary.
+Oryginały pozostają też jako archiwum w GitHub, co może zwiększyć rozmiar repo.
+W przyszłości można zastąpić GitHub pośredniczący dedykowanym MCP lub
+autoryzowanym bezpośrednim uploadem z ChatGPT.
+
+**Ograniczenia:** konto Cloudinary może mieć limit MB na pojedynczy plik,
+a Upload Preset może mieć przychodzące transformacje. Z tego powodu należy
+zweryfikować faktyczne wymiary i rozmiary plików po pierwszym wdrożeniu.
 
 ## Bezpieczeństwo
 
