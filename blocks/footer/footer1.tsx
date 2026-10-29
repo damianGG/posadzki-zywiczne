@@ -42,12 +42,8 @@ export const Footer1 = () => {
           href: "/garaze",
         },
         {
-          title: "Posadzki żywiczne Rzeszów",
-          href: "/posadzki-zywiczne/rzeszow",
-        },
-        {
-          title: "Posadzki żywiczne Kraków",
-          href: "/posadzki-zywiczne/krakow",
+          title: "Posadzki elektrostatyczne ESD",
+          href: "/posadzki-elektrostatyczne",
         },
         {
           title: "Pomieszczenia czyste",
@@ -57,6 +53,16 @@ export const Footer1 = () => {
           title: "Kamienny dywan",
           href: "/kamienny-dywan",
         },
+      ],
+    },
+    {
+      title: "Gdzie wykonujemy posadzki",
+      items: [
+        { title: "Posadzki żywiczne Rzeszów", href: "/posadzki-zywiczne/rzeszow" },
+        { title: "Posadzki żywiczne Kraków", href: "/posadzki-zywiczne/krakow" },
+        { title: "Posadzki żywiczne Lublin", href: "/posadzki-zywiczne/lublin" },
+        { title: "Posadzki żywiczne Warszawa", href: "/posadzki-zywiczne/warszawa" },
+        { title: "Posadzki żywiczne Katowice", href: "/posadzki-zywiczne/katowice" },
       ],
     },
   ];
