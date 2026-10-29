@@ -8,6 +8,7 @@ import { FAQ2 } from "@/blocks/faq/faq2";
 import { Contact1 } from "@/blocks/contact/contact1";
 import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
 import RelatedRealizations from "@/components/related-realizations";
+import Link from "next/link";
 
 export const revalidate = 300;
 
@@ -27,6 +28,21 @@ export default function Home() {
             <ProblemSolutionSection />
             <BenefitsSection />
             <StoneCarpetTeaser />
+            <section className="mx-auto max-w-6xl px-4 py-8" aria-labelledby="taras-poradnik">
+              <h2 id="taras-poradnik" className="text-2xl font-bold md:text-3xl">Jak wybrać system żywiczny na taras?</h2>
+              <p className="mt-3 max-w-4xl leading-relaxed text-muted-foreground">
+                Przed wykonaniem nawierzchni sprawdzamy wilgotność podłoża, odwodnienie,
+                hydroizolację oraz wymagania dotyczące odporności na UV i poślizg.
+                Wyjaśniamy to w poradniku{" "}
+                <Link href="/blog/czy-posadzka-zywiczna-nadaje-sie-na-taras" className="font-medium text-primary underline-offset-4 hover:underline">
+                  czy posadzka żywiczna nadaje się na taras
+                </Link>.
+                Jeśli masz zdjęcia balkonu lub tarasu,{" "}
+                <Link href="/kontakt" className="font-medium text-primary underline-offset-4 hover:underline">
+                  zapytaj o indywidualną wycenę
+                </Link>.
+              </p>
+            </section>
             <RelatedRealizations category="balkony-tarasy" title="Nasze realizacje balkonów i tarasów" />
             <Feature3 />
             {/* <Feature4 /> */}
