@@ -97,6 +97,12 @@ export default function Home() {
                 {" "}oraz{" "}
                 <Link href="/posadzki-zywiczne/krakow" className="font-medium text-primary underline-offset-4 hover:underline">posadzkach żywicznych w Krakowie</Link>.
               </p>
+              <p className="mt-4 max-w-4xl leading-relaxed text-muted-foreground">
+                Planując użytkowanie garażu po wykonaniu prac, sprawdź też{" "}
+                <Link href="/blog/ile-trwa-schniecie-posadzki-zywicznej" className="font-medium text-primary underline-offset-4 hover:underline">
+                  kiedy można wjechać samochodem na nową posadzkę
+                </Link>.
+              </p>
             </section>
             <ProblemSolutionSection />
             <ScrollDrivenRenovationTimeline />
