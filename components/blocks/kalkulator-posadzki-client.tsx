@@ -1000,7 +1000,11 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         !!wybranyKolorObj
 
     // Check if mobile sticky bar should be shown
-    const canGenerateOffer = powierzchnia > 0 && kosztCalkowity > 0
+    const requiresPerimeter = !obwod.trim() && wybraneDodatki.some(id => {
+        const s = dodatkiUslugi.find(service => service.id === id)
+        return s && !s.wCeniePosadzki && !s.cenaZaM2 && !!s.cenaZaMb
+    })
+    const canGenerateOffer = powierzchnia > 0 && kosztCalkowity > 0 && !requiresPerimeter
     const shouldShowMobileStickyBar = canGenerateOffer && 
         !!wybranaPosadzka && 
         !!wybranyRodzajPowierzchniObj && 
@@ -2492,7 +2496,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                         </div>
                                         <Separator className="my-2" />
                                         <div className="flex justify-between text-lg font-bold text-green-700">
-                                            <span>Koszt całkowity:</span>
+                                            <span>{requiresPerimeter ? "Suma częściowa:" : "Koszt całkowity:"}</span>
                                             <span className="animate-pulse">{kosztPoRabacie.toFixed(2)} zł</span>
                                         </div>
                                         <div className="text-center text-sm text-green-600">
@@ -2504,10 +2508,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                             </div>
                                         )}
                                         <div className="text-center text-xs text-gray-600">
-                                            {!obwod.trim() && wybraneDodatki.some(id => {
-                                                const s = dodatkiUslugi.find(service => service.id === id)
-                                                return s && !s.wCeniePosadzki && !s.cenaZaM2 && !!s.cenaZaMb
-                                            })
+                                            {requiresPerimeter
                                                 ? "Suma częściowa: bez cokołów i innych usług za mb. Podaj obwód, aby poznać pełną wycenę."
                                                 : FINAL_PRICE_NOTE}
                                         </div>
