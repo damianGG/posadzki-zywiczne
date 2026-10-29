@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prebuild": "node scripts/sync-chatgpt-cloudinary.mjs"
+    "prebuild": "node scripts/test-calculator-engine.mjs && node scripts/sync-chatgpt-cloudinary.mjs"
   },
   "dependencies": {
     "@mdx-js/react": "^3.1.0",

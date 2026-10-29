@@ -1,0 +1,108 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "PosadzkiŻywiczne — API kalkulatora",
+    "version": "1.0.0",
+    "description": "Publiczne, bezpieczne API do niewiążących wycen posadzek. Nie wystawia ofert handlowych i nie wysyła zapytań."
+  },
+  "servers": [
+    {
+      "url": "https://www.posadzkizywiczne.com"
+    }
+  ],
+  "paths": {
+    "/api/v1/calculator/options": {
+      "get": {
+        "operationId": "getFloorCalculatorOptions",
+        "summary": "Pobierz aktywne opcje i ceny",
+        "responses": {
+          "200": {
+            "description": "Opcje kalkulatora",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Cennik niedostępny"
+          }
+        }
+      }
+    },
+    "/api/v1/calculator/estimate": {
+      "post": {
+        "operationId": "calculateResinFloorEstimate",
+        "summary": "Oblicz orientacyjną wycenę",
+        "description": "Przy braku obwodu, gdy potrzebny do cokołów, total_pln=null i brakujące dane w missing_information. Bez arbitralnych rabatów.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "area_m2",
+                  "room_id",
+                  "surface_id",
+                  "color_id"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "area_m2": {
+                    "type": "number",
+                    "minimum": 1,
+                    "maximum": 2500
+                  },
+                  "perimeter_m": {
+                    "type": "number",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1000
+                  },
+                  "room_id": {
+                    "type": "string"
+                  },
+                  "surface_id": {
+                    "type": "string"
+                  },
+                  "color_id": {
+                    "type": "string"
+                  },
+                  "concrete_state_id": {
+                    "type": "string"
+                  },
+                  "service_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Wycena orientacyjna; total_pln może być null",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Nieprawidłowe dane"
+          },
+          "503": {
+            "description": "Kalkulator niedostępny"
+          }
+        }
+      }
+    }
+  }
+}
