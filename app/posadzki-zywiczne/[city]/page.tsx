@@ -224,9 +224,10 @@ export default async function LocalServicePage({ params }: Props) {
 
       <section className="container mx-auto max-w-6xl px-4 py-14">
         <h2 className="text-2xl font-bold">Zobacz szczegóły oferty i poradniki</h2>
-        <div className="mt-5 grid gap-4 md:grid-cols-3">
+        <div className="mt-5 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <Link href="/garaze" className="rounded-lg border p-5 font-semibold hover:border-primary">Posadzki żywiczne do garaży</Link>
           <Link href="/posadzki-zywiczne-na-balkony" className="rounded-lg border p-5 font-semibold hover:border-primary">Balkony i tarasy</Link>
+          <Link href="/posadzki-elektrostatyczne" className="rounded-lg border p-5 font-semibold hover:border-primary">Posadzki elektrostatyczne ESD</Link>
           <Link href={`/blog/posadzki-zywiczne-${page.slug}`} className="rounded-lg border p-5 font-semibold hover:border-primary">
             Poradnik techniczny – {page.city}
           </Link>

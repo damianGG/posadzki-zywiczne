@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllBlogPosts } from "@/lib/blog";
 import { getAllRealizacje } from "@/lib/realizacje";
+import { localServicePages } from "@/lib/local-service-pages";
 import { SITE_URL } from "@/lib/site-config";
 import { stoneCities } from "@/lib/stone-cities";
 
@@ -30,8 +31,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/",
     "/posadzki-zywiczne-na-balkony",
     "/garaze",
-    "/posadzki-zywiczne/rzeszow",
-    "/posadzki-zywiczne/krakow",
+    "/posadzki-elektrostatyczne",
     "/kuchnia-salon",
     "/pomieszczenia-czyste",
     "/kalkulator",
@@ -43,5 +43,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ].map((path) => ({ url: `${SITE_URL}${path}` }));
 
   const cityPages = stoneCities.map(city => ({ url: `${SITE_URL}/kamienny-dywan/${city.slug}` }));
-  return [...staticPages, ...cityPages, ...posts, ...realizacje];
+  const localPages = Object.keys(localServicePages).map(city => ({ url: `${SITE_URL}/posadzki-zywiczne/${city}` }));
+  return [...staticPages, ...localPages, ...cityPages, ...posts, ...realizacje];
 }

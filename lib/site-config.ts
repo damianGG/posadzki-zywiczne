@@ -4,7 +4,7 @@ export const SITE_URL = "https://www.posadzkizywiczne.com";
 export const SITE_NAME = "Posadzki Żywiczne";
 
 export const SITE_DESCRIPTION =
-  "Wykonujemy posadzki żywiczne w garażach, domach, lokalach usługowych i halach oraz na balkonach i tarasach. Rzeszów, Kraków i okolice. Zapytaj o wycenę.";
+  "Wykonujemy posadzki żywiczne do garaży, hal i na tarasy oraz specjalistyczne systemy ESD. Rzeszów, Kraków, Lublin, Warszawa, Katowice. Zapytaj o wycenę.";
 
 export const SITE_PHONE = "+48507384619";
 export const SITE_EMAIL = "biuro@posadzkizywiczne.com";

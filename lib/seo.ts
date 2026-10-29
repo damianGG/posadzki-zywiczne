@@ -34,7 +34,7 @@ export function getDefaultSEOConfig() {
   return {
     siteName: SITE_NAME,
     siteUrl: SITE_URL,
-    defaultTitle: "Posadzki żywiczne Rzeszów i Kraków | Garaże, balkony, hale",
+    defaultTitle: "Posadzki żywiczne | Garaże, hale i posadzki ESD",
     defaultDescription: SITE_DESCRIPTION,
     defaultImage: absoluteUrl("/garaz/garaz-zywica-2.jpg"),
     locale: "pl_PL",

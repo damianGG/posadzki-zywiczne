@@ -65,17 +65,9 @@ export const Header2 = () => {
             description: "",
         },
         {
-            title: "Gdzie działamy",
-            description: "Realizacje i wyceny posadzek żywicznych",
-            items: [
-                { title: "Posadzki żywiczne Rzeszów", href: "/posadzki-zywiczne/rzeszow", image: "/garage.jpg" },
-                { title: "Posadzki żywiczne Kraków", href: "/posadzki-zywiczne/krakow", image: "/garage.jpg" },
-            ],
-        },
-        {
-            title: "Pomieszczenia Czyste",
-            href: "/pomieszczenia-czyste",
-            description: "",
+            title: "Posadzki elektrostatyczne",
+            href: "/posadzki-elektrostatyczne",
+            description: "Specjalistyczne posadzki ESD i przewodzące",
         },
         {
             title: "Kamienny dywan",

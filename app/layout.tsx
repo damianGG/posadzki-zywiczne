@@ -19,7 +19,7 @@ import {
 } from "@/lib/site-config";
 
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
-const defaultTitle = "Posadzki żywiczne Rzeszów i Kraków | Garaże, balkony, hale";
+const defaultTitle = "Posadzki żywiczne | Garaże, hale i posadzki ESD";
 const homeBannerUrl = absoluteUrl("/garaz/garaz-zywica-2.jpg");
 
 export const metadata: Metadata = {
