@@ -342,8 +342,6 @@ const WYMIARY_LIMITS = {
     maxPowierzchnia: 2500,
 }
 
-const FLAT_RATE_LIMIT_M2 = 34
-const FLAT_RATE_AMOUNT = 5000
 const createDiscountConfig = () => ({
     percent: 15,
     codes: (process.env.NEXT_PUBLIC_DISCOUNT_CODES ?? "KONKURS10")
@@ -1389,115 +1387,48 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         doc.line(20, yPosition, pageWidth - 20, yPosition)
         yPosition += 8
 
-        // Materiał podstawowy
-        doc.setFont(pdfFontFamily, "normal")
-        const priceRanges: PriceRange[] = Array.isArray(wybranyRodzajPowierzchniObj.price_ranges)
-            ? wybranyRodzajPowierzchniObj.price_ranges
-            : []
-        const applicableRange = priceRanges.find((range: PriceRange) => {
-            const minMatch = powierzchnia >= range.min_m2
-            const maxMatch = range.max_m2 === null || powierzchnia <= range.max_m2
-            return minMatch && maxMatch
+        // PDF uses the exact same deterministic engine as the web preview and AI.
+        const pdfCalculation = calculateFloorEstimate({
+            area_m2: powierzchnia,
+            perimeter_m: obwod.trim() && Number.parseFloat(obwod) > 0 ? Number.parseFloat(obwod) : undefined,
+            surface: {
+                id: wybranyRodzajPowierzchniObj.id,
+                name: wybranyRodzajPowierzchniObj.nazwa,
+                price_per_m2: wybranyRodzajPowierzchniObj.cenaZaM2,
+                price_ranges: wybranyRodzajPowierzchniObj.price_ranges,
+            },
+            color: {
+                id: wybranyKolorObj.id,
+                name: wybranyKolorObj.nazwa,
+                additional_price: wybranyKolorObj.cenaDodatkowa,
+            },
+            concrete: wybranyStanBetonuObj ? {
+                id: wybranyStanBetonuObj.id,
+                name: wybranyStanBetonuObj.nazwa,
+                additional_price: wybranyStanBetonuObj.cenaDodatkowa,
+            } : undefined,
+            services: dodatkiUslugi.filter(d => wybraneDodatki.includes(d.id)).map(d => ({
+                id: d.id, name: d.nazwa,
+                price_per_m2: d.cenaZaM2,
+                price_per_mb: d.cenaZaMb,
+                price_fixed: d.cenaStala,
+                is_included_in_floor_price: d.wCeniePosadzki,
+            })),
         })
-        const isFlatRate = Boolean(applicableRange?.is_flat_rate)
-        let basePricePerM2 = wybranyRodzajPowierzchniObj.cenaZaM2
-        if (!isFlatRate && applicableRange?.price_per_m2) {
-            basePricePerM2 = Number(applicableRange.price_per_m2)
+        if (!pdfCalculation.complete) {
+            throw new Error("Podaj obwód, aby uwzględnić wszystkie usługi rozliczane w mb.")
         }
-        let flatRateAmount = 0
-        if (isFlatRate && !applicableRange?.price_per_m2) {
-            console.warn(
-                `Flat rate range for ${wybranyRodzajPowierzchniObj.nazwa} missing price_per_m2, using default ${FLAT_RATE_AMOUNT} zl.`
-            )
-        }
-        if (isFlatRate) {
-            flatRateAmount = Number(applicableRange?.price_per_m2 ?? FLAT_RATE_AMOUNT)
-        }
-        const baseRowTotal = isFlatRate ? flatRateAmount : powierzchnia * basePricePerM2
-
-        renderPdfRow(
-            `${wybranaPosadzka.nazwa} - ${wybranyRodzajPowierzchniObj.nazwa}${isFlatRate ? " (ryczałt)" : ""}`,
-            isFlatRate ? "1" : powierzchnia.toFixed(2),
-            isFlatRate ? "ryczałt" : "m²",
-            `${(isFlatRate ? flatRateAmount : basePricePerM2).toFixed(2)} zl`,
-            `${baseRowTotal.toFixed(2)} zl`,
-        )
-
-        if (wybranyKolorObj.cenaDodatkowa > 0) {
-            const colorTotal = powierzchnia * wybranyKolorObj.cenaDodatkowa
+        const isFlatRate = pdfCalculation.items[0]?.unit === "ryczalt"
+        const flatRateAmount = isFlatRate ? pdfCalculation.items[0].amount_pln : 0
+        const units: Record<string, string> = { m2: "m²", mb: "mb", kpl: "kpl", ryczalt: "ryczałt" }
+        pdfCalculation.items.forEach((item) => {
             renderPdfRow(
-                `Dopłata za kolor (${wybranyKolorObj.kodRAL})`,
-                powierzchnia.toFixed(2),
-                "m²",
-                `${wybranyKolorObj.cenaDodatkowa.toFixed(2)} zl`,
-                `${colorTotal.toFixed(2)} zl`,
+                item.name + (item.unit === "ryczalt" ? " (ryczałt)" : ""),
+                item.included_in_floor_price ? "-" : item.quantity.toFixed(2),
+                item.included_in_floor_price ? "-" : units[item.unit],
+                item.included_in_floor_price ? "w cenie posadzki" : item.unit_price_pln.toFixed(2) + " zl",
+                item.amount_pln.toFixed(2) + " zl",
             )
-        }
-
-        // Stan betonu (jeśli dotyczy)
-        if (wybranyStanBetonuObj && wybranyStanBetonuObj.cenaDodatkowa > 0) {
-            renderPdfRow(
-                `Przygotowanie podloza: ${wybranyStanBetonuObj.nazwa}`,
-                powierzchnia.toFixed(2),
-                "m²",
-                `${wybranyStanBetonuObj.cenaDodatkowa.toFixed(2)} zl`,
-                `${(powierzchnia * wybranyStanBetonuObj.cenaDodatkowa).toFixed(2)} zl`,
-            )
-        }
-
-        // Dodatkowe usługi
-        wybraneDodatki.forEach((dodatekId) => {
-            const dodatek = dodatkiUslugi.find((d) => d.id === dodatekId)
-            if (!dodatek) return
-
-            let ilosc = 0
-            let jednostka = ""
-            let cenaJedn = 0
-            let wartosc = 0
-
-            if (dodatek.wCeniePosadzki) {
-                // Service included in floor price
-                renderPdfRow(dodatek.nazwa, "-", "-", "w cenie posadzki", "0.00 zl")
-            } else if (dodatek.cenaZaM2) {
-                ilosc = powierzchnia
-                jednostka = "m²"
-                cenaJedn = dodatek.cenaZaM2
-                wartosc = powierzchnia * dodatek.cenaZaM2
-                
-                renderPdfRow(
-                    dodatek.nazwa,
-                    ilosc.toFixed(2),
-                    jednostka,
-                    `${cenaJedn.toFixed(2)} zl`,
-                    `${wartosc.toFixed(2)} zl`,
-                )
-            } else if (dodatek.cenaZaMb && obwod) {
-                ilosc = Number.parseFloat(obwod)
-                jednostka = "mb"
-                cenaJedn = dodatek.cenaZaMb
-                wartosc = ilosc * dodatek.cenaZaMb
-                
-                renderPdfRow(
-                    dodatek.nazwa,
-                    ilosc.toFixed(2),
-                    jednostka,
-                    `${cenaJedn.toFixed(2)} zl`,
-                    `${wartosc.toFixed(2)} zl`,
-                )
-            } else if (dodatek.cenaStala) {
-                ilosc = 1
-                jednostka = "kpl"
-                cenaJedn = dodatek.cenaStala
-                wartosc = dodatek.cenaStala
-                
-                renderPdfRow(
-                    dodatek.nazwa,
-                    ilosc.toFixed(2),
-                    jednostka,
-                    `${cenaJedn.toFixed(2)} zl`,
-                    `${wartosc.toFixed(2)} zl`,
-                )
-            }
         })
 
         // Linia podsumowania
@@ -1527,7 +1458,7 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         if (isFlatRate) {
             doc.text(
                 formatTextForPDF(
-                    `Dla powierzchni do ${FLAT_RATE_LIMIT_M2} m² obowiązuje cena ryczałtowa ${flatRateAmount.toFixed(2)} zł.`
+                    `Dla tej powierzchni obowiązuje cena ryczałtowa ${flatRateAmount.toFixed(2)} zł.`
                 ),
                 20,
                 yPosition,
