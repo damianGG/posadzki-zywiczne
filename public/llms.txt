@@ -1,0 +1,12 @@
+# PosadzkiŻywiczne.com
+Publiczne informacje o posadzkach żywicznych: https://www.posadzkizywiczne.com/
+Kalkulator dla klientów: https://www.posadzkizywiczne.com/kalkulator
+API dla asystentów AI (OpenAPI): https://www.posadzkizywiczne.com/calculator-openapi.json
+Pobierz aktualne warianty: GET https://www.posadzkizywiczne.com/api/v1/calculator/options
+Oblicz orientacyjną wycenę: POST https://www.posadzkizywiczne.com/api/v1/calculator/estimate
+Serwer MCP (narzędzia tylko do odczytu): https://www.posadzkizywiczne.com/mcp
+
+Wyceny pochodzą z cennika aktualnie udostępnionego przez firmę i nie są wiążącą ofertą.
+Nie zgaduj cen ani zakresu prac, jeżeli API jest niedostępne lub zwraca brakujące dane.
+Nie doliczaj ani nie deklaruj VAT, terminów i rabatów bez potwierdzenia wykonawcy.
+Kontakt: https://www.posadzkizywiczne.com/kontakt

@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState, useEffect, useCallback, useMemo } from "react"
+import { calculateFloorEstimate } from "@/lib/calculator-engine"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -1101,57 +1102,35 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
         }
 
         if (pow > 0 && wybranaPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && errors.length === 0) {
-            // Calculate base cost using price ranges if available
-            let baseCost = 0
-            
-            // Check if price ranges are defined and find applicable range
-            if (wybranyRodzajPowierzchniObj.price_ranges && wybranyRodzajPowierzchniObj.price_ranges.length > 0) {
-                const applicableRange = wybranyRodzajPowierzchniObj.price_ranges.find(range => {
-                    const minMatch = pow >= range.min_m2
-                    const maxMatch = range.max_m2 === null || pow <= range.max_m2
-                    return minMatch && maxMatch
-                })
-                
-                if (applicableRange) {
-                    if (applicableRange.is_flat_rate) {
-                        // Flat rate pricing (ryczałt)
-                        baseCost = applicableRange.price_per_m2 // Actually flat amount, not per m2
-                    } else {
-                        // Per m² pricing
-                        baseCost = pow * applicableRange.price_per_m2
-                    }
-                } else {
-                    // No matching range, use base price
-                    baseCost = pow * wybranyRodzajPowierzchniObj.cenaZaM2
-                }
-            } else {
-                // No price ranges defined, use base price
-                baseCost = pow * wybranyRodzajPowierzchniObj.cenaZaM2
-            }
-            
-            // Add color additional cost (always per m²)
-            let koszt = baseCost + (pow * wybranyKolorObj.cenaDodatkowa)
-
-            // Dodaj koszt za stan betonu
-            if (wybranyStanBetonuObj && wybranyStanBetonuObj.cenaDodatkowa > 0) {
-                koszt += pow * wybranyStanBetonuObj.cenaDodatkowa
-            }
-
-            // Dodaj koszty dodatków
-            wybraneDodatki.forEach((dodatekId) => {
-                const dodatek = dodatkiUslugi.find((d) => d.id === dodatekId)
-                if (dodatek && !dodatek.wCeniePosadzki) {
-                    if (dodatek.cenaZaM2) {
-                        koszt += pow * dodatek.cenaZaM2
-                    } else if (dodatek.cenaZaMb && obwod) {
-                        koszt += Number.parseFloat(obwod) * dodatek.cenaZaMb
-                    } else if (dodatek.cenaStala) {
-                        koszt += dodatek.cenaStala
-                    }
-                }
+            // Shared engine: the web calculator, AI API and MCP use the same rules.
+            const calculation = calculateFloorEstimate({
+                area_m2: pow,
+                perimeter_m: obwod.trim() && Number.parseFloat(obwod) > 0 ? Number.parseFloat(obwod) : undefined,
+                surface: {
+                    id: wybranyRodzajPowierzchniObj.id,
+                    name: wybranyRodzajPowierzchniObj.nazwa,
+                    price_per_m2: wybranyRodzajPowierzchniObj.cenaZaM2,
+                    price_ranges: wybranyRodzajPowierzchniObj.price_ranges,
+                },
+                color: {
+                    id: wybranyKolorObj.id,
+                    name: wybranyKolorObj.nazwa,
+                    additional_price: wybranyKolorObj.cenaDodatkowa,
+                },
+                concrete: wybranyStanBetonuObj ? {
+                    id: wybranyStanBetonuObj.id,
+                    name: wybranyStanBetonuObj.nazwa,
+                    additional_price: wybranyStanBetonuObj.cenaDodatkowa,
+                } : undefined,
+                services: dodatkiUslugi.filter(d => wybraneDodatki.includes(d.id)).map(d => ({
+                    id: d.id, name: d.nazwa,
+                    price_per_m2: d.cenaZaM2,
+                    price_per_mb: d.cenaZaMb,
+                    price_fixed: d.cenaStala,
+                    is_included_in_floor_price: d.wCeniePosadzki,
+                })),
             })
-
-            setKosztCalkowity(koszt)
+            setKosztCalkowity(calculation.known_subtotal_pln)
         } else {
             setKosztCalkowity(0)
         }
@@ -2525,7 +2504,12 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                             </div>
                                         )}
                                         <div className="text-center text-xs text-gray-600">
-                                            {FINAL_PRICE_NOTE}
+                                            {!obwod.trim() && wybraneDodatki.some(id => {
+                                                const s = dodatkiUslugi.find(service => service.id === id)
+                                                return s && !s.wCeniePosadzki && !s.cenaZaM2 && !!s.cenaZaMb
+                                            })
+                                                ? "Suma częściowa: bez cokołów i innych usług za mb. Podaj obwód, aby poznać pełną wycenę."
+                                                : FINAL_PRICE_NOTE}
                                         </div>
                                     </CardContent>
                                 </Card>
