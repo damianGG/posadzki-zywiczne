@@ -35,7 +35,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/kuchnia-salon",
     "/pomieszczenia-czyste",
     "/kalkulator",
-    "/sklep",
     "/kontakt",
     "/realizacje",
     "/blog",
