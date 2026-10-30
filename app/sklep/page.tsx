@@ -63,33 +63,14 @@ export default async function ShopPage() {
     { name: "Strona główna", url: baseUrl.toString() },
     { name: "Sklep", url: shopUrl },
   ])
-  const offerCatalogSchema = {
+  // Do not publish Product/Offer availability or a Shopify price until actual
+  // sellable products and approved prices are connected.
+  const kitCollectionSchema = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Sklep z zestawami do posadzek żywicznych",
+    name: "Konfigurator zestawów do posadzek żywicznych",
     description: metadata.description,
     url: shopUrl,
-    mainEntity: {
-      "@type": "OfferCatalog",
-      name: "Konfigurowalne zestawy do posadzek żywicznych",
-      itemListElement: finishVariants.map((variant, index) => ({
-        "@type": "ListItem",
-        position: index + 1,
-        item: {
-          "@type": "Offer",
-          price: variant.price_from,
-          priceCurrency: "PLN",
-          availability: "https://schema.org/InStock",
-          url: shopUrl,
-          itemOffered: {
-            "@type": "Product",
-            name: variant.label,
-            description: variant.description,
-            category: "Zestawy do posadzek żywicznych",
-          },
-        },
-      })),
-    },
   }
   const faqSchema = {
     "@context": "https://schema.org",
@@ -125,7 +106,7 @@ export default async function ShopPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offerCatalogSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(kitCollectionSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
       <section className="border-b bg-white px-4 py-10">
@@ -178,7 +159,7 @@ export default async function ShopPage() {
                   {finishVariants.map((variant) => (
                     <li key={variant.id}>
                       <span className="font-medium text-zinc-950">{variant.label}</span>
-                      {` — od ${variant.price_from} ${variant.price_unit_label ?? "zł/m²"}. `}
+                      {". "}
                       {variant.description}
                     </li>
                   ))}
