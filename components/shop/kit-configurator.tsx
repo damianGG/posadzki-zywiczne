@@ -62,6 +62,22 @@ export default function KitConfigurator({ catalog }: KitConfiguratorProps) {
   const kitItems = useMemo(() => getVisibleKitItems(config, selections), [config, selections])
   const ctas = useMemo(() => getActiveCtas(config), [config])
 
+  // Transfer the measured area from the service calculator without reusing
+  // its labour-inclusive price as a materials price.
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const rawArea = params.get("area")
+    if (!rawArea) return
+    const area = Number(rawArea)
+    if (!Number.isFinite(area) || area < config.area.min || area > 1000) return
+    const garage = activeRoomVariants.find(item => /garaż|garaz/i.test(item.label))
+    setSelections(current => ({
+      ...current,
+      area,
+      roomVariantId: current.roomVariantId ?? (garage && isRoomVariantSelectable(garage) ? garage.id : null),
+    }))
+  }, [activeRoomVariants, config.area.min])
+
   useEffect(() => {
     if (!requiresFlakeColor && selections.flakeColorId) {
       setSelections((current) => ({ ...current, flakeColorId: null }))
