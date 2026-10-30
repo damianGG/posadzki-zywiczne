@@ -1,3 +1,4 @@
+import { resolveLegacyPublicMedia } from "@/lib/public-cloudinary-media";
 // Shared production URLs and business details used by metadata and structured data.
 export const SITE_URL = "https://www.posadzkizywiczne.com";
 
@@ -25,5 +26,5 @@ export const SITE_LOCATIONS = [
 ] as const;
 
 export function absoluteUrl(path = "/") {
-  return new URL(path, SITE_URL).toString();
+  return resolveLegacyPublicMedia(path) || new URL(path, SITE_URL).toString();
 }
