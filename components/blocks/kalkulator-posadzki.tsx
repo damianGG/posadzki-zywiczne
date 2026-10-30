@@ -74,7 +74,7 @@ async function getCalculatorConfig(): Promise<CalculatorData> {
     }
 }
 
-export default async function KalkulatorPosadzki() {
+export default async function KalkulatorPosadzki({ shopEnabled = false }: { shopEnabled?: boolean }) {
     const calculatorData = await getCalculatorConfig()
     // Do not silently expose stale hard-coded fallback prices when Neon is unavailable.
     if (!calculatorData.surfaceTypes.length || !calculatorData.colors.length ||
@@ -86,5 +86,5 @@ export default async function KalkulatorPosadzki() {
         </section>
     }
 
-    return <KalkulatorPosadzkiClient initialData={calculatorData} />
+    return <KalkulatorPosadzkiClient initialData={calculatorData} shopEnabled={shopEnabled} />
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 import { SITE_URL } from "@/lib/site-config"
 
 import StorefrontClient from "@/components/shop/storefront-client"
@@ -127,7 +128,21 @@ export default async function ShopPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(offerCatalogSchema) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
 
-      <StorefrontClient initialCatalog={catalog} />
+      <section className="border-b bg-white px-4 py-10">
+        <div className="container mx-auto max-w-5xl">
+          <p className="text-sm font-bold uppercase tracking-widest text-zinc-600">Sklep PosadzkiŻywiczne</p>
+          <h2 className="mt-2 text-2xl font-bold md:text-3xl">Zleć wykonanie lub kup materiały i zrób to sam</h2>
+          <p className="mt-3 max-w-3xl text-zinc-600">W kalkulatorze wycenisz usługę z montażem. W sklepie kupisz pojedyncze produkty lub dobierzesz zestaw DIY. Te dwa warianty są kalkulowane niezależnie.</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/kalkulator" className="rounded-xl bg-zinc-900 px-5 py-3 font-semibold text-white">Oblicz koszt wykonania</Link>
+            <Link href="/sklep/produkty" className="rounded-xl border border-zinc-300 px-5 py-3 font-semibold text-zinc-900">Kup pojedyncze produkty</Link>
+            <Link href="/sklep/koszyk" className="rounded-xl border border-zinc-300 px-5 py-3 font-semibold text-zinc-900">Koszyk</Link>
+          </div>
+        </div>
+      </section>
+      <div id="zestawy">
+        <StorefrontClient initialCatalog={catalog} />
+      </div>
 
       <section className="border-t border-zinc-200 bg-white py-14">
         <div className="container mx-auto max-w-4xl px-4">

@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react"
+import Link from "next/link"
 
 import OptionCard from "@/components/shop/option-card"
 import { Button } from "@/components/ui/button"
@@ -96,6 +96,10 @@ export default function ResultSummary({
               </span>
             </div>
           </div>
+          <p className="rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs leading-5 text-amber-950">
+            Szacunkowe ilości i wartości w tym konfiguratorze są poglądowe. To nie jest cena Shopify ani gotowy koszyk materiałów.
+            Przed zakupem pełnego systemu należy potwierdzić dobór technologiczny, zużycie, wielkości opakowań i dostępność.
+          </p>
           <div className="flex items-center justify-between rounded-2xl bg-zinc-950 px-4 py-4 text-white">
             <span>Szacunkowa wartość</span>
             <span className="text-xl font-semibold">{formatCurrency(total)} zł</span>
@@ -146,17 +150,13 @@ export default function ResultSummary({
       ) : null}
 
       <div className="space-y-3">
-        {ctas.map((cta) => (
-          <Button
-            key={cta.id}
-            variant={cta.variant || "default"}
-            className="h-12 w-full justify-between rounded-2xl"
-            onClick={() => onMockAction(cta.label)}
-          >
-            {cta.label}
-            <ExternalLink className="h-4 w-4" />
-          </Button>
-        ))}
+        <p className="text-sm text-zinc-600">Zakup całego zestawu będzie dostępny po zatwierdzeniu receptur i powiązaniu składników z wariantami Shopify.</p>
+        <Link href="/sklep/produkty" className="block rounded-2xl bg-zinc-950 px-5 py-4 text-center font-semibold text-white hover:bg-zinc-800">
+          Zobacz pojedyncze produkty w sklepie
+        </Link>
+        <Link href="/kontakt" className="block rounded-2xl border border-zinc-300 px-5 py-4 text-center font-semibold text-zinc-900 hover:bg-zinc-50">
+          Zapytaj o kompletny zestaw
+        </Link>
       </div>
     </div>
   )

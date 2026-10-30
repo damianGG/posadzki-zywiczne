@@ -28,6 +28,7 @@ import {
 } from "lucide-react"
 import jsPDF from "jspdf"
 import Image from "next/image"
+import Link from "next/link"
 import confetti from "canvas-confetti"
 
 // Constants
@@ -601,10 +602,11 @@ interface CalculatorData {
 }
 
 interface KalkulatorPosadzkiClientProps {
+    shopEnabled?: boolean
     initialData: CalculatorData
 }
 
-export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosadzkiClientProps) {
+export default function KalkulatorPosadzkiClient({ initialData, shopEnabled = false }: KalkulatorPosadzkiClientProps) {
     // Transform server data to component format early to prevent errors
     const transformedSurfaces = React.useMemo(() => {
         if (!initialData?.surfaceTypes || initialData.surfaceTypes.length === 0) {
@@ -2443,6 +2445,20 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                                                 ? "Suma częściowa: bez cokołów i innych usług za mb. Podaj obwód, aby poznać pełną wycenę."
                                                 : FINAL_PRICE_NOTE}
                                         </div>
+                                        {shopEnabled && rodzajPomieszczenia === "garaz-piwnica" && (
+                                            <div className="mt-4 border-t border-green-200 pt-4">
+                                                <p className="mb-3 text-sm font-bold text-zinc-900">Jak chcesz zrealizować posadzkę?</p>
+                                                <div className="grid gap-2">
+                                                    <Link href="/kontakt" className="rounded-lg bg-green-700 p-3 text-center text-sm font-semibold text-white hover:bg-green-800">
+                                                        Zleć nam wykonanie — {requiresPerimeter ? "wycena częściowa" : kosztPoRabacie.toFixed(2) + " zł"}
+                                                    </Link>
+                                                    <Link href={`/sklep?area=${powierzchnia.toFixed(1)}`} className="rounded-lg border border-zinc-300 bg-white p-3 text-center text-sm font-semibold text-zinc-900 hover:bg-zinc-50">
+                                                        Kup zestaw DIY — dobierz materiały
+                                                    </Link>
+                                                </div>
+                                                <p className="mt-2 text-xs text-zinc-600">Cena zestawu jest obliczana osobno na podstawie zatwierdzonych materiałów i opakowań; nie jest to kwota po odjęciu robocizny.</p>
+                                            </div>
+                                        )}
                                     </CardContent>
                                 </Card>
                             </div>
@@ -2710,6 +2726,13 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
                             )}
                         </div>
                         
+                        {shopEnabled && rodzajPomieszczenia === "garaz-piwnica" && powierzchnia > 0 && (
+                            <div className="mb-3 grid grid-cols-2 gap-2 text-center text-xs font-semibold">
+                                <Link href="/kontakt" className="rounded-lg bg-green-700 p-2 text-white">Zleć wykonanie</Link>
+                                <Link href={`/sklep?area=${powierzchnia.toFixed(1)}`} className="rounded-lg border border-zinc-300 bg-white p-2 text-zinc-900">Kup zestaw DIY</Link>
+                            </div>
+                        )}
+
                         {/* Email input for mobile */}
                         {showEmailInput ? (
                             <div className="space-y-2 mb-3">

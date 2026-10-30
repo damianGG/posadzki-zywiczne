@@ -32,7 +32,7 @@ interface NavigationItem {
     disabled?: boolean
 }
 
-export const Header2 = () => {
+export const Header2 = ({ shopEnabled = false }: { shopEnabled?: boolean }) => {
     const navigationItems: NavigationItem[] = [
         {
             title: "Strona Główna",
@@ -51,8 +51,7 @@ export const Header2 = () => {
         },
         {
             title: "Sklep",
-            badge: "Dostępny wkrótce",
-            disabled: true,
+            ...(shopEnabled ? { href: "/sklep" } : { badge: "Dostępny wkrótce", disabled: true }),
         },
         {
             title: "Balkony i Tarasy",

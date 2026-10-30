@@ -3,6 +3,7 @@ import { getAllBlogPosts } from "@/lib/blog";
 import { getAllRealizacje } from "@/lib/realizacje";
 import { localServicePages } from "@/lib/local-service-pages";
 import { SITE_URL } from "@/lib/site-config";
+import { isShopEnabled } from "@/lib/shop-feature";
 import { stoneCities } from "@/lib/stone-cities";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -35,12 +36,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/kuchnia-salon",
     "/pomieszczenia-czyste",
     "/kalkulator",
-    "/sklep",
     "/kontakt",
     "/realizacje",
     "/blog",
     "/kamienny-dywan",
   ].map((path) => ({ url: `${SITE_URL}${path}` }));
+
+  // Never include the hidden store in the public sitemap.
+  if (isShopEnabled() && process.env.VERCEL_ENV === "production") {
+    staticPages.push({ url: `${SITE_URL}/sklep` });
+    staticPages.push({ url: `${SITE_URL}/sklep/produkty` });
+  }
 
   const cityPages = stoneCities.map(city => ({ url: `${SITE_URL}/kamienny-dywan/${city.slug}` }));
   const localPages = Object.keys(localServicePages).map(city => ({ url: `${SITE_URL}/posadzki-zywiczne/${city}` }));
