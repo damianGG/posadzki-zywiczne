@@ -1,0 +1,709 @@
+{
+  "version": 1,
+  "description": "Verified Git blob SHA identities for legacy public images eligible for upload (no destructive changes).",
+  "maxUploadBytes": 9500000,
+  "assets": [
+    {
+      "path": "/IMG_2538.jpg",
+      "gitSha": "96943d7e7cfef3391615489fa70abac661bc6221",
+      "bytes": 4542210,
+      "publicId": "posadzkizywiczne/legacy/96943d7e7cfef3391615489fa70abac661bc6221"
+    },
+    {
+      "path": "/IMG_2538_422.jpg",
+      "gitSha": "96943d7e7cfef3391615489fa70abac661bc6221",
+      "bytes": 4542210,
+      "publicId": "posadzkizywiczne/legacy/96943d7e7cfef3391615489fa70abac661bc6221"
+    },
+    {
+      "path": "/IMG_2966.jpg",
+      "gitSha": "329f63f532cabef49440da08fc1fedc648b1648c",
+      "bytes": 8021142,
+      "publicId": "posadzkizywiczne/legacy/329f63f532cabef49440da08fc1fedc648b1648c"
+    },
+    {
+      "path": "/IMG_2966_6610.jpg",
+      "gitSha": "329f63f532cabef49440da08fc1fedc648b1648c",
+      "bytes": 8021142,
+      "publicId": "posadzkizywiczne/legacy/329f63f532cabef49440da08fc1fedc648b1648c"
+    },
+    {
+      "path": "/IMG_2966_res.jpg",
+      "gitSha": "fbc0db7192106386d1d8719813c5ee93280b68db",
+      "bytes": 2903445,
+      "publicId": "posadzkizywiczne/legacy/fbc0db7192106386d1d8719813c5ee93280b68db"
+    },
+    {
+      "path": "/IMG_3130.jpg",
+      "gitSha": "f9d340fb29e414d6748bb0ff7563992dcf31848f",
+      "bytes": 4324273,
+      "publicId": "posadzkizywiczne/legacy/f9d340fb29e414d6748bb0ff7563992dcf31848f"
+    },
+    {
+      "path": "/IMG_3130_3007.jpg",
+      "gitSha": "f9d340fb29e414d6748bb0ff7563992dcf31848f",
+      "bytes": 4324273,
+      "publicId": "posadzkizywiczne/legacy/f9d340fb29e414d6748bb0ff7563992dcf31848f"
+    },
+    {
+      "path": "/IMG_3191.jpg",
+      "gitSha": "0c3a3a0a21daec1e18c59f8201cc584669e6ef65",
+      "bytes": 4991642,
+      "publicId": "posadzkizywiczne/legacy/0c3a3a0a21daec1e18c59f8201cc584669e6ef65"
+    },
+    {
+      "path": "/IMG_3191_2550.jpg",
+      "gitSha": "0c3a3a0a21daec1e18c59f8201cc584669e6ef65",
+      "bytes": 4991642,
+      "publicId": "posadzkizywiczne/legacy/0c3a3a0a21daec1e18c59f8201cc584669e6ef65"
+    },
+    {
+      "path": "/IMG_3224.jpg",
+      "gitSha": "c8a56473ca73d858c19e6edd119cb1413ec57d7f",
+      "bytes": 7131769,
+      "publicId": "posadzkizywiczne/legacy/c8a56473ca73d858c19e6edd119cb1413ec57d7f"
+    },
+    {
+      "path": "/IMG_3224_4978.jpg",
+      "gitSha": "c8a56473ca73d858c19e6edd119cb1413ec57d7f",
+      "bytes": 7131769,
+      "publicId": "posadzkizywiczne/legacy/c8a56473ca73d858c19e6edd119cb1413ec57d7f"
+    },
+    {
+      "path": "/IMG_3225.jpg",
+      "gitSha": "a1c28f1d5071b3a1a97d1cd1c61d3f4e62ef0df1",
+      "bytes": 6716517,
+      "publicId": "posadzkizywiczne/legacy/a1c28f1d5071b3a1a97d1cd1c61d3f4e62ef0df1"
+    },
+    {
+      "path": "/IMG_3225_4819.jpg",
+      "gitSha": "a1c28f1d5071b3a1a97d1cd1c61d3f4e62ef0df1",
+      "bytes": 6716517,
+      "publicId": "posadzkizywiczne/legacy/a1c28f1d5071b3a1a97d1cd1c61d3f4e62ef0df1"
+    },
+    {
+      "path": "/IMG_3225_cropped.jpg",
+      "gitSha": "1787d778096cf8b9a377ef4c34bd565b209356c8",
+      "bytes": 662880,
+      "publicId": "posadzkizywiczne/legacy/1787d778096cf8b9a377ef4c34bd565b209356c8"
+    },
+    {
+      "path": "/antypolizg.jpg",
+      "gitSha": "2dc54ceeb297e4c1aeacfad6b1577828196edf7c",
+      "bytes": 100224,
+      "publicId": "posadzkizywiczne/legacy/2dc54ceeb297e4c1aeacfad6b1577828196edf7c"
+    },
+    {
+      "path": "/apple-icon.png",
+      "gitSha": "eec2cc09a4e2a8472f0a555bb2d274b9c83250b8",
+      "bytes": 1416,
+      "publicId": "posadzkizywiczne/legacy/eec2cc09a4e2a8472f0a555bb2d274b9c83250b8"
+    },
+    {
+      "path": "/chatgpt-realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035/przemysl-garaz-100m2-polaczenie-pomieszczen.jpg",
+      "gitSha": "7fc415399b4e5145790d9ffb5c8ceb31085f0f4a",
+      "bytes": 495009,
+      "publicId": "posadzkizywiczne/legacy/7fc415399b4e5145790d9ffb5c8ceb31085f0f4a"
+    },
+    {
+      "path": "/chatgpt-realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035/przemysl-garaz-100m2-strefa-boczna.jpg",
+      "gitSha": "d30634442b80592ad487104538ba9903c369d447",
+      "bytes": 435648,
+      "publicId": "posadzkizywiczne/legacy/d30634442b80592ad487104538ba9903c369d447"
+    },
+    {
+      "path": "/chatgpt-realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035/przemysl-garaz-100m2-ujecie-glowne.jpg",
+      "gitSha": "fae2abb1aa905dda61bd34995340e8eda68ee467",
+      "bytes": 633811,
+      "publicId": "posadzkizywiczne/legacy/fae2abb1aa905dda61bd34995340e8eda68ee467"
+    },
+    {
+      "path": "/chatgpt-realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035/przemysl-garaz-100m2-wykonczenie-cokolu.jpg",
+      "gitSha": "033302042ae134d1a88e94b31e4f152a43c2bf58",
+      "bytes": 581395,
+      "publicId": "posadzkizywiczne/legacy/033302042ae134d1a88e94b31e4f152a43c2bf58"
+    },
+    {
+      "path": "/chatgpt-realizacje/posadzka-zywiczna-garaz-30m2-sedziszow-malopolski/garaz-30m2-ral7035-oryginal.jpg",
+      "gitSha": "68c8da1c6f5d410174e46515a4e517a85c89fb3a",
+      "bytes": 696042,
+      "publicId": "posadzkizywiczne/legacy/68c8da1c6f5d410174e46515a4e517a85c89fb3a"
+    },
+    {
+      "path": "/female.jpg",
+      "gitSha": "00871ac6f7ef34663444c3afd633680aae334999",
+      "bytes": 4714,
+      "publicId": "posadzkizywiczne/legacy/00871ac6f7ef34663444c3afd633680aae334999"
+    },
+    {
+      "path": "/firmy-wspolpraca/renoplast-logo.png",
+      "gitSha": "1db13c854f2f81a32fa9a8f1ea8d9b8c46cd4cca",
+      "bytes": 4186,
+      "publicId": "posadzkizywiczne/legacy/1db13c854f2f81a32fa9a8f1ea8d9b8c46cd4cca"
+    },
+    {
+      "path": "/firmy-wspolpraca/sicon-logo.png",
+      "gitSha": "e91a7f224066c0bb8b09401cf9d60acacd0b47be",
+      "bytes": 3796,
+      "publicId": "posadzkizywiczne/legacy/e91a7f224066c0bb8b09401cf9d60acacd0b47be"
+    },
+    {
+      "path": "/firmy-wspolpraca/sika-logo.webp",
+      "gitSha": "d188ebaf8a66a5268e4d3a66b51bac343c013b67",
+      "bytes": 14954,
+      "publicId": "posadzkizywiczne/legacy/d188ebaf8a66a5268e4d3a66b51bac343c013b67"
+    },
+    {
+      "path": "/firmy-wspolpraca/sopro-logo.png",
+      "gitSha": "d9d86c9c9cdcaee8a784926989dac737cbb5c490",
+      "bytes": 10191,
+      "publicId": "posadzkizywiczne/legacy/d9d86c9c9cdcaee8a784926989dac737cbb5c490"
+    },
+    {
+      "path": "/firmy-wspolpraca/weber-logo.webp",
+      "gitSha": "a4a2919078ff56ab12eefcd02ed18eabc515c5b2",
+      "bytes": 10992,
+      "publicId": "posadzkizywiczne/legacy/a4a2919078ff56ab12eefcd02ed18eabc515c5b2"
+    },
+    {
+      "path": "/garage.jpg",
+      "gitSha": "08146cd43d909cc72985a759eb6036da58eacd17",
+      "bytes": 117875,
+      "publicId": "posadzkizywiczne/legacy/08146cd43d909cc72985a759eb6036da58eacd17"
+    },
+    {
+      "path": "/garaz/IMG_0780.JPG",
+      "gitSha": "57b9e941da4cf2a9ff99126e378c796b71e0ab14",
+      "bytes": 6746739,
+      "publicId": "posadzkizywiczne/legacy/57b9e941da4cf2a9ff99126e378c796b71e0ab14"
+    },
+    {
+      "path": "/garaz/IMG_0795.JPG",
+      "gitSha": "d97f915ea2ba22bb3fc3221919d1a18928570b05",
+      "bytes": 3143936,
+      "publicId": "posadzkizywiczne/legacy/d97f915ea2ba22bb3fc3221919d1a18928570b05"
+    },
+    {
+      "path": "/garaz/IMG_0910.JPG",
+      "gitSha": "03f4b280f57822edaef6929b43d57e138c26bdf8",
+      "bytes": 2883920,
+      "publicId": "posadzkizywiczne/legacy/03f4b280f57822edaef6929b43d57e138c26bdf8"
+    },
+    {
+      "path": "/garaz/IMG_0914.JPG",
+      "gitSha": "8f5b0bfe781aa4db47d17bd66ef5c61a3da64235",
+      "bytes": 2649757,
+      "publicId": "posadzkizywiczne/legacy/8f5b0bfe781aa4db47d17bd66ef5c61a3da64235"
+    },
+    {
+      "path": "/garaz/IMG_0915.JPG",
+      "gitSha": "f9ef739c5b7c819204b5215ce16331ebf1fe03da",
+      "bytes": 2633245,
+      "publicId": "posadzkizywiczne/legacy/f9ef739c5b7c819204b5215ce16331ebf1fe03da"
+    },
+    {
+      "path": "/garaz/IMG_0919.JPG",
+      "gitSha": "ac494d9e3528d558a19c8a911ac9201a5a703598",
+      "bytes": 3121772,
+      "publicId": "posadzkizywiczne/legacy/ac494d9e3528d558a19c8a911ac9201a5a703598"
+    },
+    {
+      "path": "/garaz/IMG_0920.JPG",
+      "gitSha": "aab4a4b4a54f43f22c8b55a7b9ba5f6fd324a510",
+      "bytes": 3079258,
+      "publicId": "posadzkizywiczne/legacy/aab4a4b4a54f43f22c8b55a7b9ba5f6fd324a510"
+    },
+    {
+      "path": "/garaz/IMG_1253.JPG",
+      "gitSha": "77a57df183ea32908f856f3e1758ac4d9e22fa31",
+      "bytes": 3976545,
+      "publicId": "posadzkizywiczne/legacy/77a57df183ea32908f856f3e1758ac4d9e22fa31"
+    },
+    {
+      "path": "/garaz/beton-plamy.jpg",
+      "gitSha": "efb570c5db73b4c79d9c4676ab1de113f0786b02",
+      "bytes": 61884,
+      "publicId": "posadzkizywiczne/legacy/efb570c5db73b4c79d9c4676ab1de113f0786b02"
+    },
+    {
+      "path": "/garaz/beton-problem.jpg",
+      "gitSha": "1c2a7a7676fcfed21e7ab5286a85765abb6ed40a",
+      "bytes": 129988,
+      "publicId": "posadzkizywiczne/legacy/1c2a7a7676fcfed21e7ab5286a85765abb6ed40a"
+    },
+    {
+      "path": "/garaz/czy-epoksyd-zolknie-uv.png",
+      "gitSha": "8e424afd310aa02bcea87b066fbf570cbcdf77ae",
+      "bytes": 2051978,
+      "publicId": "posadzkizywiczne/legacy/8e424afd310aa02bcea87b066fbf570cbcdf77ae"
+    },
+    {
+      "path": "/garaz/garaz-hala.png",
+      "gitSha": "feb64b3c4b1aee9796a171cd0afe69776b4b98a6",
+      "bytes": 1334393,
+      "publicId": "posadzkizywiczne/legacy/feb64b3c4b1aee9796a171cd0afe69776b4b98a6"
+    },
+    {
+      "path": "/garaz/garaz-tesla-po.png",
+      "gitSha": "06392faa577bf2db3ae037ef82ed4014b2e30b5c",
+      "bytes": 540286,
+      "publicId": "posadzkizywiczne/legacy/06392faa577bf2db3ae037ef82ed4014b2e30b5c"
+    },
+    {
+      "path": "/garaz/garaz-tesla.png",
+      "gitSha": "60f742536e6dea6e047068ae2e0b05b0094cef7a",
+      "bytes": 659758,
+      "publicId": "posadzkizywiczne/legacy/60f742536e6dea6e047068ae2e0b05b0094cef7a"
+    },
+    {
+      "path": "/garaz/garaz-zywica-2.jpg",
+      "gitSha": "60017e10516826b6d209a57de3b7737fbd58b211",
+      "bytes": 27543,
+      "publicId": "posadzkizywiczne/legacy/60017e10516826b6d209a57de3b7737fbd58b211"
+    },
+    {
+      "path": "/garaz/garaz-zywica.webp",
+      "gitSha": "abd87d5f60c56810458c52db2700d111971f7e48",
+      "bytes": 13634,
+      "publicId": "posadzkizywiczne/legacy/abd87d5f60c56810458c52db2700d111971f7e48"
+    },
+    {
+      "path": "/garaz/jaka-posadzka-zywiczna-do-garazu.png",
+      "gitSha": "25cc040f8ed479904412d2d909baab138018ec2f",
+      "bytes": 2854838,
+      "publicId": "posadzkizywiczne/legacy/25cc040f8ed479904412d2d909baab138018ec2f"
+    },
+    {
+      "path": "/garaz/koszt-posadzki-zywicznej-garaz.png",
+      "gitSha": "3a8249de41a7328222f652057cfeca99dbbade8a",
+      "bytes": 2032811,
+      "publicId": "posadzkizywiczne/legacy/3a8249de41a7328222f652057cfeca99dbbade8a"
+    },
+    {
+      "path": "/garaz/malowanie-cokolu.png",
+      "gitSha": "9962c3dd10a5a82096c2df7e7b6e5c3429619b3c",
+      "bytes": 2082904,
+      "publicId": "posadzkizywiczne/legacy/9962c3dd10a5a82096c2df7e7b6e5c3429619b3c"
+    },
+    {
+      "path": "/garaz/podnosniki.png",
+      "gitSha": "1663a109d99307343691278f23c2ac12fe403cfc",
+      "bytes": 831785,
+      "publicId": "posadzkizywiczne/legacy/1663a109d99307343691278f23c2ac12fe403cfc"
+    },
+    {
+      "path": "/garaz/posadzkazywiczne-taras.png",
+      "gitSha": "81f51b771f4c64dacf8c5861648bf47d8d3f8147",
+      "bytes": 1788310,
+      "publicId": "posadzkizywiczne/legacy/81f51b771f4c64dacf8c5861648bf47d8d3f8147"
+    },
+    {
+      "path": "/gastronomia.jpg",
+      "gitSha": "2b70fb8f53425ed5a0cf4a8b2ae30417192e1be4",
+      "bytes": 128287,
+      "publicId": "posadzkizywiczne/legacy/2b70fb8f53425ed5a0cf4a8b2ae30417192e1be4"
+    },
+    {
+      "path": "/images/antyposlizgowa.jpg",
+      "gitSha": "25cc040f8ed479904412d2d909baab138018ec2f",
+      "bytes": 2854838,
+      "publicId": "posadzkizywiczne/legacy/25cc040f8ed479904412d2d909baab138018ec2f"
+    },
+    {
+      "path": "/images/antypoślizgowa.jpg",
+      "gitSha": "25cc040f8ed479904412d2d909baab138018ec2f",
+      "bytes": 2854838,
+      "publicId": "posadzkizywiczne/legacy/25cc040f8ed479904412d2d909baab138018ec2f"
+    },
+    {
+      "path": "/images/cokol.jpg",
+      "gitSha": "60017e10516826b6d209a57de3b7737fbd58b211",
+      "bytes": 27543,
+      "publicId": "posadzkizywiczne/legacy/60017e10516826b6d209a57de3b7737fbd58b211"
+    },
+    {
+      "path": "/images/demontaz.jpg",
+      "gitSha": "1c2a7a7676fcfed21e7ab5286a85765abb6ed40a",
+      "bytes": 129988,
+      "publicId": "posadzkizywiczne/legacy/1c2a7a7676fcfed21e7ab5286a85765abb6ed40a"
+    },
+    {
+      "path": "/images/dylatacje.jpg",
+      "gitSha": "25cc040f8ed479904412d2d909baab138018ec2f",
+      "bytes": 2854838,
+      "publicId": "posadzkizywiczne/legacy/25cc040f8ed479904412d2d909baab138018ec2f"
+    },
+    {
+      "path": "/images/gruntowanie.jpg",
+      "gitSha": "1c2a7a7676fcfed21e7ab5286a85765abb6ed40a",
+      "bytes": 129988,
+      "publicId": "posadzkizywiczne/legacy/1c2a7a7676fcfed21e7ab5286a85765abb6ed40a"
+    },
+    {
+      "path": "/images/naprawa.jpg",
+      "gitSha": "feb64b3c4b1aee9796a171cd0afe69776b4b98a6",
+      "bytes": 1334393,
+      "publicId": "posadzkizywiczne/legacy/feb64b3c4b1aee9796a171cd0afe69776b4b98a6"
+    },
+    {
+      "path": "/images/podklad.jpg",
+      "gitSha": "06392faa577bf2db3ae037ef82ed4014b2e30b5c",
+      "bytes": 540286,
+      "publicId": "posadzkizywiczne/legacy/06392faa577bf2db3ae037ef82ed4014b2e30b5c"
+    },
+    {
+      "path": "/images/sprzatanie.jpg",
+      "gitSha": "feb64b3c4b1aee9796a171cd0afe69776b4b98a6",
+      "bytes": 1334393,
+      "publicId": "posadzkizywiczne/legacy/feb64b3c4b1aee9796a171cd0afe69776b4b98a6"
+    },
+    {
+      "path": "/images/szlifowanie.jpg",
+      "gitSha": "3a8249de41a7328222f652057cfeca99dbbade8a",
+      "bytes": 2032811,
+      "publicId": "posadzkizywiczne/legacy/3a8249de41a7328222f652057cfeca99dbbade8a"
+    },
+    {
+      "path": "/images/transport.jpg",
+      "gitSha": "06392faa577bf2db3ae037ef82ed4014b2e30b5c",
+      "bytes": 540286,
+      "publicId": "posadzkizywiczne/legacy/06392faa577bf2db3ae037ef82ed4014b2e30b5c"
+    },
+    {
+      "path": "/images/uszczelnienie.jpg",
+      "gitSha": "feb64b3c4b1aee9796a171cd0afe69776b4b98a6",
+      "bytes": 1334393,
+      "publicId": "posadzkizywiczne/legacy/feb64b3c4b1aee9796a171cd0afe69776b4b98a6"
+    },
+    {
+      "path": "/images/warstwa-ochronna.jpg",
+      "gitSha": "60017e10516826b6d209a57de3b7737fbd58b211",
+      "bytes": 27543,
+      "publicId": "posadzkizywiczne/legacy/60017e10516826b6d209a57de3b7737fbd58b211"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-bez-braz-rzeszow-04-hq.webp",
+      "gitSha": "2b0b1bcd382ca531dfbcaf1dad0099a3b7c9168d",
+      "bytes": 528208,
+      "publicId": "posadzkizywiczne/legacy/2b0b1bcd382ca531dfbcaf1dad0099a3b7c9168d"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-bez-braz-rzeszow-04.avif",
+      "gitSha": "f96ddbbff44b216fab82e56fb6814caadf22cec1",
+      "bytes": 8306,
+      "publicId": "posadzkizywiczne/legacy/f96ddbbff44b216fab82e56fb6814caadf22cec1"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-bez-braz-rzeszow-05-hq.webp",
+      "gitSha": "727eb564ff0592d5c6315b49d81346dd333c193c",
+      "bytes": 510354,
+      "publicId": "posadzkizywiczne/legacy/727eb564ff0592d5c6315b49d81346dd333c193c"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-bez-braz-rzeszow-05.avif",
+      "gitSha": "2c62ffc844ad9ab8539d7997bc956fbc62f845c9",
+      "bytes": 7262,
+      "publicId": "posadzkizywiczne/legacy/2c62ffc844ad9ab8539d7997bc956fbc62f845c9"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-dlugie-budynek-rzeszow-03-hq.webp",
+      "gitSha": "e33ffc3e2cd8a0ca955b31ae7d3d3f9125c20b74",
+      "bytes": 379420,
+      "publicId": "posadzkizywiczne/legacy/e33ffc3e2cd8a0ca955b31ae7d3d3f9125c20b74"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-dlugie-budynek-rzeszow-03.avif",
+      "gitSha": "0d6d742a9c0b659be57b768e89283bad02348b97",
+      "bytes": 7718,
+      "publicId": "posadzkizywiczne/legacy/0d6d742a9c0b659be57b768e89283bad02348b97"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-realizacja-hq.webp",
+      "gitSha": "e002de2c0c441555fc51281b21b04368c6937445",
+      "bytes": 510326,
+      "publicId": "posadzkizywiczne/legacy/e002de2c0c441555fc51281b21b04368c6937445"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-wejscie-grafit-rzeszow-01-hq.webp",
+      "gitSha": "a3a158814e55a5e84f6bd90e5fa28b7cfcc72963",
+      "bytes": 531808,
+      "publicId": "posadzkizywiczne/legacy/a3a158814e55a5e84f6bd90e5fa28b7cfcc72963"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-wejscie-grafit-rzeszow-01.avif",
+      "gitSha": "72a8580bb7331b08cb81646e9b1bd6355a6d3a1a",
+      "bytes": 8251,
+      "publicId": "posadzkizywiczne/legacy/72a8580bb7331b08cb81646e9b1bd6355a6d3a1a"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-wejscie-grafit-rzeszow-02-hq.webp",
+      "gitSha": "982f001ab79d67ff0962d4384a9a0860ebc42be9",
+      "bytes": 510108,
+      "publicId": "posadzkizywiczne/legacy/982f001ab79d67ff0962d4384a9a0860ebc42be9"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-schody-wejscie-grafit-rzeszow-02.avif",
+      "gitSha": "c3bcdc5b65a4a2afbe3c7ff602a1ce77521f1855",
+      "bytes": 11357,
+      "publicId": "posadzkizywiczne/legacy/c3bcdc5b65a4a2afbe3c7ff602a1ce77521f1855"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-struktura-grafit-rzeszow-08-hq.webp",
+      "gitSha": "cf4097b8699105d60663a5e6f85b9ae69139c773",
+      "bytes": 461732,
+      "publicId": "posadzkizywiczne/legacy/cf4097b8699105d60663a5e6f85b9ae69139c773"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-struktura-grafit-rzeszow-08.avif",
+      "gitSha": "11ddf879cdb86fc7c38ebb47a803c4c3cb907fc5",
+      "bytes": 11624,
+      "publicId": "posadzkizywiczne/legacy/11ddf879cdb86fc7c38ebb47a803c4c3cb907fc5"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-taras-bez-rzeszow-06-hq.webp",
+      "gitSha": "1c7aef9b3832f1407bf1153fce7276319ad3e899",
+      "bytes": 449384,
+      "publicId": "posadzkizywiczne/legacy/1c7aef9b3832f1407bf1153fce7276319ad3e899"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-taras-bez-rzeszow-06.avif",
+      "gitSha": "f6d7d0c693ca056e1e3928c08be737ae196a698b",
+      "bytes": 9092,
+      "publicId": "posadzkizywiczne/legacy/f6d7d0c693ca056e1e3928c08be737ae196a698b"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-taras-podest-rzeszow-07-hq.webp",
+      "gitSha": "832c2fa54bb39b63fb849475be07d111d1c008f0",
+      "bytes": 435556,
+      "publicId": "posadzkizywiczne/legacy/832c2fa54bb39b63fb849475be07d111d1c008f0"
+    },
+    {
+      "path": "/kamienny-dywan/realizacje/kamienny-dywan-taras-podest-rzeszow-07.avif",
+      "gitSha": "14a9c442529a06bf7140726020f2cd9ac347f66c",
+      "bytes": 5930,
+      "publicId": "posadzkizywiczne/legacy/14a9c442529a06bf7140726020f2cd9ac347f66c"
+    },
+    {
+      "path": "/kamienny-dywan/schody-kamienny-dywan-realizacja.webp",
+      "gitSha": "bb08c445477bacf68023abc493cfa989837af955",
+      "bytes": 233694,
+      "publicId": "posadzkizywiczne/legacy/bb08c445477bacf68023abc493cfa989837af955"
+    },
+    {
+      "path": "/kropla.jpg",
+      "gitSha": "aa85d35f4680bfa260e19d75ae924384857d204c",
+      "bytes": 70867,
+      "publicId": "posadzkizywiczne/legacy/aa85d35f4680bfa260e19d75ae924384857d204c"
+    },
+    {
+      "path": "/kuchnia.jpg",
+      "gitSha": "a559c1ec3b7029fbf95d5c95b9467434d080aa34",
+      "bytes": 387654,
+      "publicId": "posadzkizywiczne/legacy/a559c1ec3b7029fbf95d5c95b9467434d080aa34"
+    },
+    {
+      "path": "/male.jpg",
+      "gitSha": "fbad86ba57dcbd44f0cae845a3863c194080d2fb",
+      "bytes": 3320,
+      "publicId": "posadzkizywiczne/legacy/fbad86ba57dcbd44f0cae845a3863c194080d2fb"
+    },
+    {
+      "path": "/mech.jpg",
+      "gitSha": "38792fa3bda5700328a01a0bba0b7925eb6e4833",
+      "bytes": 277238,
+      "publicId": "posadzkizywiczne/legacy/38792fa3bda5700328a01a0bba0b7925eb6e4833"
+    },
+    {
+      "path": "/mieszkanie.jpg",
+      "gitSha": "d94e69c0ea40d405c219eed132e5cee4a6a69fe4",
+      "bytes": 37511,
+      "publicId": "posadzkizywiczne/legacy/d94e69c0ea40d405c219eed132e5cee4a6a69fe4"
+    },
+    {
+      "path": "/mieszkanie/DeWatermark.ai_1732886162387.png",
+      "gitSha": "34c160c551c6b50438cbfa2e0db975f58a5a82c2",
+      "bytes": 435634,
+      "publicId": "posadzkizywiczne/legacy/34c160c551c6b50438cbfa2e0db975f58a5a82c2"
+    },
+    {
+      "path": "/newsletter/kuchnia_po.jpg",
+      "gitSha": "0cf983727b8bf941c56809bf691706d70d22a6ad",
+      "bytes": 78840,
+      "publicId": "posadzkizywiczne/legacy/0cf983727b8bf941c56809bf691706d70d22a6ad"
+    },
+    {
+      "path": "/newsletter/kuchnia_przed.jpg",
+      "gitSha": "d0d7cc37b4149e7c1ade3f48ed5813ff9bee7ef7",
+      "bytes": 120165,
+      "publicId": "posadzkizywiczne/legacy/d0d7cc37b4149e7c1ade3f48ed5813ff9bee7ef7"
+    },
+    {
+      "path": "/newsletter/posadzka_top.png",
+      "gitSha": "40bebc396ed87f7584b4b819c3e532a8c193ad9e",
+      "bytes": 341768,
+      "publicId": "posadzkizywiczne/legacy/40bebc396ed87f7584b4b819c3e532a8c193ad9e"
+    },
+    {
+      "path": "/odpadajace_plytki.webp",
+      "gitSha": "46290efd5a8a32512a6f307f53f62f8d0d53578e",
+      "bytes": 244610,
+      "publicId": "posadzkizywiczne/legacy/46290efd5a8a32512a6f307f53f62f8d0d53578e"
+    },
+    {
+      "path": "/posadzkizywiczne.com_logo.png",
+      "gitSha": "39371b9651ec9d289283201cd6f3e87ad907e62a",
+      "bytes": 1453150,
+      "publicId": "posadzkizywiczne/legacy/39371b9651ec9d289283201cd6f3e87ad907e62a"
+    },
+    {
+      "path": "/produkcja.jpg",
+      "gitSha": "2f8b24d1ce827d3942cba1a462955361a994312a",
+      "bytes": 163480,
+      "publicId": "posadzkizywiczne/legacy/2f8b24d1ce827d3942cba1a462955361a994312a"
+    },
+    {
+      "path": "/profilowe.png",
+      "gitSha": "f979601908b97320f47a4f6ecd6b39c4385b553d",
+      "bytes": 283814,
+      "publicId": "posadzkizywiczne/legacy/f979601908b97320f47a4f6ecd6b39c4385b553d"
+    },
+    {
+      "path": "/realizacje/chorzow-kosciuski-mieszkanie/20251017_132317.jpg",
+      "gitSha": "2edfb13969ddce40926e9c3bd76b6065b2c25162",
+      "bytes": 1407668,
+      "publicId": "posadzkizywiczne/legacy/2edfb13969ddce40926e9c3bd76b6065b2c25162"
+    },
+    {
+      "path": "/realizacje/katowice-wisniowa-mieszkanie/IMG_1474.jpg",
+      "gitSha": "4b536feef1ee4fbfad894460a4e2129f08d17f73",
+      "bytes": 871359,
+      "publicId": "posadzkizywiczne/legacy/4b536feef1ee4fbfad894460a4e2129f08d17f73"
+    },
+    {
+      "path": "/realizacje/katowice-wisniowa-mieszkanie/IMG_1478.JPG",
+      "gitSha": "f13c6b956c60c5ce80afd0bc7cfebfc5b30acaa3",
+      "bytes": 2261204,
+      "publicId": "posadzkizywiczne/legacy/f13c6b956c60c5ce80afd0bc7cfebfc5b30acaa3"
+    },
+    {
+      "path": "/realizacje/katowice-wisniowa-mieszkanie/IMG_1481.JPG",
+      "gitSha": "af77e8d9da62958da9ce20da08a90c3d13109a07",
+      "bytes": 2343916,
+      "publicId": "posadzkizywiczne/legacy/af77e8d9da62958da9ce20da08a90c3d13109a07"
+    },
+    {
+      "path": "/realizacje/krakow-rydlowka-balkon/IMG_1315.JPG",
+      "gitSha": "8d5896b9d5effcef7014f1eb03c86852a2b8efda",
+      "bytes": 5810172,
+      "publicId": "posadzkizywiczne/legacy/8d5896b9d5effcef7014f1eb03c86852a2b8efda"
+    },
+    {
+      "path": "/realizacje/krakow-rydlowka-balkon/IMG_1320.JPG",
+      "gitSha": "870a304b3468f184b3b712f5e805708d0fdd7e56",
+      "bytes": 5436423,
+      "publicId": "posadzkizywiczne/legacy/870a304b3468f184b3b712f5e805708d0fdd7e56"
+    },
+    {
+      "path": "/realizacje/krakow-rydlowka-balkon/IMG_1324.JPG",
+      "gitSha": "70ca9bb073e2e6b6361148035742142fb932f686",
+      "bytes": 5352069,
+      "publicId": "posadzkizywiczne/legacy/70ca9bb073e2e6b6361148035742142fb932f686"
+    },
+    {
+      "path": "/realizacje/rzeszow-glogow-malopolski-taras/IMG_9538.JPG",
+      "gitSha": "daf699bc63610902bff63786859720a0ef6f4e82",
+      "bytes": 5390138,
+      "publicId": "posadzkizywiczne/legacy/daf699bc63610902bff63786859720a0ef6f4e82"
+    },
+    {
+      "path": "/realizacje/rzeszow-glogow-malopolski-taras/IMG_9540.JPG",
+      "gitSha": "3b542223da718e3697fa6c73114939363ad5680b",
+      "bytes": 3356920,
+      "publicId": "posadzkizywiczne/legacy/3b542223da718e3697fa6c73114939363ad5680b"
+    },
+    {
+      "path": "/realizacje/rzeszow-krakowska-mieszkanie/Kopia IMG_1947.JPG",
+      "gitSha": "d0b8f3167a86f8d5f5f54d1fdd6283bae5dd70a7",
+      "bytes": 2542692,
+      "publicId": "posadzkizywiczne/legacy/d0b8f3167a86f8d5f5f54d1fdd6283bae5dd70a7"
+    },
+    {
+      "path": "/realizacje/rzeszow-krakowska-mieszkanie/Kopia IMG_1948.JPG",
+      "gitSha": "acc968bc17dd957237fb4334d243f4de4322cdcd",
+      "bytes": 2694153,
+      "publicId": "posadzkizywiczne/legacy/acc968bc17dd957237fb4334d243f4de4322cdcd"
+    },
+    {
+      "path": "/realizacje/rzeszow-krakowska-mieszkanie/Kopia IMG_1949.JPG",
+      "gitSha": "3104b880667333c7321e6dd56fa8686fa3112259",
+      "bytes": 2716797,
+      "publicId": "posadzkizywiczne/legacy/3104b880667333c7321e6dd56fa8686fa3112259"
+    },
+    {
+      "path": "/realizacje/rzeszow-krakowska-mieszkanie/Kopia IMG_1951.JPG",
+      "gitSha": "81c36a1e23cedec60fa42463f95235cf07c7e95d",
+      "bytes": 3476419,
+      "publicId": "posadzkizywiczne/legacy/81c36a1e23cedec60fa42463f95235cf07c7e95d"
+    },
+    {
+      "path": "/realizacje/tarnow-bajeczna-garaz/IMG_8666.JPG",
+      "gitSha": "f0a67ca3834b1e1e8c7bdefa0fca459044409a6a",
+      "bytes": 3376556,
+      "publicId": "posadzkizywiczne/legacy/f0a67ca3834b1e1e8c7bdefa0fca459044409a6a"
+    },
+    {
+      "path": "/realizacje/tarnow-bajeczna-garaz/IMG_8687.JPG",
+      "gitSha": "cecf4d8a8ef2c2851509eedd5b0f2791d8b4d231",
+      "bytes": 4394230,
+      "publicId": "posadzkizywiczne/legacy/cecf4d8a8ef2c2851509eedd5b0f2791d8b4d231"
+    },
+    {
+      "path": "/realizacje/tarnow-bajeczna-garaz/IMG_8695.JPG",
+      "gitSha": "63997e55d2f7c1833a8ce3a5345cbfec8151829d",
+      "bytes": 4211072,
+      "publicId": "posadzkizywiczne/legacy/63997e55d2f7c1833a8ce3a5345cbfec8151829d"
+    },
+    {
+      "path": "/remont-balkon.webp",
+      "gitSha": "19bbc9c91f3764c21b1acc7442ead0e9e18bb349",
+      "bytes": 222736,
+      "publicId": "posadzkizywiczne/legacy/19bbc9c91f3764c21b1acc7442ead0e9e18bb349"
+    },
+    {
+      "path": "/sprzatanie-balokonu-2.jpg",
+      "gitSha": "a72b3549d67f2a683c2f266fdba7624767c0cf13",
+      "bytes": 114592,
+      "publicId": "posadzkizywiczne/legacy/a72b3549d67f2a683c2f266fdba7624767c0cf13"
+    },
+    {
+      "path": "/uv-protect.png",
+      "gitSha": "942f4ebd351f1eb11bfb62c2a0bfb86c44eed22c",
+      "bytes": 442817,
+      "publicId": "posadzkizywiczne/legacy/942f4ebd351f1eb11bfb62c2a0bfb86c44eed22c"
+    },
+    {
+      "path": "/uvprotect.jpg",
+      "gitSha": "0a3a029e1d051b53cd2501d609a5dbf4390cdfe2",
+      "bytes": 36165,
+      "publicId": "posadzkizywiczne/legacy/0a3a029e1d051b53cd2501d609a5dbf4390cdfe2"
+    },
+    {
+      "path": "/web-app-manifest-192x192.png",
+      "gitSha": "c89c303f47af5ae454e43e8e0386263c04500de2",
+      "bytes": 10196,
+      "publicId": "posadzkizywiczne/legacy/c89c303f47af5ae454e43e8e0386263c04500de2"
+    },
+    {
+      "path": "/web-app-manifest-512x512.png",
+      "gitSha": "40ef035cf35edb532d5db9317fc8a222a4f010d5",
+      "bytes": 49623,
+      "publicId": "posadzkizywiczne/legacy/40ef035cf35edb532d5db9317fc8a222a4f010d5"
+    },
+    {
+      "path": "/zima.jpg",
+      "gitSha": "a06c26b8d523f12669b9a28307669e525cde8355",
+      "bytes": 459115,
+      "publicId": "posadzkizywiczne/legacy/a06c26b8d523f12669b9a28307669e525cde8355"
+    }
+  ]
+}
