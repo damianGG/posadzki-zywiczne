@@ -1,4 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
+import { isShopEnabled } from "./lib/shop-feature";
 import manifest from "./data/public-cloudinary-manifest.json";
 import mediaState from "./data/public-cloudinary-state.json";
 
@@ -28,6 +29,15 @@ function decodeLegacyPath(pathname: string): string {
 
 export function middleware(request: NextRequest) {
   const normalizedPath = decodeLegacyPath(request.nextUrl.pathname);
+  const pathname = request.nextUrl.pathname;
+  if (pathname === "/sklep" || pathname.startsWith("/sklep/") || pathname.startsWith("/api/shopify/")) {
+    if (!isShopEnabled()) {
+      return new NextResponse("Not Found", { status: 404, headers: { "X-Robots-Tag": "noindex, nofollow, noarchive" } });
+    }
+    const response = NextResponse.next();
+    if (process.env.VERCEL_ENV !== "production") response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    return response;
+  }
 
   // Vercel's config-level redirects do not match a few URI-encoded Unicode and
   // whitespace filenames. Preserve their old URLs with a normalized 308.
@@ -52,5 +62,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/blog/:path*", "/images/:path*", "/realizacje/:path*"],
+  matcher: ["/blog/:path*", "/images/:path*", "/realizacje/:path*", "/sklep/:path*", "/api/shopify/:path*"],
 };
