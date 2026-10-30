@@ -6,6 +6,7 @@ import { GoogleTagManager } from "@next/third-parties/google";
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Header2 } from "@/blocks/header/header2";
+import { isShopEnabled } from "@/lib/shop-feature";
 import {
   getLocalBusinessSchema,
   getOrganizationSchema,
@@ -133,7 +134,7 @@ export default function RootLayout({
       />
 
       <body className="font-sans">
-        <Header2 />
+        <Header2 shopEnabled={isShopEnabled()} />
         {children}
         <SpeedInsights />
         <Analytics />
