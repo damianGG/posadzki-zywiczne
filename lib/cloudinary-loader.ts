@@ -1,3 +1,4 @@
+import { resolveLegacyPublicMedia } from "@/lib/public-cloudinary-media";
 /**
  * Custom Cloudinary image loader for Next.js Image component
  * Automatically applies optimizations for better mobile experience
@@ -51,7 +52,7 @@ function buildQualityTransformations(quality?: number): string[] {
  * Only applies transformations to Cloudinary URLs
  */
 export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoaderParams): string {
-  const parsedUrl = parseCloudinaryUrl(src);
+  const parsedUrl = parseCloudinaryUrl(resolveLegacyPublicMedia(src) || src);
   
   if (!parsedUrl) {
     return src;
@@ -84,7 +85,7 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
  * Uses portrait aspect ratio and crop to fill for better mobile viewing
  */
 export function cloudinaryLoaderMobile({ src, width, quality }: CloudinaryLoaderParams): string {
-  const parsedUrl = parseCloudinaryUrl(src);
+  const parsedUrl = parseCloudinaryUrl(resolveLegacyPublicMedia(src) || src);
   
   if (!parsedUrl) {
     return src;
@@ -146,7 +147,7 @@ export function getOptimizedCloudinaryUrl(
     gravity?: 'auto' | 'face' | 'faces' | 'center';
   } = {}
 ): string {
-  const parsedUrl = parseCloudinaryUrl(src);
+  const parsedUrl = parseCloudinaryUrl(resolveLegacyPublicMedia(src) || src);
   
   if (!parsedUrl) {
     return src;

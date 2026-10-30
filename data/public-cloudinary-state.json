@@ -1,5 +1,5 @@
 {
-  "active": false,
-  "phase": "import-only",
-  "notes": "Activate only after verifying every imported original on Cloudinary; preview builds never upload."
+  "active": true,
+  "phase": "cloudinary-active",
+  "notes": "Cloudinary upload completed successfully: 98/98 original unique assets in production build 2026-10-30. Former paths redirect to Cloudinary. Originals can be restored from Git history."
 }
