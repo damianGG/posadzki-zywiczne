@@ -27,6 +27,14 @@ function decodeLegacyPath(pathname: string): string {
 }
 
 export function middleware(request: NextRequest) {
+  // The legacy kit configurator must not be publicly accessible before store launch.
+  if (request.nextUrl.pathname === "/sklep" || request.nextUrl.pathname.startsWith("/sklep/")) {
+    return new NextResponse("Not Found", {
+      status: 404,
+      headers: { "X-Robots-Tag": "noindex, nofollow, noarchive" },
+    });
+  }
+
   const normalizedPath = decodeLegacyPath(request.nextUrl.pathname);
 
   // Vercel's config-level redirects do not match a few URI-encoded Unicode and
@@ -52,5 +60,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/blog/:path*", "/images/:path*", "/realizacje/:path*"],
+  matcher: ["/blog/:path*", "/images/:path*", "/realizacje/:path*", "/sklep/:path*"],
 };
