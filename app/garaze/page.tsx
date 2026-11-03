@@ -5,14 +5,10 @@ import { Feature5 } from "@/blocks/feature/feature5";
 import { CTA2 } from "@/blocks/cta/cta2";
 import { FAQ2 } from "./components/faq2";
 import { Contact1 } from "@/blocks/contact/contact1";
-import { Feature3 } from "./components/feature3";
 import ProblemSolutionSection from "./components/issuse-solution";
-import BenefitsSection from "./components/BenefitsSection";
-import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 import type { Metadata } from 'next'
 import { absoluteUrl } from "@/lib/site-config";
-import ScrollDrivenRenovationTimeline from "@/components/blocks/scroll-driven-renovation-timeline";
 import BlogPreviewSection from "@/components/blog-preview-section";
 import RelatedRealizations from "@/components/related-realizations";
 import Link from "next/link";
@@ -51,7 +47,16 @@ export default function Home() {
 
     return (
         <>
-<HeroMainPage variant="garage" />
+            <HeroMainPage variant="garage" />
+            <section aria-labelledby="garaz-harmonogram" className="mx-auto max-w-6xl px-4 pt-12">
+              <h2 id="garaz-harmonogram" className="text-2xl font-bold">Na ile dni opróżnić garaż?</h2>
+              <dl className="mt-6 grid gap-6 sm:grid-cols-2">
+                <div><dt className="font-semibold">Prace ekipy</dt><dd>Typową posadzkę garażową wykonujemy podczas trzech wizyt. Naprawy betonu mogą wydłużyć harmonogram.</dd></div>
+                <div><dt className="font-semibold">Pierwsze wejście pieszo</dt><dd>Termin liczymy od ostatniej warstwy. Podamy go dla wybranego systemu i temperatury w garażu.</dd></div>
+                <div><dt className="font-semibold">Pierwszy wjazd samochodem</dt><dd>Przed zaplanowaniem parkowania poproś o osobny termin dopuszczenia ruchu pojazdów. Powłoka wymaga więcej czasu pod obciążenie kół.</dd></div>
+                <div><dt className="font-semibold">Gwarancja</dt><dd>Przed zamówieniem sprawdź w ofercie okres ochrony, zakres prac objętych gwarancją i zasady zgłoszenia usterki.</dd></div>
+              </dl>
+            </section>
             <section className="mx-auto max-w-6xl px-4 py-12 md:py-16" aria-labelledby="garaz-zywica-informacje">
               <h2 id="garaz-zywica-informacje" className="text-2xl font-bold md:text-3xl">
                 Posadzka żywiczna w garażu – co wpływa na trwałość i koszt?
@@ -105,8 +110,6 @@ export default function Home() {
               </p>
             </section>
             <ProblemSolutionSection />
-            <ScrollDrivenRenovationTimeline />
-            <BenefitsSection />
             <FAQ2 />
             <RelatedRealizations category="garaze" title="Nasze posadzki w garażach — zdjęcia realizacji" />
             <BlogPreviewSection
@@ -115,7 +118,6 @@ export default function Home() {
                 subtitle="Poznaj najnowsze trendy, porady ekspertów i praktyczne rozwiązania w świecie posadzek żywicznych"
             />
             <CTA2 />
-            <SocialProofSection />
             <Feature5 />
             <Contact1 />
         </>
