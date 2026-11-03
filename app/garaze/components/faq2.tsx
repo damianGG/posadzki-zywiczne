@@ -75,7 +75,7 @@ const faqItems = [
   },
   {
     question: "Ile kosztuje wykonanie posadzki żywicznej w garażu?",
-    answer: "Koszt posadzki żywicznej zależy od rodzaju użytej żywicy i metrażu, średnio wynosi od 100 do 200 zł za m².",
+    answer: "Orientacyjny koszt sprawdzisz w kalkulatorze garażu. Do indywidualnej wyceny podaj metraż, miejscowość i stan betonu. Uwzględnimy potrzebne naprawy, wykończenie i cokoły.",
     link: "/blog/ile-kosztuje-wykonanie-posadzki-zywicznej-w-garazu"
   },
   {

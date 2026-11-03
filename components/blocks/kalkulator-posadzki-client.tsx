@@ -602,9 +602,10 @@ interface CalculatorData {
 
 interface KalkulatorPosadzkiClientProps {
     initialData: CalculatorData
+    presetGarage?: boolean
 }
 
-export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosadzkiClientProps) {
+export default function KalkulatorPosadzkiClient({ initialData, presetGarage = false }: KalkulatorPosadzkiClientProps) {
     // Transform server data to component format early to prevent errors
     const transformedSurfaces = React.useMemo(() => {
         if (!initialData?.surfaceTypes || initialData.surfaceTypes.length === 0) {
@@ -826,7 +827,9 @@ export default function KalkulatorPosadzkiClient({ initialData }: KalkulatorPosa
     const stanyBetonu = transformedConcreteStates.data
     const dodatkiUslugi: DodatkowaUsluga[] = transformedServices.data
     
-    const [rodzajPomieszczenia, setRodzajPomieszczenia] = useState<string>("")
+    const [rodzajPomieszczenia, setRodzajPomieszczenia] = useState<string>(() =>
+        presetGarage && rodzajePomieszczen.some(room => room.id === "garaz-piwnica" && room.dostepny) ? "garaz-piwnica" : ""
+    )
     const [stanBetonu, setStanBetonu] = useState<string>("")
     const [wymiary, setWymiary] = useState({ dlugosc: "", szerokosc: "" })
     const [powierzchniaBezposrednia, setPowierzchniaBezposrednia] = useState("")
