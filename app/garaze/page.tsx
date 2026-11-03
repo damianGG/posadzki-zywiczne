@@ -48,6 +48,22 @@ export default function Home() {
     return (
         <>
             <HeroMainPage variant="garage" />
+            <section aria-labelledby="garaz-koszt-realizacji" className="mx-auto max-w-6xl px-4 pt-12">
+              <h2 id="garaz-koszt-realizacji" className="text-2xl font-bold md:text-3xl">
+                Ile kosztowała posadzka w garażu 45 m²?
+              </h2>
+              <p className="mt-4"><strong className="text-xl">7 500 zł netto za całość</strong> (około 167 zł netto/m²).</p>
+              <p className="mt-4 font-semibold">Zakres prac w tej cenie</p>
+              <ul className="mt-2 list-disc space-y-1 pl-6">
+                <li>Przygotowanie podłoża, w tym szlifowanie, szpachlowanie i gruntowanie.</li>
+                <li>Obsadzenie kratki odpływowej.</li>
+                <li>Wykonanie zasadniczej warstwy żywicy. Do wyboru były płatki dekoracyjne lub antypoślizgowe wykończenie z posypką kwarcową.</li>
+                <li>Wykonanie cokołów i uszczelnienie styku ściany z posadzką.</li>
+              </ul>
+              <Link href="/kalkulator?typ=garaz" className="mt-5 inline-block font-medium text-primary underline">
+                Oblicz koszt mojego garażu
+              </Link>
+            </section>
             <section aria-labelledby="garaz-harmonogram" className="mx-auto max-w-6xl px-4 pt-12">
               <h2 id="garaz-harmonogram" className="text-2xl font-bold">Na ile dni opróżnić garaż?</h2>
               <dl className="mt-6 grid gap-6 sm:grid-cols-2">
