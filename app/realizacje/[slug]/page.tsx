@@ -7,6 +7,7 @@ import { SITE_URL, absoluteUrl } from '@/lib/site-config';
 import { Badge } from '@/components/ui/badge';
 import { Contact1 } from '@/blocks/contact/contact1';
 import { CTA2 } from '@/blocks/cta/cta2';
+import RealizationTechnology from "@/components/realization-technology";
 import { ImageGallery } from '@/components/ui/image-gallery';
 
 // Revalidate every 60 seconds to show new realizacje
@@ -352,6 +353,8 @@ export default async function RealizacjaDetailPage({ params }: Props) {
             </div>
           </div>
         </section>
+
+        <RealizationTechnology realization={realizacja} />
 
         {/* Related Projects */}
         {relatedProjects.length > 0 && (

@@ -3,6 +3,7 @@
  * Provides CRUD operations for realizacje in the Neon Postgres database
  */
 
+import type { TechnologyLinks } from "@/lib/realization-materials";
 import { insertRow, isDatabaseConfigured, query, queryOne, updateRow } from './db';
 
 export interface RealizacjaData {
@@ -51,6 +52,7 @@ export interface RealizacjaData {
     localService?: string;
   };
 
+  technology_links?: TechnologyLinks;
   cloudinary_folder?: string;
   created_at?: string;
   updated_at?: string;
@@ -89,6 +91,7 @@ export async function createRealizacja(data: RealizacjaData): Promise<{ success:
       faq: data.faq || [],
       content: data.content,
       cloudinary_folder: data.cloudinary_folder,
+      ...(data.technology_links ? { technology_links: data.technology_links } : {}),
     });
 
     return { success: true, data: result };

@@ -10,6 +10,7 @@ import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMe
 import { serviceGroups } from "@/lib/service-navigation";
 
 const links = [
+  { title: "Systemy", href: "/systemy" },
   { title: "Realizacje", href: "/realizacje" },
   { title: "Poradniki", href: "/blog" },
   { title: "Kontakt", href: "/kontakt" },

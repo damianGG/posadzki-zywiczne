@@ -7,6 +7,7 @@ import { CTA2 } from "@/blocks/cta/cta2";
 import { FAQ2 } from "@/blocks/faq/faq2";
 import { Contact1 } from "@/blocks/contact/contact1";
 import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
+import RelatedSystems from "@/components/related-systems";
 import RelatedRealizations from "@/components/related-realizations";
 import Link from "next/link";
 
@@ -43,6 +44,7 @@ export default function Home() {
                 </Link>.
               </p>
             </section>
+            <div className="mx-auto max-w-6xl px-4 pb-12"><RelatedSystems application="balkony" title="Systemy na balkony i tarasy" /></div>
             <RelatedRealizations category="balkony-tarasy" title="Nasze realizacje balkonów i tarasów" />
             <Feature3 />
             {/* <Feature4 /> */}

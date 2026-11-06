@@ -3,6 +3,7 @@ import { getAllBlogPosts } from "@/lib/blog";
 import { getAllRealizacje } from "@/lib/realizacje";
 import { localServicePages } from "@/lib/local-service-pages";
 import { SITE_URL } from "@/lib/site-config";
+import { catalogSystems } from "@/lib/floor-system-catalog";
 import { stoneCities } from "@/lib/stone-cities";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -38,13 +39,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/hale-magazyny",
     "/gastronomia",
     "/kalkulator",
+    "/systemy",
     "/kontakt",
     "/realizacje",
     "/blog",
     "/kamienny-dywan",
   ].map((path) => ({ url: `${SITE_URL}${path}` }));
 
+  const systemPages = catalogSystems.map(system => ({ url: `${SITE_URL}/systemy/${system.slug}` }));
   const cityPages = stoneCities.map(city => ({ url: `${SITE_URL}/kamienny-dywan/${city.slug}` }));
   const localPages = Object.keys(localServicePages).map(city => ({ url: `${SITE_URL}/posadzki-zywiczne/${city}` }));
-  return [...staticPages, ...localPages, ...cityPages, ...posts, ...realizacje];
+  return [...staticPages, ...systemPages, ...localPages, ...cityPages, ...posts, ...realizacje];
 }

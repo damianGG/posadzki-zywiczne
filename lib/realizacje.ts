@@ -93,6 +93,7 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
     keywords: data.keywords || [],
     content: data.content,
     faq: data.faq,
+    technologyLinks: data.technology_links,
   };
 }
 

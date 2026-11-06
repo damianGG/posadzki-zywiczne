@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, CircuitBoard, Factory, FlaskConical, ShieldCheck, Zap } from "lucide-react";
+import RelatedSystems from "@/components/related-systems";
 import { absoluteUrl, SITE_PHONE, SITE_URL } from "@/lib/site-config";
 import { generatePageMetadata } from "@/lib/seo";
 import { getBreadcrumbSchema } from "@/lib/structured-data";
@@ -205,6 +206,7 @@ export default function PosadzkiElektrostatycznePage() {
         </div>
       </section>
 
+      <div className="container mx-auto max-w-6xl px-4"><RelatedSystems application="esd" title="Rozwiązania Sto do posadzek ESD" /></div>
       <section className="container mx-auto max-w-6xl px-4 py-16">
         <div className="rounded-2xl bg-zinc-900 px-7 py-10 text-white md:px-12 md:py-14">
           <div className="max-w-3xl">

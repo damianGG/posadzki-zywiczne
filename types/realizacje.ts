@@ -1,3 +1,5 @@
+import type { TechnologyLinks } from "@/lib/realization-materials";
+
 export type RealizacjaCategory = 'schody' | 'garaze' | 'kuchnie' | 'balkony-tarasy' | 'domy-mieszkania' | 'pomieszczenia-czyste';
 
 export interface Realizacja {
@@ -21,6 +23,8 @@ export interface Realizacja {
   };
   features: string[];
   keywords: string[];
+  /** Explicit manufacturer/system/material attributions, never inferred from tags. */
+  technologyLinks?: TechnologyLinks;
   
   // SEO-optimized content sections
   content?: {
