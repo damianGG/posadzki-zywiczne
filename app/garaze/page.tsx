@@ -131,6 +131,7 @@ export default function Home() {
               <div className="mt-5 flex flex-wrap gap-3">
                 <Link href="/systemy/sika-posadzki-garazowe" className="rounded-lg border px-4 py-3 font-medium hover:border-primary">Systemy Sika do garaży</Link>
                 <Link href="/systemy/sicon-posadzki-garazowe" className="rounded-lg border px-4 py-3 font-medium hover:border-primary">Systemy Sicon do garaży</Link>
+                <Link href="/systemy/epovio-garaz" className="rounded-lg border px-4 py-3 font-medium hover:border-primary">EPOVIO Garage (w opracowaniu)</Link>
                 <Link href="/systemy" className="rounded-lg border px-4 py-3 font-medium hover:border-primary">Wszystkie systemy</Link>
               </div>
             </section>
