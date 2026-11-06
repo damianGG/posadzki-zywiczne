@@ -23,7 +23,7 @@ export function resolveTechnologyLinks(realization: Realizacja) {
     garaze: "garaze", "balkony-tarasy": "balkony", "pomieszczenia-czyste": "hale",
   };
   const application = suggestedCategory[realization.category];
-  const suggestedSystems = application ? systemsForApplication(application).filter(system => !documentedSystems.some(documented => documented.slug === system.slug)) : [];
+  const suggestedSystems = application ? systemsForApplication(application).filter(system => !system.isConcept && !documentedSystems.some(documented => documented.slug === system.slug)) : [];
   return { documentedSystems, usedMaterials, suggestedSystems, equivalentShopProductIds: relation?.equivalentShopProductIds ?? [] };
 }
 
