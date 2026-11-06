@@ -5,11 +5,12 @@ export const Footer1 = () => {
   const navigationItems = [
     ...serviceGroups,
     { title: "Informacje", items: [
+      {title: "Systemy i producenci", href: "/systemy"},
       {title: "Realizacje", href: "/realizacje"},
       {title: "Galeria zdjęć", href: "/galeria"},
       {title: "Poradniki", href: "/blog"},
       {title: "Kontakt i wycena", href: "/kontakt"},
-      {title: "Kalkulator garażu", href: "/kalkulator"},
+      {title: "Kalkulator garażu", href: "/kalkulator?typ=garaz"},
     ]},
     { title: "Gdzie wykonujemy posadzki", items: [
       {title: "Rzeszów", href: "/posadzki-zywiczne/rzeszow"},
