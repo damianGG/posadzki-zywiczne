@@ -125,6 +125,15 @@ export default function Home() {
                 </Link>.
               </p>
             </section>
+            <section className="mx-auto max-w-6xl px-4 pb-12" aria-labelledby="garage-systems-heading">
+              <h2 id="garage-systems-heading" className="text-2xl font-bold md:text-3xl">Porównaj systemy do posadzek garażowych</h2>
+              <p className="mt-3 max-w-3xl text-muted-foreground">Zobacz, jak dobieramy rozwiązania producentów Sika i Sicon do stanu betonu oraz sposobu użytkowania garażu. Opis systemu nie jest gotową recepturą warstw.</p>
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link href="/systemy/sika-posadzki-garazowe" className="rounded-lg border px-4 py-3 font-medium hover:border-primary">Systemy Sika do garaży</Link>
+                <Link href="/systemy/sicon-posadzki-garazowe" className="rounded-lg border px-4 py-3 font-medium hover:border-primary">Systemy Sicon do garaży</Link>
+                <Link href="/systemy" className="rounded-lg border px-4 py-3 font-medium hover:border-primary">Wszystkie systemy</Link>
+              </div>
+            </section>
             <ProblemSolutionSection />
             <FAQ2 />
             <RelatedRealizations category="garaze" title="Nasze posadzki w garażach — zdjęcia realizacji" />
