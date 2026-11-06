@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { serviceGroups } from "@/lib/service-navigation";
+import RelatedSystems from "@/components/related-systems";
 import { industrialServices } from "@/lib/industrial-services";
 
 export default function IndustrialServicePage({ slug }: { slug: keyof typeof industrialServices }) {
@@ -34,6 +35,7 @@ export default function IndustrialServicePage({ slug }: { slug: keyof typeof ind
           <p className="mt-3 text-muted-foreground">W portfolio znajdziesz zdjęcia i opisy wykonanych prac. Zastosowany system i zakres podajemy przy konkretnym projekcie.</p>
           <Link href="/realizacje" className="mt-4 inline-block font-semibold underline">Zobacz portfolio realizacji</Link>
         </section>
+        {(slug === "parkingi" || slug === "hale-magazyny") && <RelatedSystems application={slug === "parkingi" ? "parkingi" : "hale"} />}
         <section className="mt-12" aria-labelledby="related-services">
           <h2 id="related-services" className="text-2xl font-semibold">Powiązane usługi</h2>
           <div className="mt-4 flex flex-wrap gap-3">{page.related.map(href => <Link key={href} href={href} className="rounded-lg border px-4 py-3 hover:bg-muted">{services.find(service => service.href === href)?.title}</Link>)}</div>
