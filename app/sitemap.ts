@@ -46,7 +46,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/kamienny-dywan",
   ].map((path) => ({ url: `${SITE_URL}${path}` }));
 
-  const systemPages = catalogSystems.map(system => ({ url: `${SITE_URL}/systemy/${system.slug}` }));
+  const systemPages = catalogSystems.filter(system => !system.isConcept).map(system => ({ url: `${SITE_URL}/systemy/${system.slug}` }));
   const cityPages = stoneCities.map(city => ({ url: `${SITE_URL}/kamienny-dywan/${city.slug}` }));
   const localPages = Object.keys(localServicePages).map(city => ({ url: `${SITE_URL}/posadzki-zywiczne/${city}` }));
   return [...staticPages, ...systemPages, ...localPages, ...cityPages, ...posts, ...realizacje];
