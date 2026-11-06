@@ -19,6 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${system.title} | Systemy posadzek żywicznych`,
     description: system.summary,
     alternates: { canonical: absoluteUrl(`/systemy/${slug}`) },
+    ...(system.isConcept ? { robots: { index: false, follow: true } } : {}),
   };
 }
 export default async function SystemDetailsPage({ params }: Props) {
@@ -33,9 +34,15 @@ export default async function SystemDetailsPage({ params }: Props) {
       <nav aria-label="Ścieżka nawigacji" className="mb-7 text-sm text-muted-foreground">
         <Link href="/" className="hover:underline">Strona główna</Link> / <Link href="/systemy" className="hover:underline">Systemy</Link> / {system.title}
       </nav>
-      <p className="text-sm font-medium text-primary">{manufacturers[system.manufacturerId].name}</p>
+      <p className="text-sm font-medium text-primary">{manufacturers[system.manufacturerId].name}{system.isConcept ? " · system w opracowaniu" : ""}</p>
       <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-5xl">{system.title}</h1>
       <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">{system.summary}</p>
+      {system.isConcept && (
+        <p className="mt-5 max-w-3xl rounded-lg border px-4 py-3 text-sm leading-relaxed text-muted-foreground">
+          EPOVIO jest własną marką w fazie rozwoju. Nie ma jeszcze zatwierdzonej receptury, kart technicznych,
+          instrukcji stosowania ani gotowych produktów w sprzedaży. Nazwy zestawów są robocze.
+        </p>
+      )}
       <div className="mt-7 flex flex-wrap gap-3">
         <Link href={system.serviceHref} className="rounded-lg bg-primary px-5 py-3 font-semibold text-primary-foreground hover:opacity-90">Zobacz ofertę wykonawczą</Link>
         <Link href="/kontakt" className="rounded-lg border px-5 py-3 font-medium hover:border-primary">Zapytaj o dobór systemu</Link>
@@ -46,10 +53,28 @@ export default async function SystemDetailsPage({ params }: Props) {
           {system.selectionCriteria.map(item => <li key={item}>{item}</li>)}
         </ul>
         <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-          Wybór systemu wymaga aktualnej dokumentacji technicznej oraz oględzin podłoża.
-          Nie należy traktować samych nazw materiałów jako instrukcji mieszania lub wykonywania warstw.
+          {system.isConcept
+            ? "Skład zestawów i ich kompatybilność zostaną ustalone po testach i skompletowaniu dokumentacji. Ta strona nie jest instrukcją wykonawczą ani ofertą handlową."
+            : "Wybór systemu wymaga aktualnej dokumentacji technicznej oraz oględzin podłoża. Nie należy traktować samych nazw materiałów jako instrukcji mieszania lub wykonywania warstw."}
         </p>
       </section>
+      {system.plannedOffer && system.plannedOffer.length > 0 && (
+        <section className="mt-12" aria-labelledby="epovio-variants">
+          <h2 id="epovio-variants" className="text-2xl font-semibold">Planowane warianty EPOVIO</h2>
+          <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
+            Poniższe produkty istnieją obecnie wyłącznie jako szkice w Shopify.
+            Nie mają zatwierdzonego składu, parametrów technicznych, cen ani możliwości zakupu.
+          </p>
+          <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {system.plannedOffer.map(offer => (
+              <article key={offer.name} className="rounded-xl border p-5">
+                <h3 className="font-semibold">{offer.name}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{offer.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+      )}
       {exampleMaterials.length > 0 && (
         <section className="mt-12">
           <h2 className="text-2xl font-semibold">Przykładowe materiały z oferty producenta</h2>
