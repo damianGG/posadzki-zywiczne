@@ -3,8 +3,9 @@
  * A system-family entry is NOT a manufacturer-approved layer specification.
  * Material examples are NOT proof they were used on a particular job.
  * No product is for sale here; store IDs are populated only after launch.
+ * EPOVIO is a brand concept (not a verified material manufacturer or tested recipe).
  */
-export type ManufacturerId = "sika" | "flowcrete" | "sto" | "sicon";
+export type ManufacturerId = "sika" | "flowcrete" | "sto" | "sicon" | "epovio";
 export type SystemApplication = "garaze" | "parkingi" | "hale" | "esd" | "balkony" | "gastronomia";
 
 export interface CatalogMaterial {
@@ -26,6 +27,9 @@ export interface CatalogSystem {
   selectionCriteria: string[];
   /** Technical examples from the manufacturer's range, not a layer recipe. */
   exampleMaterialIds: string[];
+  /** Concept-stage brand/system, not yet a technical specification or saleable product. */
+  isConcept?: boolean;
+  plannedOffer?: Array<{ name: string; description: string }>;
 }
 
 export const manufacturers: Record<ManufacturerId, { name: string; description: string }> = {
@@ -33,6 +37,7 @@ export const manufacturers: Record<ManufacturerId, { name: string; description: 
   flowcrete: { name: "Flowcrete", description: "Systemy posadzkowe dla parkingów, obiektów przemysłowych i wymagających stref użytkowych." },
   sto: { name: "Sto", description: "Rozwiązania przemysłowe, w tym posadzki wymagające kontroli właściwości elektrycznych." },
   sicon: { name: "Sicon", description: "Materiały i rozwiązania do wykonywania posadzek żywicznych." },
+  epovio: { name: "EPOVIO", description: "Własna, rozwijana marka Posadzkizywiczne.com. Koncepcja zestawów do samodzielnego wykonywania posadzek garażowych." },
 };
 
 export const catalogMaterials: CatalogMaterial[] = [
@@ -46,6 +51,26 @@ export const catalogMaterials: CatalogMaterial[] = [
 ];
 
 export const catalogSystems: CatalogSystem[] = [
+  {
+    slug: "epovio-garaz",
+    title: "EPOVIO Garage – autorski system do garażu",
+    manufacturerId: "epovio",
+    application: "garaze",
+    serviceHref: "/garaze",
+    summary: "Rozwijana przez Posadzkizywiczne.com koncepcja systemu garażowego EPOVIO: zestawy DIY z wariantem podstawowym i dekoracyjnym z płatkami. Skład, parametry i instrukcje wymagają jeszcze zatwierdzenia.",
+    selectionCriteria: [
+      "Rozpoznanie rodzaju i stanu podłoża, wilgotności, zanieczyszczeń i ewentualnych napraw.",
+      "Wybór oczekiwanego efektu: jednolite wykończenie albo wariant z płatkami dekoracyjnymi.",
+      "Weryfikacja docelowych materiałów, zgodności warstw, zużycia, warunków utwardzania i dokumentacji bezpieczeństwa przed wdrożeniem do sprzedaży.",
+    ],
+    exampleMaterialIds: [],
+    isConcept: true,
+    plannedOffer: [
+      { name: "EPOVIO Garage Kit", description: "Opracowywany zestaw bazowy do samodzielnego wykonania posadzki garażowej." },
+      { name: "EPOVIO Garage Flakes Kit", description: "Opracowywany wariant dekoracyjny z płatkami do garażu." },
+      { name: "EPOVIO Repair Kit", description: "Planowany zestaw uzupełniający do miejscowych napraw i przygotowania podłoża; nie jest kompletnym systemem posadzkowym." },
+    ],
+  },
   {
     slug: "sika-posadzki-garazowe",
     title: "Systemy Sika do garaży",
