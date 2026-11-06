@@ -1,70 +1,23 @@
 import Link from "next/link";
+import { serviceGroups } from "@/lib/service-navigation";
 
 export const Footer1 = () => {
   const navigationItems = [
-
-    // {
-    //   title: "2",
-    //   description: "",
-    //   items: [
-    //     {
-    //       title: "",
-    //       href: "/reports",
-    //     },
-    //     {
-    //       title: "",
-    //       href: "/statistics",
-    //     },
-    //     {
-    //       title: "",
-    //       href: "/dashboards",
-    //     },
-    //     {
-    //       title: "",
-    //       href: "/recordings",
-    //     },
-    //   ],
-    // },
-    {
-      title: "Firma",
-      description: "Trwałe posadzki żywiczne dopasowane do obiektu",
-      items: [
-        {
-          title: "Strona główna",
-          href: "/",
-        },
-        {
-          title: "Balkony i tarasy",
-          href: "/posadzki-zywiczne-na-balkony",
-        },
-        {
-          title: "Garaże",
-          href: "/garaze",
-        },
-        {
-          title: "Posadzki elektrostatyczne ESD",
-          href: "/posadzki-elektrostatyczne",
-        },
-        {
-          title: "Pomieszczenia czyste",
-          href: "/pomieszczenia-czyste",
-        },
-        {
-          title: "Kamienny dywan",
-          href: "/kamienny-dywan",
-        },
-      ],
-    },
-    {
-      title: "Gdzie wykonujemy posadzki",
-      items: [
-        { title: "Posadzki żywiczne Rzeszów", href: "/posadzki-zywiczne/rzeszow" },
-        { title: "Posadzki żywiczne Kraków", href: "/posadzki-zywiczne/krakow" },
-        { title: "Posadzki żywiczne Lublin", href: "/posadzki-zywiczne/lublin" },
-        { title: "Posadzki żywiczne Warszawa", href: "/posadzki-zywiczne/warszawa" },
-        { title: "Posadzki żywiczne Katowice", href: "/posadzki-zywiczne/katowice" },
-      ],
-    },
+    ...serviceGroups,
+    { title: "Informacje", items: [
+      {title: "Realizacje", href: "/realizacje"},
+      {title: "Galeria zdjęć", href: "/galeria"},
+      {title: "Poradniki", href: "/blog"},
+      {title: "Kontakt i wycena", href: "/kontakt"},
+      {title: "Kalkulator garażu", href: "/kalkulator"},
+    ]},
+    { title: "Gdzie wykonujemy posadzki", items: [
+      {title: "Rzeszów", href: "/posadzki-zywiczne/rzeszow"},
+      {title: "Kraków", href: "/posadzki-zywiczne/krakow"},
+      {title: "Lublin", href: "/posadzki-zywiczne/lublin"},
+      {title: "Warszawa", href: "/posadzki-zywiczne/warszawa"},
+      {title: "Katowice", href: "/posadzki-zywiczne/katowice"},
+    ]},
   ];
 
   return (
@@ -96,23 +49,14 @@ export const Footer1 = () => {
               </div>
             </div>
           </div>
-          <div className="grid lg:grid-cols-3 gap-10 items-start">
+          <div className="grid sm:grid-cols-2 gap-8 items-start">
             {navigationItems.map((item) => (
               <div
                 key={item.title}
                 className="flex text-base gap-1 flex-col items-start"
               >
                 <div className="flex flex-col gap-2">
-                  {/* {item.href ? (
-                    <Link
-                      href={item.href}
-                      className="flex justify-between items-center"
-                    >
-                      <span className="text-xl">{item.title}</span>
-                    </Link>
-                  ) : (
-                    <p className="text-xl">{item.title}</p>
-                  )} */}
+                  <h3 className="mb-2 font-semibold">{item.title}</h3>
                   {item.items &&
                     item.items.map((subItem) => (
                       <Link

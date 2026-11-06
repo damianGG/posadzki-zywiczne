@@ -1,35 +1,11 @@
-import HeroMainPage from "./components/hero_mainpage";
-import { Feature5 } from "@/blocks/feature/feature5";
+import IndustrialServicePage from "@/components/industrial-service-page";
+import { industrialServices } from "@/lib/industrial-services";
+import { generatePageMetadata } from "@/lib/seo";
 
-import { CTA2 } from "@/blocks/cta/cta2";
-import { FAQ2 } from "./components/faq2";
-import { Contact1 } from "@/blocks/contact/contact1";
-
-import { Feature3 } from "./components/feature3";
-
-import ProblemSolutionSection from "./components/issuse-solution";
-import BenefitsSection from "./components/BenefitsSection";
-import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
-import CertificatesSection from "./components/CertificatesSection";
-
-export default function Home() {
-
-
-    return (
-        <>
-            <HeroMainPage />
-            <ProblemSolutionSection />
-            <CertificatesSection />
-            <BenefitsSection />
-            <Feature3 />
-            <SocialProofSection />
-            <FAQ2 />
-            <CTA2 />
-            {/* <Case2 /> */}
-            {/* <Stats2 /> */}
-            {/* <Blog1 /> */}
-            <Feature5 />
-            <Contact1 />
-        </>
-    );
-}
+const page = industrialServices["pomieszczenia-czyste"];
+export const metadata = generatePageMetadata({
+  title: page.title + " — wykonanie i wycena",
+  description: page.description,
+  path: "/pomieszczenia-czyste",
+});
+export default function Page() { return <IndustrialServicePage slug="pomieszczenia-czyste" />; }

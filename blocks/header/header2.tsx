@@ -1,317 +1,85 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Calculator } from "lucide-react"
-import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuItem,
-    NavigationMenuLink,
-    NavigationMenuList,
-    NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu"
-import { Menu, MoveRight, X } from "lucide-react"
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "framer-motion"
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
+import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger } from "@/components/ui/navigation-menu";
+import { serviceGroups } from "@/lib/service-navigation";
 
-interface NavigationSubItem {
-    title: string
-    href: string
-    image: string
-}
-
-interface NavigationItem {
-    title: string
-    href?: string
-    description?: string
-    image?: string
-    items?: NavigationSubItem[]
-    badge?: string
-    disabled?: boolean
-}
+const links = [
+  { title: "Realizacje", href: "/realizacje" },
+  { title: "Poradniki", href: "/blog" },
+  { title: "Kontakt", href: "/kontakt" },
+];
 
 export const Header2 = () => {
-    const navigationItems: NavigationItem[] = [
-        {
-            title: "Strona Główna",
-            href: "/",
-            description: "",
-        },
-        {
-            title: "Realizacje",
-            href: "/realizacje",
-            description: "",
-        },
-        {
-            title: "Galeria",
-            href: "/galeria",
-            description: "",
-        },
-        {
-            title: "Sklep",
-            badge: "Dostępny wkrótce",
-            disabled: true,
-        },
-        {
-            title: "Balkony i Tarasy",
-            href: "/posadzki-zywiczne-na-balkony",
-            description: "",
-        },
-        {
-            title: "Garaże",
-            href: "/garaze",
-            description: "",
-        },
-        {
-            title: "Posadzki elektrostatyczne",
-            href: "/posadzki-elektrostatyczne",
-            description: "Specjalistyczne posadzki ESD i przewodzące",
-        },
-        {
-            title: "Kamienny dywan",
-            href: "/kamienny-dywan",
-            description: "",
-        },
-    ]
+  const pathname = usePathname();
+  const [isOpen, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => { setOpen(false); }, [pathname]);
+  const active = (href: string) => pathname === href ? "page" as const : undefined;
 
-    const [scrolled, setScrolled] = useState(false)
-
-    useEffect(() => {
-        const handleScroll = () => {
-            const isScrolled = window.scrollY > 10
-            if (isScrolled !== scrolled) {
-                setScrolled(isScrolled)
-            }
-        }
-
-        window.addEventListener("scroll", handleScroll, { passive: true })
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll)
-        }
-    }, [scrolled])
-
-    const [isOpen, setOpen] = useState(false)
-    const [hoveredSubItem, setHoveredSubItem] = useState<NavigationSubItem | null>(null)
-
-    const menuVariants = {
-        open: {
-            opacity: 1,
-            height: "auto",
-            transition: { duration: 0.3 },
-        },
-        closed: {
-            opacity: 0,
-            height: 0,
-            transition: { duration: 0.3 },
-        },
-    }
-
-    const navigationBadgeClassName =
-        "rounded-full bg-zinc-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white"
-
-    const renderBadge = (badge?: string) =>
-        badge ? <span className={navigationBadgeClassName}>{badge}</span> : null
-
-    const getDisabledNavigationAriaLabel = (item: NavigationItem) =>
-        item.badge ? `${item.title} - ${item.badge}` : item.title
-
-    return (
-        <header
-            className={`sticky top-0 left-0 z-40 w-full bg-zinc-50`}
-        >
-
-            <div className="container relative mx-auto min-h-20 flex items-center justify-between">
-                {/* LOGO/BRAND - DODANE */}
-                <div className="flex items-center">
-                    <Link href="/" className="flex items-center space-x-2">
-                        <div className="w-8 h-8  rounded-md flex items-center justify-center">
-                            <span className="text-primary-foreground font-bold text-sm">
-                                <Image
-                                    src="/posadzkizywiczne.com_logo.png"
-                                    alt="logo posadzkizywiczne.com"
-                                    width={300}
-                                    height={100}
-                                    sizes="32px"
-                                />
-                            </span>
-                        </div>
-                        <span className="font-bold text-lg hidden sm:block">PosadzkiŻywiczne.com</span>
-                    </Link>
-                </div>
-
-                {/* NAVIGATION - ŚRODEK */}
-                <div className="hidden lg:flex items-center">
-                    <NavigationMenu className="flex justify-center items-center">
-                        <NavigationMenuList className="flex justify-center gap-2 flex-row">
-                            {navigationItems.map((item) => (
-                                <NavigationMenuItem key={item.title} className="relative" onMouseLeave={() => setHoveredSubItem(null)}>
-                                    {item.disabled ? (
-                                        <button
-                                            type="button"
-                                            aria-disabled="true"
-                                            aria-label={getDisabledNavigationAriaLabel(item)}
-                                            className="inline-flex h-9 cursor-not-allowed items-center rounded-md px-3 text-sm text-muted-foreground opacity-70"
-                                        >
-                                            <span className="flex items-center gap-2">
-                                                {item.title}
-                                                {renderBadge(item.badge)}
-                                            </span>
-                                        </button>
-                                    ) : item.href ? (
-                                        <Link href={item.href} passHref>
-                                            <Button variant="ghost" size="sm" className="text-sm">
-                                                <span className="flex items-center gap-2">
-                                                    {item.title}
-                                                    {renderBadge(item.badge)}
-                                                </span>
-                                            </Button>
-                                        </Link>
-                                    ) : (
-                                        <>
-                                            <NavigationMenuTrigger
-                                                className="font-medium text-sm"
-                                                onMouseEnter={() => {
-                                                    if (item.items && item.items.length > 0) {
-                                                        setHoveredSubItem(item.items[0])
-                                                    }
-                                                }}
-                                            >
-                                                {item.title}
-                                            </NavigationMenuTrigger>
-                                            <NavigationMenuContent className="absolute left-1/2 transform -translate-x-1/2 !w-[450px] p-4">
-                                                <div className="flex flex-col lg:grid grid-cols-2 gap-4">
-                                                    <div className="flex flex-col h-full justify-between">
-                                                        <div className="flex flex-col">
-                                                            {item.description && <p className="text-muted-foreground text-sm">{item.description}</p>}
-                                                        </div>
-                                                        {(hoveredSubItem?.image || item.image) && (
-                                                            <Image
-                                                                src={hoveredSubItem?.image || item.image || "/placeholder.svg"}
-                                                                alt={hoveredSubItem?.title || item.title}
-                                                                width={424}
-                                                                height={424}
-                                                                className="rounded-md mb-2"
-                                                            />
-                                                        )}
-                                                    </div>
-                                                    <div className="flex flex-col text-sm h-full justify-end">
-                                                        {item.items?.map((subItem) => (
-                                                            <NavigationMenuLink
-                                                                href={subItem.href}
-                                                                key={subItem.title}
-                                                                className="flex flex-row justify-between items-center hover:bg-muted py-2 px-4 rounded"
-                                                                onMouseEnter={() => setHoveredSubItem(subItem)}
-                                                                onMouseLeave={() => {
-                                                                    if (item.items && item.items.length > 0) {
-                                                                        setHoveredSubItem(item.items[0])
-                                                                    } else {
-                                                                        setHoveredSubItem(null)
-                                                                    }
-                                                                }}
-                                                            >
-                                                                <span>{subItem.title}</span>
-                                                                <MoveRight className="w-4 h-4 text-muted-foreground" />
-                                                            </NavigationMenuLink>
-                                                        ))}
-                                                    </div>
-                                                </div>
-                                            </NavigationMenuContent>
-                                        </>
-                                    )}
-                                </NavigationMenuItem>
-                            ))}
-                        </NavigationMenuList>
-                    </NavigationMenu>
-                </div>
-
-                {/* CTA BUTTONS - PRAWA STRONA */}
-                <div className="flex items-center gap-3">
-                    <Button variant="outline" size="sm" className="hidden sm:flex bg-transparent">
-                        <Link href="/kontakt">Kontakt</Link>
-                    </Button>
-                    <Button
-                        size="sm"
-                        className="flex items-center gap-2 bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 text-white hover:from-purple-700 hover:via-pink-600 hover:to-orange-500"
-                    >
-                        <Link href="/kalkulator" className="flex items-center gap-2">
-                            <span className="hidden sm:inline">Kalkulator posadzki</span>
-                            <span className="sm:hidden">Kalkulator</span>
-                        </Link>
-                    </Button>
-                </div>
-
-                {/* MOBILE MENU BUTTON */}
-                <div className="flex lg:hidden">
-                    <Button variant="ghost" size="sm" onClick={() => setOpen(!isOpen)}>
-                        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                    </Button>
-                </div>
-            </div>
-
-            {/* MOBILE MENU */}
-            <motion.div
-                className="lg:hidden border-t bg-background/95 backdrop-blur-md"
-                initial="closed"
-                animate={isOpen ? "open" : "closed"}
-                variants={menuVariants}
-                style={{ overflow: "hidden" }}
-            >
-                <div className="container py-4 space-y-4">
-                    {navigationItems.map((item) => (
-                        <div key={item.title}>
-                            {item.disabled ? (
-                                <button
-                                    type="button"
-                                    aria-disabled="true"
-                                    aria-label={getDisabledNavigationAriaLabel(item)}
-                                    className="flex w-full items-center justify-between py-2 text-left text-muted-foreground opacity-70"
-                                >
-                                    <span className="flex items-center gap-2 text-base font-medium">
-                                        {item.title}
-                                        {renderBadge(item.badge)}
-                                    </span>
-                                </button>
-                            ) : item.href ? (
-                                <Link
-                                    href={item.href}
-                                    className="flex items-center justify-between py-2"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    <span className="text-base font-medium">{item.title}</span>
-                                    <MoveRight className="w-4 h-4 stroke-1 text-muted-foreground" />
-                                </Link>
-                            ) : (
-                                <div className="space-y-2 py-2">
-                                    <span className="text-base font-medium text-muted-foreground">{item.title}</span>
-                                    <div className="ml-4 flex flex-col gap-2">
-                                        {item.items?.map(subItem => (
-                                            <Link
-                                                key={subItem.href}
-                                                href={subItem.href}
-                                                className="block py-1 text-sm font-medium"
-                                                onClick={() => setOpen(false)}
-                                            >
-                                                {subItem.title}
-                                            </Link>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+  return (
+    <header className="sticky top-0 z-40 w-full border-b bg-zinc-50" onKeyDown={event => {
+      if (event.key === "Escape" && isOpen) { setOpen(false); toggleRef.current?.focus(); }
+    }}>
+      <div className="container mx-auto flex min-h-20 items-center justify-between gap-3">
+        <Link href="/" aria-label="PosadzkiŻywiczne.com — strona główna" className="flex shrink-0 items-center gap-2">
+          <Image src="/posadzkizywiczne.com_logo.png" alt="" width={32} height={32} sizes="32px" />
+          <span className="hidden text-lg font-bold sm:block">PosadzkiŻywiczne.com</span>
+        </Link>
+        <div className="hidden xl:block">
+          <NavigationMenu aria-label="Nawigacja główna">
+            <NavigationMenuList>
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="bg-transparent">Posadzki</NavigationMenuTrigger>
+                <NavigationMenuContent className="p-6 md:w-[600px]">
+                  <div className="grid grid-cols-2 gap-6">
+                    {serviceGroups.map(group => (
+                      <div key={group.title}>
+                        <p className="mb-3 text-sm font-semibold text-muted-foreground">{group.title}</p>
+                        <ul className="space-y-1">{group.items.map(item => (
+                          <li key={item.href}><NavigationMenuLink asChild active={pathname === item.href}>
+                            <Link href={item.href} aria-current={active(item.href)} className="block rounded-md px-3 py-2 text-sm hover:bg-muted focus:bg-muted">{item.title}</Link>
+                          </NavigationMenuLink></li>
+                        ))}</ul>
+                      </div>
                     ))}
-                    <div className="pt-4 border-t space-y-3">
-                        <Button variant="outline" className="w-full bg-transparent" asChild>
-                            <Link href="/kontakt">Kontakt</Link>
-                        </Button>
-                        <Button className="w-full" asChild>
-                            <Link href="/kontakt">Bezpłatna konsultacja</Link>
-                        </Button>
-                    </div>
-                </div>
-            </motion.div>
-        </header>
-    )
-}
+                  </div>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+              {links.map(item => (
+                <NavigationMenuItem key={item.href}><NavigationMenuLink asChild active={pathname === item.href}>
+                  <Link href={item.href} aria-current={active(item.href)} className="block rounded-md px-4 py-2 text-sm font-medium hover:bg-muted">{item.title}</Link>
+                </NavigationMenuLink></NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link href="/kalkulator" className="hidden text-sm hover:underline lg:block">Kalkulator garażu</Link>
+          <Button asChild size="sm"><Link href="/kontakt">Wyceń posadzkę</Link></Button>
+          <Button ref={toggleRef} variant="ghost" size="icon" className="xl:hidden" aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={() => setOpen(!isOpen)}>
+            {isOpen ? <X aria-hidden="true" className="h-5 w-5" /> : <Menu aria-hidden="true" className="h-5 w-5" />}
+          </Button>
+        </div>
+      </div>
+      <nav id="mobile-navigation" aria-label="Nawigacja mobilna" hidden={!isOpen} className="max-h-[calc(100dvh-5rem)] overflow-y-auto border-t px-5 py-4 xl:hidden">
+        <p className="mb-3 text-lg font-semibold">Posadzki</p>
+        {serviceGroups.map(group => (
+          <details key={group.title} open className="mb-4 border-b pb-3">
+            <summary className="cursor-pointer py-2 font-medium">{group.title}</summary>
+            <ul>{group.items.map(item => (
+              <li key={item.href}><Link href={item.href} aria-current={active(item.href)} onClick={() => setOpen(false)} className="block rounded px-3 py-3 text-sm hover:bg-muted">{item.title}</Link></li>
+            ))}</ul>
+          </details>
+        ))}
+        {links.map(item => <Link key={item.href} href={item.href} aria-current={active(item.href)} onClick={() => setOpen(false)} className="block py-3 font-medium">{item.title}</Link>)}
+        <Link href="/kalkulator" onClick={() => setOpen(false)} className="block py-3 font-medium">Kalkulator garażu</Link>
+      </nav>
+    </header>
+  );
+};
