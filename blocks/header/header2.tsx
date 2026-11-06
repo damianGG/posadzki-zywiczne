@@ -60,8 +60,8 @@ export const Header2 = () => {
           </NavigationMenu>
         </div>
         <div className="flex items-center gap-2">
-          <Link href="/kalkulator" className="hidden text-sm hover:underline lg:block">Kalkulator garażu</Link>
-          <Button asChild size="sm"><Link href="/kalkulator">Wyceń garaż</Link></Button>
+          <Link href="/kalkulator?typ=garaz" className="hidden text-sm hover:underline lg:block">Kalkulator garażu</Link>
+          <Button asChild size="sm"><Link href="/kalkulator?typ=garaz">Wyceń garaż</Link></Button>
           <Button ref={toggleRef} variant="ghost" size="icon" className="xl:hidden" aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={() => setOpen(!isOpen)}>
             {isOpen ? <X aria-hidden="true" className="h-5 w-5" /> : <Menu aria-hidden="true" className="h-5 w-5" />}
           </Button>
@@ -78,7 +78,7 @@ export const Header2 = () => {
           </details>
         ))}
         {links.map(item => <Link key={item.href} href={item.href} aria-current={active(item.href)} onClick={() => setOpen(false)} className="block py-3 font-medium">{item.title}</Link>)}
-        <Link href="/kalkulator" onClick={() => setOpen(false)} className="block py-3 font-medium">Kalkulator garażu</Link>
+        <Link href="/kalkulator?typ=garaz" onClick={() => setOpen(false)} className="block py-3 font-medium">Kalkulator garażu</Link>
       </nav>
     </header>
   );
