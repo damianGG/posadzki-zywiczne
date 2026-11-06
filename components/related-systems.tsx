@@ -2,7 +2,7 @@ import Link from "next/link";
 import { systemsForApplication, type SystemApplication } from "@/lib/floor-system-catalog";
 
 export default function RelatedSystems({ application, title = "Systemy posadzkowe do porównania" }: { application: SystemApplication; title?: string }) {
-  const systems = systemsForApplication(application);
+  const systems = systemsForApplication(application).filter(system => !system.isConcept);
   if (!systems.length) return null;
   return (
     <section className="mt-12" aria-labelledby={`systems-${application}`}>

@@ -2,7 +2,7 @@
 
 ## Strony i adresy
 - /garaze, /parkingi, /hale-magazyny, /posadzki-elektrostatyczne itd.: istniejące usługi wykonawcze (bez migracji URL).
-- /systemy: publiczny katalog czterech producentów Sika, Flowcrete, Sto, Sicon i rodzin zastosowań.
+- /systemy: publiczny katalog rozwiązań Sika, Flowcrete, Sto, Sicon oraz rozwijanej marki własnej EPOVIO.
 - /systemy/[slug]: strony rodzin systemów i kryteriów doboru, połączone z usługami.
 - /systemy/materialy/[slug]: tymczasowe nieindeksowane karty informacyjne (bez ofert/price schema).
 - /realizacje/[slug]: galeria + potwierdzone systemy i materiały + osobno propozycje alternatywnych technologii.
@@ -34,6 +34,15 @@ Dla realizacji przechowywanych w repozytorium dodaj wpis do `documentedRealizati
 Taki wpis nie stanowi potwierdzenia użycia konkretnej żywicy. Dodaj `usedMaterialIds` dopiero gdy znasz jej dokładny model.
 
 Dla realizacji z Neon wykonaj kontrolowaną aktualizację `technology_links` po wdrożeniu migracji. Następny etap obejmuje edytor tych relacji w panelu administracyjnym (z walidacją katalogu).
+
+## Autorski system EPOVIO Garage — etap koncepcji
+- W katalogu istnieje rodzina systemu `/systemy/epovio-garaz` ze statusem `isConcept: true`; jest dostępna z katalogu i strony garaży, ale ma `noindex,follow` i nie pojawia się w XML sitemap do momentu zatwierdzenia dokumentacji.
+- **Marka własna EPOVIO nie oznacza, że spółka jest producentem chemicznym**. Nie przypisuj jej właściwości, oznakowania i certyfikatów producenta bez weryfikacji.
+- Koncepcja garażowa obejmuje dwa warianty planowanych zestawów: `EPOVIO Garage Kit` i `EPOVIO Garage Flakes Kit`. `EPOVIO Repair Kit` to zestaw do przygotowania/naprawy podłoża, nie pełna posadzka.
+- Shopify posiada trzy produkty **DRAFT** o tych nazwach, z techniczną ceną 0 zł, bez SKU, zatwierdzonych receptur, kart technicznych czy prawidłowej oferty handlowej. W katalogu nie tworzymy jeszcze odnośników zakupowych ani mapowania tych szkiców na faktycznie użyte materiały.
+- Nadal wymagane: materiały i dostawca/private label, skład i kompatybilność warstw, dobór podłoża, realne zużycie, testy, instrukcje, SDS/CLP/UFI/PCN tam gdzie mają zastosowanie, ceny, logistyka oraz weryfikacja praw do oznaczenia EPOVIO (potencjalna kolizja z EPOVIA).
+- `resolveTechnologyLinks` nie rekomenduje koncepcji EPOVIO automatycznie na stronach istniejących realizacji. Relacje do realizacji można dodać dopiero po wykonaniu i potwierdzeniu rzeczywistego zastosowania docelowego produktu.
+- Sklep nadal ukryty; istniejący kalkulator wyceny wykonania garażu pozostaje niezależny.
 
 ## Integracja ze sklepem Epovio/Shopify — kolejny etap
 - Jeden identyfikator materiału wewnętrznego, mapowany na konkretne SKU i `shopProductId`/Shopify product variant, nigdy po zgadywanej nazwie.
