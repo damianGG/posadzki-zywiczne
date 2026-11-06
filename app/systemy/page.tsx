@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { catalogSystems, manufacturers, type ManufacturerId } from "@/lib/floor-system-catalog";
+import { catalogSystems, getCatalogSystem, manufacturers, type ManufacturerId } from "@/lib/floor-system-catalog";
 import { absoluteUrl } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Systemy posadzek żywicznych Sika, Flowcrete, Sto i Sicon",
-  description: "Dobór systemów posadzek żywicznych do garaży, parkingów, hal, balkonów i ESD. Porównaj zastosowania oraz wymagania i zobacz materiały producentów.",
+  title: "Systemy posadzek | Sika, Flowcrete, Sto, Sicon, EPOVIO",
+  description: "Systemy żywiczne Sika, Flowcrete, Sto i Sicon oraz rozwijany system garażowy EPOVIO. Porównaj technologie do garaży, parkingów, hal i ESD.",
   alternates: { canonical: absoluteUrl("/systemy") },
 };
 const manufacturerIds: ManufacturerId[] = ["sika", "flowcrete", "sto", "sicon"];
 
 export default function SystemsIndexPage() {
+  const epovio = getCatalogSystem("epovio-garaz");
   return (
     <main className="mx-auto max-w-6xl px-4 py-12 md:py-16">
       <nav aria-label="Ścieżka nawigacji" className="mb-7 text-sm text-muted-foreground">
@@ -18,13 +19,25 @@ export default function SystemsIndexPage() {
       </nav>
       <h1 className="text-3xl font-bold tracking-tight md:text-5xl">Systemy posadzek żywicznych</h1>
       <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-        Poznaj rozwiązania producentów Sika, Flowcrete, Sto i Sicon. Najpierw wybierz zastosowanie,
+        Poznaj rozwiązania Sika, Flowcrete, Sto i Sicon oraz naszą rozwijaną markę EPOVIO. Najpierw wybierz zastosowanie,
         a następnie sprawdź warunki techniczne, które decydują o doborze warstw.
       </p>
       <p className="mt-4 max-w-3xl text-sm text-muted-foreground">
         Ten katalog pomaga porównywać technologie. Nie jest gotową recepturą wykonania posadzki:
         zgodność warstw, zużycie i parametry potwierdzamy dla kompletnego systemu według aktualnych dokumentów producenta.
       </p>
+      {epovio && (
+        <section id="epovio" className="mt-10 rounded-2xl border p-6 md:p-8" aria-labelledby="epovio-heading">
+          <p className="text-sm font-medium text-primary">Nasz rozwijany system · w przygotowaniu</p>
+          <h2 id="epovio-heading" className="mt-2 text-2xl font-bold md:text-3xl">{manufacturers.epovio.name} Garage</h2>
+          <p className="mt-3 max-w-3xl text-muted-foreground">
+            {epovio.summary} Produkty są nadal szkicami — nie prowadzimy jeszcze sprzedaży ani nie publikujemy niezweryfikowanych parametrów.
+          </p>
+          <Link href={`/systemy/${epovio.slug}`} className="mt-5 inline-block rounded-lg border px-5 py-3 text-sm font-semibold hover:border-primary hover:text-primary">
+            Poznaj koncepcję EPOVIO Garage
+          </Link>
+        </section>
+      )}
       <div className="mt-10 grid gap-6 md:grid-cols-2">
         {manufacturerIds.map(id => (
           <section key={id} id={id} className="scroll-mt-28 rounded-2xl border p-6">
