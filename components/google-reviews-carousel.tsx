@@ -14,7 +14,7 @@ import type { GoogleReview } from "@/lib/google-reviews";
 
 function ReviewCard({ review }: { review: GoogleReview }) {
   const [expanded, setExpanded] = useState(false);
-  const canExpand = review.content.length > 240;
+  const canExpand = review.content.length > 120;
 
   const author = (
     <span className="flex min-w-0 items-center gap-3">
@@ -45,7 +45,7 @@ function ReviewCard({ review }: { review: GoogleReview }) {
   );
 
   return (
-    <article className="flex h-full min-h-[370px] flex-col rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
+    <article className="flex h-full w-full min-h-[370px] flex-col rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
       <div className="flex items-center justify-between gap-3">
         <span className="flex gap-1" aria-label={"Ocena " + review.rating + " na 5"}>
           {Array.from({ length: 5 }, (_, index) => (
@@ -60,7 +60,7 @@ function ReviewCard({ review }: { review: GoogleReview }) {
             />
           ))}
         </span>
-        <span className="text-xs font-semibold text-slate-500">Google Maps</span>
+        <span translate="no" className="whitespace-nowrap text-xs font-normal text-[#5e5e5e]">Google Maps</span>
       </div>
       <div className="mt-7 flex-1">
         {review.content ? (
