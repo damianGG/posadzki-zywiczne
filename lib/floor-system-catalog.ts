@@ -1,18 +1,18 @@
 /**
- * Editorial catalog of manufacturers, system families and named materials.
+ * Editorial catalog of brands, system families and named materials.
  * A system-family entry is NOT a manufacturer-approved layer specification.
  * Material examples are NOT proof they were used on a particular job.
  * No product is for sale here; store IDs are populated only after launch.
  * EPOVIO is an independent own-label brand, not a rebadged Sicon system.
  * Final formulations, actual producer and measured data must be verified before sale.
  */
-export type ManufacturerId = "sika" | "flowcrete" | "sto" | "sicon" | "epovio";
+export type BrandId = "sika" | "flowcrete" | "sto" | "sicon" | "epovio";
 export type SystemApplication = "garaze" | "parkingi" | "hale" | "esd" | "balkony" | "gastronomia";
 
 export interface CatalogMaterial {
   id: string;
   name: string;
-  manufacturerId: ManufacturerId;
+  brandId: BrandId;
   description: string;
   /** Optional external commercial product mapping; never guessed from the name. */
   shopProductId?: string;
@@ -25,7 +25,7 @@ export interface CatalogMaterial {
 export interface CatalogSystem {
   slug: string;
   title: string;
-  manufacturerId: ManufacturerId;
+  brandId: BrandId;
   application: SystemApplication;
   serviceHref: string;
   summary: string;
@@ -42,26 +42,26 @@ export interface CatalogSystem {
   technicalFields?: Array<{ label: string; value: string }>;
 }
 
-export const manufacturers: Record<ManufacturerId, { name: string; description: string }> = {
-  sika: { name: "Sika", description: "Rozwiązania żywiczne do garaży, pomieszczeń użytkowych i powierzchni zewnętrznych." },
-  flowcrete: { name: "Flowcrete", description: "Systemy posadzkowe dla parkingów, obiektów przemysłowych i wymagających stref użytkowych." },
-  sto: { name: "Sto", description: "Rozwiązania przemysłowe, w tym posadzki wymagające kontroli właściwości elektrycznych." },
-  sicon: { name: "Sicon", description: "Materiały i rozwiązania do wykonywania posadzek żywicznych." },
-  epovio: { name: "EPOVIO", description: "Własna, rozwijana marka Posadzkizywiczne.com. Koncepcja zestawów do samodzielnego wykonywania posadzek garażowych." },
+export const brands: Record<BrandId, { name: string; description: string; kind: "own" | "external" }> = {
+  sika: { name: "Sika", description: "Rozwiązania żywiczne do garaży, pomieszczeń użytkowych i powierzchni zewnętrznych.", kind: "external" },
+  flowcrete: { name: "Flowcrete", description: "Systemy posadzkowe dla parkingów, obiektów przemysłowych i wymagających stref użytkowych.", kind: "external" },
+  sto: { name: "Sto", description: "Rozwiązania przemysłowe, w tym posadzki wymagające kontroli właściwości elektrycznych.", kind: "external" },
+  sicon: { name: "Sicon", description: "Materiały i rozwiązania do wykonywania posadzek żywicznych.", kind: "external" },
+  epovio: { name: "EPOVIO", description: "Samodzielna marka własna Posadzkizywiczne.com – rozwijamy pod nią produkty do wykonywania posadzek. Docelowy wytwórca chemii będzie wskazany w dokumentacji.", kind: "own" },
 };
 
 export const catalogMaterials: CatalogMaterial[] = [
-  { id: "sikafloor-264", name: "Sikafloor-264", manufacturerId: "sika", description: "Materiał z rodziny epoksydowych rozwiązań posadzkowych Sika; zastosowanie zależy od aktualnej karty technicznej." },
-  { id: "sikafloor-2540-w", name: "Sikafloor-2540 W", manufacturerId: "sika", description: "Wodorozcieńczalny materiał epoksydowy; dobór wymaga sprawdzenia podłoża i dokumentacji producenta." },
-  { id: "sikafloor-305-w", name: "Sikafloor-305 W", manufacturerId: "sika", description: "Powłoka wykończeniowa z oferty Sika; zgodność z układem warstw wymaga potwierdzenia." },
-  { id: "flowcrete-deckshield-finish", name: "Flowcrete Deckshield Finish", manufacturerId: "flowcrete", description: "Produkt z rodziny rozwiązań parkingowych Deckshield; dobór i zakres stosowania według producenta." },
-  { id: "sto-put-wv-150", name: "Sto PUT WV 150", manufacturerId: "sto", description: "Materiał z oferty Sto; szczegółowe przeznaczenie i kompatybilność należy potwierdzić w dokumentacji." },
-  { id: "sto-put-wv-200", name: "Sto PUT WV 200", manufacturerId: "sto", description: "Materiał z oferty Sto; parametry techniczne należy odczytać z aktualnej karty produktu." },
-  { id: "sicon-rr100-pro", name: "Sicon RR100 PRO", manufacturerId: "sicon", description: "Materiał do rozwiązań posadzkowych Sicon; właściwy układ warstw wymaga potwierdzenia. Nie należy utożsamiać go z RR100-E." },
+  { id: "sikafloor-264", name: "Sikafloor-264", brandId: "sika", description: "Materiał z rodziny epoksydowych rozwiązań posadzkowych Sika; zastosowanie zależy od aktualnej karty technicznej." },
+  { id: "sikafloor-2540-w", name: "Sikafloor-2540 W", brandId: "sika", description: "Wodorozcieńczalny materiał epoksydowy; dobór wymaga sprawdzenia podłoża i dokumentacji producenta." },
+  { id: "sikafloor-305-w", name: "Sikafloor-305 W", brandId: "sika", description: "Powłoka wykończeniowa z oferty Sika; zgodność z układem warstw wymaga potwierdzenia." },
+  { id: "flowcrete-deckshield-finish", name: "Flowcrete Deckshield Finish", brandId: "flowcrete", description: "Produkt z rodziny rozwiązań parkingowych Deckshield; dobór i zakres stosowania według producenta." },
+  { id: "sto-put-wv-150", name: "Sto PUT WV 150", brandId: "sto", description: "Materiał z oferty Sto; szczegółowe przeznaczenie i kompatybilność należy potwierdzić w dokumentacji." },
+  { id: "sto-put-wv-200", name: "Sto PUT WV 200", brandId: "sto", description: "Materiał z oferty Sto; parametry techniczne należy odczytać z aktualnej karty produktu." },
+  { id: "sicon-rr100-pro", name: "Sicon RR100 PRO", brandId: "sicon", description: "Materiał do rozwiązań posadzkowych Sicon; właściwy układ warstw wymaga potwierdzenia. Nie należy utożsamiać go z RR100-E." },
   {
     id: "siconofloor-gf-e-premium",
     name: "Siconofloor GF-E Premium",
-    manufacturerId: "sicon",
+    brandId: "sicon",
     description: "Bezbarwny, dwuskładnikowy grunt epoksydowy do betonu i pod systemy żywiczne. Producent podaje zużycie gruntowania około 0,3–0,6 kg/m², zależne od podłoża.",
     referenceConsumption: "Gruntowanie: orientacyjnie 0,3–0,6 kg/m² (karta Sicon; porowate podłoże może wymagać kolejnej warstwy).",
     technicalSheetUrl: "https://www.sicon.pl/wp-content/uploads/2023/02/SICONOFLOOR-GF-E-PREMIUM-KT.pdf",
@@ -69,7 +69,7 @@ export const catalogMaterials: CatalogMaterial[] = [
   {
     id: "siconofloor-rr100-e",
     name: "Siconofloor RR100-E",
-    manufacturerId: "sicon",
+    brandId: "sicon",
     description: "Barwiona, dwuskładnikowa żywica epoksydowa stosowana jako powłoka zamykająca w systemach gładkich i z kruszywem kwarcowym. To RR100-E, a nie odrębny wariant RR100 PRO.",
     referenceConsumption: "Powłoka na gładkiej powierzchni: ok. 0,15–0,20 kg/m²; przy zasypie kwarcowym i nierównościach zużycie wzrasta.",
     technicalSheetUrl: "https://www.sicon.pl/wp-content/uploads/2023/02/SICONOFLOOR-RR100-KT.pdf",
@@ -80,7 +80,7 @@ export const catalogSystems: CatalogSystem[] = [
   {
     slug: "epovio-garaz",
     title: "EPOVIO Garage – autorski system do garażu",
-    manufacturerId: "epovio",
+    brandId: "epovio",
     application: "garaze",
     serviceHref: "/garaze",
     summary: "EPOVIO Garage to rozwijany pod własną marką EPOVIO system powłokowy do garaży. Projekt obejmuje wariant gładki, dekoracyjny z płatkami i antypoślizgowy; ostateczne produkty, skład i parametry zostaną zatwierdzone przed sprzedażą.",
@@ -126,7 +126,7 @@ export const catalogSystems: CatalogSystem[] = [
   {
     slug: "sika-posadzki-garazowe",
     title: "Systemy Sika do garaży",
-    manufacturerId: "sika",
+    brandId: "sika",
     application: "garaze",
     serviceHref: "/garaze",
     summary: "Dobór posadzki garażowej zależy od stanu betonu, wilgotności, obciążeń, wykończenia i oczekiwanej łatwości mycia.",
@@ -136,7 +136,7 @@ export const catalogSystems: CatalogSystem[] = [
   {
     slug: "sika-balkony-tarasy",
     title: "Rozwiązania Sika na balkony i tarasy",
-    manufacturerId: "sika",
+    brandId: "sika",
     application: "balkony",
     serviceHref: "/posadzki-zywiczne-na-balkony",
     summary: "Na zewnątrz priorytetami są woda, nasłonecznienie, ruchy podłoża oraz poprawnie wykonane detale uszczelnień.",
@@ -146,7 +146,7 @@ export const catalogSystems: CatalogSystem[] = [
   {
     slug: "flowcrete-parkingi",
     title: "Systemy Flowcrete do parkingów",
-    manufacturerId: "flowcrete",
+    brandId: "flowcrete",
     application: "parkingi",
     serviceHref: "/parkingi",
     summary: "Rozwiązania dla miejsc postojowych, ramp i dróg manewrowych dobierane do rodzaju konstrukcji i ruchu.",
@@ -156,7 +156,7 @@ export const catalogSystems: CatalogSystem[] = [
   {
     slug: "flowcrete-posadzki-przemyslowe",
     title: "Posadzki przemysłowe Flowcrete",
-    manufacturerId: "flowcrete",
+    brandId: "flowcrete",
     application: "hale",
     serviceHref: "/hale-magazyny",
     summary: "Systemy dla hal i magazynów uwzględniające ruch kołowy, czyszczenie, obciążenia i warunki pracy.",
@@ -166,7 +166,7 @@ export const catalogSystems: CatalogSystem[] = [
   {
     slug: "sto-posadzki-esd",
     title: "Rozwiązania Sto do posadzek ESD",
-    manufacturerId: "sto",
+    brandId: "sto",
     application: "esd",
     serviceHref: "/posadzki-elektrostatyczne",
     summary: "Posadzki przewodzące i rozpraszające wymagają uzgodnienia parametrów elektrycznych całego systemu oraz pomiarów odbiorowych.",
@@ -176,7 +176,7 @@ export const catalogSystems: CatalogSystem[] = [
   {
     slug: "sicon-posadzki-garazowe",
     title: "Rozwiązania Sicon do posadzek garażowych",
-    manufacturerId: "sicon",
+    brandId: "sicon",
     application: "garaze",
     serviceHref: "/garaze",
     summary: "Dobór materiałów Sicon do garażu opieramy na stanie podłoża, oczekiwanej fakturze i sposobie eksploatacji.",
