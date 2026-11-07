@@ -3,7 +3,8 @@
  * A system-family entry is NOT a manufacturer-approved layer specification.
  * Material examples are NOT proof they were used on a particular job.
  * No product is for sale here; store IDs are populated only after launch.
- * EPOVIO is a brand concept (not a verified material manufacturer or tested recipe).
+ * EPOVIO is an independent own-label brand, not a rebadged Sicon system.
+ * Final formulations, actual producer and measured data must be verified before sale.
  */
 export type ManufacturerId = "sika" | "flowcrete" | "sto" | "sicon" | "epovio";
 export type SystemApplication = "garaze" | "parkingi" | "hale" | "esd" | "balkony" | "gastronomia";
@@ -37,6 +38,8 @@ export interface CatalogSystem {
   /** Proposed structure; not manufacturer-approved as one complete specification. */
   proposedLayers?: Array<{ title: string; materialId?: string; description: string }>;
   pendingValidation?: string[];
+  /** Fields for a brand-owned technical-card layout. Unknown figures are left as pending. */
+  technicalFields?: Array<{ label: string; value: string }>;
 }
 
 export const manufacturers: Record<ManufacturerId, { name: string; description: string }> = {
@@ -76,36 +79,48 @@ export const catalogMaterials: CatalogMaterial[] = [
 export const catalogSystems: CatalogSystem[] = [
   {
     slug: "epovio-garaz",
-    title: "EPOVIO Garage – system garażowy na materiałach Sicon",
+    title: "EPOVIO Garage – autorski system do garażu",
     manufacturerId: "epovio",
     application: "garaze",
     serviceHref: "/garaze",
-    summary: "Proponowany przez Posadzkizywiczne.com układ powłok garażowych: grunt Siconofloor GF-E Premium i barwna warstwa zamykająca Siconofloor RR100-E. Wersja antypoślizgowa przewiduje zasyp kwarcowy. Szczegóły kombinacji i wykonania wymagają weryfikacji.",
+    summary: "EPOVIO Garage to rozwijany pod własną marką EPOVIO system powłokowy do garaży. Projekt obejmuje wariant gładki, dekoracyjny z płatkami i antypoślizgowy; ostateczne produkty, skład i parametry zostaną zatwierdzone przed sprzedażą.",
     selectionCriteria: [
-      "Podłoże mineralne: ocena wytrzymałości, przyczepności, wilgotności, rys, dylatacji i zabrudzeń przed gruntowaniem.",
-      "Warstwa gruntująca GF-E Premium oraz RR100-E jako cienkowarstwowe wykończenie — zużycia tylko wg kart Sicon, a nie jako gwarancja ilości zestawu.",
-      "Jeśli potrzebny antypoślizg: rozważenie zasypu kwarcowego wg rozwiązań Sicon Epoxy Structur oraz potwierdzenie parametrów konkretnego układu.",
-      "Wariant z płatkami dekoracyjnymi wymaga osobno dobranej kompatybilnej warstwy zamykającej; nie jest jeszcze zweryfikowaną recepturą.",
+      "Ocena podłoża betonowego: wilgotności, nośności, rys, dylatacji i starych powłok.",
+      "Dobór oczekiwanego wykończenia: gładkiego, z płatkami dekoracyjnymi albo antypoślizgowego.",
+      "Weryfikacja ostatecznej dokumentacji EPOVIO: zgodności składników, zużycia, czasów aplikacji, obciążeń i zasad pielęgnacji.",
     ],
-    exampleMaterialIds: ["siconofloor-gf-e-premium", "siconofloor-rr100-e"],
+    // Brand-owned product names below are design placeholders, not verified SKUs.
+    // Never link third-party products or copy their technical values into EPOVIO.
+    exampleMaterialIds: [],
     isConcept: true,
     proposedLayers: [
-      { title: "1. Przygotowanie betonu", description: "Mechaniczne otwarcie porów, usunięcie mleczka cementowego, zanieczyszczeń i słabych warstw, naprawy oraz odkurzenie. Zgodnie z kartami produktów." },
-      { title: "2. Gruntowanie", materialId: "siconofloor-gf-e-premium", description: "Dwuskładnikowy grunt epoksydowy Siconofloor GF-E Premium. Teoretyczne zużycie wg producenta 0,3–0,6 kg/m²; w zależności od chłonności może być potrzebne ponowne gruntowanie." },
-      { title: "3. Faktura antypoślizgowa (wariant opcjonalny)", description: "W wariancie kwarcowym projektujemy zasyp odpowiednim suchym kruszywem. System Siconofloor Epoxy Structur jest punktem odniesienia, lecz nie potwierdza automatycznie zgodności całej kombinacji z GF-E Premium." },
-      { title: "4. Barwna warstwa zamykająca", materialId: "siconofloor-rr100-e", description: "Siconofloor RR100-E. Karta podaje 0,15–0,20 kg/m² przy użyciu jako lakier na powierzchni gładkiej; zużycie na posypce kwarcowej jest większe i zależy od faktury." },
+      { title: "1. Przygotowanie podłoża", description: "Weryfikacja i mechaniczne przygotowanie betonu, usunięcie zanieczyszczeń oraz naprawy ubytków przed nałożeniem powłok. Metodę przygotowania określi docelowa instrukcja EPOVIO." },
+      { title: "2. Grunt EPOVIO Garage Primer", description: "Planowany dedykowany grunt pod warstwy EPOVIO. Nazwa robocza; rodzaj spoiwa, zużycie, liczba warstw i warunki stosowania wymagają zatwierdzenia." },
+      { title: "3. Warstwa zasadnicza EPOVIO Garage Coat", description: "Projektowana powłoka właściwa do garażu. Nazwa robocza; skład, mieszanie, grubość i parametry eksploatacyjne zostaną podane po badaniach produktu." },
+      { title: "4. Wykończenie powierzchni", description: "Wariant gładki, opcjonalny zasyp kwarcowy lub płatki dekoracyjne. Dobór warstwy zamykającej EPOVIO, jej przejrzystość oraz kompatybilność pozostają częścią opracowania." },
+    ],
+    technicalFields: [
+      { label: "Marka", value: "EPOVIO – marka własna Posadzkizywiczne.com" },
+      { label: "Przeznaczenie", value: "Planowany system do garaży indywidualnych" },
+      { label: "Rodzaj spoiwa", value: "Do potwierdzenia po wyborze finalnej formulacji" },
+      { label: "Podłoże", value: "Beton; szczegółowe wymagania zostaną określone w karcie technicznej" },
+      { label: "Wykończenia", value: "Projekt: gładkie, z płatkami dekoracyjnymi, antypoślizgowe" },
+      { label: "Zużycie i grubość", value: "Do ustalenia na podstawie finalnych materiałów i prób" },
+      { label: "Mieszanie i czas pracy", value: "Do potwierdzenia w karcie technicznej produktów EPOVIO" },
+      { label: "Utwardzanie i dopuszczenie ruchu", value: "Do potwierdzenia w badaniach i instrukcji EPOVIO" },
+      { label: "Dokumentacja", value: "W opracowaniu – karty techniczne, bezpieczeństwa i instrukcje" },
     ],
     pendingValidation: [
-      "Pisemne potwierdzenie przez Sicon zgodności GF-E Premium i RR100-E jako konkretnego układu oraz warunków międzywarstwowych.",
-      "Dobór granulacji, ilości i sposobu zasypu kwarcowego oraz oczekiwanej klasy antypoślizgowości.",
-      "Próba na reprezentatywnym betonie, kontrola przyczepności oraz szczegółowy protokół przygotowania podłoża.",
-      "Receptura z płatkami dekoracyjnymi oraz dobór przezroczystej warstwy zamykającej i jej kompatybilności.",
-      "Finalne jednostki handlowe, składy zestawów, instrukcje, dokumenty bezpieczeństwa i ceny dla sklepu EPOVIO.",
+      "Ustalenie finalnych produktów EPOVIO i ich rzeczywistego producenta lub dostawcy private label.",
+      "Zatwierdzenie formulacji, współpracy warstw i wariantów wykończenia na podstawie badań.",
+      "Parametry techniczne: zużycie, mieszanie, pot life, przyczepność, odporność, grubość, poślizg i utwardzanie.",
+      "Opracowanie własnych kart technicznych, dokumentacji bezpieczeństwa, etykiet i instrukcji EPOVIO.",
+      "Weryfikacja opakowań, numerów SKU, warunków gwarancji, cen i zgodności z przepisami przed uruchomieniem sklepu.",
     ],
     plannedOffer: [
-      { name: "EPOVIO Garage Kit", description: "Projekt zestawu powłokowego opartego na GF-E Premium (grunt) i RR100-E (barwne wykończenie), po potwierdzeniu zgodności układu." },
-      { name: "EPOVIO Garage Flakes Kit", description: "Wariant dekoracyjny w opracowaniu; wymagane osobne potwierdzenie systemu z płatkami i przezroczystą powłoką zamykającą." },
-      { name: "EPOVIO Repair Kit", description: "Osobny zestaw do miejscowych napraw podłoża, nie zastępuje dwóch materiałów bazowego systemu." },
+      { name: "EPOVIO Garage Kit", description: "Planowany podstawowy zestaw produktów pod marką EPOVIO do samodzielnego wykonania posadzki garażowej." },
+      { name: "EPOVIO Garage Flakes Kit", description: "Planowany zestaw EPOVIO z dekoracyjnymi płatkami i odpowiednią powłoką zamykającą; specyfikacja w opracowaniu." },
+      { name: "EPOVIO Repair Kit", description: "Planowany zestaw uzupełniający EPOVIO do przygotowania i miejscowych napraw podłoża." },
     ],
   },
   {
