@@ -20,6 +20,9 @@ export interface CatalogMaterial {
   technicalSheetUrl?: string;
   /** Reference consumption for this specific use, never a total system estimate. */
   referenceConsumption?: string;
+  /** Planned EPOVIO products without approved formulations or retail SKUs. */
+  isConcept?: boolean;
+  technicalFields?: Array<{ label: string; value: string }>;
 }
 
 export interface CatalogSystem {
@@ -74,6 +77,36 @@ export const catalogMaterials: CatalogMaterial[] = [
     referenceConsumption: "Powłoka na gładkiej powierzchni: ok. 0,15–0,20 kg/m²; przy zasypie kwarcowym i nierównościach zużycie wzrasta.",
     technicalSheetUrl: "https://www.sicon.pl/wp-content/uploads/2023/02/SICONOFLOOR-RR100-KT.pdf",
   },
+  {
+    id: "epovio-garage-primer",
+    name: "EPOVIO Garage Primer",
+    brandId: "epovio",
+    description: "Grunt do garażowego systemu EPOVIO – planowany komponent własnej marki. Docelowy skład i parametry nie są jeszcze zatwierdzone.",
+    isConcept: true,
+    technicalFields: [
+      { label: "Rola w systemie", value: "Grunt pod planowany system EPOVIO Garage" },
+      { label: "Rodzaj materiału", value: "Do potwierdzenia po finalnym wyborze formulacji" },
+      { label: "Wymagania dla podłoża", value: "Do potwierdzenia" },
+      { label: "Proporcje mieszania", value: "Do potwierdzenia" },
+      { label: "Zużycie", value: "Do potwierdzenia" },
+      { label: "Czas aplikacji i schnięcia", value: "Do potwierdzenia" },
+    ],
+  },
+  {
+    id: "epovio-garage-coat",
+    name: "EPOVIO Garage Coat",
+    brandId: "epovio",
+    description: "Planowana powłoka zasadnicza systemu EPOVIO Garage. Receptura, warianty barwne, metoda aplikacji i parametry techniczne wymagają opracowania.",
+    isConcept: true,
+    technicalFields: [
+      { label: "Rola w systemie", value: "Planowana warstwa zasadnicza do garaży" },
+      { label: "Rodzaj spoiwa", value: "Do potwierdzenia" },
+      { label: "Wykończenie", value: "Projekt: gładkie oraz dekoracyjne/antypoślizgowe po weryfikacji" },
+      { label: "Zużycie i grubość", value: "Do potwierdzenia" },
+      { label: "Proporcje mieszania", value: "Do potwierdzenia" },
+      { label: "Czas utwardzania", value: "Do potwierdzenia" },
+    ],
+  },
 ];
 
 export const catalogSystems: CatalogSystem[] = [
@@ -91,12 +124,12 @@ export const catalogSystems: CatalogSystem[] = [
     ],
     // Brand-owned product names below are design placeholders, not verified SKUs.
     // Never link third-party products or copy their technical values into EPOVIO.
-    exampleMaterialIds: [],
+    exampleMaterialIds: ["epovio-garage-primer", "epovio-garage-coat"],
     isConcept: true,
     proposedLayers: [
       { title: "1. Przygotowanie podłoża", description: "Weryfikacja i mechaniczne przygotowanie betonu, usunięcie zanieczyszczeń oraz naprawy ubytków przed nałożeniem powłok. Metodę przygotowania określi docelowa instrukcja EPOVIO." },
-      { title: "2. Grunt EPOVIO Garage Primer", description: "Planowany dedykowany grunt pod warstwy EPOVIO. Nazwa robocza; rodzaj spoiwa, zużycie, liczba warstw i warunki stosowania wymagają zatwierdzenia." },
-      { title: "3. Warstwa zasadnicza EPOVIO Garage Coat", description: "Projektowana powłoka właściwa do garażu. Nazwa robocza; skład, mieszanie, grubość i parametry eksploatacyjne zostaną podane po badaniach produktu." },
+      { title: "2. Grunt EPOVIO Garage Primer", materialId: "epovio-garage-primer", description: "Planowany dedykowany grunt pod warstwy EPOVIO. Nazwa robocza; rodzaj spoiwa, zużycie, liczba warstw i warunki stosowania wymagają zatwierdzenia." },
+      { title: "3. Warstwa zasadnicza EPOVIO Garage Coat", materialId: "epovio-garage-coat", description: "Projektowana powłoka właściwa do garażu. Nazwa robocza; skład, mieszanie, grubość i parametry eksploatacyjne zostaną podane po badaniach produktu." },
       { title: "4. Wykończenie powierzchni", description: "Wariant gładki, opcjonalny zasyp kwarcowy lub płatki dekoracyjne. Dobór warstwy zamykającej EPOVIO, jej przejrzystość oraz kompatybilność pozostają częścią opracowania." },
     ],
     technicalFields: [
