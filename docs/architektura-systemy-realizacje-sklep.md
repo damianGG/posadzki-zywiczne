@@ -37,25 +37,27 @@ Dla realizacji z Neon wykonaj kontrolowaną aktualizację `technology_links` po 
 
 ## Autorski system EPOVIO Garage — etap koncepcji
 - W katalogu istnieje rodzina systemu `/systemy/epovio-garaz` ze statusem `isConcept: true`; jest dostępna z katalogu i strony garaży, ale ma `noindex,follow` i nie pojawia się w XML sitemap do momentu zatwierdzenia dokumentacji.
-- **Marka własna EPOVIO nie oznacza, że spółka jest producentem chemicznym**. Nie przypisuj jej właściwości, oznakowania i certyfikatów producenta bez weryfikacji.
+- **EPOVIO jest osobną marką produktów**. Faktyczny wytwórca chemii może być partnerem kontraktowym; nie publikuj niezweryfikowanych parametrów ani certyfikatów.
 - Koncepcja garażowa obejmuje dwa warianty planowanych zestawów: `EPOVIO Garage Kit` i `EPOVIO Garage Flakes Kit`. `EPOVIO Repair Kit` to zestaw do przygotowania/naprawy podłoża, nie pełna posadzka.
 - Shopify posiada trzy produkty **DRAFT** o tych nazwach, z techniczną ceną 0 zł, bez SKU, zatwierdzonych receptur, kart technicznych czy prawidłowej oferty handlowej. W katalogu nie tworzymy jeszcze odnośników zakupowych ani mapowania tych szkiców na faktycznie użyte materiały.
-- Nadal wymagane: materiały i dostawca/private label, skład i kompatybilność warstw, dobór podłoża, realne zużycie, testy, instrukcje, SDS/CLP/UFI/PCN tam gdzie mają zastosowanie, ceny, logistyka oraz weryfikacja praw do oznaczenia EPOVIO (potencjalna kolizja z EPOVIA).
+- Nadal wymagane: gotowe produkty EPOVIO i ich dostawca/producent kontraktowy, skład, kompatybilność warstw, badania, instrukcje, dokumenty bezpieczeństwa (SDS/CLP/UFI/PCN, jeżeli wymagane), ceny, logistyka oraz weryfikacja praw do oznaczenia EPOVIO.
 - `resolveTechnologyLinks` nie rekomenduje koncepcji EPOVIO automatycznie na stronach istniejących realizacji. Relacje do realizacji można dodać dopiero po wykonaniu i potwierdzeniu rzeczywistego zastosowania docelowego produktu.
 - Sklep nadal ukryty; istniejący kalkulator wyceny wykonania garażu pozostaje niezależny.
 
-## EPOVIO Garage: proponowany układ na materiałach Sicon (07.11.2026)
+## EPOVIO Garage – niezależna marka własna (07.11.2026)
 
-**System EPOVIO** jest autorskim doborem/kompozycją warstw przez Posadzkizywiczne.com, a nie nazwą nowego produktu chemicznego. Producentem materiałów pozostaje Sicon. Bazą są:
-- `siconofloor-gf-e-premium` — **Siconofloor GF-E Premium**: grunt epoksydowy, opisany przez producenta jako grunt pod systemy żywiczne. Karta: https://www.sicon.pl/wp-content/uploads/2023/02/SICONOFLOOR-GF-E-PREMIUM-KT.pdf. Orientacyjne zużycie wg TDS: 0,3–0,6 kg/m² do gruntowania, zależne od chłonności, ew. dwie warstwy.
-- `siconofloor-rr100-e` — **Siconofloor RR100-E**: barwna powłoka cienkowarstwowa zamykająca, nie mylić z RR100 PRO ani RR100-E Premium. Karta: https://www.sicon.pl/wp-content/uploads/2023/02/SICONOFLOOR-RR100-KT.pdf. Dla gładkiego podłoża: orientacyjnie 0,15–0,20 kg/m²; dla zasypu kwarcowego zużycie jest większe.
-- Układ koncepcyjny: **przygotowany beton → GF-E Premium → (opcjonalny zasyp kwarcowy do układu antypoślizgowego) → RR100-E**.
-- Punktem odniesienia dla kwarcu jest system producenta **Siconofloor Epoxy Structur**: https://www.sicon.pl/systemy_zywiczne/systemy-epoksydowe/; wymienia on grunt GF-E lub wybrany inny grunt z linii Sicon i RR100-E. **Nie** zawiera wprost zatwierdzenia konkretnego zestawienia z GF-E **Premium**. Konieczne potwierdzenie kompatybilności, warstw/odstępów technologicznych i zużycia.
-- Karta GF-E Premium zawiera rozbieżność informacji o czasie życia mieszaniny (opis 30–40 minut, tabela 10 minut przy 20°C). Nie publikuj czasu życia ani nie wyliczaj planu robót bez uzyskania aktualnej, poprawnej karty i potwierdzenia od producenta.
-- Do oferty Garage Flakes potrzebna jest osobna, kompatybilna transparentna warstwa zamykająca. RR100-E jest pigmentowany i nie może być automatycznie przedstawiany jako przejrzysty lakier do eksponowania płatków.
-- W kartach `/systemy/materialy/...` publikujemy tylko producenta, odnośniki do jego dokumentacji i wybrane wartości zużycia opisane wraz z warunkami; strony pozostają `noindex`.
-- Do czasu zatwierdzenia receptury, badań i instrukcji EPOVIO Garage pozostaje `isConcept: true`; brak linku do sprzedaży i automatycznego przypisywania do starszych realizacji.
-- Zestawy Shopify pozostają wersjami DRAFT; nie aktualizuj ich ceny ani stanów w oparciu o samą kartę techniczną.
+- **EPOVIO** to osobna marka planowanych produktów żywicznych Posadzkizywiczne.com, a nie przemianowana żywica Sicon ani nazwa gotowego zestawu produktów innego producenta.
+- Dokumentacja Sicon GF-E Premium i RR100-E została wykorzystana **wyłącznie jako przykład konstrukcji karty technicznej**: opis, przeznaczenie, budowa powłoki, zużycie, warunki aplikacji, parametry i bezpieczeństwo. Nie przejmujemy nazw materiałów, receptur, wartości liczbowych ani deklarowanych właściwości Sicon dla EPOVIO.
+- W katalogu własnej marki znajdują się dwa **roboczo nazwane, niezatwierdzone projekty produktów**:
+  - `epovio-garage-primer` – **EPOVIO Garage Primer**, projekt gruntu.
+  - `epovio-garage-coat` – **EPOVIO Garage Coat**, projekt powłoki zasadniczej.
+- Roboczy schemat systemu: przygotowanie betonu → grunt EPOVIO → powłoka EPOVIO → wykończenie gładkie, z płatkami lub antypoślizgowe. Sam schemat nie jest jeszcze recepturą do stosowania.
+- W `/systemy/epovio-garaz` powstała **własna karta systemu EPOVIO**, a w `/systemy/materialy/epovio-garage-primer` i `/systemy/materialy/epovio-garage-coat` znajdują się własne szkice kart technicznych obu komponentów.
+- `brandId: "epovio"` oraz `brands.epovio.kind: "own"` oddzielają markę własną od marek zewnętrznych. W systemie EPOVIO nie ma identyfikatorów ani odnośników do materiałów Sicon.
+- Wszystkie **niepotwierdzone** dane, m.in. rodzaj spoiwa, proporcje, zużycie, pot life, czas utwardzania, skład, parametry techniczne i kompatybilność warstw, oznaczamy jako „do potwierdzenia”. Wartości z kart Sicon nie są wartościami EPOVIO.
+- Przed wdrożeniem potrzebujemy zatwierdzonego składu i wytwórcy lub producenta kontraktowego (private label), badania parametrów i współpracy warstw, instrukcji, dokumentów bezpieczeństwa i prawidłowego oznakowania handlowego. Marka własna nie musi oznaczać produkcji chemicznej we własnej fabryce.
+- `EPOVIO Garage Kit`, `EPOVIO Garage Flakes Kit` i `EPOVIO Repair Kit` pozostają szkicami produktów w Shopify; brak zatwierdzenia do zakupu i publikacji.
+- Podstrona systemu i robocze karty produktów pozostają `noindex`, a sam system `isConcept: true` i nie trafia do sitemap XML. Nie przypisujemy go do realizacji wykonanych wcześniej na produktach innych producentów.
 
 ## Integracja ze sklepem Epovio/Shopify — kolejny etap
 - Jeden identyfikator materiału wewnętrznego, mapowany na konkretne SKU i `shopProductId`/Shopify product variant, nigdy po zgadywanej nazwie.
