@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { catalogSystems, getCatalogMaterial, getCatalogSystem, manufacturers } from "@/lib/floor-system-catalog";
+import { catalogSystems, getCatalogMaterial, getCatalogSystem, brands } from "@/lib/floor-system-catalog";
 import { getAllRealizacje } from "@/lib/realizacje";
 import { realizationsForSystem } from "@/lib/realization-materials";
 import { absoluteUrl } from "@/lib/site-config";
@@ -34,7 +34,7 @@ export default async function SystemDetailsPage({ params }: Props) {
       <nav aria-label="Ścieżka nawigacji" className="mb-7 text-sm text-muted-foreground">
         <Link href="/" className="hover:underline">Strona główna</Link> / <Link href="/systemy" className="hover:underline">Systemy</Link> / {system.title}
       </nav>
-      <p className="text-sm font-medium text-primary">{manufacturers[system.manufacturerId].name}{system.isConcept ? " · system w opracowaniu" : ""}</p>
+      <p className="text-sm font-medium text-primary">{brands[system.brandId].name}{system.isConcept ? " · system w opracowaniu" : ""}</p>
       <h1 className="mt-2 text-3xl font-bold tracking-tight md:text-5xl">{system.title}</h1>
       <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">{system.summary}</p>
       {system.isConcept && (
