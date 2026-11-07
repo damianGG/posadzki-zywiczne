@@ -39,8 +39,9 @@ export default async function SystemDetailsPage({ params }: Props) {
       <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">{system.summary}</p>
       {system.isConcept && (
         <p className="mt-5 max-w-3xl rounded-lg border px-4 py-3 text-sm leading-relaxed text-muted-foreground">
-          EPOVIO jest własną marką w fazie rozwoju. Nie ma jeszcze zatwierdzonej receptury, kart technicznych,
-          instrukcji stosowania ani gotowych produktów w sprzedaży. Nazwy zestawów są robocze.
+          EPOVIO Garage to opracowywana przez nas koncepcja wykonawcza wykorzystująca oryginalne
+          produkty Sicon. Ich karty techniczne są dostępne poniżej, ale łączna specyfikacja systemu,
+          receptura wariantów i komplet zestawu DIY wymagają jeszcze zatwierdzenia. Nie prowadzimy sprzedaży.
         </p>
       )}
       <div className="mt-7 flex flex-wrap gap-3">
@@ -54,16 +55,61 @@ export default async function SystemDetailsPage({ params }: Props) {
         </ul>
         <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
           {system.isConcept
-            ? "Skład zestawów i ich kompatybilność zostaną ustalone po testach i skompletowaniu dokumentacji. Ta strona nie jest instrukcją wykonawczą ani ofertą handlową."
+            ? "Proponowana kolejność warstw nie jest deklaracją producenta Sicon o kompatybilności wybranej pary materiałów. Ostateczną recepturę, międzywarstwy i warunki aplikacji zatwierdzimy po weryfikacji. To nie jest instrukcja wykonawcza ani oferta handlowa."
             : "Wybór systemu wymaga aktualnej dokumentacji technicznej oraz oględzin podłoża. Nie należy traktować samych nazw materiałów jako instrukcji mieszania lub wykonywania warstw."}
         </p>
       </section>
+      {system.proposedLayers && system.proposedLayers.length > 0 && (
+        <section className="mt-12" aria-labelledby="epovio-layers">
+          <h2 id="epovio-layers" className="text-2xl font-semibold">Proponowana budowa systemu EPOVIO Garage</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-relaxed text-muted-foreground">
+            Układ opracowany na podstawie przeznaczenia materiałów GF-E Premium i RR100-E oraz systemów
+            kwarcowych Sicon. Stanowi propozycję do potwierdzenia, a nie zatwierdzoną recepturę.
+          </p>
+          <ol className="mt-5 grid gap-4 sm:grid-cols-2">
+            {system.proposedLayers.map(layer => {
+              const material = layer.materialId ? getCatalogMaterial(layer.materialId) : undefined;
+              return (
+                <li key={layer.title} className="rounded-xl border p-5">
+                  <h3 className="font-semibold">{layer.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{layer.description}</p>
+                  {material && (
+                    <Link href={`/systemy/materialy/${material.id}`} className="mt-3 inline-block text-sm font-semibold text-primary hover:underline">
+                      Zobacz kartę materiału: {material.name}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+          <div className="mt-6 rounded-xl bg-muted/40 p-5">
+            <h3 className="font-semibold">Karty techniczne producenta Sicon</h3>
+            <p className="mt-2 text-sm text-muted-foreground">Dane o zużyciu dotyczą poszczególnych produktów, nie zatwierdzonego kompletnego zestawu EPOVIO.</p>
+            <div className="mt-3 flex flex-wrap gap-4">
+              {exampleMaterials.filter(material => Boolean(material.technicalSheetUrl)).map(material => (
+                <a key={material.id} href={material.technicalSheetUrl} target="_blank" rel="noopener noreferrer" className="text-sm font-semibold text-primary underline-offset-4 hover:underline">
+                  {material.name} — PDF Sicon
+                </a>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+      {system.pendingValidation && system.pendingValidation.length > 0 && (
+        <section className="mt-12 rounded-xl border p-6" aria-labelledby="epovio-validation">
+          <h2 id="epovio-validation" className="text-xl font-semibold">Co trzeba jeszcze zatwierdzić?</h2>
+          <ul className="mt-4 list-disc space-y-2 pl-5 text-sm leading-relaxed text-muted-foreground">
+            {system.pendingValidation.map(item => <li key={item}>{item}</li>)}
+          </ul>
+        </section>
+      )}
       {system.plannedOffer && system.plannedOffer.length > 0 && (
         <section className="mt-12" aria-labelledby="epovio-variants">
           <h2 id="epovio-variants" className="text-2xl font-semibold">Planowane warianty EPOVIO</h2>
           <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
-            Poniższe produkty istnieją obecnie wyłącznie jako szkice w Shopify.
-            Nie mają zatwierdzonego składu, parametrów technicznych, cen ani możliwości zakupu.
+            Poniższe zestawy są na razie szkicami w Shopify. Choć wskazujemy komponenty bazowe Sicon,
+            nie ustalono jeszcze ostatecznych ilości w opakowaniu, receptur kompletnych wariantów,
+            cen ani możliwości zakupu.
           </p>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {system.plannedOffer.map(offer => (
@@ -77,8 +123,12 @@ export default async function SystemDetailsPage({ params }: Props) {
       )}
       {exampleMaterials.length > 0 && (
         <section className="mt-12">
-          <h2 className="text-2xl font-semibold">Przykładowe materiały z oferty producenta</h2>
-          <p className="mt-3 max-w-3xl text-sm text-muted-foreground">Wskazane produkty służą do poznania asortymentu. Nie oznacza to, że wszystkie tworzą wspólnie zatwierdzony system lub były wykorzystane podczas konkretnej realizacji.</p>
+          <h2 className="text-2xl font-semibold">{system.isConcept ? "Materiały bazowe Sicon" : "Przykładowe materiały z oferty producenta"}</h2>
+          <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
+            {system.isConcept
+              ? "Są to produkty Sicon wybrane jako podstawa koncepcji EPOVIO Garage. Nie oznacza to, że producent zatwierdził ich użycie jako jednego kompletnego systemu."
+              : "Wskazane produkty służą do poznania asortymentu. Nie oznacza to, że wszystkie tworzą wspólnie zatwierdzony system lub były wykorzystane podczas konkretnej realizacji."}
+          </p>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {exampleMaterials.map(material => (
               <Link key={material.id} href={`/systemy/materialy/${material.id}`} className="rounded-xl border p-5 hover:border-primary">
