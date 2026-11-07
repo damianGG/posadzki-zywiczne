@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Realizacja } from "@/types/realizacje";
-import { manufacturers } from "@/lib/floor-system-catalog";
+import { brands } from "@/lib/floor-system-catalog";
 import { resolveTechnologyLinks } from "@/lib/realization-materials";
 
 /**
@@ -34,7 +34,7 @@ export default function RealizationTechnology({ realization }: { realization: Re
             <div className="mt-4 grid gap-3 sm:grid-cols-2">
               {usedMaterials.map(material => (
                 <Link key={material.id} href={`/systemy/materialy/${material.id}`} className="rounded-xl border p-4 hover:border-primary">
-                  <p className="text-xs text-muted-foreground">{manufacturers[material.manufacturerId].name}</p>
+                  <p className="text-xs text-muted-foreground">{brands[material.brandId].name}</p>
                   <p className="mt-1 font-semibold">{material.name}</p>
                   <p className="mt-2 text-sm text-muted-foreground">Zobacz kartę materiału</p>
                 </Link>

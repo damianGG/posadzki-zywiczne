@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { catalogSystems, getCatalogSystem, manufacturers, type ManufacturerId } from "@/lib/floor-system-catalog";
+import { catalogSystems, getCatalogSystem, brands, type BrandId } from "@/lib/floor-system-catalog";
 import { absoluteUrl } from "@/lib/site-config";
 
 export const metadata: Metadata = {
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Systemy żywiczne Sika, Flowcrete, Sto i Sicon oraz rozwijany system garażowy EPOVIO. Porównaj technologie do garaży, parkingów, hal i ESD.",
   alternates: { canonical: absoluteUrl("/systemy") },
 };
-const manufacturerIds: ManufacturerId[] = ["sika", "flowcrete", "sto", "sicon"];
+const brandIds: BrandId[] = ["sika", "flowcrete", "sto", "sicon"];
 
 export default function SystemsIndexPage() {
   const epovio = getCatalogSystem("epovio-garaz");
@@ -19,7 +19,7 @@ export default function SystemsIndexPage() {
       </nav>
       <h1 className="text-3xl font-bold tracking-tight md:text-5xl">Systemy posadzek żywicznych</h1>
       <p className="mt-5 max-w-3xl text-lg leading-relaxed text-muted-foreground">
-        Poznaj rozwiązania Sika, Flowcrete, Sto i Sicon oraz naszą rozwijaną markę EPOVIO. Najpierw wybierz zastosowanie,
+        Poznaj własną markę EPOVIO oraz systemy innych producentów: Sika, Flowcrete, Sto i Sicon. Najpierw wybierz zastosowanie,
         a następnie sprawdź warunki techniczne, które decydują o doborze warstw.
       </p>
       <p className="mt-4 max-w-3xl text-sm text-muted-foreground">
@@ -29,7 +29,7 @@ export default function SystemsIndexPage() {
       {epovio && (
         <section id="epovio" className="mt-10 rounded-2xl border p-6 md:p-8" aria-labelledby="epovio-heading">
           <p className="text-sm font-medium text-primary">Nasz rozwijany system · w przygotowaniu</p>
-          <h2 id="epovio-heading" className="mt-2 text-2xl font-bold md:text-3xl">{manufacturers.epovio.name} Garage</h2>
+          <h2 id="epovio-heading" className="mt-2 text-2xl font-bold md:text-3xl">{brands.epovio.name} Garage</h2>
           <p className="mt-3 max-w-3xl text-muted-foreground">
             {epovio.summary} Produkty są nadal szkicami — nie prowadzimy jeszcze sprzedaży ani nie publikujemy niezweryfikowanych parametrów.
           </p>
@@ -39,12 +39,12 @@ export default function SystemsIndexPage() {
         </section>
       )}
       <div className="mt-10 grid gap-6 md:grid-cols-2">
-        {manufacturerIds.map(id => (
+        {brandIds.map(id => (
           <section key={id} id={id} className="scroll-mt-28 rounded-2xl border p-6">
-            <h2 className="text-2xl font-semibold">{manufacturers[id].name}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{manufacturers[id].description}</p>
+            <h2 className="text-2xl font-semibold">{brands[id].name}</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{brands[id].description}</p>
             <ul className="mt-5 space-y-3">
-              {catalogSystems.filter(system => system.manufacturerId === id).map(system => (
+              {catalogSystems.filter(system => system.brandId === id).map(system => (
                 <li key={system.slug}>
                   <Link href={`/systemy/${system.slug}`} className="block rounded-lg border p-4 transition-colors hover:border-primary">
                     <span className="font-semibold">{system.title}</span>
