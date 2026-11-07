@@ -128,17 +128,18 @@ export default async function SystemDetailsPage({ params }: Props) {
       )}
       {exampleMaterials.length > 0 && (
         <section className="mt-12">
-          <h2 className="text-2xl font-semibold">Przykładowe materiały z oferty producenta</h2>
+          <h2 className="text-2xl font-semibold">{system.brandId === "epovio" ? "Projektowane produkty marki EPOVIO" : "Przykładowe materiały z oferty producenta"}</h2>
           <p className="mt-3 max-w-3xl text-sm text-muted-foreground">
-            Wskazane materiały służą do poznania asortymentu danego producenta. Nie oznacza to,
-            że wszystkie tworzą wspólnie zatwierdzony system lub były wykorzystane podczas konkretnej realizacji.
+            {system.brandId === "epovio"
+              ? "Odrębne komponenty projektowane pod marką EPOVIO. To jeszcze nie są gotowe produkty handlowe; nazwy i parametry mogą się zmienić."
+              : "Wskazane materiały służą do poznania asortymentu danego producenta. Nie oznacza to, że wszystkie tworzą wspólnie zatwierdzony system lub były wykorzystane podczas konkretnej realizacji."}
           </p>
           <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {exampleMaterials.map(material => (
               <Link key={material.id} href={`/systemy/materialy/${material.id}`} className="rounded-xl border p-5 hover:border-primary">
                 <h3 className="font-semibold">{material.name}</h3>
                 <p className="mt-2 text-sm text-muted-foreground">{material.description}</p>
-                <span className="mt-4 inline-block text-sm font-medium text-primary">Poznaj materiał</span>
+                <span className="mt-4 inline-block text-sm font-medium text-primary">{material.isConcept ? "Zobacz projekt karty produktu" : "Poznaj materiał"}</span>
               </Link>
             ))}
           </div>
