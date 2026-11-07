@@ -96,7 +96,7 @@ export const catalogSystems: CatalogSystem[] = [
       { title: "4. Barwna warstwa zamykająca", materialId: "siconofloor-rr100-e", description: "Siconofloor RR100-E. Karta podaje 0,15–0,20 kg/m² przy użyciu jako lakier na powierzchni gładkiej; zużycie na posypce kwarcowej jest większe i zależy od faktury." },
     ],
     pendingValidation: [
-      "Pisемne potwierdzenie przez Sicon zgodności GF-E Premium i RR100-E jako konkretnego układu oraz warunków międzywarstwowych.",
+      "Pisemne potwierdzenie przez Sicon zgodności GF-E Premium i RR100-E jako konkretnego układu oraz warunków międzywarstwowych.",
       "Dobór granulacji, ilości i sposobu zasypu kwarcowego oraz oczekiwanej klasy antypoślizgowości.",
       "Próba na reprezentatywnym betonie, kontrola przyczepności oraz szczegółowy protokół przygotowania podłoża.",
       "Receptura z płatkami dekoracyjnymi oraz dobór przezroczystej warstwy zamykającej i jej kompatybilności.",
