@@ -33,6 +33,16 @@ export default async function MaterialPage({ params }: Props) {
       <p className="text-sm font-medium text-primary">{manufacturers[material.manufacturerId].name}</p>
       <h1 className="mt-2 text-3xl font-bold md:text-4xl">{material.name}</h1>
       <p className="mt-5 text-lg leading-relaxed">{material.description}</p>
+      {material.referenceConsumption && (
+        <section className="mt-9 rounded-xl border p-6">
+          <h2 className="text-xl font-semibold">Orientacyjne zużycie wg Sicon</h2>
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{material.referenceConsumption}</p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Zużycie zależy od chłonności, chropowatości, grubości i wariantu wykończenia.
+            Nie jest to gotowa wycena ani instrukcja dla systemu EPOVIO.
+          </p>
+        </section>
+      )}
       <section className="mt-9 rounded-xl border p-6">
         <h2 className="text-xl font-semibold">Dokumentacja i dobór</h2>
         <p className="mt-3 leading-relaxed text-muted-foreground">
@@ -40,6 +50,12 @@ export default async function MaterialPage({ params }: Props) {
           warstwami należy sprawdzić w aktualnej karcie technicznej producenta. Ta strona nie zastępuje dokumentacji,
           nie stanowi oferty sprzedaży ani potwierdzenia zastosowania materiału na konkretnej realizacji.
         </p>
+        {material.technicalSheetUrl && (
+          <a href={material.technicalSheetUrl} target="_blank" rel="noopener noreferrer"
+             className="mt-4 inline-block text-sm font-semibold text-primary underline-offset-4 hover:underline">
+            Otwórz oficjalną kartę techniczną Sicon (PDF)
+          </a>
+        )}
       </section>
       {related.length > 0 && (
         <section className="mt-9">
