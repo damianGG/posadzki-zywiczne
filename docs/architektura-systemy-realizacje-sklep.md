@@ -44,6 +44,19 @@ Dla realizacji z Neon wykonaj kontrolowaną aktualizację `technology_links` po 
 - `resolveTechnologyLinks` nie rekomenduje koncepcji EPOVIO automatycznie na stronach istniejących realizacji. Relacje do realizacji można dodać dopiero po wykonaniu i potwierdzeniu rzeczywistego zastosowania docelowego produktu.
 - Sklep nadal ukryty; istniejący kalkulator wyceny wykonania garażu pozostaje niezależny.
 
+## EPOVIO Garage: proponowany układ na materiałach Sicon (07.11.2026)
+
+**System EPOVIO** jest autorskim doborem/kompozycją warstw przez Posadzkizywiczne.com, a nie nazwą nowego produktu chemicznego. Producentem materiałów pozostaje Sicon. Bazą są:
+- `siconofloor-gf-e-premium` — **Siconofloor GF-E Premium**: grunt epoksydowy, opisany przez producenta jako grunt pod systemy żywiczne. Karta: https://www.sicon.pl/wp-content/uploads/2023/02/SICONOFLOOR-GF-E-PREMIUM-KT.pdf. Orientacyjne zużycie wg TDS: 0,3–0,6 kg/m² do gruntowania, zależne od chłonności, ew. dwie warstwy.
+- `siconofloor-rr100-e` — **Siconofloor RR100-E**: barwna powłoka cienkowarstwowa zamykająca, nie mylić z RR100 PRO ani RR100-E Premium. Karta: https://www.sicon.pl/wp-content/uploads/2023/02/SICONOFLOOR-RR100-KT.pdf. Dla gładkiego podłoża: orientacyjnie 0,15–0,20 kg/m²; dla zasypu kwarcowego zużycie jest większe.
+- Układ koncepcyjny: **przygotowany beton → GF-E Premium → (opcjonalny zasyp kwarcowy do układu antypoślizgowego) → RR100-E**.
+- Punktem odniesienia dla kwarcu jest system producenta **Siconofloor Epoxy Structur**: https://www.sicon.pl/systemy_zywiczne/systemy-epoksydowe/; wymienia on grunt GF-E lub wybrany inny grunt z linii Sicon i RR100-E. **Nie** zawiera wprost zatwierdzenia konkretnego zestawienia z GF-E **Premium**. Konieczne potwierdzenie kompatybilności, warstw/odstępów technologicznych i zużycia.
+- Karta GF-E Premium zawiera rozbieżność informacji o czasie życia mieszaniny (opis 30–40 minut, tabela 10 minut przy 20°C). Nie publikuj czasu życia ani nie wyliczaj planu robót bez uzyskania aktualnej, poprawnej karty i potwierdzenia od producenta.
+- Do oferty Garage Flakes potrzebna jest osobna, kompatybilna transparentna warstwa zamykająca. RR100-E jest pigmentowany i nie może być automatycznie przedstawiany jako przejrzysty lakier do eksponowania płatków.
+- W kartach `/systemy/materialy/...` publikujemy tylko producenta, odnośniki do jego dokumentacji i wybrane wartości zużycia opisane wraz z warunkami; strony pozostają `noindex`.
+- Do czasu zatwierdzenia receptury, badań i instrukcji EPOVIO Garage pozostaje `isConcept: true`; brak linku do sprzedaży i automatycznego przypisywania do starszych realizacji.
+- Zestawy Shopify pozostają wersjami DRAFT; nie aktualizuj ich ceny ani stanów w oparciu o samą kartę techniczną.
+
 ## Integracja ze sklepem Epovio/Shopify — kolejny etap
 - Jeden identyfikator materiału wewnętrznego, mapowany na konkretne SKU i `shopProductId`/Shopify product variant, nigdy po zgadywanej nazwie.
 - Dopiero po uruchomieniu sklepu pokazuj link do istniejącej, dostępnej do zakupu karty produktu. Nie kieruj klientów na `/sklep` dopóki middleware zwraca 404.
