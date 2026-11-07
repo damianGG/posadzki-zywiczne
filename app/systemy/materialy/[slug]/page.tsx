@@ -33,6 +33,29 @@ export default async function MaterialPage({ params }: Props) {
       <p className="text-sm font-medium text-primary">{brands[material.brandId].name}</p>
       <h1 className="mt-2 text-3xl font-bold md:text-4xl">{material.name}</h1>
       <p className="mt-5 text-lg leading-relaxed">{material.description}</p>
+      {material.isConcept && (
+        <p className="mt-5 max-w-3xl rounded-xl border p-5 text-sm leading-relaxed text-muted-foreground">
+          To projekt karty produktu należącego do samodzielnej marki EPOVIO.
+          Formulacja, wytwórca kontraktowy oraz szczegółowe dane techniczne wymagają zatwierdzenia.
+          Produkt nie jest jeszcze dostępny do kupienia.
+        </p>
+      )}
+      {material.technicalFields && material.technicalFields.length > 0 && (
+        <section className="mt-9" aria-labelledby="material-technical-fields">
+          <h2 id="material-technical-fields" className="text-2xl font-semibold">Karta techniczna – dane w opracowaniu</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Układ dokumentacji EPOVIO; miejsca bez potwierdzonych danych oznaczyliśmy jako wymagające weryfikacji.
+          </p>
+          <dl className="mt-5 overflow-hidden rounded-xl border">
+            {material.technicalFields.map((field, index) => (
+              <div key={field.label} className={`grid gap-2 px-5 py-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] sm:gap-6 ${index % 2 ? "bg-muted/40" : "bg-background"}`}>
+                <dt className="font-semibold">{field.label}</dt>
+                <dd className="text-sm text-muted-foreground">{field.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
       {material.referenceConsumption && (
         <section className="mt-9 rounded-xl border p-6">
           <h2 className="text-xl font-semibold">Orientacyjne zużycie wg dokumentacji producenta</h2>
@@ -44,11 +67,11 @@ export default async function MaterialPage({ params }: Props) {
         </section>
       )}
       <section className="mt-9 rounded-xl border p-6">
-        <h2 className="text-xl font-semibold">Dokumentacja i dobór</h2>
+        <h2 className="text-xl font-semibold">{material.isConcept ? "Co będzie zawierać finalna dokumentacja?" : "Dokumentacja i dobór"}</h2>
         <p className="mt-3 leading-relaxed text-muted-foreground">
-          Właściwości, dopuszczalne zastosowania, przygotowanie podłoża, zużycie i zgodność z pozostałymi
-          warstwami należy sprawdzić w aktualnej karcie technicznej producenta. Ta strona nie zastępuje dokumentacji,
-          nie stanowi oferty sprzedaży ani potwierdzenia zastosowania materiału na konkretnej realizacji.
+          {material.isConcept
+            ? "Po zatwierdzeniu produktu EPOVIO opublikujemy własną kartę techniczną: przeznaczenie, przygotowanie podłoża, proporcje mieszania, zużycie, aplikację, warunki utwardzania, parametry użytkowe, przechowywanie oraz wymagane informacje bezpieczeństwa. Do tego czasu ta strona nie jest instrukcją aplikacji ani ofertą sprzedaży."
+            : "Właściwości, dopuszczalne zastosowania, przygotowanie podłoża, zużycie i zgodność z pozostałymi warstwami należy sprawdzić w aktualnej karcie technicznej producenta. Ta strona nie zastępuje dokumentacji, nie stanowi oferty sprzedaży ani potwierdzenia zastosowania materiału na konkretnej realizacji."}
         </p>
         {material.technicalSheetUrl && (
           <a href={material.technicalSheetUrl} target="_blank" rel="noopener noreferrer"
