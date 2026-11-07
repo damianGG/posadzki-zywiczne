@@ -36,7 +36,7 @@ export default async function GoogleReviewsSection() {
               className="mx-auto mt-9 inline-flex flex-wrap items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-6 py-4 shadow-sm transition-shadow hover:shadow-md"
               aria-label="Zobacz ocenę firmy Posadzkizywiczne.com w Google Maps"
             >
-              <span className="font-semibold text-slate-700">Google Maps</span>
+              <span translate="no" className="whitespace-nowrap text-base font-normal text-[#5e5e5e]">Google Maps</span>
               <strong className="text-2xl text-slate-900">
                 {data.rating.toLocaleString("pl-PL", { maximumFractionDigits: 1 })}
               </strong>
