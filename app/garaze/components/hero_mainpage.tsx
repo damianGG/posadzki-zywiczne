@@ -25,80 +25,54 @@ export default function HeroMainPage({ variant = "home" }: HeroMainPageProps) {
         );
     }
     return (
-        <div className="relative w-full min-h-screen">
-            {/* Background Image */}
-            <div className="absolute inset-0">
+        <section className="relative isolate overflow-hidden bg-gradient-to-b from-zinc-50 via-white to-white">
+            {/* On phones the hero stays image-free: render portfolio photos below the fold instead. */}
+            <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden="true">
                 <Image
                     src="/garaz/IMG_1253.JPG"
-                    alt="Posadzka żywiczna w garażu - przykładowa realizacja"
+                    alt=""
                     fill
-                    priority
-                    fetchPriority="high"
-                    sizes="100vw"
+                    quality={70}
+                    sizes="(min-width: 1280px) 55vw, 50vw"
                     className="object-cover object-right"
                 />
-                <div
-                    className="absolute inset-0"
-                    style={{
-                        background:
-                            "linear-gradient(to left, rgba(255,255,255,0), rgba(255,255,255,1) 75%)",
-                    }}
-                />
+                <div className="absolute inset-0 bg-gradient-to-r from-white via-white/95 via-55% to-white/10" />
             </div>
 
-            {/* Content */}
-            <div className="relative z-10 h-full flex items-center container">
-                <div className="w-full md:w-1/2 px-4 md:px-8">
-                    <div className="flex flex-col gap-8 py-20 lg:py-40 items-start justify-start">
-                        <div className="flex gap-4 flex-col">
-                            <h1 className="text-5xl md:text-7xl max-w-2xl tracking-tighter text-left font-regular">
-                                <span className="text-spektr-cyan-50">Posadzki żywiczne</span>
-                                <span className="block">do domu i firmy</span>
-                            </h1>
-
-                            <p className="text-lg md:text-xl leading-relaxed tracking-tight text-muted-foreground max-w-2xl text-left">
-                                Wykonujemy posadzki do garaży, domów, obiektów usługowych i przemysłowych oraz na balkony i tarasy. Rzeszów, Kraków i okolice.
-                            </p>
-                            <ul className="grid gap-2 text-sm md:text-base text-muted-foreground">
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-primary" />
-                                    Wstępna wycena na podstawie zdjęć i metrażu
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-primary" />
-                                    Harmonogram prac dopasowany do podłoża i systemu
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <Check className="w-4 h-4 text-primary" />
-                                    Gwarancja trwałości oraz wsparcie po montażu
-                                </li>
-                            </ul>
-                        </div>
-
-                        <div className="flex flex-col md:flex-row gap-3">
-                            <Button className="gap-4" asChild>
-                                <a href="#kontakt">
-                                    Darmowa wycena
-                                    <MoveRight className="w-4 h-4" />
-                                </a>
-                            </Button>
-                            <Button className="gap-4" variant="outline" asChild>
-                                <a href="tel:+48507384619">
-                                    +48 507 384 619
-                                    <PhoneCall className="w-4 h-4" />
-                                </a>
-                            </Button>
-
-                            <Button className="gap-4" asChild>
-                                <a href="mailto:biuro@posadzkizywiczne.com">
-                                    biuro@posadzkizywiczne.com
-                                    <MoveRight className="w-4 h-4" />
-                                </a>
-                            </Button>
-                        </div>
+            <div className="container relative z-10 mx-auto flex min-h-[460px] items-center px-4 py-12 sm:min-h-[520px] sm:py-16 lg:min-h-[640px] lg:py-20">
+                <div className="max-w-2xl">
+                    <p className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-700">
+                        Posadzki żywiczne – wykonanie i wycena
+                    </p>
+                    <h1 className="max-w-2xl text-4xl font-semibold leading-tight tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
+                        Posadzki żywiczne do garażu, domu i firmy
+                    </h1>
+                    <p className="mt-5 max-w-xl text-base leading-relaxed text-slate-700 sm:text-lg">
+                        Wykonujemy posadzki do garaży, domów, hal, na balkony i tarasy.
+                        Rzeszów, Kraków i okolice. Zacznij od orientacyjnej wyceny garażu online.
+                    </p>
+                    <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                        <Button asChild size="lg" className="w-full gap-2 sm:w-auto">
+                            <a href="/kalkulator?typ=garaz">
+                                Wyceń garaż
+                                <MoveRight className="h-4 w-4" aria-hidden="true" />
+                            </a>
+                        </Button>
+                        <Button asChild size="lg" variant="outline" className="w-full gap-2 sm:w-auto">
+                            <a href="tel:+48507384619">
+                                Zadzwoń: 507 384 619
+                                <PhoneCall className="h-4 w-4" aria-hidden="true" />
+                            </a>
+                        </Button>
                     </div>
+                    <p className="mt-5 text-sm text-slate-700">
+                        Inny rodzaj posadzki?{" "}
+                        <a href="/kontakt" className="font-semibold underline underline-offset-4 hover:text-slate-950">
+                            Wyślij zapytanie
+                        </a>
+                    </p>
                 </div>
             </div>
-        </div>
+        </section>
     );
 }
