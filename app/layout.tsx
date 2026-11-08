@@ -76,6 +76,7 @@ export default function RootLayout({
   return (
     <html lang="pl">
       <head>
+        <meta name="google-site-verification" content="ace_3QdAQPGi-d0Su1tT0BZZXdGGGCA1UQn3CbKF7uw" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         <link rel="preconnect" href="https://res.cloudinary.com" crossOrigin="anonymous" />
 
