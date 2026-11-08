@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Check, MoveRight, PhoneCall } from "lucide-react";
+import { MoveRight, PhoneCall } from "lucide-react";
 type HeroMainPageProps = { variant?: "home" | "garage" };
 
 export default function HeroMainPage({ variant = "home" }: HeroMainPageProps) {
