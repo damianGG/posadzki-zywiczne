@@ -1,28 +1,31 @@
-# Opinie Google Maps – konfiguracja
+# Opinie Google Maps – wersja bez API
 
-Komponent jest używany na stronie głównej, /garaze oraz /posadzki-zywiczne-na-balkony.
+Sekcja na stronie głównej, `/garaze` oraz `/posadzki-zywiczne-na-balkony` korzysta z ręcznie przepisanych **8 ocen Google** ze zrzutów ekranu przekazanych przez właściciela 8 listopada 2026 roku.
 
-## Uruchomienie
+## Co jest wyświetlane
 
-1. W Google Cloud Console włącz Places API (New) i rozliczenia dla projektu.
-2. Utwórz oddzielny klucz API do serwerowych zapytań Places; ogranicz go do Places API (New), ustaw limity i alerty kosztowe.
-3. Ustal dokładny Place ID profilu firmy w Google Maps, w którym klienci wystawiają opinie.
-4. W Vercel → Project → Settings → Environment Variables ustaw:
-   - GOOGLE_PLACES_API_KEY: klucz serwerowy Places API.
-   - GOOGLE_PLACE_ID: identyfikator profilu firmy z Google Maps.
-5. Wykonaj ponowny deployment i upewnij się, że opinie dotyczą właściwego profilu.
+- Autentyczne widoczne teksty i dane z przesłanych zrzutów, bez dopisywania brakujących fragmentów.
+- Oceny 5/5, nazwiska autorów i względne daty ze zrzutów.
+- Karuzela kart, rozwijanie długich opinii, odnośniki do wizytówki Google Maps.
+- Średnia 5,0 wyłącznie z **8 pokazanych ocen** – nie jest przedstawiana jako oficjalna średnia całego profilu.
+- Recenzja Karola Kuliga jest oznaczona jako fragment, ponieważ jej dalsza część była ukryta.
+- Oceny Kacpra Zastawnika i Bartosza Jesionowskiego nie zawierały tekstu.
 
-Klucza nie wolno umieszczać w repozytorium ani w zmiennej NEXT_PUBLIC_. Istniejący NEXT_PUBLIC_GOOGLE_API_KEY jest używany w innym celu.
+Wszystkie linki prowadzą do wizytówki podanej przez właściciela:
+https://share.google/fiwrzUXA1Fls64tj0
 
-## Zasady działania
+Uwaga: podany krótki URL nie został automatycznie potwierdzony, dlatego przed mergem sprawdź go w przeglądarce.
 
-- Places API (New) zwraca maksymalnie 5 opinii (według trafności Google). Link prowadzi do pozostałych recenzji w Maps.
-- Teksty opinii korzystają z płatnej kategorii Place Details Enterprise + Atmosphere. Sprawdź aktualną taryfę, ustaw budżet i limity.
-- Nie zapisujemy ani nie buforujemy danych Google; serwer używa cache: no-store, a strony z opiniami są dynamiczne.
-- Widoczni są autorzy, odnośniki do opinii i atrybucje dostawców. Jeżeli Google przetłumaczył opinię, komponent to sygnalizuje.
-- W razie braku konfiguracji lub błędu API nie pojawia się wymyślona ocena ani przykładowe recenzje – tylko link do Google Maps.
-- Przed publikacją zweryfikuj obowiązkową politykę prywatności, regulamin i zgodność z warunkami Google Maps Platform.
+## Utrzymanie
 
-Dokumentacja: https://developers.google.com/maps/documentation/places/web-service/place-details
-Zasady: https://developers.google.com/maps/documentation/places/web-service/policies
-Place ID: https://developers.google.com/maps/documentation/places/web-service/place-id
+- **Nie ma integracji z API**, żadnych kluczy, kosztów Places API ani zależności od Google Cloud.
+- Treść nie aktualizuje się automatycznie; aby ją zmienić, edytuj tablicę `googleReviews` w `lib/google-reviews.ts`.
+- W miarę upływu czasu względne daty typu „rok temu” stają się nieaktualne. Komponent jawnie informuje, że daty pochodzą ze zrzutów z 8.11.2026.
+- Nie dodawaj do markup danych typu AggregateRating / Review do samodzielnie wystawianych przez firmę opinii – Google zwykle nie kwalifikuje takich gwiazdek do wyników rozszerzonych.
+- Jeżeli w przyszłości zostanie uruchomione Google API, należy zastąpić dane statyczne osobną integracją uwzględniającą regulamin Google.
+
+## Kontrola po wdrożeniu
+
+1. Sprawdź widok mobilny i desktopowy, przewijanie slidera i „Czytaj więcej”.
+2. Kliknij „Zobacz wszystkie opinie w Google Maps” i sprawdź, czy prowadzi do właściwej firmy.
+3. Porównaj treści każdej karty ze zrzutami; brakujących fragmentów nie uzupełniaj domysłami.
