@@ -58,10 +58,18 @@ const faqs = [
 ];
 
 export default async function GaragePage() {
-  const projects = (await getRealizacjeByCategory("garaze"))
-    .filter((project) => Boolean(project.slug && project.images.main))
-    .slice(0, 6);
-  const przemysl = projects.find((project) => project.slug === "posadzka-zywiczna-garaz-100m2-przemysl-ral7035");
+  const allGarageProjects = (await getRealizacjeByCategory("garaze"))
+    .filter((project) => Boolean(project.slug && project.images.main));
+  // Keep documented case studies visible even when newer database entries arrive.
+  const featuredSlugs = [
+    "posadzka-zywiczna-garaz-100m2-przemysl-ral7035",
+    "posadzka-zywiczna-garaz-30m2-sedziszow-malopolski",
+  ];
+  const projects = [
+    ...featuredSlugs.flatMap((slug) => allGarageProjects.filter((project) => project.slug === slug)),
+    ...allGarageProjects.filter((project) => !featuredSlugs.includes(project.slug)),
+  ].slice(0, 6);
+  const przemysl = allGarageProjects.find((project) => project.slug === "posadzka-zywiczna-garaz-100m2-przemysl-ral7035");
   const detailPhotos = przemysl ? normalizeGallery(przemysl).slice(0, 3) : [];
 
   return (
