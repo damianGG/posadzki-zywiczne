@@ -1,12 +1,12 @@
-import { Star, ExternalLink } from "lucide-react";
+import { ExternalLink, Star } from "lucide-react";
 import GoogleReviewsCarousel from "@/components/google-reviews-carousel";
-import { getGoogleReviews, GOOGLE_REVIEWS_FALLBACK_URL } from "@/lib/google-reviews";
+import {
+  GOOGLE_MAPS_PROFILE_URL,
+  displayedReviewsAverage,
+  googleReviews,
+} from "@/lib/google-reviews";
 
-export default async function GoogleReviewsSection() {
-  const data = await getGoogleReviews();
-  const mapsUrl = data?.mapsUrl ?? GOOGLE_REVIEWS_FALLBACK_URL;
-  const hasRating = typeof data?.rating === "number";
-
+export default function GoogleReviewsSection() {
   return (
     <section
       id="opinie-google"
@@ -25,56 +25,58 @@ export default async function GoogleReviewsSection() {
             Co mówią klienci po wykonaniu posadzki?
           </h2>
           <p className="mt-4 text-base text-slate-600">
-            Sprawdź autentyczne opinie o Posadzkizywiczne.com w Google Maps.
+            Zobacz opinie klientów o naszej pracy opublikowane w Google.
           </p>
 
-          {hasRating && (
-            <a
-              href={mapsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mx-auto mt-9 inline-flex flex-wrap items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-6 py-4 shadow-sm transition-shadow hover:shadow-md"
-              aria-label="Zobacz ocenę firmy Posadzkizywiczne.com w Google Maps"
+          <a
+            href={GOOGLE_MAPS_PROFILE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mx-auto mt-9 inline-flex flex-wrap items-center justify-center gap-3 rounded-full border border-slate-200 bg-white px-6 py-4 shadow-sm transition-shadow hover:shadow-md"
+            aria-label="Zobacz wizytówkę Posadzkizywiczne.com i opinie w Google Maps"
+          >
+            <span className="flex items-center gap-2 font-semibold text-slate-700">
+              <span aria-hidden="true" className="bg-gradient-to-br from-blue-500 via-red-500 to-green-500 bg-clip-text text-2xl font-extrabold text-transparent">G</span>
+              Google
+            </span>
+            <strong className="text-2xl text-slate-900">
+              {displayedReviewsAverage.toLocaleString("pl-PL", {
+                minimumFractionDigits: 1,
+                maximumFractionDigits: 1,
+              })}
+            </strong>
+            <span
+              className="flex items-center gap-0.5"
+              aria-label={"Średnia " + displayedReviewsAverage + " na 5 z prezentowanych opinii"}
             >
-              <span translate="no" className="whitespace-nowrap text-base font-normal text-[#5e5e5e]">Google Maps</span>
-              <strong className="text-2xl text-slate-900">
-                {data.rating.toLocaleString("pl-PL", { maximumFractionDigits: 1 })}
-              </strong>
-              <span className="flex items-center gap-0.5" aria-label={"Ocena " + data.rating + " na 5"}>
-                {Array.from({ length: 5 }, (_, index) => (
-                  <Star
-                    key={index}
-                    className={
-                      index < Math.round(data.rating!)
-                        ? "h-5 w-5 fill-amber-400 text-amber-400"
-                        : "h-5 w-5 text-slate-300"
-                    }
-                    aria-hidden="true"
-                  />
-                ))}
-              </span>
-              {typeof data.reviewCount === "number" && (
-                <span className="w-full text-xs text-slate-500 sm:w-auto">
-                  {data.reviewCount.toLocaleString("pl-PL")} ocen
-                </span>
-              )}
-            </a>
-          )}
+              {Array.from({ length: 5 }, (_, index) => (
+                <Star
+                  key={index}
+                  className={
+                    index < Math.round(displayedReviewsAverage)
+                      ? "h-5 w-5 fill-amber-400 text-amber-400"
+                      : "h-5 w-5 text-slate-300"
+                  }
+                  aria-hidden="true"
+                />
+              ))}
+            </span>
+            <span className="w-full text-xs text-slate-500 sm:w-auto">
+              z {googleReviews.length} pokazanych opinii
+            </span>
+          </a>
+          <p className="mt-3 text-xs text-slate-500">
+            To średnia z prezentowanych ocen, nie całkowita ocena wizytówki Google.
+          </p>
         </div>
 
-        {data?.reviews.length ? (
-          <div className="mt-12 md:mt-14">
-            <GoogleReviewsCarousel reviews={data.reviews} />
-          </div>
-        ) : (
-          <p className="mx-auto mt-12 max-w-xl text-center text-sm text-slate-600">
-            Aktualne opinie i oceny znajdziesz bezpośrednio w profilu firmy na Google Maps.
-          </p>
-        )}
+        <div className="mt-12 md:mt-14">
+          <GoogleReviewsCarousel reviews={googleReviews} />
+        </div>
 
         <div className="mt-12 flex flex-col items-center gap-3 text-center">
           <a
-            href={mapsUrl}
+            href={GOOGLE_MAPS_PROFILE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 font-semibold text-primary underline-offset-4 hover:underline"
@@ -82,31 +84,11 @@ export default async function GoogleReviewsSection() {
             Zobacz wszystkie opinie w Google Maps
             <ExternalLink className="h-4 w-4" aria-hidden="true" />
           </a>
-          <p className="text-xs text-slate-500">
-            Źródło: Google Maps. Opinie prezentowane według trafności Google (maksymalnie 5).
+          <p className="max-w-2xl text-xs text-slate-500">
+            Źródło: Google Maps. Opinie przepisane ze zrzutów ekranu udostępnionych
+            8 listopada 2026 r. Sekcja nie aktualizuje się automatycznie.
+            Daty publikacji są względne i pochodzą ze zrzutów.
           </p>
-          {Boolean(data?.attributions.length) && (
-            <p className="text-xs text-slate-500">
-              Dostawcy danych:{" "}
-              {data!.attributions.map((attribution, index) => (
-                <span key={attribution.provider + index}>
-                  {index > 0 ? ", " : ""}
-                  {attribution.providerUri ? (
-                    <a
-                      href={attribution.providerUri}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="underline underline-offset-2"
-                    >
-                      {attribution.provider}
-                    </a>
-                  ) : (
-                    attribution.provider
-                  )}
-                </span>
-              ))}
-            </p>
-          )}
         </div>
       </div>
     </section>
