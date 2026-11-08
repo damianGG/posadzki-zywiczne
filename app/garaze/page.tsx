@@ -5,6 +5,7 @@ import { Feature5 } from "@/blocks/feature/feature5";
 import { CTA2 } from "@/blocks/cta/cta2";
 import { FAQ2 } from "./components/faq2";
 import { Contact1 } from "@/blocks/contact/contact1";
+import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 import ProblemSolutionSection from "./components/issuse-solution";
 
 import type { Metadata } from 'next'
@@ -145,6 +146,7 @@ export default function Home() {
             />
             <CTA2 />
             <Feature5 />
+            <SocialProofSection />
             <Contact1 />
         </>
     );
