@@ -41,7 +41,7 @@ function buildQualityTransformations(quality?: number): string[] {
     transformations.push(`q_${quality}`);
   } else {
     // Use auto quality for best results
-    transformations.push('q_auto:best');
+    transformations.push('q_auto:good');
   }
   
   return transformations;
@@ -70,8 +70,8 @@ export default function cloudinaryLoader({ src, width, quality }: CloudinaryLoad
   // Auto format (WebP/AVIF when supported by browser)
   transformations.push('f_auto');
   
-  // DPR auto for retina displays
-  transformations.push('dpr_auto');
+  // Next/Image srcset already selects a width appropriate for device pixel ratio.
+  // Do not apply dpr_auto on top: that would download unnecessarily large images.
   
   // Combine transformations
   const transformString = transformations.join(',');
