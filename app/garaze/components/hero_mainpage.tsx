@@ -73,6 +73,20 @@ export default function HeroMainPage({ variant = "home" }: HeroMainPageProps) {
                     </p>
                 </div>
             </div>
+            {/* Same verified local photograph, placed below the content on small screens. */}
+            <figure className="relative z-10 mx-auto max-w-2xl px-4 pb-9 lg:hidden">
+                <Image
+                    src="/garaz/IMG_1253.JPG"
+                    width={900}
+                    height={600}
+                    loading="lazy"
+                    quality={70}
+                    sizes="(max-width: 768px) 100vw, 70vw"
+                    className="aspect-[3/2] w-full rounded-2xl object-cover"
+                    alt="Posadzka żywiczna w wykończonym garażu"
+                />
+                <figcaption className="mt-2 text-xs text-zinc-600">Zdjęcie z naszej galerii garaży</figcaption>
+            </figure>
         </section>
     );
 }
