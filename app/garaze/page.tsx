@@ -6,6 +6,7 @@ import { absoluteUrl } from "@/lib/site-config";
 import { getRealizacjeByCategory } from "@/lib/realizacje";
 import type { Realizacja } from "@/types/realizacje";
 import GarageFinishPicker from "./components/garage-finish-picker";
+import EditorialPhotoSlot from "@/components/editorial-photo-slot";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 const heroImage = "https://res.cloudinary.com/dvvqfkmsw/image/upload/v1793190382/realizacje/chatgpt/posadzka-zywiczna-garaz-30m2-sedziszow-malopolski/garaz-30m2-ral7035-oryginal-b2e28c4ecd288ef1.jpg";
@@ -181,6 +182,33 @@ export default async function GaragePage() {
         </section>
       )}
 
+      <section aria-labelledby="garage-before-after" className="border-t border-zinc-200 bg-zinc-50 py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Metamorfoza garażu</p>
+          <h2 id="garage-before-after" className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
+            Przed i po — ten sam garaż, ta sama perspektywa.
+          </h2>
+          <p className="mt-4 max-w-3xl leading-relaxed text-zinc-600">
+            Tak chcemy dokumentować realną zmianę. Do uzupełnienia potrzebna jest para zdjęć wykonanych w jednym miejscu, z podobnego kąta i w podobnym świetle.
+          </p>
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            <EditorialPhotoSlot
+              label="PRZED — stan betonu"
+              shot="Cała podłoga garażu przed szlifowaniem, widoczne rysy i ubytki"
+              caption="Ujęcie do sparowania ze zdjęciem po realizacji."
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+            <EditorialPhotoSlot
+              label="PO — gotowa posadzka"
+              shot="Ten sam garaż po wykonaniu powłoki, cokołów i detali"
+              caption="Dokładnie ta sama perspektywa, nie zdjęcie z innej realizacji."
+              sizes="(max-width: 768px) 100vw, 50vw"
+            />
+          </div>
+          <p className="mt-4 text-xs text-zinc-500">To oznaczone miejsca na zdjęcia, nie wizualizacja wykonanej metamorfozy.</p>
+        </div>
+      </section>
+
       <section id="cena" aria-labelledby="garaz-cena" className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Cena i zakres</p>
@@ -218,11 +246,18 @@ export default async function GaragePage() {
           <h2 id="garaz-przebieg" className="max-w-2xl text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Od oceny betonu do gotowej posadzki.</h2>
           <div className="mt-10 grid gap-8 md:grid-cols-3">
             {[
-              { number: "01", title: "Oględziny i dobór", content: "Sprawdzamy nośność, wilgotność, pęknięcia oraz dylatacje. Ustalamy wykończenie, kolor i zakres napraw." },
-              { number: "02", title: "Przygotowanie podłoża", content: "Szlifujemy i naprawiamy beton, wykonujemy gruntowanie oraz wymagane warstwy systemu." },
-              { number: "03", title: "Detale i odbiór", content: "Wykańczamy posadzkę i cokoły. Informujemy, kiedy można bezpiecznie wejść i wjechać samochodem." },
+              { number: "01", title: "Oględziny i dobór", content: "Sprawdzamy nośność, wilgotność, pęknięcia oraz dylatacje. Ustalamy wykończenie, kolor i zakres napraw.", shot: "Zbliżenie rysy, dylatacji lub oględzin betonu" },
+              { number: "02", title: "Przygotowanie podłoża", content: "Szlifujemy i naprawiamy beton, wykonujemy gruntowanie oraz wymagane warstwy systemu.", shot: "Praca szlifierki na betonie lub etap gruntowania" },
+              { number: "03", title: "Detale i odbiór", content: "Wykańczamy posadzkę i cokoły. Informujemy, kiedy można bezpiecznie wejść i wjechać samochodem.", shot: "Detal gotowego cokołu, narożnika i powierzchni posadzki" },
             ].map((step) => (
               <div key={step.number} className="border-t border-zinc-300 pt-5">
+                <EditorialPhotoSlot
+                  label={step.title}
+                  shot={step.shot}
+                  aspect="landscape"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="mb-5"
+                />
                 <p className="text-sm font-semibold text-zinc-500">{step.number}</p>
                 <h3 className="mt-4 text-xl font-semibold text-zinc-950">{step.title}</h3>
                 <p className="mt-3 leading-relaxed text-zinc-600">{step.content}</p>
@@ -243,10 +278,24 @@ export default async function GaragePage() {
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-zinc-200 p-6">
+            <EditorialPhotoSlot
+              label="Zbliżenie przygotowanego podłoża"
+              shot="Naprawiona rysa, szlifowany beton lub dylatacja przed gruntowaniem"
+              aspect="wide"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="mb-5"
+            />
             <h3 className="text-lg font-semibold">Trwałość zaczyna się pod żywicą</h3>
             <p className="mt-3 text-sm leading-relaxed text-zinc-600">Rysy, wilgoć, dylatacje i słaba warstwa betonu mogą zniweczyć nawet estetyczne wykończenie. Dlatego dobieramy przygotowanie podłoża do jego faktycznego stanu.</p>
           </div>
           <div className="rounded-2xl border border-zinc-200 p-6">
+            <EditorialPhotoSlot
+              label="Makro wykończenia"
+              shot="Prawdziwa faktura płatków lub posypki kwarcowej pokazana z bliska"
+              aspect="wide"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="mb-5"
+            />
             <h3 className="text-lg font-semibold">Dobór systemu zamiast przypadkowego produktu</h3>
             <p className="mt-3 text-sm leading-relaxed text-zinc-600">Rodzaj gruntu, warstwy zasadniczej, posypki i lakieru wykończeniowego zależy od warunków. Karty techniczne producentów pomagają potwierdzić parametry.</p>
           </div>
