@@ -44,5 +44,5 @@ Brakujące kadry dla kart: parking z widoczną rampą/dylatacją, hala z ruchem 
 
 1. Wszystkie kadry responsywne, z czytelnymi etykietami, bez CLS (stałe proporcje).
 2. Realne zdjęcia renderowane przez `next/image`, z opisowym `alt`; dekoracyjne sloty odróżnione od realnych zdjęć.
-3. PR otwarty jako **Draft**. Przed sca leniem do `main` uzupełnić brakujące ujęcia, usunąć puste sloty lub uzyskać zgodę na ich ekspozycję.
+3. PR otwarty jako **Draft**. Przed scaleniem do `main` uzupełnić brakujące ujęcia, usunąć puste sloty lub uzyskać zgodę na ich ekspozycję.
 4. Sprawdzić podgląd 375 px / 768 px / 1440 px, dostępność, `pnpm lint` i `pnpm build`.
