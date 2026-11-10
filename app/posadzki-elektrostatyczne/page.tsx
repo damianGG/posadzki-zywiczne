@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, CircuitBoard, Factory, FlaskConical, ShieldCheck, Zap } from "lucide-react";
 import RelatedSystems from "@/components/related-systems";
+import EditorialPhotoSlot from "@/components/editorial-photo-slot";
 import { absoluteUrl, SITE_PHONE, SITE_URL } from "@/lib/site-config";
 import { generatePageMetadata } from "@/lib/seo";
 import { getBreadcrumbSchema } from "@/lib/structured-data";
@@ -91,7 +92,8 @@ export default function PosadzkiElektrostatycznePage() {
       </div>
 
       <header className="bg-gradient-to-br from-zinc-950 via-zinc-900 to-slate-800 py-16 text-white md:py-24">
-        <div className="container mx-auto max-w-6xl px-4">
+        <div className="container mx-auto grid max-w-6xl gap-10 px-4 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2 text-sm text-slate-200">
             <Zap className="h-4 w-4" aria-hidden="true" />
             Specjalistyczne systemy ESD
@@ -115,6 +117,13 @@ export default function PosadzkiElektrostatycznePage() {
           <p className="mt-6 text-sm text-slate-300">
             Zakres rezystancji i wymagania dotyczące badań potwierdzamy indywidualnie dla każdego projektu.
           </p>
+          </div>
+          <EditorialPhotoSlot
+            label="Posadzka ESD w zakładzie produkcyjnym"
+            shot="Szerokie ujęcie rzeczywistej hali z wykonaną posadzką ESD"
+            caption="Do wstawienia wyłącznie zdjęcie udokumentowanego systemu."
+            sizes="(max-width: 1024px) 100vw, 45vw"
+          />
         </div>
       </header>
 
@@ -182,6 +191,22 @@ export default function PosadzkiElektrostatycznePage() {
               </div>
             </div>
           ))}
+        </div>
+        <div className="mt-10 grid gap-5 md:grid-cols-2">
+          <EditorialPhotoSlot
+            label="Połączenie przewodzące"
+            shot="Zbliżenie siatki, taśmy miedzianej lub punktu uziemienia przed warstwą wykończeniową"
+            caption="Dokumentacja rzeczywistego etapu wykonania, bez pozorowanych połączeń."
+            aspect="wide"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+          <EditorialPhotoSlot
+            label="Pomiar gotowej posadzki"
+            shot="Technik wykonujący rzeczywisty pomiar rezystancji z widocznym układem pomiarowym"
+            caption="Bez dopisywania wyniku pomiaru, jeżeli nie pochodzi z dokumentacji."
+            aspect="wide"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
         </div>
         <div className="mt-8 rounded-xl border-l-4 border-primary bg-muted/40 p-6">
           <p className="leading-relaxed">
