@@ -5,6 +5,7 @@ import { Contact1 } from "@/blocks/contact/contact1";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
 import { getLatestBlogPosts } from "@/lib/blog";
+import { getAllRealizacje } from "@/lib/realizacje";
 import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
 import RelatedRealizations from "@/components/related-realizations";
 import Link from "next/link";
@@ -12,13 +13,14 @@ import { localServicePages } from "@/lib/local-service-pages";
 
 export const revalidate = 300;
 
-export default function Home() {
+export default async function Home() {
   const latestPosts = getLatestBlogPosts(3);
+  const serviceProjects = await getAllRealizacje();
 
   return (
     <>
       <HeroMainPage variant="home" />
-      <Feature5 />
+      <Feature5 projects={serviceProjects} />
       <SocialProofSection />
       <StoneCarpetTeaser />
       <section className="container mx-auto max-w-6xl px-4 py-12" aria-labelledby="service-areas-heading">
