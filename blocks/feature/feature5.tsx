@@ -1,9 +1,8 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { serviceGroups } from "@/lib/service-navigation";
-import { getAllRealizacje } from "@/lib/realizacje";
 import { stoneCarpetGallery } from "@/lib/stone-carpet-gallery";
-import type { RealizacjaCategory } from "@/types/realizacje";
+import type { Realizacja, RealizacjaCategory } from "@/types/realizacje";
 import EditorialPhotoSlot from "@/components/editorial-photo-slot";
 
 // Only display documented photographs from the same service category.
@@ -28,8 +27,7 @@ const shotBriefs: Record<string, string> = {
   "/pomieszczenia-czyste": "Bezspoinowa powierzchnia i detal przy ścianie w cleanroomie",
 };
 
-export async function Feature5() {
-  const projects = await getAllRealizacje();
+export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
 
   return (
     <section className="container mx-auto px-4 py-16 lg:py-24" aria-labelledby="services-heading">
