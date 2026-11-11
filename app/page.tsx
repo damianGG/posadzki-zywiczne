@@ -1,13 +1,13 @@
-import HeroMainPage from "@/app/garaze/components/hero_mainpage";
-import { Feature5 } from "@/blocks/feature/feature5";
-import { CTA2 } from "@/blocks/cta/cta2";
+import { Suspense } from "react";
+import Link from "next/link";
 import { Contact1 } from "@/blocks/contact/contact1";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 import BlogPreviewSection from "@/components/blog-preview-section";
-import { getLatestBlogPosts } from "@/lib/blog";
-import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
+import HomeHero from "@/components/home-hero";
+import OrderFlow from "@/components/order-flow";
+import PhotoWall from "@/components/photo-wall";
 import RelatedRealizations from "@/components/related-realizations";
-import Link from "next/link";
+import { getLatestBlogPosts } from "@/lib/blog";
 import { localServicePages } from "@/lib/local-service-pages";
 
 export const revalidate = 300;
@@ -17,32 +17,29 @@ export default function Home() {
 
   return (
     <>
-      <HeroMainPage variant="home" />
-      <Feature5 />
+      <HomeHero />
+      <Suspense fallback={<section className="bg-zinc-50 px-4 py-16 text-zinc-600">Ładuję wybór posadzki…</section>}>
+        <OrderFlow />
+      </Suspense>
+      <PhotoWall />
       <SocialProofSection />
-      <StoneCarpetTeaser />
+      <RelatedRealizations title="Kolejne udokumentowane realizacje" limit={6} />
       <section className="container mx-auto max-w-6xl px-4 py-12" aria-labelledby="service-areas-heading">
         <h2 id="service-areas-heading" className="text-2xl font-bold md:text-3xl">Posadzki żywiczne w Twoim mieście</h2>
-        <p className="mt-3 max-w-3xl text-muted-foreground">
-          Realizujemy posadzki żywiczne dla klientów indywidualnych i przemysłowych.
-          Sprawdź zakres usług oraz informacje potrzebne do wyceny w wybranym mieście.
-        </p>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <p className="mt-3 max-w-3xl text-zinc-600">Ten sam sposób wyceny. Wybierz miasto, jeśli chcesz zobaczyć lokalny zakres dojazdu.</p>
+        <div className="mt-5 flex flex-wrap gap-2">
           {Object.values(localServicePages).map((page) => (
-            <Link key={page.slug} href={"/posadzki-zywiczne/" + page.slug} className="group rounded-xl border p-6 hover:border-primary">
-              <h3 className="text-xl font-semibold group-hover:text-primary">Posadzki żywiczne {page.city}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">{page.description}</p>
+            <Link key={page.slug} href={"/posadzki-zywiczne/" + page.slug} className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-900 hover:border-zinc-950">
+              {page.city}
             </Link>
           ))}
         </div>
       </section>
-      <RelatedRealizations title="Zobacz efekty naszych prac" />
       <BlogPreviewSection
         posts={latestPosts}
-        title="Poradniki o posadzkach żywicznych"
-        subtitle="Poznaj systemy epoksydowe i poliuretanowe, zasady przygotowania podłoża oraz praktyczne wskazówki dotyczące wyboru posadzki."
+        title="Krótkie odpowiedzi, zanim zapytasz"
+        subtitle="Koszt, żółknięcie od słońca i czas, po którym można wjechać autem."
       />
-      <CTA2 />
       <Contact1 />
     </>
   );

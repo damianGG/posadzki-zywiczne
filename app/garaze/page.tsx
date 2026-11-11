@@ -91,8 +91,8 @@ export default async function GaragePage() {
               Piękne, trwałe posadzki żywiczne dopasowane do Twojego garażu. Zobacz wykonane przez nas realizacje, wybierz kolor i strukturę, a następnie poznaj orientacyjny koszt.
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700">
-                Wyceń swój garaż <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <Link href="/zamow?miejsce=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700">
+                Wybierz wygląd i wyceń <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <Link href="#realizacje" className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-300 px-6 py-3.5 text-sm font-semibold text-zinc-900 transition-colors hover:border-zinc-900">
                 Zobacz realizacje <Images className="h-4 w-4" aria-hidden="true" />
@@ -287,8 +287,8 @@ export default async function GaragePage() {
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Twój garaż może wyglądać tak samo dobrze.</h2>
           <p className="mt-5 text-zinc-300">Podaj metraż i lokalizację. Jeśli beton wymaga naprawy, dołącz zdjęcia całej podłogi oraz zbliżenia uszkodzeń.</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200">
-              Wyceń garaż <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <Link href="/zamow?miejsce=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200">
+              Wybierz wygląd i wyceń <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link href="/kontakt" className="inline-flex items-center justify-center rounded-full border border-zinc-500 px-7 py-3.5 text-sm font-semibold text-white hover:border-white">
               Skontaktuj się z nami
