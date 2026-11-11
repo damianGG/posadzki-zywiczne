@@ -5,6 +5,7 @@ export const Footer1 = () => {
   const navigationItems = [
     ...serviceGroups,
     { title: "Informacje", items: [
+      {title: "Wycena ze zdjęciami", href: "/zamow"},
       {title: "Systemy i producenci", href: "/systemy"},
       {title: "Realizacje", href: "/realizacje"},
       {title: "Galeria zdjęć", href: "/galeria"},
