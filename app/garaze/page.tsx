@@ -4,9 +4,8 @@ import type { Metadata } from "next";
 import { ArrowRight, Check, ChevronRight, Images, Ruler, ShieldCheck } from "lucide-react";
 import { absoluteUrl } from "@/lib/site-config";
 import { getRealizacjeByCategory } from "@/lib/realizacje";
-import type { Realizacja } from "@/types/realizacje";
 import GarageFinishPicker from "./components/garage-finish-picker";
-import EditorialPhotoSlot from "@/components/editorial-photo-slot";
+import ProjectPhoto from "@/components/project-photo";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 const heroImage = "https://res.cloudinary.com/dvvqfkmsw/image/upload/v1793190382/realizacje/chatgpt/posadzka-zywiczna-garaz-30m2-sedziszow-malopolski/garaz-30m2-ral7035-oryginal-b2e28c4ecd288ef1.jpg";
@@ -26,16 +25,11 @@ export const metadata: Metadata = {
 
 export const revalidate = 300;
 
-function normalizeGallery(project: Realizacja): Array<{ url: string; alt: string }> {
-  return project.images.gallery
-    .filter((image) => typeof image === "string" || !image.hidden)
-    .map((image) => typeof image === "string"
-      ? { url: image, alt: "Szczegół posadzki żywicznej – " + project.location }
-      : { url: image.url, alt: image.alt || "Szczegół realizacji – " + project.location })
-    .filter((image) => Boolean(image.url));
-}
-
 const faqs = [
+  {
+    q: "Czy zdjęcie potwierdza odporność i antypoślizgowość?",
+    a: "Zdjęcie pokazuje wygląd i widoczne detale. Nie potwierdza wilgotności betonu, przyczepności, grubości warstw ani klasy antypoślizgowości. Te wymagania ustalamy na podstawie oceny podłoża, doboru systemu i jego dokumentacji.",
+  },
   {
     q: "Ile kosztuje posadzka żywiczna w garażu?",
     a: "Koszt zależy od metrażu, stanu betonu, wymaganych napraw, rodzaju wykończenia i zakresu cokołów. Przykładowy garaż 45 m² wykonaliśmy za 7 500 zł netto. To przykład konkretnej realizacji, nie uniwersalny cennik.",
@@ -70,8 +64,12 @@ export default async function GaragePage() {
     ...featuredSlugs.flatMap((slug) => allGarageProjects.filter((project) => project.slug === slug)),
     ...allGarageProjects.filter((project) => !featuredSlugs.includes(project.slug)),
   ].slice(0, 6);
-  const przemysl = allGarageProjects.find((project) => project.slug === "posadzka-zywiczna-garaz-100m2-przemysl-ral7035");
-  const detailPhotos = przemysl ? normalizeGallery(przemysl).slice(0, 3) : [];
+  const photoRoot = "/chatgpt-realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035/";
+  const detailPhotos = [
+    { url: photoRoot + "przemysl-garaz-100m2-wykonczenie-cokolu.jpg", alt: "Cokół i faktura szarej posadzki z płatkami w narożniku garażu w Przemyślu", caption: "Cokół i narożnik · Przemyśl", question: "Jak wykończymy styk ze ścianą?", answer: "Na zdjęciu widać cokół dopasowany do posadzki. Jego wysokość, przygotowanie ściany i uszczelnienie połączenia ustalamy w zakresie wyceny." },
+    { url: photoRoot + "przemysl-garaz-100m2-polaczenie-pomieszczen.jpg", alt: "Posadzka z płatkami w garażu oraz przejście do sąsiedniego pomieszczenia", caption: "Przejście między pomieszczeniami · Przemyśl", question: "Co z przejściami i dylatacjami?", answer: "Obejrzyj przebieg podłogi w przejściu. Przy Twoim zleceniu sprawdzimy różnice poziomów, progi i istniejące dylatacje. Wykończenie nie usuwa ruchu konstrukcji." },
+    { url: photoRoot + "przemysl-garaz-100m2-strefa-boczna.jpg", alt: "Jasnoszara posadzka z płatkami i odbiciem światła w bocznym pomieszczeniu garażu", caption: "Faktura i odbicie światła · Przemyśl", question: "Czy tak będzie wyglądać w moim świetle?", answer: "Kolor i połysk zmieniają odbiór wraz z oświetleniem. Zdjęcie pomaga wybrać kierunek, a odcień i fakturę potwierdzamy próbką. Ręcznie wykonana powierzchnia ma drobne różnice w układzie płatków." },
+  ];
 
   return (
     <main className="overflow-hidden">
@@ -86,7 +84,7 @@ export default async function GaragePage() {
             </nav>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Posadzki żywiczne do garaży</p>
             <h1 className="mt-4 text-4xl font-semibold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl xl:text-6xl">
-              Garaż, w którym liczy się każdy detal.
+              Posadzka do garażu, którą możesz obejrzeć z bliska.
             </h1>
             <p className="mt-6 max-w-lg text-base leading-relaxed text-zinc-600 sm:text-lg">
               Piękne, trwałe posadzki żywiczne dopasowane do Twojego garażu. Zobacz wykonane przez nas realizacje, wybierz kolor i strukturę, a następnie poznaj orientacyjny koszt.
@@ -119,6 +117,11 @@ export default async function GaragePage() {
         </div>
       </section>
 
+      <nav aria-label="Pytania przed wyborem posadzki" className="mx-auto flex max-w-7xl flex-wrap gap-3 px-4 py-6 sm:px-6">
+        {[ ["#wykonczenia", "Jakie wykończenie?"], ["#garaz-detale", "Jak wyglądają detale?"], ["#cena", "Ile kosztuje?"], ["#garaz-przebieg", "Jak przebiegają prace?"], ["#garaz-faq", "Wady i pytania"] ].map(([href, label]) => (
+          <a key={href} href={href} className="rounded-full border border-zinc-300 px-4 py-3 text-sm font-semibold hover:bg-zinc-100">{label}</a>
+        ))}
+      </nav>
       <GarageFinishPicker />
 
       <section id="realizacje" aria-labelledby="garage-realizacje" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-24">
@@ -126,7 +129,7 @@ export default async function GaragePage() {
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Portfolio</p>
             <h2 id="garage-realizacje" className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
-              Nie wizualizacje. Nasze prawdziwe garaże.
+              Zobacz nasze wykonane garaże.
             </h2>
             <p className="mt-4 text-zinc-600">Otwórz realizację, aby obejrzeć więcej zdjęć i poznać zastosowane rozwiązanie.</p>
           </div>
@@ -163,16 +166,15 @@ export default async function GaragePage() {
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Jakość w zbliżeniu</p>
               <h2 id="garaz-detale" className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">O jakości świadczą szczegóły.</h2>
-              <p className="mt-4 leading-relaxed text-zinc-300">Nie tylko cała powierzchnia — również połączenia pomieszczeń, krawędzie i cokoły. Poniżej rzeczywiste zdjęcia z garażu 100 m² w Przemyślu.</p>
+              <p className="mt-4 leading-relaxed text-zinc-300">Powiększ zdjęcia cokołu, przejścia i faktury. Wszystkie trzy kadry pochodzą z garażu 100 m² w Przemyślu.</p>
             </div>
             <div className="mt-9 grid gap-5 md:grid-cols-3">
               {detailPhotos.map((photo) => (
-                <figure key={photo.url} className="overflow-hidden rounded-2xl bg-zinc-900">
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <Image src={photo.url} alt={photo.alt} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
-                  </div>
-                  <figcaption className="p-4 text-sm leading-relaxed text-zinc-300">{photo.alt}</figcaption>
-                </figure>
+                <article key={photo.url} className="min-w-0 rounded-2xl bg-white p-4 text-zinc-950 sm:p-5">
+                  <ProjectPhoto src={photo.url} alt={photo.alt} caption={photo.caption} sizes="(max-width: 768px) 100vw, 33vw" />
+                  <h3 className="mt-5 text-xl font-semibold">{photo.question}</h3>
+                  <p className="mt-3 leading-relaxed text-zinc-600">{photo.answer}</p>
+                </article>
               ))}
             </div>
             <Link href="/realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-white underline underline-offset-4">
@@ -182,39 +184,12 @@ export default async function GaragePage() {
         </section>
       )}
 
-      <section aria-labelledby="garage-before-after" className="border-t border-zinc-200 bg-zinc-50 py-16 lg:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Metamorfoza garażu</p>
-          <h2 id="garage-before-after" className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
-            Przed i po — ten sam garaż, ta sama perspektywa.
-          </h2>
-          <p className="mt-4 max-w-3xl leading-relaxed text-zinc-600">
-            Tak chcemy dokumentować realną zmianę. Do uzupełnienia potrzebna jest para zdjęć wykonanych w jednym miejscu, z podobnego kąta i w podobnym świetle.
-          </p>
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
-            <EditorialPhotoSlot
-              label="PRZED — stan betonu"
-              shot="Cała podłoga garażu przed szlifowaniem, widoczne rysy i ubytki"
-              caption="Ujęcie do sparowania ze zdjęciem po realizacji."
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-            <EditorialPhotoSlot
-              label="PO — gotowa posadzka"
-              shot="Ten sam garaż po wykonaniu powłoki, cokołów i detali"
-              caption="Dokładnie ta sama perspektywa, nie zdjęcie z innej realizacji."
-              sizes="(max-width: 768px) 100vw, 50vw"
-            />
-          </div>
-          <p className="mt-4 text-xs text-zinc-500">To oznaczone miejsca na zdjęcia, nie wizualizacja wykonanej metamorfozy.</p>
-        </div>
-      </section>
-
-      <section id="cena" aria-labelledby="garaz-cena" className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
+      <section id="cena" aria-labelledby="garaz-cena" className="scroll-mt-24 mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Cena i zakres</p>
           <h2 id="garaz-cena" className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Ile kosztuje posadzka żywiczna w garażu?</h2>
           <p className="mt-4 leading-relaxed text-zinc-600">
-            Każdy beton jest inny. Cena zależy od przygotowania podłoża, metrażu, cokołów i wybranego wykończenia. Dlatego pokazujemy konkretny przykład, a nie sztuczną cenę „od”.
+            Każdy beton jest inny. Cena zależy od przygotowania podłoża, metrażu, cokołów i wybranego wykończenia. Poniżej znajdziesz potwierdzony koszt i zakres jednego z naszych zleceń.
           </p>
           <Link href="/kalkulator?typ=garaz" className="mt-7 inline-flex items-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white hover:bg-zinc-700">
             Oblicz koszt mojego garażu <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -237,7 +212,7 @@ export default async function GaragePage() {
               ))}
             </ul>
           </div>
-          <p className="mt-6 text-xs text-zinc-600">To historyczna cena pojedynczej realizacji, nie oferta dla każdego garażu. Końcowy zakres i koszt potwierdzamy po ocenie podłoża.</p>
+          <p className="mt-6 text-xs text-zinc-600">To historyczna cena pojedynczej realizacji. Fotografie garaży 30 i 100 m² na tej stronie przedstawiają inne zlecenia i nie są ilustracją tej ceny. Końcowy zakres i koszt potwierdzamy po ocenie podłoża.</p>
         </div>
       </section>
 
@@ -251,13 +226,6 @@ export default async function GaragePage() {
               { number: "03", title: "Detale i odbiór", content: "Wykańczamy posadzkę i cokoły. Informujemy, kiedy można bezpiecznie wejść i wjechać samochodem.", shot: "Detal gotowego cokołu, narożnika i powierzchni posadzki" },
             ].map((step) => (
               <div key={step.number} className="border-t border-zinc-300 pt-5">
-                <EditorialPhotoSlot
-                  label={step.title}
-                  shot={step.shot}
-                  aspect="landscape"
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                  className="mb-5"
-                />
                 <p className="text-sm font-semibold text-zinc-500">{step.number}</p>
                 <h3 className="mt-4 text-xl font-semibold text-zinc-950">{step.title}</h3>
                 <p className="mt-3 leading-relaxed text-zinc-600">{step.content}</p>
@@ -271,31 +239,17 @@ export default async function GaragePage() {
       <section aria-labelledby="garaz-dobor" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20">
         <div className="max-w-3xl">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Technologia, która ma znaczenie</p>
-          <h2 id="garaz-dobor" className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Nie tylko kolor. Posadzka dobrana do warunków.</h2>
+          <h2 id="garaz-dobor" className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Kiedy trzeba najpierw zająć się podłożem?</h2>
           <p className="mt-4 leading-relaxed text-zinc-600">
             Do wielu garaży wewnętrznych dobieramy systemy epoksydowe, a przy nasłonecznieniu i innych wymaganiach również odpowiednie warstwy wykończeniowe. Nośność i wilgotność betonu, przyczepność powierzchni oraz odporność na UV zawsze oceniamy dla konkretnego systemu.
           </p>
         </div>
         <div className="mt-8 grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-zinc-200 p-6">
-            <EditorialPhotoSlot
-              label="Zbliżenie przygotowanego podłoża"
-              shot="Naprawiona rysa, szlifowany beton lub dylatacja przed gruntowaniem"
-              aspect="wide"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="mb-5"
-            />
             <h3 className="text-lg font-semibold">Trwałość zaczyna się pod żywicą</h3>
             <p className="mt-3 text-sm leading-relaxed text-zinc-600">Rysy, wilgoć, dylatacje i słaba warstwa betonu mogą zniweczyć nawet estetyczne wykończenie. Dlatego dobieramy przygotowanie podłoża do jego faktycznego stanu.</p>
           </div>
           <div className="rounded-2xl border border-zinc-200 p-6">
-            <EditorialPhotoSlot
-              label="Makro wykończenia"
-              shot="Prawdziwa faktura płatków lub posypki kwarcowej pokazana z bliska"
-              aspect="wide"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="mb-5"
-            />
             <h3 className="text-lg font-semibold">Dobór systemu zamiast przypadkowego produktu</h3>
             <p className="mt-3 text-sm leading-relaxed text-zinc-600">Rodzaj gruntu, warstwy zasadniczej, posypki i lakieru wykończeniowego zależy od warunków. Karty techniczne producentów pomagają potwierdzić parametry.</p>
           </div>

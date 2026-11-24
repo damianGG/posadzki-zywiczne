@@ -5,26 +5,16 @@ import { stoneCarpetGallery } from "@/lib/stone-carpet-gallery";
 import type { Realizacja, RealizacjaCategory } from "@/types/realizacje";
 import EditorialPhotoSlot from "@/components/editorial-photo-slot";
 
-// Only display documented photographs from the same service category.
-// An empty category deliberately gets a photo brief instead of a misleading image.
+// Curated fallbacks keep photographed services visible when the CMS is unavailable.
 const photoCategories: Partial<Record<string, RealizacjaCategory>> = {
   "/garaze": "garaze",
   "/posadzki-zywiczne-na-balkony": "balkony-tarasy",
   "/kuchnia-salon": "domy-mieszkania",
-  "/gastronomia": "kuchnie",
-  "/pomieszczenia-czyste": "pomieszczenia-czyste",
 };
-
-const shotBriefs: Record<string, string> = {
-  "/garaze": "Garaż po realizacji, widok całej posadzki i cokołów",
-  "/posadzki-zywiczne-na-balkony": "Detal wykończenia balkonu przy progu i okapniku",
-  "/kamienny-dywan": "Zbliżenie kruszywa oraz krawędzi stopnia",
-  "/kuchnia-salon": "Gotowa posadzka żywiczna we wnętrzu mieszkalnym",
-  "/parkingi": "Parking z rampą, odwodnieniem i oznakowaniem",
-  "/hale-magazyny": "Posadzka hali z widoczną strefą ruchu wózków",
-  "/gastronomia": "Posadzka w kuchni profesjonalnej, wpust i cokół",
-  "/posadzki-elektrostatyczne": "Posadzka ESD w rzeczywistej strefie produkcyjnej",
-  "/pomieszczenia-czyste": "Bezspoinowa powierzchnia i detal przy ścianie w cleanroomie",
+const servicePhotos: Record<string, { src: string; alt: string; caption: string }> = {
+  "/garaze": { src: "/garaz/IMG_1253.JPG", alt: "Jasna posadzka z płatkami i cokołami w garażu", caption: "Posadzka z płatkami · zdjęcie z naszej galerii" },
+  "/posadzki-zywiczne-na-balkony": { src: "/realizacje/krakow-rydlowka-balkon/IMG_1315.JPG", alt: "Balkon z jasną posadzką w płatki i żółtą balustradą", caption: "Wykończenie balkonu · Kraków" },
+  "/kamienny-dywan": { src: stoneCarpetGallery[0].src, alt: stoneCarpetGallery[0].alt, caption: "Kamienny dywan na stopniach i podeście" },
 };
 
 export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
@@ -34,7 +24,7 @@ export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Zastosowania i realizacje</p>
       <h2 id="services-heading" className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">Zobacz, co możemy wykonać</h2>
       <p className="mt-4 max-w-2xl text-muted-foreground">
-        Wybierz zastosowanie i obejrzyj naszą pracę. Tam, gdzie nie mamy jeszcze odpowiedniego ujęcia, pokazujemy dokładnie, jakie zdjęcie chcemy uzupełnić.
+        Wybierz miejsce, w którym planujesz posadzkę. Zobacz zdjęcia, zakres wykonania i odpowiedzi na pytania o koszt oraz codzienne użytkowanie.
       </p>
       {serviceGroups.map(group => (
         <div key={group.title} className="mt-10">
@@ -45,14 +35,10 @@ export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
               const project = category
                 ? projects.find(candidate => candidate.category === category && Boolean(candidate.images.main))
                 : undefined;
-              const stonePhoto = item.href === "/kamienny-dywan" ? stoneCarpetGallery[8] : undefined;
-              const src = stonePhoto?.src || project?.images.main;
-              const alt = stonePhoto?.alt || (project ? `${project.title} — ${project.location}` : undefined);
-              const caption = stonePhoto
-                ? stonePhoto.caption
-                : project
-                  ? `Z naszej realizacji: ${project.location}`
-                  : "Ujęcie do uzupełnienia z własnej realizacji";
+              const selectedPhoto = servicePhotos[item.href];
+              const src = selectedPhoto?.src || project?.images.main;
+              const alt = selectedPhoto?.alt || (project ? `${project.title} — ${project.location}` : undefined);
+              const caption = selectedPhoto?.caption || (project ? `Z naszej realizacji: ${project.location}` : undefined);
 
               return (
                 <Link
@@ -65,11 +51,11 @@ export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
                     alt={alt}
                     label={item.title}
                     caption={caption}
-                    shot={shotBriefs[item.href] || item.title}
                     aspect="wide"
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="!rounded-none !border-0"
                   />
+                  {!src && <h4 className="px-5 pt-5 text-lg font-semibold">{item.title}</h4>}
                   <div className="flex items-start justify-between gap-4 p-5">
                     <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                     <ArrowRight className="mt-1 h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden="true" />

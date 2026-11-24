@@ -1,127 +1,72 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Check } from "lucide-react";
+import ProjectPhoto from "@/components/project-photo";
+import { SITE_EMAIL } from "@/lib/site-config";
 
 const finishes = [
   {
-    id: "platki",
     title: "Płatki dekoracyjne",
-    eyebrow: "Dekoracyjna",
-    description: "Delikatna mozaika na powierzchni. Dobry wybór, gdy chcesz połączyć estetykę z codziennym użytkowaniem garażu.",
-    detail: "Wielkość i gęstość płatków ustalamy przy doborze próbki.",
+    src: "/garaz/IMG_1253.JPG",
+    alt: "Jasnoszara posadzka z kontrastującymi płatkami w garażu z białą bramą",
+    caption: "Płatki i cokoły · zdjęcie z naszej galerii garaży",
+    advantage: "Drobny wzór rozbija jednolity kolor. Gęstość i wielkość płatków możesz dobrać na próbce.",
+    limitation: "Same płatki nie określają antypoślizgowości. Fakturę i warstwę zamykającą dobieramy do sposobu użytkowania i mycia.",
   },
   {
-    id: "gladka",
-    title: "Jednolita i gładka",
-    eyebrow: "Minimalistyczna",
-    description: "Spokojna, jednolita powierzchnia, która podkreśla prostą architekturę garażu.",
-    detail: "Gładkie wykończenie wymaga świadomego doboru przyczepności do sposobu użytkowania.",
+    title: "Jednolita powierzchnia",
+    src: "/garaz/IMG_0910.JPG",
+    alt: "Garaż z jednolitą jasnoszarą posadzką i widocznymi odbiciami światła",
+    caption: "Jednolite wykończenie · zdjęcie z naszej galerii garaży",
+    advantage: "Spokojny wygląd bez dekoracyjnego wzoru. Na zdjęciu możesz ocenić odbicia światła i efekt na dużej powierzchni.",
+    limitation: "Na jednolitej powierzchni łatwiej zauważyć smugi i ślady użytkowania. Gładka posadzka może być śliska na mokro.",
   },
-  {
-    id: "kwarc",
-    title: "Z posypką kwarcową",
-    eyebrow: "Strukturalna",
-    description: "Wyrazista faktura powierzchni. Rozważ ją, jeśli ważniejsza jest przyczepność pod butem niż idealna gładkość.",
-    detail: "Strukturę i poziom antypoślizgowości dobieramy do warunków w garażu.",
-  },
-] as const;
+];
 
 const colors = [
   { name: "Jasny szary", ral: "RAL 7035", hex: "#d7d9d3" },
   { name: "Szary", ral: "RAL 7040", hex: "#9da3a6" },
   { name: "Antracyt", ral: "RAL 7016", hex: "#383e43" },
   { name: "Beżowoszary", ral: "RAL 1019", hex: "#a89b86" },
-] as const;
+];
 
 export default function GarageFinishPicker() {
-  const [finishId, setFinishId] = useState<(typeof finishes)[number]["id"]>("platki");
-  const [colorId, setColorId] = useState<(typeof colors)[number]["ral"]>("RAL 7035");
-  const selectedFinish = finishes.find((item) => item.id === finishId) ?? finishes[0];
-  const selectedColor = colors.find((item) => item.ral === colorId) ?? colors[0];
-
-  const texture = finishId === "platki"
-    ? "radial-gradient(circle at 21% 25%, #ffffffb3 0 2px, transparent 3px), radial-gradient(circle at 68% 60%, #29292965 0 2px, transparent 3px), radial-gradient(circle at 42% 80%, #fafafac9 0 1px, transparent 3px)"
-    : finishId === "kwarc"
-      ? "radial-gradient(circle at 25% 35%, #fff7 0 1px, transparent 2px), radial-gradient(circle at 70% 55%, #0004 0 1px, transparent 2px)"
-      : "none";
-
   return (
-    <section id="wykonczenia" aria-labelledby="wykonczenia-heading" className="bg-zinc-50 py-16 sm:py-20 lg:py-24">
+    <section id="wykonczenia" aria-labelledby="wykonczenia-heading" className="scroll-mt-24 bg-zinc-50 py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <div className="max-w-3xl">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Zaprojektuj wygląd</p>
-          <h2 id="wykonczenia-heading" className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
-            Wybierz wykończenie do swojego garażu
-          </h2>
-          <p className="mt-4 leading-relaxed text-zinc-600">
-            Nie musisz znać nazw systemów. Zacznij od efektu, jaki chcesz uzyskać. Technologię dobierzemy później do Twojego betonu i sposobu użytkowania.
-          </p>
+        <p className="text-sm font-semibold uppercase tracking-widest text-zinc-500">Porównaj przed wyborem</p>
+        <h2 id="wykonczenia-heading" className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Które wykończenie sprawdzi się u Ciebie?</h2>
+        <p className="mt-4 max-w-2xl leading-relaxed text-zinc-600">Obejrzyj i powiększ prawdziwe zdjęcia. Wygląd wybierasz Ty, a technologię dobieramy do betonu, wody i obciążeń w garażu.</p>
+        <div className="mt-9 grid gap-8 md:grid-cols-2">
+          {finishes.map(finish => (
+            <article key={finish.title} className="min-w-0 rounded-2xl border border-zinc-200 bg-white p-4 sm:p-6">
+              <ProjectPhoto src={finish.src} alt={finish.alt} caption={finish.caption} />
+              <h3 className="mt-5 text-2xl font-semibold text-zinc-950">{finish.title}</h3>
+              <p className="mt-3 leading-relaxed text-zinc-600">{finish.advantage}</p>
+              <p className="mt-4 border-l-2 border-zinc-300 pl-4 leading-relaxed text-zinc-600"><strong className="text-zinc-950">Co warto wiedzieć? </strong>{finish.limitation}</p>
+              <a href={`mailto:${SITE_EMAIL}?subject=${encodeURIComponent("Wycena garażu — " + finish.title)}&body=${encodeURIComponent("Interesuje mnie: " + finish.title + "\nMiejscowość: \nMetraż: \nStan podłoża: \n\nDołączam zdjęcie całego garażu i zbliżenia uszkodzeń.")}`} className="mt-5 inline-block rounded-full bg-zinc-950 px-5 py-3 text-base font-semibold text-white hover:bg-zinc-700">Zapytaj o takie wykończenie</a>
+              <p className="mt-2 text-sm text-zinc-600">Otworzy się wiadomość e-mail. Wpisz metraż i miejscowość, a zdjęcia podłoża dodaj jako załączniki.</p>
+            </article>
+          ))}
         </div>
-
-        <div className="mt-9 grid gap-4 md:grid-cols-3">
-          {finishes.map((finish, index) => {
-            const active = finish.id === finishId;
-            return (
-              <button
-                key={finish.id}
-                type="button"
-                aria-pressed={active}
-                onClick={() => setFinishId(finish.id)}
-                className={"group relative rounded-2xl border p-6 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-zinc-900 " +
-                  (active ? "border-zinc-900 bg-white shadow-sm" : "border-zinc-200 bg-white/70 hover:border-zinc-400")}
-              >
-                <span className="flex items-start justify-between">
-                  <span className="text-xs font-medium uppercase tracking-widest text-zinc-500">0{index + 1} / {finish.eyebrow}</span>
-                  <span className={"flex h-7 w-7 items-center justify-center rounded-full border " + (active ? "border-zinc-900 bg-zinc-900 text-white" : "border-zinc-300 text-transparent")}>
-                    <Check className="h-4 w-4" aria-hidden="true" />
-                  </span>
-                </span>
-                <span className="mt-8 block text-xl font-semibold tracking-tight text-zinc-900">{finish.title}</span>
-                <span className="mt-2 block text-sm leading-relaxed text-zinc-600">{finish.description}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="mt-8 grid overflow-hidden rounded-2xl border border-zinc-200 bg-white lg:grid-cols-[1fr_0.9fr]">
-          <div className="relative flex min-h-[250px] flex-col justify-end overflow-hidden p-6 sm:min-h-[360px] sm:p-10"
-            style={{ backgroundColor: selectedColor.hex, backgroundImage: texture, backgroundSize: finishId === "platki" ? "38px 38px" : "12px 12px" }}>
-            <div className="relative max-w-sm rounded-xl bg-white/90 p-4 shadow-sm backdrop-blur-sm">
-              <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600">Schematyczna próbka</p>
-              <p className="mt-1 text-lg font-semibold text-zinc-950">{selectedColor.name} · {selectedColor.ral}</p>
-              <p className="mt-1 text-sm text-zinc-700">{selectedFinish.title}</p>
-            </div>
+        <div className="mt-8 grid gap-8 rounded-2xl border border-zinc-200 bg-white p-6 md:grid-cols-2 sm:p-8">
+          <div>
+            <h3 className="text-xl font-semibold">A jeśli potrzebuję mocniejszej faktury?</h3>
+            <p className="mt-3 leading-relaxed text-zinc-600">Możemy rozważyć posypkę kwarcową. Bardziej wyczuwalna struktura zmienia komfort chodzenia i sposób czyszczenia. Stopień antypoślizgowości potwierdzamy dla dobranego systemu, nie na podstawie zdjęcia.</p>
+            <Link href="/kontakt" className="mt-4 inline-block py-2 font-semibold underline underline-offset-4">Porozmawiaj o wodzie i antypoślizgu</Link>
           </div>
-          <div className="flex flex-col justify-between p-6 sm:p-10">
-            <div>
-              <h3 className="text-xl font-semibold text-zinc-950">Kolor ma znaczenie</h3>
-              <p className="mt-3 text-sm leading-relaxed text-zinc-600">
-                Wybierz wstępny kierunek kolorystyczny. Ekran nie zastąpi rzeczywistej próbki, a dostępność odcieni i mieszanek zależy od wybranego systemu.
-              </p>
-              <div className="mt-7 grid grid-cols-4 gap-3" role="group" aria-label="Wybór koloru posadzki">
-                {colors.map((color) => (
-                  <button key={color.ral} type="button" onClick={() => setColorId(color.ral)} aria-pressed={colorId === color.ral}
-                    className="min-w-0 rounded-lg text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
-                    title={color.name + " " + color.ral}>
-                    <span className={"block h-14 w-full rounded-lg border-2 " + (colorId === color.ral ? "border-zinc-950 ring-2 ring-zinc-300 ring-offset-2" : "border-zinc-200")}
-                      style={{backgroundColor: color.hex}} />
-                    <span className="mt-2 block text-center text-xs font-medium text-zinc-700">{color.ral}</span>
-                  </button>
-                ))}
-              </div>
-              <p className="mt-6 text-sm text-zinc-600">{selectedFinish.detail}</p>
-            </div>
-            <Link href="/kalkulator?typ=garaz" className="mt-8 inline-flex items-center gap-2 self-start rounded-full bg-zinc-950 px-6 py-3 font-semibold text-white transition-colors hover:bg-zinc-700">
-              Wyceń garaż <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
+          <div>
+            <h3 className="text-xl font-semibold">Jaki kolor wybrać?</h3>
+            <ul className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4" aria-label="Poglądowe kolory RAL">
+              {colors.map(color => (
+                <li key={color.ral}>
+                  <span className="block h-12 rounded-lg border border-zinc-300" style={{ backgroundColor: color.hex }} aria-hidden="true" />
+                  <span className="mt-2 block text-sm font-medium">{color.ral}</span>
+                  <span className="text-sm text-zinc-600">{color.name}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-sm leading-relaxed text-zinc-600">To poglądowe kolory, nie zmiana koloru zdjęć. Odcień, połysk i dostępność potwierdzamy na próbce wybranego systemu.</p>
           </div>
         </div>
-        <p className="mt-3 text-xs text-zinc-500">
-          Próbka powyżej jest poglądową grafiką kolorystyczną, nie zdjęciem realizacji ani gwarancją identycznej faktury.
-          Zdjęcia rzeczywistych posadzek znajdziesz poniżej.
-        </p>
       </div>
     </section>
   );

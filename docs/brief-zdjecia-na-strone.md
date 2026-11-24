@@ -1,48 +1,50 @@
-# Plan zdjęć do stron usługowych — PR wizualny
+# Zdjęcia, które odpowiadają na pytania klienta
 
-## Zasady publikacji
+Aktualizacja PR #108 — 24.11.2026. Kierunek: Marcus Sheridan, „Co chce wiedzieć klient?” / They Ask, You Answer. Cena, obawy, porównania, opinie i wybór rozwiązania muszą być powiązane z konkretnymi dowodami.
 
-To jest **szkic do akceptacji**, nie komplet materiałów do publikacji. Widoczne prostokąty z ikoną aparatu to **brakujące ujęcia**, celowo odróżnione od prawdziwych zdjęć firmy. Nie zastępujemy ich stockiem ani zdjęciem z innej inwestycji przedstawianym jako dowód.
+## Wprowadzone w PR
 
-- Źródło: zdjęcia własnych realizacji, najlepiej w oryginalnej rozdzielczości i po zgodzie właściciela obiektu; bez danych osobowych, tablic i identyfikatorów.
-- Wzór „przed i po”: ten sam garaż, ta sama perspektywa, podobna ogniskowa, bez upiększającej zmiany ekspozycji i bez manipulacji materiałem.
-- Każde zdjęcie ma mówić o **konkretnym detalu**: cokołach, odprowadzeniu wody, pęknięciach, przygotowaniu podłoża, strukturze płatków, uziemieniu ESD.
-- Zdjęcia dostępne już w bazie/galerii są podpinane automatycznie tam, gdzie pasują do kategorii. Do innych slotów zdjęcia należy dodać dopiero po weryfikacji, co faktycznie pokazują.
-- Uzupełniając `src`, podaj rzeczywisty opis `alt` (bez nadużywania słów kluczowych). Preferuj oryginał w Cloudinary lub zoptymalizowane pliki lokalne z `next/image`.
+- Jedno duże zdjęcie garażu 30 m² w hero strony głównej, również na telefonie, z podpisem i linkiem do właściwej realizacji.
+- Karty usług ze zdjęciami z właściwego zastosowania. Garaż, balkon i kamienny dywan mają stałe, sprawdzone zasoby niezależne od CMS. Pozostałe usługi zachowują opis i link, gdy brakuje potwierdzonej fotografii.
+- Trzy odpowiedzi ze zdjęciami na stronie głównej: cokół, połysk tarasu, faktura kamiennego dywanu. W odpowiedzi także ograniczenia rozwiązania.
+- Porównanie garażu z płatkami i jednolitego wykończenia na prawdziwych zdjęciach. Kwarc opisany osobno, bez zastępowania go zdjęciem płatków. Kolory RAL są poglądowe i nie zmieniają zdjęcia.
+- Powiększenie pełnego kadru w oknie z obsługą klawiatury, Escape, zamknięciem po polsku i przywróceniem fokusu.
+- Trzy zdjęcia detali tego samego garażu 100 m² w Przemyślu: cokół, przejście, odbicia światła. Każde odpowiada na osobne pytanie.
+- Cena 7500 zł netto dotyczy osobnego garażu 45 m². Zdjęć 30 i 100 m² nie podpisujemy tą ceną. Zachowujemy potwierdzony zakres: przygotowanie, szlifowanie, szpachlowanie, gruntowanie, kratka, warstwa zasadnicza, płatki lub kwarc, cokoły i uszczelnienie.
+- Usunięte publiczne puste sloty, niedokończone „przed/po” i techniczne briefy. Brak materiału nie blokuje zdjęć już dostępnych. Usługi przemysłowe i ESD zachowują wcześniejszy układ do otrzymania odpowiednich materiałów.
 
-## Priorytet 1 — /garaze
+## Lista zdjęć do uzupełnienia
 
-| Miejsce | Dokładnie co sfotografować | Kadr |
+| Pytanie klienta | Potrzebne zdjęcie | Co dopisać po potwierdzeniu |
 | --- | --- | --- |
-| „Przed” | Surowy/spękany beton garażu przed pracami, z widoczną całą podłogą | Poziomo 4:3, ten sam punkt co „Po” |
-| „Po” | Ten sam garaż po wykonaniu żywicy i cokołów, ten sam punkt widzenia | Poziomo 4:3, para z poprzednim |
-| Proces 01 | Zbliżenie rysy, dylatacji lub pomiaru podłoża — bez sugerowania konkretnego wyniku | Poziomo 4:3 |
-| Proces 02 | Ręce operatora i szlifierka na betonie albo poprawnie wykonane gruntowanie | Poziomo 4:3 |
-| Proces 03 | Gotowa powierzchnia z widocznym cokołem i wykończeniem przy ścianie | Poziomo 4:3 |
-| Technologia 01 | Makro naprawionej rysy lub przygotowanego podłoża | Poziomo 16:9 |
-| Technologia 02 | Makro faktury płatków albo kwarcu; alternatywnie rzeczywisty przekrój systemu z etykietami | Poziomo 16:9 |
+| Czy da się naprawić mój stary beton? | Para przed i po z tego samego garażu, podobna perspektywa | Stan wyjściowy, naprawy, czas i metraż |
+| Co dokładnie dostaję w cenie? | Garaż 45 m² za 7500 zł netto oraz detal kratki i cokołu | Data i potwierdzony zakres tej realizacji |
+| Czym kwarc różni się od płatków? | Makro prawdziwego kwarcu, płatków i gładkiej powierzchni | Układ warstw, czyszczenie, udokumentowana klasa antypoślizgowości |
+| Co robicie przed żywicą? | Szlifowanie, naprawa rysy, gruntowanie z jednej inwestycji | Faktycznie wykonany etap, bez dopisywania parametrów |
+| Jak wygląda odpływ i dylatacja? | Zbliżenia wykonanej kratki, progu i dylatacji | Zakres w ofercie, sposób użytkowania |
+| Czy wytrzyma w moim zakładzie? | Własne zdjęcia hali, parkingu, gastronomii, pomieszczenia czystego | Typ obiektu i system potwierdzony dokumentacją |
+| Jak sprawdzacie ESD? | Siatka/taśma, uziemienie, pomiar z tej samej inwestycji | Wynik wyłącznie z protokołu i warunki badania |
 
-**Dodatkowe zdjęcia:** obróbka kratki ściekowej, cokoły, próg garażowy, detal narożnika, antypoślizg. Nie należy używać dowolnego zdjęcia z galerii jako dowodu na opisany etap pracy.
+Z każdego zlecenia zbieramy: szeroki kadr, fakturę, cokół, odpływ/próg, zdjęcie stanu przed pracami i 1–2 etapy. Film 30–60 sekund może pokazać powierzchnię z poziomu oczu i przejście do detalu. Nie wymyślamy dat, cen, materiałów ani lokalizacji.
 
-## Priorytet 2 — strona główna
+## Zasady zdjęć
 
-- **Mobile hero**: autentyczna fotografia wykonanego garażu (istniejący zasób).
-- **Karty usług**: zdjęcie dokładnie z właściwej kategorii (gdy jest w portfolio); w przeciwnym wypadku slot z opisem brakującego ujęcia.
-- **Kamienny dywan**: rzeczywista fotografia schodów + zbliżenie faktury kruszywa (istniejące materiały).
+- Oryginalne zdjęcia wykonawcy. Bez stocku i generowanych ilustracji oznaczonych jako realizacje.
+- „Przed i po” tylko z tego samego obiektu. Do czasu dostarczenia pary sekcja jest ukryta.
+- Opis alt mówi, co widać. Fotografia nie potwierdza parametrów, np. antypoślizgowości, grubości lub odporności ESD.
+- Cloudinary i next/image, responsywne sizes, stałe proporcje, lazy loading poniżej hero. Duży kadr ładowany po otwarciu podglądu.
+- Podpisu z ceną nie łączymy z fotografią innego zlecenia.
 
-Brakujące kadry dla kart: parking z widoczną rampą/dylatacją, hala z ruchem wózków, strefa ESD, strefa gastronomiczna, wnętrze mieszkalne. Nie mylić garażu domowego z parkingiem przemysłowym.
+## Powiązanie z PR #109
 
-## Priorytet 3 — /parkingi, /hale-magazyny, /gastronomia, /pomieszczenia-czyste i /posadzki-elektrostatyczne
+#108 jest samodzielnym PR zdjęciowym, opartym na main. Nie zawiera API formularza ani /zamow. CTA wykończeń otwiera istniejący kanał e-mail z nazwą wykończenia. Strona jasno mówi o otwarciu poczty i ręcznym dołączeniu zdjęć.
 
-- Parking: rampa lub połączenie dylatacyjne w rzeczywistym parkingu.
-- Hala: szeroka perspektywa strefy pracy + detal powierzchni przy kołach wózka.
-- Gastronomia: cokoły higieniczne i odpływ w kuchni produkcyjnej.
-- Pomieszczenie czyste: bezspoinowa nawierzchnia i połączenie posadzka–ściana.
-- ESD: realna posadzka w hali, **rzeczywista** siatka przewodząca lub taśmy/uziemienie oraz pomiar po wykonaniu. Nie umieszczać fikcyjnych wyników ani deklaracji zgodności na zdjęciach.
+#109 nadal zawiera docelową trzyetapową wycenę. Przed jego scaleniem trzeba rozwiązać nakładające się zmiany w app/page.tsx oraz komponencie wykończeń garażu: zachować zdjęcia, powiększenie, uczciwe porównanie i odpowiedzi z #108, a akcje wyceny podłączyć do /zamow. Nie przywracać pustych slotów ani schematycznych tekstur. W wycenie zachować wybrane zdjęcie/wykończenie; nie dodawać niepotwierdzonych deklaracji „nie jest śliskie”.
 
-## Kryteria akceptacji PR
+## Odbiór
 
-1. Wszystkie kadry responsywne, z czytelnymi etykietami, bez CLS (stałe proporcje).
-2. Realne zdjęcia renderowane przez `next/image`, z opisowym `alt`; dekoracyjne sloty odróżnione od realnych zdjęć.
-3. PR otwarty jako **Draft**. Przed scaleniem do `main` uzupełnić brakujące ujęcia, usunąć puste sloty lub uzyskać zgodę na ich ekspozycję.
-4. Sprawdzić podgląd 375 px / 768 px / 1440 px, dostępność, `pnpm lint` i `pnpm build`.
+- Sprawdzić / i /garaze w szerokościach 375, 768, 1440 px.
+- Każde zdjęcie ma się ładować, z zachowaniem podpisu i właściwego zakresu realizacji.
+- Powiększenie: klawiatura, Escape, zamknięcie i przywrócenie fokusu.
+- Linki sekcji i ofert, treść mailto, brak pustych sekcji i poziomego przewijania.
+- Lint zmienionych komponentów i build. Produkcyjna publikacja dopiero po merge; preview nie jest publikacją na domenie.
