@@ -6,6 +6,7 @@ import { absoluteUrl } from "@/lib/site-config";
 import { getRealizacjeByCategory } from "@/lib/realizacje";
 import GarageFinishPicker from "./components/garage-finish-picker";
 import ProjectPhoto from "@/components/project-photo";
+import ServiceSectionNav from "@/components/service-section-nav";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 const heroImage = "https://res.cloudinary.com/dvvqfkmsw/image/upload/v1793190382/realizacje/chatgpt/posadzka-zywiczna-garaz-30m2-sedziszow-malopolski/garaz-30m2-ral7035-oryginal-b2e28c4ecd288ef1.jpg";
@@ -117,14 +118,7 @@ export default async function GaragePage() {
         </div>
       </section>
 
-      <nav aria-label="Pytania przed wyborem posadzki" className="sticky top-[83px] z-30 border-y bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-4 py-2 sm:px-6">
-          {[["#cena","Cena"],["#wykonczenia","Wykończenia"],["#realizacje","Zdjęcia"],["#garaz-detale","Detale"],["#garaz-przebieg","Przebieg"],["#garaz-faq","Wady i pytania"],["#garaz-opinie","Opinie"]].map(([href,label]) => (
-            <a key={href} href={href} className="shrink-0 rounded-full px-3 py-2.5 text-sm font-semibold hover:bg-zinc-100 focus-visible:outline">{label}</a>
-          ))}
-          <Link href="/zamow?miejsce=garaz" className="ml-auto shrink-0 rounded-full brand-button px-4 py-2.5 text-sm font-semibold">Poproś o wycenę</Link>
-        </div>
-      </nav>
+      <ServiceSectionNav items={[{"href":"#cena","label":"Cena"},{"href":"#wykonczenia","label":"Wykończenia"},{"href":"#realizacje","label":"Zdjęcia"},{"href":"#garaz-detale","label":"Detale"},{"href":"#garaz-przebieg","label":"Przebieg"},{"href":"#garaz-faq","label":"Wady i pytania"},{"href":"#garaz-opinie","label":"Opinie"}]} quoteHref="/zamow?miejsce=garaz" />
       <section id="cena" aria-labelledby="garaz-cena" className="scroll-mt-40 mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Cena i zakres</p>

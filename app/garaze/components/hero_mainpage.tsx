@@ -22,6 +22,7 @@ export default function HeroMainPage({ variant = "home" }: { variant?: "home" | 
             <Link href={garage ? "/garaze#wykonczenia" : "#services-heading"} className="rounded-full brand-button px-6 py-3.5 text-center font-semibold">Wybierz rodzaj posadzki</Link>
             <Link href="/kalkulator?typ=garaz" className="rounded-full border border-zinc-400 px-6 py-3.5 text-center font-semibold text-zinc-950 hover:bg-white">Sprawdź cenę garażu</Link>
           </div>
+          {!garage && <nav aria-label="Szybki dostęp" className="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-sm font-medium"><Link href="#home-services-private" className="inline-flex min-h-11 items-center underline underline-offset-4">Dom i garaż</Link><Link href="#home-services-business" className="inline-flex min-h-11 items-center underline underline-offset-4">Firma i przemysł</Link><Link href="#home-price-section" className="inline-flex min-h-11 items-center underline underline-offset-4">Koszt</Link><Link href="#home-realizations" className="inline-flex min-h-11 items-center underline underline-offset-4">Realizacje</Link></nav>}
           <p className="mt-5 text-base text-zinc-600">Masz pytanie? <a className="font-semibold underline underline-offset-4" href="tel:+48507384619">507 384 619</a></p>
           <p className="mt-3 text-sm leading-relaxed text-zinc-600">Wycenę przygotujemy na podstawie metrażu, miejscowości i stanu podłoża. Nie musisz znać nazwy systemu.</p>
         </div>

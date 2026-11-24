@@ -26,8 +26,9 @@ export default function ProjectPhoto({ src, alt, caption, sizes = "(max-width: 7
             <Dialog.Title className="pr-12 text-lg font-semibold text-zinc-950">{caption}</Dialog.Title>
             <Dialog.Description className="mt-2 pr-10 text-sm text-zinc-600">Pełny kadr zdjęcia. Kolor na ekranie może różnić się od rzeczywistej próbki.</Dialog.Description>
             <div className="relative mt-4 h-[65dvh]">
-              <Image src={src} alt={alt} fill sizes="(max-width: 1024px) 95vw, 1000px" quality={85} className="object-contain" />
+              <Image src={src} alt={alt} fill sizes="(max-width: 1024px) 95vw, 1000px" quality={90} className="object-contain" />
             </div>
+            <a href={src} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 items-center text-sm font-medium underline underline-offset-4">Otwórz zdjęcie w pełnym rozmiarze (nowa karta)</a>
             <Dialog.Close className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-zinc-100 text-zinc-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-zinc-900" aria-label="Zamknij zdjęcie"><X aria-hidden="true" className="h-5 w-5" /></Dialog.Close>
           </Dialog.Content>
         </Dialog.Portal>

@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react";
 import { serviceGroups } from "@/lib/service-navigation";
 import { stoneCarpetGallery } from "@/lib/stone-carpet-gallery";
 import type { Realizacja, RealizacjaCategory } from "@/types/realizacje";
-import EditorialPhotoSlot from "@/components/editorial-photo-slot";
+import Image from "next/image";
 
 // Curated fallbacks keep photographed services visible when the CMS is unavailable.
 const photoCategories: Partial<Record<string, RealizacjaCategory>> = {
@@ -29,14 +29,14 @@ const servicePhotos: Record<string, { src: string; alt: string; caption: string 
 export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
 
   return (
-    <section className="container mx-auto px-4 py-16 lg:py-24" aria-labelledby="services-heading">
+    <section className="container mx-auto px-4 py-12 lg:py-20" aria-labelledby="services-heading">
       <p className="brand-eyebrow">Zastosowania i realizacje</p>
-      <h2 id="services-heading" className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">Zobacz, co możemy wykonać</h2>
+      <h2 id="services-heading" className="mt-3 scroll-mt-28 text-3xl font-semibold tracking-tight md:text-4xl">Gdzie potrzebujesz posadzki?</h2>
       <p className="mt-4 max-w-2xl text-muted-foreground">
         Wybierz miejsce, w którym planujesz posadzkę. Zobacz zdjęcia, zakres wykonania i odpowiedzi na pytania o koszt oraz codzienne użytkowanie.
       </p>
-      {serviceGroups.map(group => (
-        <div key={group.title} className="mt-10">
+      {serviceGroups.map((group,index) => (
+        <div key={group.title} id={index === 0 ? "home-services-private" : "home-services-business"} className="mt-10 scroll-mt-28">
           <h3 className="brand-section-heading mb-5 text-2xl font-semibold">{group.title}</h3>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {group.items.map(item => {
@@ -52,21 +52,14 @@ export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group overflow-hidden rounded-2xl border bg-background shadow-sm transition-colors hover:border-[#007A3D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                  className="group grid min-w-0 overflow-hidden rounded-2xl border bg-background transition-colors hover:border-[#007A3D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:flex sm:flex-col"
                 >
-                  <EditorialPhotoSlot
-                    src={src}
-                    alt={alt}
-                    label={item.title}
-                    caption={caption}
-                    aspect="wide"
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="!rounded-none !border-0"
-                  />
-                  {!src && <h4 className="px-5 pt-5 text-lg font-semibold">{item.title}</h4>}
-                  <div className="flex items-start justify-between gap-4 p-5">
-                    <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  {src && alt && <div className="relative aspect-[16/10] overflow-hidden bg-zinc-100"><Image src={src} alt={alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover motion-safe:transition-transform motion-safe:group-hover:scale-[1.025]" /></div>}
+                  <div className="flex flex-1 flex-col p-4 sm:p-5">
+                    <h4 className="text-lg font-semibold tracking-tight">{item.title}</h4>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+                    {caption && <p className="mt-2 text-xs text-zinc-600">{caption}</p>}
+                    <span className="mt-auto flex items-center justify-between gap-2 pt-4 text-sm font-semibold text-zinc-950">Zobacz zdjęcia i szczegóły <ArrowRight className="h-4 w-4 shrink-0 text-[#007A3D]" aria-hidden="true" /></span>
                   </div>
                 </Link>
               );

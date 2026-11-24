@@ -134,8 +134,9 @@ export default function RootLayout({
       />
 
       <body className="font-sans">
+        <a href="#page-content" className="skip-link">Przejdź do treści</a>
         <Header2 />
-        {children}
+        <div id="page-content" tabIndex={-1} className="outline-none scroll-mt-24">{children}</div>
         <SpeedInsights />
         <Analytics />
         <Footer1 />

@@ -75,7 +75,7 @@ const basePlaces: FloorPlace[] = [
       {
         id: "dywan",
         title: "Kamienny dywan",
-        description: "Kruszywo zatopione w żywicy. Naturalny wygląd tarasu i schodów, woda ma gdzie spływać.",
+        description: "Kruszywo połączone żywicą. Naturalna faktura tarasu i schodów. Odpływ wody zależy od całego układu warstw.",
         detail: "Kolor kruszywa wybieramy ze wzornika. Na schodach dokładamy wykończenie krawędzi.",
         image: "/kamienny-dywan/realizacje/kamienny-dywan-taras-bez-rzeszow-06-hq.webp",
         alt: "Beżowy kamienny dywan na zadaszonym tarasie",
@@ -94,7 +94,7 @@ const basePlaces: FloorPlace[] = [
         id: "balkon-platki",
         title: "Płatki na balkonie",
         description: "Lżejszy rysunek niż kamienny dywan. Dobry, gdy balkon ma zostać jasny i prosty w myciu.",
-        detail: "Przy balustradzie i progu robimy szczelne połączenie, żeby woda nie wchodziła pod warstwę.",
+        detail: "Przy balustradzie i progu dobieramy obróbki i uszczelnienie do stanu podłoża.",
         image: "/realizacje/krakow-rydlowka-balkon/IMG_1315.JPG",
         alt: "Jasny balkon z posadzką w drobne płatki i żółtą balustradą",
         caption: "Balkon · z naszej galerii",
@@ -167,6 +167,13 @@ const basePlaces: FloorPlace[] = [
         detail: "Podaj, czy podłoga ma spadki i kratki. To zmienia przygotowanie podłoża.",
         alt: "Gastronomia",
         caption: "Dobór po opisie obiektu",
+      },
+      {
+        id: "cleanroom",
+        title: "Pomieszczenie czyste lub laboratorium",
+        description: "Dobór do wymagań czystości, dezynfekcji i procesu.",
+        detail: "Prześlij wymagania projektu i sposób czyszczenia. Sama posadzka nie potwierdza klasy czystości obiektu.",
+        alt: "", caption: "Dobór do specyfikacji",
       },
       {
         id: "esd",

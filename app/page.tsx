@@ -19,10 +19,10 @@ export default async function Home() {
   const serviceProjects = await getAllRealizacje();
 
   return (
-    <>
+    <main>
       <HeroMainPage variant="home" />
       <Feature5 projects={serviceProjects} />
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:px-6 md:grid-cols-[1fr_1fr] md:items-center" aria-labelledby="home-price">
+      <section className="mx-auto grid max-w-7xl gap-6 scroll-mt-28 px-4 py-10 sm:px-6 md:grid-cols-[1fr_1fr] md:items-center" id="home-price-section" aria-labelledby="home-price">
         <div>
           <h2 id="home-price" className="text-3xl font-semibold tracking-tight">Ile kosztuje posadzka żywiczna?</h2>
           <p className="mt-3 max-w-xl text-zinc-600">Sprawdź orientacyjny koszt garażu bez podawania danych kontaktowych. Dla innych zastosowań dobierzemy zakres indywidualnie.</p>
@@ -38,7 +38,7 @@ export default async function Home() {
           <Link href="/garaze#cena" className="mt-4 inline-block font-semibold underline underline-offset-4">Zobacz dokładny zakres</Link>
         </div>
       </section>
-      <RelatedRealizations title="Zobacz efekty naszych prac" />
+      <div id="home-realizations" className="scroll-mt-28"><RelatedRealizations title="Zobacz efekty naszych prac" /></div>
       <SocialProofSection />
       <CustomerPhotoAnswers />
       <StoneCarpetTeaser />
@@ -67,6 +67,6 @@ export default async function Home() {
         <p className="mx-auto mt-3 max-w-xl text-stone-600">Podaj metraż i lokalizację. Możesz wybrać wygląd lub poprosić nas o pomoc w doborze.</p>
         <Link href="/zamow" className="mt-6 inline-block rounded-full brand-button px-7 py-3.5 font-semibold">Poproś o indywidualną wycenę</Link>
       </section>
-    </>
+    </main>
   );
 }

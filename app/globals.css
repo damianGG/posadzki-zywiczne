@@ -134,3 +134,12 @@
     background: linear-gradient(90deg,#00D664 0 56px,transparent 56px);
   }
 }
+
+@layer components {
+  .skip-link { position: fixed; top: 0.75rem; left: 0.75rem; z-index: 150; transform: translateY(-200%); background: #202522; color: white; padding: 0.8rem 1rem; border-radius: 0.5rem; }
+  .skip-link:focus { transform: none; outline: 3px solid #00D664; }
+}
+@layer base {
+  :where(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid #007A3D; outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto !important; } }
+}

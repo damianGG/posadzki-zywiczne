@@ -12,9 +12,7 @@ function clean(value: unknown, max: number) {
 
 function validEmail(value: string) {
   if (!value) return true;
-  const parts = value.split("@");
-  if (parts.length !== 2 || !parts[0] || parts[1].split(".").some((part) => !part)) return false;
-  return !value.includes(" ");
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 }
 
 export async function POST(request: NextRequest) {

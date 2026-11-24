@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronRight, Droplets, Sun, Layers3 } from "lucide-react";
 import ProjectPhoto from "@/components/project-photo";
+import ServiceSectionNav from "@/components/service-section-nav";
 import RelatedSystems from "@/components/related-systems";
 import RelatedRealizations from "@/components/related-realizations";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
@@ -58,12 +59,7 @@ export default function BalconyPage() {
           </figure>
         </div>
       </section>
-      <nav aria-label="Pytania o balkon i taras" className="sticky top-[83px] z-30 border-y bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-4 py-2 sm:px-6">
-          {[["#cena","Cena"],["#wykonczenia","Wykończenia"],["#realizacje","Zdjęcia"],["#problemy","Problemy"],["#przebieg","Przebieg"],["#faq","Pytania"],["#opinie","Opinie"]].map(([href,label]) => <a key={href} href={href} className="shrink-0 rounded-full px-3 py-2.5 text-sm font-semibold hover:bg-muted">{label}</a>)}
-          <Link href="/zamow?miejsce=taras" className="brand-button ml-auto shrink-0 rounded-full px-4 py-2.5 text-sm font-semibold">Poproś o wycenę</Link>
-        </div>
-      </nav>
+      <ServiceSectionNav items={[{"href":"#cena","label":"Cena"},{"href":"#wykonczenia","label":"Wykończenia"},{"href":"#realizacje","label":"Zdjęcia"},{"href":"#problemy","label":"Problemy"},{"href":"#przebieg","label":"Przebieg"},{"href":"#faq","label":"Pytania"},{"href":"#opinie","label":"Opinie"}]} quoteHref="/zamow?miejsce=taras" />
       <section id="cena" className="mx-auto grid max-w-7xl scroll-mt-44 gap-8 px-4 py-12 sm:px-6 lg:grid-cols-2 lg:py-16">
         <div>
           <p className="brand-eyebrow">Cena i zakres</p>

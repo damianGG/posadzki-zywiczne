@@ -62,8 +62,8 @@ export const Header2 = () => {
         </div>
         <div className="flex items-center gap-2">
           <Link href="/kalkulator?typ=garaz" className="hidden text-sm hover:underline lg:block">Kalkulator garażu</Link>
-          <Link href="/zamow" className="brand-accent-button inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-semibold transition-colors">Zobacz i wyceń</Link>
-          <Button ref={toggleRef} variant="ghost" size="icon" className="xl:hidden" aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={() => setOpen(!isOpen)}>
+          <Link href="/zamow" className="brand-accent-button inline-flex min-h-11 items-center justify-center rounded-md px-3 text-sm font-semibold transition-colors">Poproś o wycenę</Link>
+          <Button ref={toggleRef} variant="ghost" size="icon" className="h-11 w-11 xl:hidden" aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={() => setOpen(!isOpen)}>
             {isOpen ? <X aria-hidden="true" className="h-5 w-5" /> : <Menu aria-hidden="true" className="h-5 w-5" />}
           </Button>
         </div>
@@ -79,7 +79,7 @@ export const Header2 = () => {
           </details>
         ))}
         {links.map(item => <Link key={item.href} href={item.href} aria-current={active(item.href)} onClick={() => setOpen(false)} className="block py-3 font-medium">{item.title}</Link>)}
-        <Link href="/zamow" onClick={() => setOpen(false)} className="mt-2 block rounded-full brand-accent-button px-4 py-3 text-center font-semibold">Zobacz i wyceń</Link>
+        <Link href="/zamow" onClick={() => setOpen(false)} className="mt-2 block rounded-full brand-accent-button px-4 py-3 text-center font-semibold">Poproś o wycenę</Link>
         <Link href="/kalkulator?typ=garaz" onClick={() => setOpen(false)} className="block py-3 font-medium">Kalkulator garażu</Link>
       </nav>
       <div className="brand-rule" aria-hidden="true" />
