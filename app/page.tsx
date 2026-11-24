@@ -27,11 +27,11 @@ export default async function Home() {
           <h2 id="home-price" className="text-3xl font-semibold tracking-tight">Ile kosztuje posadzka żywiczna?</h2>
           <p className="mt-3 max-w-xl text-zinc-600">Sprawdź orientacyjny koszt garażu bez podawania danych kontaktowych. Dla innych zastosowań dobierzemy zakres indywidualnie.</p>
           <div className="mt-5 flex flex-wrap gap-4">
-            <Link href="/kalkulator?typ=garaz" className="rounded-full bg-zinc-950 px-6 py-3 font-semibold text-white">Oblicz koszt garażu</Link>
+            <Link href="/kalkulator?typ=garaz" className="rounded-full brand-button px-6 py-3 font-semibold">Oblicz koszt garażu</Link>
             <Link href="/zamow" className="rounded-full border px-6 py-3 font-semibold">Zapytaj o inną posadzkę</Link>
           </div>
         </div>
-        <div className="rounded-2xl bg-zinc-100 p-6 sm:p-8">
+        <div className="rounded-2xl brand-surface p-6 sm:p-8">
           <p className="text-sm font-medium text-zinc-600">Przykład wykonanego garażu · 45 m²</p>
           <p className="mt-2 text-4xl font-semibold tracking-tight">7 500 zł <span className="text-lg">netto</span></p>
           <p className="mt-3 text-sm text-zinc-600">Przygotowanie podłoża, żywica, kratka, cokoły i uszczelnienie. Historyczna cena konkretnego zlecenia, nie cennik.</p>
@@ -62,10 +62,10 @@ export default async function Home() {
         title="Poradniki o posadzkach żywicznych"
         subtitle="Poznaj systemy epoksydowe i poliuretanowe, zasady przygotowania podłoża oraz praktyczne wskazówki dotyczące wyboru posadzki."
       />
-      <section className="bg-zinc-950 px-4 py-14 text-center text-white">
+      <section className="brand-surface px-4 py-14 text-center">
         <h2 className="text-3xl font-semibold tracking-tight">Dobierzmy posadzkę do Twojego obiektu</h2>
-        <p className="mx-auto mt-3 max-w-xl text-zinc-300">Podaj metraż i lokalizację. Możesz wybrać wygląd lub poprosić nas o pomoc w doborze.</p>
-        <Link href="/zamow" className="mt-6 inline-block rounded-full bg-white px-7 py-3.5 font-semibold text-zinc-950">Poproś o indywidualną wycenę</Link>
+        <p className="mx-auto mt-3 max-w-xl text-stone-600">Podaj metraż i lokalizację. Możesz wybrać wygląd lub poprosić nas o pomoc w doborze.</p>
+        <Link href="/zamow" className="mt-6 inline-block rounded-full brand-button px-7 py-3.5 font-semibold">Poproś o indywidualną wycenę</Link>
       </section>
     </>
   );

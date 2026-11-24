@@ -34,7 +34,7 @@ export default function GarageFinishPicker() {
   return (
     <section id="wykonczenia" aria-labelledby="wykonczenia-heading" className="scroll-mt-40 bg-zinc-50 py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <p className="text-sm font-semibold uppercase tracking-widest text-zinc-500">Porównaj przed wyborem</p>
+        <p className="brand-eyebrow">Porównaj przed wyborem</p>
         <h2 id="wykonczenia-heading" className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Które wykończenie sprawdzi się u Ciebie?</h2>
         <p className="mt-4 max-w-2xl leading-relaxed text-zinc-600">Obejrzyj i powiększ prawdziwe zdjęcia. Wygląd wybierasz Ty, a technologię dobieramy do betonu, wody i obciążeń w garażu.</p>
         <div className="mt-9 grid gap-8 md:grid-cols-2">
@@ -44,7 +44,7 @@ export default function GarageFinishPicker() {
               <h3 className="mt-5 text-2xl font-semibold text-zinc-950">{finish.title}</h3>
               <p className="mt-3 leading-relaxed text-zinc-600">{finish.advantage}</p>
               <p className="mt-4 border-l-2 border-zinc-300 pl-4 leading-relaxed text-zinc-600"><strong className="text-zinc-950">Co warto wiedzieć? </strong>{finish.limitation}</p>
-              <Link href={`/zamow?miejsce=garaz&wyglad=${finish.id}`} className="mt-5 inline-block rounded-full bg-zinc-950 px-5 py-3 text-base font-semibold text-white hover:bg-zinc-700">Wybieram to wykończenie</Link>
+              <Link href={`/zamow?miejsce=garaz&wyglad=${finish.id}`} className="mt-5 inline-block rounded-full brand-button px-5 py-3 text-base font-semibold">Wybieram to wykończenie</Link>
               <p className="mt-2 text-sm text-zinc-600">Sprawdź koszt lub przejdź do indywidualnej wyceny.</p>
             </article>
           ))}

@@ -34,9 +34,9 @@ const answers = [
 
 export default function CustomerPhotoAnswers() {
   return (
-    <section className="bg-zinc-50 py-14 sm:py-20" aria-labelledby="photo-answers-heading">
+    <section className="brand-surface py-14 sm:py-20" aria-labelledby="photo-answers-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <p className="text-sm font-semibold uppercase tracking-widest text-zinc-500">Zanim wybierzesz</p>
+        <p className="brand-eyebrow">Zanim wybierzesz</p>
         <h2 id="photo-answers-heading" className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">Przyjrzyj się temu, o co pytają klienci.</h2>
         <p className="mt-4 max-w-2xl text-zinc-600">Powiększ zdjęcia naszych prac. Sprawdź detale i ograniczenia, które warto poznać przed wyceną.</p>
         <div className="mt-9 grid gap-8 md:grid-cols-3">

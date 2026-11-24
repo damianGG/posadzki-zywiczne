@@ -24,7 +24,7 @@ export const Header2 = () => {
   const active = (href: string) => pathname === href ? "page" as const : undefined;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-zinc-50" onKeyDown={event => {
+    <header className="sticky top-0 z-40 w-full border-b bg-[#faf8f3]" onKeyDown={event => {
       if (event.key === "Escape" && isOpen) { setOpen(false); toggleRef.current?.focus(); }
     }}>
       <div className="container mx-auto flex min-h-20 items-center justify-between gap-3">
@@ -79,9 +79,10 @@ export const Header2 = () => {
           </details>
         ))}
         {links.map(item => <Link key={item.href} href={item.href} aria-current={active(item.href)} onClick={() => setOpen(false)} className="block py-3 font-medium">{item.title}</Link>)}
-        <Link href="/zamow" onClick={() => setOpen(false)} className="mt-2 block rounded-full bg-zinc-950 px-4 py-3 text-center font-semibold text-white">Zobacz i wyceń</Link>
+        <Link href="/zamow" onClick={() => setOpen(false)} className="mt-2 block rounded-full brand-button px-4 py-3 text-center font-semibold">Zobacz i wyceń</Link>
         <Link href="/kalkulator?typ=garaz" onClick={() => setOpen(false)} className="block py-3 font-medium">Kalkulator garażu</Link>
       </nav>
+      <div className="brand-rule" aria-hidden="true" />
     </header>
   );
 };

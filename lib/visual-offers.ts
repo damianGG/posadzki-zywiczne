@@ -97,7 +97,7 @@ const basePlaces: FloorPlace[] = [
         detail: "Przy balustradzie i progu robimy szczelne połączenie, żeby woda nie wchodziła pod warstwę.",
         image: "/realizacje/krakow-rydlowka-balkon/IMG_1315.JPG",
         alt: "Jasny balkon z posadzką w drobne płatki i żółtą balustradą",
-        caption: "Balkon, Kraków",
+        caption: "Balkon · z naszej galerii",
       },
     ],
   },

@@ -10,19 +10,19 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
+    --primary: 19 41% 38%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 36 30% 94%;
     --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
+    --muted: 36 25% 94%;
+    --muted-foreground: 24 11% 39%;
+    --accent: 32 34% 92%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
+    --border: 32 20% 87%;
     --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
+    --ring: 19 41% 38%;
     --radius: 0.5rem;
     --header: 0 0% 100%;
   }
@@ -72,5 +72,58 @@
 
   .animate-fall {
     animation: fall linear infinite;
+  }
+}
+
+/* Brand motif: three cross-section lines echo the layers of a resin floor.
+   Decorative only; no images, external requests, or motion. */
+@layer components {
+  .brand-surface {
+    background-color: #f5f1e9;
+    background-image: linear-gradient(145deg, #faf8f3 0%, #f0e9dd 100%);
+    color: #29241f;
+  }
+  .brand-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #895238;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+  }
+  .brand-eyebrow::before {
+    content: "";
+    display: inline-block;
+    flex: 0 0 28px;
+    width: 28px;
+    height: 14px;
+    background: linear-gradient(#895238,#895238) 0 0 / 28px 2px no-repeat,
+      linear-gradient(#b77f60,#b77f60) 5px 6px / 23px 2px no-repeat,
+      linear-gradient(#c6aa91,#c6aa91) 10px 12px / 18px 2px no-repeat;
+  }
+  .brand-section-heading {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .brand-section-heading::before {
+    content: "";
+    flex: 0 0 4px;
+    height: 1.15em;
+    border-radius: 2px;
+    background: #895238;
+  }
+  .brand-button {
+    background-color: #895238;
+    color: #fff;
+    transition: background-color 160ms ease;
+  }
+  .brand-button:hover { background-color: #6d402d; color: #fff; }
+  .brand-button:focus-visible { outline: 2px solid #895238; outline-offset: 3px; }
+  .brand-rule {
+    height: 3px;
+    background: linear-gradient(90deg,#895238 0 33%,#b77f60 33% 66%,#d9c6b1 66% 100%);
   }
 }

@@ -74,7 +74,7 @@ export default async function GaragePage() {
   return (
     <main className="min-w-0">
       {/* Hero — authentic client project, not a stock image. */}
-      <section className="bg-white">
+      <section className="brand-surface">
         <div className="mx-auto grid max-w-7xl items-center gap-5 px-4 pb-8 pt-5 sm:px-6 md:py-16 lg:grid-cols-[0.88fr_1.12fr] lg:gap-14 lg:py-20">
           <div className="max-w-xl">
             <nav aria-label="Ścieżka nawigacji" className="mb-3 flex items-center gap-2 text-xs text-zinc-500">
@@ -82,7 +82,7 @@ export default async function GaragePage() {
               <ChevronRight className="h-3 w-3" aria-hidden="true" />
               <span aria-current="page">Posadzki do garażu</span>
             </nav>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Posadzki żywiczne do garaży</p>
+            <p className="brand-eyebrow">Posadzki żywiczne do garaży</p>
             <h1 className="mt-2 text-3xl font-semibold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl xl:text-6xl">
               Posadzka do garażu, którą możesz obejrzeć z bliska.
             </h1>
@@ -90,7 +90,7 @@ export default async function GaragePage() {
               Piękne, trwałe posadzki żywiczne dopasowane do Twojego garażu. Zobacz wykonane przez nas realizacje, wybierz kolor i strukturę, a następnie poznaj orientacyjny koszt.
             </p>
             <div className="mt-5 flex flex-col gap-3 sm:flex-row">
-              <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700">
+              <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center gap-2 rounded-full brand-button px-6 py-3.5 text-sm font-semibold">
                 Sprawdź cenę garażu <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <Link href="#wykonczenia" className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-300 px-6 py-3.5 text-sm font-semibold text-zinc-900 transition-colors hover:border-zinc-900">
@@ -122,7 +122,7 @@ export default async function GaragePage() {
           {[["#cena","Cena"],["#wykonczenia","Wykończenia"],["#realizacje","Zdjęcia"],["#garaz-detale","Detale"],["#garaz-przebieg","Przebieg"],["#garaz-faq","Wady i pytania"],["#garaz-opinie","Opinie"]].map(([href,label]) => (
             <a key={href} href={href} className="shrink-0 rounded-full px-3 py-2.5 text-sm font-semibold hover:bg-zinc-100 focus-visible:outline">{label}</a>
           ))}
-          <Link href="/zamow?miejsce=garaz" className="ml-auto shrink-0 rounded-full bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white">Poproś o wycenę</Link>
+          <Link href="/zamow?miejsce=garaz" className="ml-auto shrink-0 rounded-full brand-button px-4 py-2.5 text-sm font-semibold">Poproś o wycenę</Link>
         </div>
       </nav>
       <section id="cena" aria-labelledby="garaz-cena" className="scroll-mt-40 mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
@@ -132,7 +132,7 @@ export default async function GaragePage() {
           <p className="mt-4 leading-relaxed text-zinc-600">
             Każdy beton jest inny. Cena zależy od przygotowania podłoża, metrażu, cokołów i wybranego wykończenia. Poniżej znajdziesz potwierdzony koszt i zakres jednego z naszych zleceń.
           </p>
-          <Link href="/kalkulator?typ=garaz" className="mt-7 inline-flex items-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white hover:bg-zinc-700">
+          <Link href="/kalkulator?typ=garaz" className="mt-7 inline-flex items-center gap-2 rounded-full brand-button px-6 py-3 text-sm font-semibold">
             Oblicz koszt mojego garażu <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
@@ -196,12 +196,12 @@ export default async function GaragePage() {
       </section>
 
       {detailPhotos.length > 0 && (
-        <section aria-labelledby="garaz-detale" className="bg-zinc-950 py-16 text-white sm:py-20 lg:py-24">
+        <section aria-labelledby="garaz-detale" className="brand-surface py-16 sm:py-20 lg:py-24">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="max-w-2xl">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Jakość w zbliżeniu</p>
+              <p className="brand-eyebrow">Jakość w zbliżeniu</p>
               <h2 id="garaz-detale" className="scroll-mt-40 mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">O jakości świadczą szczegóły.</h2>
-              <p className="mt-4 leading-relaxed text-zinc-300">Powiększ zdjęcia cokołu, przejścia i faktury. Wszystkie trzy kadry pochodzą z garażu 100 m² w Przemyślu.</p>
+              <p className="mt-4 leading-relaxed text-stone-600">Powiększ zdjęcia cokołu, przejścia i faktury. Wszystkie trzy kadry pochodzą z garażu 100 m² w Przemyślu.</p>
             </div>
             <div className="mt-9 grid gap-5 md:grid-cols-3">
               {detailPhotos.map((photo) => (
@@ -212,7 +212,7 @@ export default async function GaragePage() {
                 </article>
               ))}
             </div>
-            <Link href="/realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-white underline underline-offset-4">
+            <Link href="/realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#895238] underline underline-offset-4">
               Zobacz całą realizację z Przemyśla <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
@@ -288,22 +288,22 @@ export default async function GaragePage() {
 
       <div id="garaz-opinie" className="scroll-mt-40"><SocialProofSection /></div>
 
-      <section className="bg-zinc-950 px-4 py-16 text-center text-white sm:px-6 lg:py-24">
+      <section className="brand-surface px-4 py-16 text-center sm:px-6 lg:py-24">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Twój garaż może wyglądać tak samo dobrze.</h2>
-          <p className="mt-5 text-zinc-300">Podaj metraż i lokalizację. Jeśli beton wymaga naprawy, dołącz zdjęcia całej podłogi oraz zbliżenia uszkodzeń.</p>
+          <p className="mt-5 text-stone-600">Podaj metraż i lokalizację. Jeśli beton wymaga naprawy, dołącz zdjęcia całej podłogi oraz zbliżenia uszkodzeń.</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/zamow?miejsce=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200">
+            <Link href="/zamow?miejsce=garaz" className="inline-flex items-center justify-center gap-2 rounded-full brand-button px-7 py-3.5 text-sm font-semibold">
               Wyceń garaż <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center rounded-full border border-zinc-500 px-7 py-3.5 text-sm font-semibold text-white hover:border-white">
+            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center rounded-full border border-stone-400 px-7 py-3.5 text-sm font-semibold text-stone-900 hover:bg-white">
               Sprawdź orientacyjny koszt
             </Link>
           </div>
-          <p className="mt-8 text-sm text-zinc-400">
+          <p className="mt-8 text-sm text-stone-600">
             Zobacz również: <Link href="/blog/ile-kosztuje-posadzka-zywiczna-w-garazu" className="underline underline-offset-4">co wpływa na koszt</Link> i <Link href="/blog/ile-trwa-schniecie-posadzki-zywicznej" className="underline underline-offset-4">kiedy można parkować</Link>.
           </p>
-          <p className="mt-3 text-sm text-zinc-400">Realizujemy zlecenia m.in. w <Link href="/posadzki-zywiczne/rzeszow" className="underline underline-offset-4">Rzeszowie</Link> i <Link href="/posadzki-zywiczne/krakow" className="underline underline-offset-4">Krakowie</Link>.</p>
+          <p className="mt-3 text-sm text-stone-600">Realizujemy zlecenia m.in. w <Link href="/posadzki-zywiczne/rzeszow" className="underline underline-offset-4">Rzeszowie</Link> i <Link href="/posadzki-zywiczne/krakow" className="underline underline-offset-4">Krakowie</Link>.</p>
         </div>
       </section>
     </main>
