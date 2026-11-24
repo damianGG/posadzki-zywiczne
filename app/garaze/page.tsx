@@ -117,7 +117,7 @@ export default async function GaragePage() {
         </div>
       </section>
 
-      <nav aria-label="Pytania przed wyborem posadzki" className="sticky top-20 z-30 border-y bg-white/95 backdrop-blur">
+      <nav aria-label="Pytania przed wyborem posadzki" className="sticky top-[83px] z-30 border-y bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-4 py-2 sm:px-6">
           {[["#cena","Cena"],["#wykonczenia","Wykończenia"],["#realizacje","Zdjęcia"],["#garaz-detale","Detale"],["#garaz-przebieg","Przebieg"],["#garaz-faq","Wady i pytania"],["#garaz-opinie","Opinie"]].map(([href,label]) => (
             <a key={href} href={href} className="shrink-0 rounded-full px-3 py-2.5 text-sm font-semibold hover:bg-zinc-100 focus-visible:outline">{label}</a>

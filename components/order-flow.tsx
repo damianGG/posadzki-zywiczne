@@ -137,7 +137,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
   return (
     <section id="zamow" aria-labelledby="order-flow-heading" className="bg-zinc-50 py-14 sm:py-20">
       <div className="mx-auto max-w-6xl px-4">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">Wycena w 3 krokach</p>
+        <p className="brand-eyebrow">Wycena w 3 krokach</p>
         <Title id="order-flow-heading" className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">
           Wybierz miejsce, porównaj wygląd i sprawdź koszt.
         </Title>
@@ -159,7 +159,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                   }}
                   className={
                     "flex w-full items-center gap-2 rounded-full border px-3 py-2 text-left text-sm font-medium " +
-                    (active ? "border-zinc-950 bg-zinc-950 text-white" : done ? "border-zinc-300 bg-white text-zinc-900" : "border-zinc-200 bg-white text-zinc-400")
+                    (active ? "border-[#895238] bg-[#895238] text-white" : done ? "border-zinc-300 bg-white text-zinc-900" : "border-zinc-200 bg-white text-zinc-400")
                   }
                   aria-current={active ? "step" : undefined}
                 >
@@ -270,10 +270,10 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
             </div>
 
             {sent ? (
-              <div className="rounded-2xl bg-zinc-950 p-6 text-white sm:p-8" role="status">
-                <p className="text-xs font-semibold uppercase tracking-widest text-zinc-400">Wysłane</p>
+              <div className="rounded-2xl brand-surface p-6 sm:p-8" role="status">
+                <p className="brand-eyebrow">Wysłane</p>
                 <h3 className="mt-3 text-3xl font-semibold tracking-tight">Dziękujemy. Oddzwonimy.</h3>
-                <p className="mt-4 leading-relaxed text-zinc-300">
+                <p className="mt-4 leading-relaxed text-stone-600">
                   Zapytanie o {place.title.toLowerCase()} ({look.title.toLowerCase()}, {area.replace(",", ".")} m², {city}) jest u nas.
                   Zadzwonimy na {phone}. Jeśli beton jest pęknięty albo tłusty, doślij zdjęcie całej podłogi i zbliżenie uszkodzeń na biuro@posadzkizywiczne.com.
                 </p>
@@ -330,7 +330,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                     Otwórz wiadomość e-mail z tymi danymi (zdjęcia dołącz ręcznie)
                   </a>
                 )}
-                <button type="submit" disabled={sending} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-semibold text-white hover:bg-zinc-800 disabled:opacity-60 sm:w-auto">
+                <button type="submit" disabled={sending} className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full brand-button px-6 py-3.5 text-sm font-semibold disabled:opacity-60 sm:w-auto">
                   {sending ? "Wysyłam…" : "Poproś o wycenę"} <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
                 {place.id === "garaz" && (

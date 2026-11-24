@@ -24,7 +24,7 @@ export default function ProjectPhoto({ src, alt, caption, sizes = "(max-width: 7
           <Dialog.Overlay className="fixed inset-0 z-[100] bg-black/85" />
           <Dialog.Content className="fixed left-1/2 top-1/2 z-[101] w-[calc(100%_-_2rem)] max-w-5xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl bg-white p-4 shadow-xl sm:p-6 max-h-[94dvh]">
             <Dialog.Title className="pr-12 text-lg font-semibold text-zinc-950">{caption}</Dialog.Title>
-            <Dialog.Description className="mt-2 pr-10 text-sm text-zinc-600">Pełny kadr z realizacji. Kolor na ekranie może różnić się od rzeczywistej próbki.</Dialog.Description>
+            <Dialog.Description className="mt-2 pr-10 text-sm text-zinc-600">Pełny kadr zdjęcia. Kolor na ekranie może różnić się od rzeczywistej próbki.</Dialog.Description>
             <div className="relative mt-4 h-[65dvh]">
               <Image src={src} alt={alt} fill sizes="(max-width: 1024px) 95vw, 1000px" quality={85} className="object-contain" />
             </div>
