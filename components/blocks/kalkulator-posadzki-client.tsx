@@ -28,6 +28,7 @@ import {
 } from "lucide-react"
 import jsPDF from "jspdf"
 import Image from "next/image"
+import Link from "next/link"
 import confetti from "canvas-confetti"
 
 // Constants
@@ -603,9 +604,10 @@ interface CalculatorData {
 interface KalkulatorPosadzkiClientProps {
     initialData: CalculatorData
     presetGarage?: boolean
+    presetLook?: string
 }
 
-export default function KalkulatorPosadzkiClient({ initialData, presetGarage = false }: KalkulatorPosadzkiClientProps) {
+export default function KalkulatorPosadzkiClient({ initialData, presetGarage = false, presetLook }: KalkulatorPosadzkiClientProps) {
     // Transform server data to component format early to prevent errors
     const transformedSurfaces = React.useMemo(() => {
         if (!initialData?.surfaceTypes || initialData.surfaceTypes.length === 0) {
@@ -2453,6 +2455,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
 
                         {/* Przyciski akcji - ukryte na mobile (przeniesione do sticky bottom bar) */}
                         <div className="hidden lg:block space-y-3">
+                            {presetGarage && <Link href={`/zamow?miejsce=garaz&wyglad=${encodeURIComponent(presetLook || "doradztwo")}&metraz=${encodeURIComponent(powierzchnia.toFixed(2))}`} className="block rounded-lg bg-zinc-950 px-4 py-3 text-center text-sm font-semibold text-white">Poproś o indywidualną wycenę</Link>}
                             <div className="space-y-2">
                                 <Label htmlFor="discountCode" className="font-medium">
                                     Kod rabatowy
@@ -2713,6 +2716,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                             )}
                         </div>
                         
+                        {presetGarage && <Link href={`/zamow?miejsce=garaz&wyglad=${encodeURIComponent(presetLook || "doradztwo")}&metraz=${encodeURIComponent(powierzchnia.toFixed(2))}`} className="block rounded-lg bg-zinc-950 px-4 py-3 text-center text-sm font-semibold text-white">Poproś o indywidualną wycenę</Link>}
                         {/* Email input for mobile */}
                         {showEmailInput ? (
                             <div className="space-y-2 mb-3">

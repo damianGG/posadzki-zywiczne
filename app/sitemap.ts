@@ -38,6 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/parkingi",
     "/hale-magazyny",
     "/gastronomia",
+    "/zamow",
     "/kalkulator",
     "/systemy",
     "/kontakt",

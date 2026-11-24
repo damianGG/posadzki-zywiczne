@@ -72,29 +72,29 @@ export default async function GaragePage() {
   ];
 
   return (
-    <main className="overflow-hidden">
+    <main className="min-w-0">
       {/* Hero — authentic client project, not a stock image. */}
       <section className="bg-white">
-        <div className="mx-auto grid max-w-7xl items-center gap-9 px-4 pb-12 pt-8 sm:px-6 md:py-16 lg:grid-cols-[0.88fr_1.12fr] lg:gap-14 lg:py-20">
+        <div className="mx-auto grid max-w-7xl items-center gap-5 px-4 pb-8 pt-5 sm:px-6 md:py-16 lg:grid-cols-[0.88fr_1.12fr] lg:gap-14 lg:py-20">
           <div className="max-w-xl">
-            <nav aria-label="Ścieżka nawigacji" className="mb-7 flex items-center gap-2 text-xs text-zinc-500">
+            <nav aria-label="Ścieżka nawigacji" className="mb-3 flex items-center gap-2 text-xs text-zinc-500">
               <Link href="/" className="hover:text-zinc-900">Strona główna</Link>
               <ChevronRight className="h-3 w-3" aria-hidden="true" />
               <span aria-current="page">Posadzki do garażu</span>
             </nav>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Posadzki żywiczne do garaży</p>
-            <h1 className="mt-4 text-4xl font-semibold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl xl:text-6xl">
+            <h1 className="mt-2 text-3xl font-semibold leading-[1.08] tracking-tight text-zinc-950 sm:text-5xl xl:text-6xl">
               Posadzka do garażu, którą możesz obejrzeć z bliska.
             </h1>
-            <p className="mt-6 max-w-lg text-base leading-relaxed text-zinc-600 sm:text-lg">
+            <p className="mt-3 max-w-lg text-base leading-relaxed text-zinc-600 sm:text-lg">
               Piękne, trwałe posadzki żywiczne dopasowane do Twojego garażu. Zobacz wykonane przez nas realizacje, wybierz kolor i strukturę, a następnie poznaj orientacyjny koszt.
             </p>
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
               <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-zinc-950 px-6 py-3.5 text-sm font-semibold text-white transition-colors hover:bg-zinc-700">
-                Wyceń swój garaż <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                Sprawdź cenę garażu <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
-              <Link href="#realizacje" className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-300 px-6 py-3.5 text-sm font-semibold text-zinc-900 transition-colors hover:border-zinc-900">
-                Zobacz realizacje <Images className="h-4 w-4" aria-hidden="true" />
+              <Link href="#wykonczenia" className="inline-flex items-center justify-center gap-2 rounded-full border border-zinc-300 px-6 py-3.5 text-sm font-semibold text-zinc-900 transition-colors hover:border-zinc-900">
+                Porównaj wykończenia <Images className="h-4 w-4" aria-hidden="true" />
               </Link>
             </div>
             <div className="mt-8 flex flex-wrap gap-x-6 gap-y-2 text-sm text-zinc-600">
@@ -103,8 +103,8 @@ export default async function GaragePage() {
               <span className="inline-flex items-center gap-2"><Ruler className="h-4 w-4 text-zinc-900" /> Dobór do podłoża</span>
             </div>
           </div>
-          <figure>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-zinc-100 lg:aspect-[1.1/1]">
+          <figure className="order-first lg:order-none">
+            <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-zinc-100 lg:aspect-[4/3]">
               <Image src={heroImage} alt="Posadzka żywiczna z płatkami dekoracyjnymi RAL 7035 w garażu 30 m² w Sędziszowie Małopolskim" fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />
             </div>
             <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-500">
@@ -117,14 +117,49 @@ export default async function GaragePage() {
         </div>
       </section>
 
-      <nav aria-label="Pytania przed wyborem posadzki" className="mx-auto flex max-w-7xl flex-wrap gap-3 px-4 py-6 sm:px-6">
-        {[ ["#wykonczenia", "Jakie wykończenie?"], ["#garaz-detale", "Jak wyglądają detale?"], ["#cena", "Ile kosztuje?"], ["#garaz-przebieg", "Jak przebiegają prace?"], ["#garaz-faq", "Wady i pytania"] ].map(([href, label]) => (
-          <a key={href} href={href} className="rounded-full border border-zinc-300 px-4 py-3 text-sm font-semibold hover:bg-zinc-100">{label}</a>
-        ))}
+      <nav aria-label="Pytania przed wyborem posadzki" className="sticky top-20 z-30 border-y bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center gap-2 overflow-x-auto px-4 py-2 sm:px-6">
+          {[["#cena","Cena"],["#wykonczenia","Wykończenia"],["#realizacje","Zdjęcia"],["#garaz-detale","Detale"],["#garaz-przebieg","Przebieg"],["#garaz-faq","Wady i pytania"],["#garaz-opinie","Opinie"]].map(([href,label]) => (
+            <a key={href} href={href} className="shrink-0 rounded-full px-3 py-2.5 text-sm font-semibold hover:bg-zinc-100 focus-visible:outline">{label}</a>
+          ))}
+          <Link href="/zamow?miejsce=garaz" className="ml-auto shrink-0 rounded-full bg-zinc-950 px-4 py-2.5 text-sm font-semibold text-white">Poproś o wycenę</Link>
+        </div>
       </nav>
+      <section id="cena" aria-labelledby="garaz-cena" className="scroll-mt-40 mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Cena i zakres</p>
+          <h2 id="garaz-cena" className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Ile kosztuje posadzka żywiczna w garażu?</h2>
+          <p className="mt-4 leading-relaxed text-zinc-600">
+            Każdy beton jest inny. Cena zależy od przygotowania podłoża, metrażu, cokołów i wybranego wykończenia. Poniżej znajdziesz potwierdzony koszt i zakres jednego z naszych zleceń.
+          </p>
+          <Link href="/kalkulator?typ=garaz" className="mt-7 inline-flex items-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white hover:bg-zinc-700">
+            Oblicz koszt mojego garażu <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
+        <div className="rounded-2xl bg-zinc-100 p-7 sm:p-10">
+          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600">Przykład wykonanego zlecenia</p>
+          <p className="mt-4 text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl">7 500 zł <span className="text-lg font-medium text-zinc-600">netto</span></p>
+          <p className="mt-2 text-zinc-600">Garaż 45 m² · około 167 zł netto/m²</p>
+          <div className="mt-7 border-t border-zinc-300 pt-6">
+            <p className="font-semibold text-zinc-950">W cenie tej realizacji:</p>
+            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-zinc-700">
+              {[
+                "Przygotowanie betonu: szlifowanie, szpachlowanie i gruntowanie",
+                "Obsadzenie kratki odpływowej",
+                "Warstwa zasadnicza z wykończeniem dekoracyjnym lub kwarcowym",
+                "Cokoły i uszczelnienie styku ściany z posadzką",
+              ].map((item) => (
+                <li key={item} className="flex gap-3"><Check className="mt-0.5 h-4 w-4 shrink-0 text-zinc-900" aria-hidden="true" />{item}</li>
+              ))}
+            </ul>
+          </div>
+          <p className="mt-6 text-xs text-zinc-600">To historyczna cena pojedynczej realizacji. Fotografie garaży 30 i 100 m² na tej stronie przedstawiają inne zlecenia i nie są ilustracją tej ceny. Końcowy zakres i koszt potwierdzamy po ocenie podłoża.</p>
+        </div>
+      </section>
+
       <GarageFinishPicker />
 
-      <section id="realizacje" aria-labelledby="garage-realizacje" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-24">
+      <section id="realizacje" aria-labelledby="garage-realizacje" className="scroll-mt-40 mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-24">
         <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Portfolio</p>
@@ -165,7 +200,7 @@ export default async function GaragePage() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="max-w-2xl">
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-400">Jakość w zbliżeniu</p>
-              <h2 id="garaz-detale" className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">O jakości świadczą szczegóły.</h2>
+              <h2 id="garaz-detale" className="scroll-mt-40 mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">O jakości świadczą szczegóły.</h2>
               <p className="mt-4 leading-relaxed text-zinc-300">Powiększ zdjęcia cokołu, przejścia i faktury. Wszystkie trzy kadry pochodzą z garażu 100 m² w Przemyślu.</p>
             </div>
             <div className="mt-9 grid gap-5 md:grid-cols-3">
@@ -184,41 +219,9 @@ export default async function GaragePage() {
         </section>
       )}
 
-      <section id="cena" aria-labelledby="garaz-cena" className="scroll-mt-24 mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Cena i zakres</p>
-          <h2 id="garaz-cena" className="mt-3 text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Ile kosztuje posadzka żywiczna w garażu?</h2>
-          <p className="mt-4 leading-relaxed text-zinc-600">
-            Każdy beton jest inny. Cena zależy od przygotowania podłoża, metrażu, cokołów i wybranego wykończenia. Poniżej znajdziesz potwierdzony koszt i zakres jednego z naszych zleceń.
-          </p>
-          <Link href="/kalkulator?typ=garaz" className="mt-7 inline-flex items-center gap-2 rounded-full bg-zinc-950 px-6 py-3 text-sm font-semibold text-white hover:bg-zinc-700">
-            Oblicz koszt mojego garażu <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </Link>
-        </div>
-        <div className="rounded-2xl bg-zinc-100 p-7 sm:p-10">
-          <p className="text-xs font-semibold uppercase tracking-widest text-zinc-600">Przykład wykonanego zlecenia</p>
-          <p className="mt-4 text-4xl font-semibold tracking-tight text-zinc-950 sm:text-5xl">7 500 zł <span className="text-lg font-medium text-zinc-600">netto</span></p>
-          <p className="mt-2 text-zinc-600">Garaż 45 m² · około 167 zł netto/m²</p>
-          <div className="mt-7 border-t border-zinc-300 pt-6">
-            <p className="font-semibold text-zinc-950">W cenie tej realizacji:</p>
-            <ul className="mt-4 space-y-3 text-sm leading-relaxed text-zinc-700">
-              {[
-                "Przygotowanie betonu: szlifowanie, szpachlowanie i gruntowanie",
-                "Obsadzenie kratki odpływowej",
-                "Warstwa zasadnicza z wykończeniem dekoracyjnym lub kwarcowym",
-                "Cokoły i uszczelnienie styku ściany z posadzką",
-              ].map((item) => (
-                <li key={item} className="flex gap-3"><Check className="mt-0.5 h-4 w-4 shrink-0 text-zinc-900" aria-hidden="true" />{item}</li>
-              ))}
-            </ul>
-          </div>
-          <p className="mt-6 text-xs text-zinc-600">To historyczna cena pojedynczej realizacji. Fotografie garaży 30 i 100 m² na tej stronie przedstawiają inne zlecenia i nie są ilustracją tej ceny. Końcowy zakres i koszt potwierdzamy po ocenie podłoża.</p>
-        </div>
-      </section>
-
       <section aria-labelledby="garaz-przebieg" className="border-y border-zinc-200 bg-zinc-50 py-16 lg:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
-          <h2 id="garaz-przebieg" className="max-w-2xl text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Od oceny betonu do gotowej posadzki.</h2>
+          <h2 id="garaz-przebieg" className="scroll-mt-40 max-w-2xl text-3xl font-semibold tracking-tight text-zinc-950 sm:text-4xl">Od oceny betonu do gotowej posadzki.</h2>
           <div className="mt-10 grid gap-8 md:grid-cols-3">
             {[
               { number: "01", title: "Oględziny i dobór", content: "Sprawdzamy nośność, wilgotność, pęknięcia oraz dylatacje. Ustalamy wykończenie, kolor i zakres napraw.", shot: "Zbliżenie rysy, dylatacji lub oględzin betonu" },
@@ -266,7 +269,7 @@ export default async function GaragePage() {
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">FAQ</p>
-            <h2 id="garaz-faq" className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Pytania przed wykonaniem posadzki.</h2>
+            <h2 id="garaz-faq" className="scroll-mt-40 mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Pytania przed wykonaniem posadzki.</h2>
             <p className="mt-4 text-zinc-600">Wycena, antypoślizgowość, wilgotność podłoża i czas utwardzania — warto znać odpowiedzi przed wyborem.</p>
           </div>
           <div className="divide-y divide-zinc-300 border-t border-zinc-300">
@@ -283,18 +286,18 @@ export default async function GaragePage() {
         </div>
       </section>
 
-      <SocialProofSection />
+      <div id="garaz-opinie" className="scroll-mt-40"><SocialProofSection /></div>
 
       <section className="bg-zinc-950 px-4 py-16 text-center text-white sm:px-6 lg:py-24">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Twój garaż może wyglądać tak samo dobrze.</h2>
           <p className="mt-5 text-zinc-300">Podaj metraż i lokalizację. Jeśli beton wymaga naprawy, dołącz zdjęcia całej podłogi oraz zbliżenia uszkodzeń.</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200">
+            <Link href="/zamow?miejsce=garaz" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-zinc-950 hover:bg-zinc-200">
               Wyceń garaż <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <Link href="/kontakt" className="inline-flex items-center justify-center rounded-full border border-zinc-500 px-7 py-3.5 text-sm font-semibold text-white hover:border-white">
-              Skontaktuj się z nami
+            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center rounded-full border border-zinc-500 px-7 py-3.5 text-sm font-semibold text-white hover:border-white">
+              Sprawdź orientacyjny koszt
             </Link>
           </div>
           <p className="mt-8 text-sm text-zinc-400">

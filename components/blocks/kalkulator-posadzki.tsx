@@ -74,7 +74,7 @@ async function getCalculatorConfig(): Promise<CalculatorData> {
     }
 }
 
-export default async function KalkulatorPosadzki({ presetGarage = false }: { presetGarage?: boolean } = {}) {
+export default async function KalkulatorPosadzki({ presetGarage = false, presetLook }: { presetGarage?: boolean; presetLook?: string } = {}) {
     const calculatorData = await getCalculatorConfig()
     // Do not silently expose stale hard-coded fallback prices when Neon is unavailable.
     if (!calculatorData.surfaceTypes.length || !calculatorData.colors.length ||
@@ -82,9 +82,9 @@ export default async function KalkulatorPosadzki({ presetGarage = false }: { pre
         return <section className="mx-auto max-w-3xl px-6 py-16 text-center">
             <h1 className="text-2xl font-semibold">Kalkulator chwilowo niedostępny</h1>
             <p className="mt-3 text-muted-foreground">Nie możemy teraz pobrać aktualnego cennika. Skontaktuj się z nami w sprawie indywidualnej wyceny.</p>
-            <a className="mt-6 inline-block font-semibold text-primary underline" href="/kontakt">Zapytaj o wycenę</a>
+            <a className="mt-6 inline-block font-semibold text-primary underline" href={presetGarage ? "/zamow?miejsce=garaz" + (presetLook ? "&wyglad=" + encodeURIComponent(presetLook) : "") : "/zamow"}>Zapytaj o wycenę</a>
         </section>
     }
 
-    return <KalkulatorPosadzkiClient initialData={calculatorData} presetGarage={presetGarage} />
+    return <KalkulatorPosadzkiClient initialData={calculatorData} presetGarage={presetGarage} presetLook={presetLook} />
 }
