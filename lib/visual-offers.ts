@@ -23,7 +23,7 @@ export type FloorPlace = {
   looks: FloorLook[];
 };
 
-export const floorPlaces: FloorPlace[] = [
+const basePlaces: FloorPlace[] = [
   {
     id: "garaz",
     title: "Garaż",
@@ -180,7 +180,9 @@ export const floorPlaces: FloorPlace[] = [
       },
     ],
   },
-].map((place: FloorPlace) => ({
+];
+
+export const floorPlaces: FloorPlace[] = basePlaces.map(place => ({
   ...place,
   looks: [...place.looks, { id: "doradztwo", title: "Nie wiem — pomóżcie mi wybrać", description: "Opisz sposób użytkowania i oczekiwania. Doradzimy odpowiedni system.", detail: "Nie musisz znać technologii, koloru ani wykończenia.", alt: "", caption: "Indywidualne doradztwo" }],
 }));
