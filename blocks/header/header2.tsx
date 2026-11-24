@@ -62,7 +62,7 @@ export const Header2 = () => {
         </div>
         <div className="flex items-center gap-2">
           <Link href="/kalkulator?typ=garaz" className="hidden text-sm hover:underline lg:block">Kalkulator garażu</Link>
-          <Link href="/zamow" className="brand-accent-button inline-flex min-h-11 items-center justify-center rounded-md px-3 text-sm font-semibold transition-colors">Poproś o wycenę</Link>
+          <Link href="/zamow" className="brand-accent-button inline-flex min-h-11 items-center justify-center rounded-md px-2.5 text-xs sm:px-3 sm:text-sm font-semibold transition-colors">Poproś o wycenę</Link>
           <Button ref={toggleRef} variant="ghost" size="icon" className="h-11 w-11 xl:hidden" aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={() => setOpen(!isOpen)}>
             {isOpen ? <X aria-hidden="true" className="h-5 w-5" /> : <Menu aria-hidden="true" className="h-5 w-5" />}
           </Button>

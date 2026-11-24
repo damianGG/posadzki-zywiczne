@@ -42,6 +42,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
   const stepTitleRef = useRef<HTMLHeadingElement>(null);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
   const previousStep = useRef(step);
+  const focusError = useRef(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [mailto, setMailto] = useState("");
@@ -56,7 +57,10 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
     }
   }, [step]);
   useEffect(() => {
-    if (Object.keys(fieldErrors).length || error) errorSummaryRef.current?.focus();
+    if (focusError.current && (Object.keys(fieldErrors).length || error)) {
+      focusError.current = false;
+      errorSummaryRef.current?.focus();
+    }
   }, [fieldErrors, error]);
   useEffect(() => { if (sent) stepTitleRef.current?.focus(); }, [sent]);
 
@@ -90,6 +94,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
   }
   function goTo(next: number) {
     if (sending || sent) return;
+    focusError.current = false;
     setError("");
     setFieldErrors({});
     setMailto("");
@@ -130,15 +135,16 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
     }
     setMailto("");
     const digits = phone.replace(/\D/g, "");
-    const meters = Number(area.replace(",", "."));
+    const meters = Number(area.trim().replace(",", "."));
     const errors: FieldErrors = {};
     if (name.trim().length < 2) errors.name = "Wpisz imię (co najmniej 2 znaki).";
     if (digits.length < 9 || digits.length > 15) errors.phone = "Wpisz numer telefonu zawierający 9–15 cyfr.";
     if (city.trim().length < 2) errors.city = "Wpisz miejscowość realizacji.";
     if (!Number.isFinite(meters) || meters < 1 || meters > 20000) errors.area = "Wpisz metraż od 1 do 20 000 m², np. 45 lub 45,5.";
     if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) errors.email = "Wpisz poprawny adres e-mail lub pozostaw pole puste.";
+    focusError.current = Object.keys(errors).length > 0;
     setFieldErrors(errors);
-    if (Object.keys(errors).length) return;
+    if (focusError.current) return;
 
     const payload = {
       placeId: place.id,
@@ -153,6 +159,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
     };
 
     if (photos.length > 3 || photos.reduce((sum, file) => sum + file.size, 0) > 3 * 1024 * 1024) {
+      focusError.current = true;
       setError("Dodaj maksymalnie 3 zdjęcia o łącznym rozmiarze do 3 MB.");
       return;
     }
@@ -164,6 +171,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
       const response = await fetch("/api/wycena", { method: "POST", body: form });
       const data = (await response.json().catch(() => ({}))) as { message?: string; mailto?: boolean };
       if (!response.ok) {
+        focusError.current = true;
         if (response.status === 503) {
           const href = `mailto:biuro@posadzkizywiczne.com?subject=${encodeURIComponent("Wycena posadzki: " + place.title)}&body=${encodeURIComponent(mailBody)}`;
           setMailto(href);
@@ -175,6 +183,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
       }
       setSent(true);
     } catch {
+      focusError.current = true;
       setError("Brak połączenia. Zadzwoń: 507 384 619.");
     } finally {
       setSending(false);
@@ -336,25 +345,25 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                   <div ref={errorSummaryRef} tabIndex={-1} role="alert" className="mt-4 scroll-mt-32 rounded-lg border-2 border-red-700 p-4 text-sm text-red-800">
                     <p className="font-semibold">{error ? "Nie udało się wysłać zapytania" : "Sprawdź podane dane"}</p>
                     {error && <p className="mt-2">{error}</p>}
-                    <ul className="mt-2 space-y-1">{(Object.keys(fieldErrors) as Field[]).map(field => <li key={field}><a href={"#quote-" + field} onClick={event => { event.preventDefault(); document.getElementById("quote-" + field)?.focus(); }} className="underline">{fieldErrors[field]}</a></li>)}</ul>
+                    <ul className="mt-2 space-y-1">{(Object.keys(fieldErrors) as Field[]).map(field => <li key={field}><a href={"#quote-" + field} onClick={event => { event.preventDefault(); const input = document.getElementById("quote-" + field); input?.focus(); input?.scrollIntoView({ block: "center" }); }} className="underline">{fieldErrors[field]}</a></li>)}</ul>
                   </div>
                 )}
                 <fieldset disabled={sending} className="mt-5 min-w-0 space-y-5">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <label className="block text-sm font-medium text-zinc-800">
                     Imię
-                    <input {...fieldProps("name")} value={name} onChange={(event) => { setName(event.target.value); clearField("name"); }} autoComplete="name" required className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-3 text-base outline-none ring-zinc-950 focus:ring-2 aria-[invalid=true]:border-red-700" />
+                    <input {...fieldProps("name")} value={name} onChange={(event) => { setName(event.target.value); clearField("name"); }} autoComplete="name" maxLength={80} required className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-3 text-base scroll-mt-32 outline-none ring-zinc-950 focus:ring-2 aria-[invalid=true]:border-red-700" />
                     {fieldError("name")}
                   </label>
                   <label className="block text-sm font-medium text-zinc-800">
                     Telefon
                     <span className="block text-xs font-normal text-zinc-600">Oddzwonimy, aby doprecyzować zakres prac.</span>
-                    <input {...fieldProps("phone")} type="tel" value={phone} onChange={(event) => { setPhone(event.target.value); clearField("phone"); }} autoComplete="tel" inputMode="tel" required className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-3 text-base outline-none ring-zinc-950 focus:ring-2" />
+                    <input {...fieldProps("phone")} type="tel" value={phone} onChange={(event) => { setPhone(event.target.value); clearField("phone"); }} autoComplete="tel" inputMode="tel" maxLength={40} required className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-3 text-base outline-none ring-zinc-950 focus:ring-2" />
                     {fieldError("phone")}
                   </label>
                   <label className="block text-sm font-medium text-zinc-800">
                     Miejscowość
-                    <input {...fieldProps("city")} value={city} onChange={(event) => { setCity(event.target.value); clearField("city"); }} autoComplete="address-level2" required className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-3 text-base outline-none ring-zinc-950 focus:ring-2" />
+                    <input {...fieldProps("city")} value={city} onChange={(event) => { setCity(event.target.value); clearField("city"); }} autoComplete="address-level2" maxLength={80} required className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-3 text-base outline-none ring-zinc-950 focus:ring-2" />
                     {fieldError("city")}
                   </label>
                   <label className="block text-sm font-medium text-zinc-800">
@@ -364,7 +373,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                   </label>
                   <label className="block text-sm font-medium text-zinc-800 sm:col-span-2">
                     E-mail (opcjonalnie)
-                    <input {...fieldProps("email")} type="email" value={email} onChange={(event) => { setEmail(event.target.value); clearField("email"); }} autoComplete="email" inputMode="email" className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-3 text-base outline-none ring-zinc-950 focus:ring-2" />
+                    <input {...fieldProps("email")} type="email" value={email} onChange={(event) => { setEmail(event.target.value); clearField("email"); }} autoComplete="email" inputMode="email" maxLength={120} className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-3 text-base outline-none ring-zinc-950 focus:ring-2" />
                     {fieldError("email")}
                   </label>
                   <label className="block text-sm font-medium text-zinc-800 sm:col-span-2">
@@ -379,7 +388,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                 <label className="mt-5 block text-sm font-medium text-zinc-800">
                   Zdjęcia podłoża (opcjonalnie)
                   <input type="file" multiple accept="image/jpeg,image/png,image/webp" aria-describedby="quote-photo-hint" onChange={event => { selectPhotos(Array.from(event.target.files ?? [])); event.target.value = ""; }} className="mt-2 block w-full text-sm file:mr-3 file:min-h-11 file:rounded-lg file:border file:bg-white file:px-3 file:font-medium" />
-                  <span id="quote-photo-hint" className="mt-2 block text-xs font-normal text-zinc-600">Do 3 zdjęć JPG, PNG lub WebP, łącznie maks. 3 MB. Najlepiej cały obiekt i zbliżenie uszkodzeń.</span>
+                  <span id="quote-photo-hint" className="mt-2 block text-xs font-normal text-zinc-600">Do 3 zdjęć JPG, PNG lub WebP, łącznie maks. 3 MB. Ponowny wybór zastępuje poprzedni zestaw. Najlepiej cały obiekt i zbliżenie uszkodzeń.</span>
                 </label>
                 {photoError && <p role="alert" className="text-sm text-red-700">{photoError}</p>}
                 {photos.length > 0 && <ul className="space-y-2" aria-label="Wybrane zdjęcia">{photos.map((photo,index) => <li key={photo.name + index} className="flex items-center justify-between gap-3 rounded-lg bg-zinc-100 px-3"><span className="min-w-0 break-all text-sm">{photo.name}</span><button type="button" className="min-h-11 shrink-0 text-sm font-medium underline" aria-label={"Usuń " + photo.name} onClick={() => { setPhotos(old => old.filter((_, i) => i !== index)); setPhotoError(""); }}>Usuń</button></li>)}</ul>}
