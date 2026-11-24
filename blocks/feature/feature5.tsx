@@ -1,23 +1,71 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { serviceGroups } from "@/lib/service-navigation";
+import { stoneCarpetGallery } from "@/lib/stone-carpet-gallery";
+import type { Realizacja, RealizacjaCategory } from "@/types/realizacje";
+import EditorialPhotoSlot from "@/components/editorial-photo-slot";
 
-export const Feature5 = () => (
-  <section className="container mx-auto py-16 lg:py-24" aria-labelledby="services-heading">
-    <h2 id="services-heading" className="text-3xl font-semibold tracking-tight md:text-4xl">Dobierz posadzkę do swojego obiektu</h2>
-    <p className="mt-4 max-w-2xl text-muted-foreground">Wybierz zastosowanie. Pokażemy, co uwzględnić przy doborze posadzki i jakie informacje przygotować do wyceny.</p>
-    {serviceGroups.map(group => (
-      <div key={group.title} className="mt-10">
-        <h3 className="mb-5 text-2xl font-semibold">{group.title}</h3>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {group.items.map(item => (
-            <Link key={item.href} href={item.href} className="group rounded-xl border bg-background p-6 transition-colors hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">
-              <h4 className="flex items-center justify-between gap-3 text-lg font-semibold">{item.title}<ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" /></h4>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-            </Link>
-          ))}
+// Curated fallbacks keep photographed services visible when the CMS is unavailable.
+const photoCategories: Partial<Record<string, RealizacjaCategory>> = {
+  "/garaze": "garaze",
+  "/posadzki-zywiczne-na-balkony": "balkony-tarasy",
+  "/kuchnia-salon": "domy-mieszkania",
+};
+const servicePhotos: Record<string, { src: string; alt: string; caption: string }> = {
+  "/garaze": { src: "/garaz/IMG_1253.JPG", alt: "Jasna posadzka z płatkami i cokołami w garażu", caption: "Posadzka z płatkami · zdjęcie z naszej galerii" },
+  "/posadzki-zywiczne-na-balkony": { src: "/realizacje/krakow-rydlowka-balkon/IMG_1315.JPG", alt: "Balkon z jasną posadzką w płatki i żółtą balustradą", caption: "Wykończenie balkonu · Kraków" },
+  "/kamienny-dywan": { src: stoneCarpetGallery[0].src, alt: stoneCarpetGallery[0].alt, caption: "Kamienny dywan na stopniach i podeście" },
+};
+
+export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
+
+  return (
+    <section className="container mx-auto px-4 py-16 lg:py-24" aria-labelledby="services-heading">
+      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Zastosowania i realizacje</p>
+      <h2 id="services-heading" className="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">Zobacz, co możemy wykonać</h2>
+      <p className="mt-4 max-w-2xl text-muted-foreground">
+        Wybierz miejsce, w którym planujesz posadzkę. Zobacz zdjęcia, zakres wykonania i odpowiedzi na pytania o koszt oraz codzienne użytkowanie.
+      </p>
+      {serviceGroups.map(group => (
+        <div key={group.title} className="mt-10">
+          <h3 className="mb-5 text-2xl font-semibold">{group.title}</h3>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {group.items.map(item => {
+              const category = photoCategories[item.href];
+              const project = category
+                ? projects.find(candidate => candidate.category === category && Boolean(candidate.images.main))
+                : undefined;
+              const selectedPhoto = servicePhotos[item.href];
+              const src = selectedPhoto?.src || project?.images.main;
+              const alt = selectedPhoto?.alt || (project ? `${project.title} — ${project.location}` : undefined);
+              const caption = selectedPhoto?.caption || (project ? `Z naszej realizacji: ${project.location}` : undefined);
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className="group overflow-hidden rounded-2xl border bg-background transition-colors hover:border-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                >
+                  <EditorialPhotoSlot
+                    src={src}
+                    alt={alt}
+                    label={item.title}
+                    caption={caption}
+                    aspect="wide"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="!rounded-none !border-0"
+                  />
+                  {!src && <h4 className="px-5 pt-5 text-lg font-semibold">{item.title}</h4>}
+                  <div className="flex items-start justify-between gap-4 p-5">
+                    <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    ))}
-  </section>
-);
+      ))}
+    </section>
+  );
+}
