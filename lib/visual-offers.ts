@@ -106,18 +106,16 @@ const basePlaces: FloorPlace[] = [
     title: "Dom",
     eyebrow: "Wnętrze",
     summary: "Kuchnia, hol, pomieszczenie gospodarcze. Gładka podłoga, którą widać od progu.",
-    image: "/garaz/garaz-zywica-2.jpg",
     alt: "Ciemnoszara, gładka posadzka w pomieszczeniu z oknami",
     href: "/kuchnia-salon",
     looks: [
       {
         id: "ciemna",
         title: "Ciemna i gładka",
-        description: "Spokojny grafit. Dobrze kryje codzienny kurz i pasuje do prostych ścian.",
+        description: "Spokojny grafit. Na ciemnych powierzchniach kurz może być bardziej widoczny.",
         detail: "We wnętrzu ważny jest połysk: mat mniej odbija światło, satyna wygląda głębiej.",
-        image: "/garaz/garaz-zywica-2.jpg",
         alt: "Ciemnoszara gładka posadzka żywiczna w pomieszczeniu",
-        caption: "Gładka posadzka w ciemnym odcieniu",
+        caption: "Dobór na podstawie próbki",
       },
       {
         id: "schody",

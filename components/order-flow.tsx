@@ -185,13 +185,11 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                   (item.id === "garaz" ? "sm:col-span-2 sm:grid sm:grid-cols-[1.3fr_1fr]" : "")
                 }
               >
-                <span className={"relative block bg-zinc-900 " + (item.id === "garaz" ? "aspect-[16/10] sm:aspect-auto sm:min-h-[320px]" : "aspect-[16/10]")}>
-                  {item.image ? (
-                    <Image src={item.image} alt={item.alt} fill sizes={item.id === "garaz" ? "(min-width: 640px) 60vw, 100vw" : "(min-width: 640px) 50vw, 100vw"} className="object-cover transition duration-500 group-hover:scale-[1.03]" />
-                  ) : (
-                    <span className="absolute inset-0 flex items-end p-5 text-2xl font-semibold tracking-tight text-white">Hala, parking, gastronomia</span>
-                  )}
-                </span>
+                {item.image && (
+                  <span className={"relative block bg-zinc-100 " + (item.id === "garaz" ? "aspect-[16/10] sm:aspect-auto sm:min-h-[240px]" : "aspect-[16/10]")}>
+                    <Image src={item.image} alt={item.alt} fill sizes={item.id === "garaz" ? "(min-width: 640px) 60vw, 100vw" : "(min-width: 640px) 50vw, 100vw"} className="object-cover motion-safe:group-hover:scale-[1.03] transition" />
+                  </span>
+                )}
                 <span className="flex flex-col justify-end p-5">
                   <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{item.eyebrow}</span>
                   <span className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950">{item.title}</span>
@@ -229,13 +227,11 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                   aria-pressed={lookId === item.id}
                   className="group overflow-hidden rounded-2xl border border-zinc-200 bg-white text-left shadow-sm transition hover:border-zinc-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-950"
                 >
-                  <span className="relative block aspect-[4/3] bg-zinc-200">
-                    {item.image ? (
-                      <Image src={item.image} alt={item.alt} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" className="object-cover transition duration-500 group-hover:scale-[1.03]" />
-                    ) : (
-                      <span className="absolute inset-0 flex items-center justify-center bg-zinc-950 p-6 text-center text-lg font-semibold text-white">{item.title}</span>
-                    )}
-                  </span>
+                  {item.image && (
+                    <span className="relative block aspect-[4/3] bg-zinc-100">
+                      <Image src={item.image} alt={item.alt} fill sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" className="object-cover motion-safe:group-hover:scale-[1.03] transition" />
+                    </span>
+                  )}
                   <span className="block p-4">
                     <span className="block text-lg font-semibold text-zinc-950">{item.title}</span>
                     <span className="mt-1 block text-sm leading-relaxed text-zinc-600">{item.description}</span>
@@ -258,13 +254,11 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
               </aside>
             )}
             <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-              <div className="relative aspect-[4/3] bg-zinc-200">
-                {look.image ? (
+              {look.image && (
+                <div className="relative aspect-[4/3] bg-zinc-100">
                   <Image src={look.image} alt={look.alt} fill sizes="(min-width: 1024px) 40vw, 100vw" className="object-cover" />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center bg-zinc-950 p-8 text-center text-2xl font-semibold text-white">{look.title}</div>
-                )}
-              </div>
+                </div>
+              )}
               <div className="p-5">
                 <p className="text-xs font-semibold uppercase tracking-widest text-zinc-500">{place.title}</p>
                 <h3 className="mt-1 text-xl font-semibold text-zinc-950">{look.title}</h3>
