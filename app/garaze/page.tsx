@@ -201,7 +201,7 @@ export default async function GaragePage() {
             <div className="max-w-2xl">
               <p className="brand-eyebrow">Jakość w zbliżeniu</p>
               <h2 id="garaz-detale" className="scroll-mt-40 mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">O jakości świadczą szczegóły.</h2>
-              <p className="mt-4 leading-relaxed text-stone-600">Powiększ zdjęcia cokołu, przejścia i faktury. Wszystkie trzy kadry pochodzą z garażu 100 m² w Przemyślu.</p>
+              <p className="mt-4 leading-relaxed text-zinc-600">Powiększ zdjęcia cokołu, przejścia i faktury. Wszystkie trzy kadry pochodzą z garażu 100 m² w Przemyślu.</p>
             </div>
             <div className="mt-9 grid gap-5 md:grid-cols-3">
               {detailPhotos.map((photo) => (
@@ -212,7 +212,7 @@ export default async function GaragePage() {
                 </article>
               ))}
             </div>
-            <Link href="/realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#895238] underline underline-offset-4">
+            <Link href="/realizacje/posadzka-zywiczna-garaz-100m2-przemysl-ral7035" className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-[#007A3D] underline underline-offset-4">
               Zobacz całą realizację z Przemyśla <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
           </div>
@@ -291,19 +291,19 @@ export default async function GaragePage() {
       <section className="brand-surface px-4 py-16 text-center sm:px-6 lg:py-24">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Twój garaż może wyglądać tak samo dobrze.</h2>
-          <p className="mt-5 text-stone-600">Podaj metraż i lokalizację. Jeśli beton wymaga naprawy, dołącz zdjęcia całej podłogi oraz zbliżenia uszkodzeń.</p>
+          <p className="mt-5 text-zinc-600">Podaj metraż i lokalizację. Jeśli beton wymaga naprawy, dołącz zdjęcia całej podłogi oraz zbliżenia uszkodzeń.</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Link href="/zamow?miejsce=garaz" className="inline-flex items-center justify-center gap-2 rounded-full brand-button px-7 py-3.5 text-sm font-semibold">
               Wyceń garaż <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center rounded-full border border-stone-400 px-7 py-3.5 text-sm font-semibold text-stone-900 hover:bg-white">
+            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center rounded-full border border-zinc-400 px-7 py-3.5 text-sm font-semibold text-zinc-900 hover:bg-white">
               Sprawdź orientacyjny koszt
             </Link>
           </div>
-          <p className="mt-8 text-sm text-stone-600">
+          <p className="mt-8 text-sm text-zinc-600">
             Zobacz również: <Link href="/blog/ile-kosztuje-posadzka-zywiczna-w-garazu" className="underline underline-offset-4">co wpływa na koszt</Link> i <Link href="/blog/ile-trwa-schniecie-posadzki-zywicznej" className="underline underline-offset-4">kiedy można parkować</Link>.
           </p>
-          <p className="mt-3 text-sm text-stone-600">Realizujemy zlecenia m.in. w <Link href="/posadzki-zywiczne/rzeszow" className="underline underline-offset-4">Rzeszowie</Link> i <Link href="/posadzki-zywiczne/krakow" className="underline underline-offset-4">Krakowie</Link>.</p>
+          <p className="mt-3 text-sm text-zinc-600">Realizujemy zlecenia m.in. w <Link href="/posadzki-zywiczne/rzeszow" className="underline underline-offset-4">Rzeszowie</Link> i <Link href="/posadzki-zywiczne/krakow" className="underline underline-offset-4">Krakowie</Link>.</p>
         </div>
       </section>
     </main>

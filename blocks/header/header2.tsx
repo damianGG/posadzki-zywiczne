@@ -24,7 +24,7 @@ export const Header2 = () => {
   const active = (href: string) => pathname === href ? "page" as const : undefined;
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b bg-[#faf8f3]" onKeyDown={event => {
+    <header className="sticky top-0 z-40 w-full border-b bg-white" onKeyDown={event => {
       if (event.key === "Escape" && isOpen) { setOpen(false); toggleRef.current?.focus(); }
     }}>
       <div className="container mx-auto flex min-h-20 items-center justify-between gap-3">
@@ -62,7 +62,7 @@ export const Header2 = () => {
         </div>
         <div className="flex items-center gap-2">
           <Link href="/kalkulator?typ=garaz" className="hidden text-sm hover:underline lg:block">Kalkulator garażu</Link>
-          <Button asChild size="sm"><Link href="/zamow">Zobacz i wyceń</Link></Button>
+          <Button asChild size="sm" className="brand-accent-button"><Link href="/zamow">Zobacz i wyceń</Link></Button>
           <Button ref={toggleRef} variant="ghost" size="icon" className="xl:hidden" aria-label={isOpen ? "Zamknij menu" : "Otwórz menu"} aria-expanded={isOpen} aria-controls="mobile-navigation" onClick={() => setOpen(!isOpen)}>
             {isOpen ? <X aria-hidden="true" className="h-5 w-5" /> : <Menu aria-hidden="true" className="h-5 w-5" />}
           </Button>
@@ -79,7 +79,7 @@ export const Header2 = () => {
           </details>
         ))}
         {links.map(item => <Link key={item.href} href={item.href} aria-current={active(item.href)} onClick={() => setOpen(false)} className="block py-3 font-medium">{item.title}</Link>)}
-        <Link href="/zamow" onClick={() => setOpen(false)} className="mt-2 block rounded-full brand-button px-4 py-3 text-center font-semibold">Zobacz i wyceń</Link>
+        <Link href="/zamow" onClick={() => setOpen(false)} className="mt-2 block rounded-full brand-accent-button px-4 py-3 text-center font-semibold">Zobacz i wyceń</Link>
         <Link href="/kalkulator?typ=garaz" onClick={() => setOpen(false)} className="block py-3 font-medium">Kalkulator garażu</Link>
       </nav>
       <div className="brand-rule" aria-hidden="true" />

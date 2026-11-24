@@ -10,19 +10,19 @@
     --card-foreground: 240 10% 3.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
-    --primary: 19 41% 38%;
+    --primary: 150 8% 13%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 36 30% 94%;
+    --secondary: 150 7% 95%;
     --secondary-foreground: 240 5.9% 10%;
-    --muted: 36 25% 94%;
-    --muted-foreground: 24 11% 39%;
-    --accent: 32 34% 92%;
+    --muted: 150 5% 95%;
+    --muted-foreground: 150 5% 38%;
+    --accent: 150 7% 94%;
     --accent-foreground: 240 5.9% 10%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 32 20% 87%;
+    --border: 150 6% 88%;
     --input: 240 5.9% 90%;
-    --ring: 19 41% 38%;
+    --ring: 150 100% 24%;
     --radius: 0.5rem;
     --header: 0 0% 100%;
   }
@@ -75,19 +75,18 @@
   }
 }
 
-/* Brand motif: three cross-section lines echo the layers of a resin floor.
-   Decorative only; no images, external requests, or motion. */
+/* Visual identity: neutral surfaces, small vivid green accents.
+   Bright green is decorative or paired with dark text, never white body text. */
 @layer components {
   .brand-surface {
-    background-color: #f5f1e9;
-    background-image: linear-gradient(145deg, #faf8f3 0%, #f0e9dd 100%);
-    color: #29241f;
+    background-color: #F6F7F6;
+    color: #202522;
   }
   .brand-eyebrow {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    color: #895238;
+    gap: 0.65rem;
+    color: #454D48;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.13em;
@@ -96,12 +95,12 @@
   .brand-eyebrow::before {
     content: "";
     display: inline-block;
-    flex: 0 0 28px;
-    width: 28px;
-    height: 14px;
-    background: linear-gradient(#895238,#895238) 0 0 / 28px 2px no-repeat,
-      linear-gradient(#b77f60,#b77f60) 5px 6px / 23px 2px no-repeat,
-      linear-gradient(#c6aa91,#c6aa91) 10px 12px / 18px 2px no-repeat;
+    flex: 0 0 22px;
+    width: 22px;
+    height: 12px;
+    background: linear-gradient(#00D664,#00D664) 0 0 / 22px 2px no-repeat,
+      linear-gradient(#00D664,#00D664) 4px 5px / 18px 2px no-repeat,
+      linear-gradient(#B9D8C7,#B9D8C7) 8px 10px / 14px 2px no-repeat;
   }
   .brand-section-heading {
     display: flex;
@@ -110,20 +109,28 @@
   }
   .brand-section-heading::before {
     content: "";
-    flex: 0 0 4px;
-    height: 1.15em;
+    flex: 0 0 3px;
+    height: 1.05em;
     border-radius: 2px;
-    background: #895238;
+    background: #00D664;
   }
   .brand-button {
-    background-color: #895238;
+    background-color: #202522;
     color: #fff;
     transition: background-color 160ms ease;
   }
-  .brand-button:hover { background-color: #6d402d; color: #fff; }
-  .brand-button:focus-visible { outline: 2px solid #895238; outline-offset: 3px; }
+  .brand-button:hover { background-color: #39433D; color: #fff; }
+  .brand-button:focus-visible, .brand-accent-button:focus-visible {
+    outline: 2px solid #007A3D;
+    outline-offset: 3px;
+  }
+  .brand-accent-button {
+    background-color: #00D664;
+    color: #102419;
+  }
+  .brand-accent-button:hover { background-color: #00BF59; color: #102419; }
   .brand-rule {
     height: 3px;
-    background: linear-gradient(90deg,#895238 0 33%,#b77f60 33% 66%,#d9c6b1 66% 100%);
+    background: linear-gradient(90deg,#00D664 0 56px,transparent 56px);
   }
 }

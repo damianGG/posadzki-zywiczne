@@ -52,7 +52,7 @@ export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group overflow-hidden rounded-2xl border bg-background shadow-sm transition-colors hover:border-[#895238] focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                  className="group overflow-hidden rounded-2xl border bg-background shadow-sm transition-colors hover:border-[#007A3D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                 >
                   <EditorialPhotoSlot
                     src={src}

@@ -159,11 +159,11 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                   }}
                   className={
                     "flex w-full items-center gap-2 rounded-full border px-3 py-2 text-left text-sm font-medium " +
-                    (active ? "border-[#895238] bg-[#895238] text-white" : done ? "border-zinc-300 bg-white text-zinc-900" : "border-zinc-200 bg-white text-zinc-400")
+                    (active ? "border-zinc-900 bg-zinc-900 text-white" : done ? "border-zinc-300 bg-white text-zinc-900" : "border-zinc-200 bg-white text-zinc-400")
                   }
                   aria-current={active ? "step" : undefined}
                 >
-                  <span className={"flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs " + (active ? "bg-white text-zinc-950" : "bg-zinc-100 text-zinc-700")}>
+                  <span className={"flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs " + (active ? "bg-[#00D664] text-[#102419]" : "bg-zinc-100 text-zinc-700")}>
                     {done ? <Check className="h-3.5 w-3.5" aria-hidden="true" /> : number}
                   </span>
                   <span className="truncate">{label}</span>
@@ -273,7 +273,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
               <div className="rounded-2xl brand-surface p-6 sm:p-8" role="status">
                 <p className="brand-eyebrow">Wysłane</p>
                 <h3 className="mt-3 text-3xl font-semibold tracking-tight">Dziękujemy. Oddzwonimy.</h3>
-                <p className="mt-4 leading-relaxed text-stone-600">
+                <p className="mt-4 leading-relaxed text-zinc-600">
                   Zapytanie o {place.title.toLowerCase()} ({look.title.toLowerCase()}, {area.replace(",", ".")} m², {city}) jest u nas.
                   Zadzwonimy na {phone}. Jeśli beton jest pęknięty albo tłusty, doślij zdjęcie całej podłogi i zbliżenie uszkodzeń na biuro@posadzkizywiczne.com.
                 </p>

@@ -36,25 +36,25 @@ export default function BalconyPage() {
       <section className="brand-surface">
         <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 py-6 sm:px-6 lg:grid-cols-2 lg:gap-14 lg:py-14">
           <div>
-            <nav aria-label="Ścieżka nawigacji" className="mb-4 flex items-center gap-2 text-xs text-stone-600"><Link href="/">Strona główna</Link><ChevronRight className="h-3 w-3" aria-hidden="true"/><span aria-current="page">Balkony i tarasy</span></nav>
+            <nav aria-label="Ścieżka nawigacji" className="mb-4 flex items-center gap-2 text-xs text-zinc-600"><Link href="/">Strona główna</Link><ChevronRight className="h-3 w-3" aria-hidden="true"/><span aria-current="page">Balkony i tarasy</span></nav>
             <p className="brand-eyebrow">Nawierzchnie zewnętrzne</p>
             <h1 className="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Posadzki żywiczne na balkony i tarasy</h1>
-            <p className="mt-4 max-w-xl text-lg leading-relaxed text-stone-600">Zobacz nasze wykonane nawierzchnie, porównaj wygląd i sprawdź, co trzeba uwzględnić, aby remont był dopasowany do Twojego balkonu.</p>
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-zinc-600">Zobacz nasze wykonane nawierzchnie, porównaj wygląd i sprawdź, co trzeba uwzględnić, aby remont był dopasowany do Twojego balkonu.</p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link href="#wykonczenia" className="brand-button rounded-full px-6 py-3.5 text-center font-semibold">Porównaj wykończenia</Link>
-              <Link href="#cena" className="rounded-full border border-stone-400 px-6 py-3.5 text-center font-semibold hover:bg-white">Sprawdź koszt</Link>
+              <Link href="#cena" className="rounded-full border border-zinc-400 px-6 py-3.5 text-center font-semibold hover:bg-white">Sprawdź koszt</Link>
             </div>
-            <div className="mt-6 flex flex-wrap gap-4 text-sm text-stone-600">
-              <span className="flex items-center gap-2"><Droplets className="h-4 w-4 text-[#895238]"/> Hydroizolacja</span>
-              <span className="flex items-center gap-2"><Sun className="h-4 w-4 text-[#895238]"/> Dobór do UV</span>
-              <span className="flex items-center gap-2"><Layers3 className="h-4 w-4 text-[#895238]"/> Ocena podłoża</span>
+            <div className="mt-6 flex flex-wrap gap-4 text-sm text-zinc-600">
+              <span className="flex items-center gap-2"><Droplets className="h-4 w-4 text-[#007A3D]"/> Hydroizolacja</span>
+              <span className="flex items-center gap-2"><Sun className="h-4 w-4 text-[#007A3D]"/> Dobór do UV</span>
+              <span className="flex items-center gap-2"><Layers3 className="h-4 w-4 text-[#007A3D]"/> Ocena podłoża</span>
             </div>
           </div>
           <figure className="order-first lg:order-none">
-            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-stone-200 lg:aspect-[4/3]">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-zinc-200 lg:aspect-[4/3]">
               <Image src={looks[1].src} alt={looks[1].alt} fill priority sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-bottom"/>
             </div>
-            <figcaption className="mt-3 text-sm text-stone-600">Nasza realizacja · taras w Głogowie Małopolskim</figcaption>
+            <figcaption className="mt-3 text-sm text-zinc-600">Nasza realizacja · taras w Głogowie Małopolskim</figcaption>
           </figure>
         </div>
       </section>
@@ -68,30 +68,30 @@ export default function BalconyPage() {
         <div>
           <p className="brand-eyebrow">Cena i zakres</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Ile kosztuje posadzka na balkonie lub tarasie?</h2>
-          <p className="mt-4 leading-relaxed text-stone-600">Odnowienie stabilnego betonu i generalny remont z usunięciem płytek oraz naprawą izolacji to różne zakresy prac. Dlatego koszt ustalamy na podstawie stanu powierzchni i potrzebnych warstw, a nie samego metrażu.</p>
+          <p className="mt-4 leading-relaxed text-zinc-600">Odnowienie stabilnego betonu i generalny remont z usunięciem płytek oraz naprawą izolacji to różne zakresy prac. Dlatego koszt ustalamy na podstawie stanu powierzchni i potrzebnych warstw, a nie samego metrażu.</p>
           <Link href="/zamow?miejsce=taras" className="brand-button mt-6 inline-flex items-center gap-2 rounded-full px-6 py-3 font-semibold">Wyślij zdjęcia do wyceny <ArrowRight className="h-4 w-4"/></Link>
         </div>
         <div className="brand-surface rounded-2xl p-6 sm:p-8">
           <h3 className="text-xl font-semibold">Co wpływa na koszt?</h3>
-          <ul className="mt-5 space-y-3 text-stone-700">{["Metraż i geometria, w tym schody i cokoły","Usunięcie płytek lub starej powłoki","Naprawa betonu i ewentualne osuszanie","Hydroizolacja i spadki","Wykończenie, progi, balustrady i obróbki"].map(item => <li key={item} className="flex gap-3"><Check className="mt-1 h-4 w-4 shrink-0 text-[#895238]"/>{item}</li>)}</ul>
+          <ul className="mt-5 space-y-3 text-zinc-700">{["Metraż i geometria, w tym schody i cokoły","Usunięcie płytek lub starej powłoki","Naprawa betonu i ewentualne osuszanie","Hydroizolacja i spadki","Wykończenie, progi, balustrady i obróbki"].map(item => <li key={item} className="flex gap-3"><Check className="mt-1 h-4 w-4 shrink-0 text-[#007A3D]"/>{item}</li>)}</ul>
         </div>
       </section>
       <section id="wykonczenia" className="scroll-mt-44 bg-muted/50 py-12 sm:py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <p className="brand-eyebrow">Porównaj wygląd</p>
           <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Które wykończenie pasuje do Ciebie?</h2>
-          <p className="mt-3 max-w-2xl text-stone-600">Obejrzyj rzeczywiste zdjęcia i powiększ detale. Technologię dobierzemy do stanu balkonu oraz warunków użytkowania.</p>
+          <p className="mt-3 max-w-2xl text-zinc-600">Obejrzyj rzeczywiste zdjęcia i powiększ detale. Technologię dobierzemy do stanu balkonu oraz warunków użytkowania.</p>
           <div className="mt-7 grid gap-5 md:grid-cols-3">
             {looks.map(look => <article key={look.id} className="flex min-w-0 flex-col rounded-2xl border bg-white p-4 sm:p-5">
               <ProjectPhoto src={look.src} alt={look.alt} caption={look.caption} sizes="(max-width: 768px) 100vw, 33vw"/>
               <h3 className="mt-4 text-xl font-semibold">{look.title}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-stone-600">{look.advantage}</p>
-              <p className="mt-3 border-l-2 border-[#b77f60] pl-3 text-sm leading-relaxed text-stone-600"><strong className="text-stone-900">Warto wiedzieć: </strong>{look.limitation}</p>
+              <p className="mt-3 text-sm leading-relaxed text-zinc-600">{look.advantage}</p>
+              <p className="mt-3 border-l-2 border-[#00D664] pl-3 text-sm leading-relaxed text-zinc-600"><strong className="text-zinc-900">Warto wiedzieć: </strong>{look.limitation}</p>
               <div className="mt-auto pt-5"><Link href={`/zamow?miejsce=taras&wyglad=${look.id}`} className="brand-button inline-block rounded-full px-5 py-3 text-sm font-semibold">Wybieram to wykończenie</Link>
               {look.id === "dywan" && <Link href="/kamienny-dywan" className="mt-3 block text-sm font-semibold underline underline-offset-4">Więcej o kamiennym dywanie</Link>}</div>
             </article>)}
           </div>
-          <p className="mt-5 text-sm text-stone-600">Nie wiesz, co wybrać? <Link href="/zamow?miejsce=taras&wyglad=doradztwo" className="font-semibold underline">Pomożemy Ci dobrać rozwiązanie.</Link></p>
+          <p className="mt-5 text-sm text-zinc-600">Nie wiesz, co wybrać? <Link href="/zamow?miejsce=taras&wyglad=doradztwo" className="font-semibold underline">Pomożemy Ci dobrać rozwiązanie.</Link></p>
         </div>
       </section>
       <section id="realizacje" className="mx-auto max-w-7xl scroll-mt-44 px-4 py-12 sm:px-6 sm:py-16">
@@ -111,34 +111,34 @@ export default function BalconyPage() {
             <article className="rounded-2xl border bg-white p-5">
               <ProjectPhoto src="/odpadajace_plytki.webp" alt="Przykład uszkodzonej powierzchni z płytek" caption="Przykład problemu podłoża · zdjęcie poglądowe"/>
               <h3 className="mt-4 text-xl font-semibold">Odspojone płytki i mokra wylewka</h3>
-              <p className="mt-3 leading-relaxed text-stone-600">Przykrycie niestabilnej albo wilgotnej powierzchni może doprowadzić do odspojenia nowej powłoki. Najpierw trzeba rozpoznać przyczynę i ocenić stan podłoża.</p>
+              <p className="mt-3 leading-relaxed text-zinc-600">Przykrycie niestabilnej albo wilgotnej powierzchni może doprowadzić do odspojenia nowej powłoki. Najpierw trzeba rozpoznać przyczynę i ocenić stan podłoża.</p>
             </article>
             <article className="rounded-2xl border bg-white p-5">
               <ProjectPhoto src="/remont-balkon.webp" alt="Przykład balkonu wymagającego remontu" caption="Przykład stanu wymagającego oceny · zdjęcie poglądowe"/>
               <h3 className="mt-4 text-xl font-semibold">Przeciekanie, spadki i obróbki</h3>
-              <p className="mt-3 leading-relaxed text-stone-600">Sama dekoracyjna nawierzchnia nie rozwiąże problemu wody. Sprawdzamy izolację, odpływ, progi, balustrady i krawędzie. Zakres zależy od konkretnego balkonu.</p>
+              <p className="mt-3 leading-relaxed text-zinc-600">Sama dekoracyjna nawierzchnia nie rozwiąże problemu wody. Sprawdzamy izolację, odpływ, progi, balustrady i krawędzie. Zakres zależy od konkretnego balkonu.</p>
             </article>
           </div>
-          <p className="mt-4 text-sm text-stone-600">Zdjęcia problemów nie są zestawem „przed i po” pokazanych wyżej realizacji.</p>
+          <p className="mt-4 text-sm text-zinc-600">Zdjęcia problemów nie są zestawem „przed i po” pokazanych wyżej realizacji.</p>
         </div>
       </section>
       <section id="przebieg" className="mx-auto max-w-7xl scroll-mt-44 px-4 py-12 sm:px-6 sm:py-16">
         <p className="brand-eyebrow">Przebieg prac</p>
         <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Od oceny podłoża do gotowej nawierzchni</h2>
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{steps.map(([n,title,body]) => <article key={n} className="border-t-2 border-[#b77f60] pt-4"><p className="text-sm font-bold text-[#895238]">{n}</p><h3 className="mt-3 text-lg font-semibold">{title}</h3><p className="mt-2 text-sm leading-relaxed text-stone-600">{body}</p></article>)}</div>
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{steps.map(([n,title,body]) => <article key={n} className="border-t-2 border-[#00D664] pt-4"><p className="text-sm font-bold text-[#007A3D]">{n}</p><h3 className="mt-3 text-lg font-semibold">{title}</h3><p className="mt-2 text-sm leading-relaxed text-zinc-600">{body}</p></article>)}</div>
         <div className="mt-9"><RelatedSystems application="balkony" title="Systemy na balkony i tarasy"/></div>
-        <p className="mt-5 text-sm text-stone-600">Więcej o doborze technologii: <Link href="/blog/czy-posadzka-zywiczna-nadaje-sie-na-taras" className="font-semibold underline underline-offset-4">Czy posadzka żywiczna nadaje się na taras?</Link></p>
+        <p className="mt-5 text-sm text-zinc-600">Więcej o doborze technologii: <Link href="/blog/czy-posadzka-zywiczna-nadaje-sie-na-taras" className="font-semibold underline underline-offset-4">Czy posadzka żywiczna nadaje się na taras?</Link></p>
       </section>
       <section id="faq" className="scroll-mt-44 bg-muted/50 py-12 sm:py-16">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
           <div><p className="brand-eyebrow">Pytania klientów</p><h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Co warto wiedzieć przed remontem?</h2></div>
-          <div className="divide-y border-t">{faqs.map(([q,a]) => <details key={q} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold marker:hidden">{q}<span className="text-xl font-normal group-open:rotate-45" aria-hidden="true">+</span></summary><p className="mt-3 text-sm leading-relaxed text-stone-600">{a}</p></details>)}</div>
+          <div className="divide-y border-t">{faqs.map(([q,a]) => <details key={q} className="group py-5"><summary className="flex cursor-pointer list-none items-center justify-between gap-3 font-semibold marker:hidden">{q}<span className="text-xl font-normal group-open:rotate-45" aria-hidden="true">+</span></summary><p className="mt-3 text-sm leading-relaxed text-zinc-600">{a}</p></details>)}</div>
         </div>
       </section>
       <div id="opinie" className="scroll-mt-44"><SocialProofSection/></div>
       <section className="brand-surface px-4 py-14 text-center">
         <h2 className="text-3xl font-semibold tracking-tight">Pokaż nam swój balkon lub taras</h2>
-        <p className="mx-auto mt-3 max-w-xl text-stone-600">Podaj metraż, miejscowość i dołącz zdjęcia całej powierzchni oraz uszkodzeń. Pomożemy Ci dobrać rozwiązanie.</p>
+        <p className="mx-auto mt-3 max-w-xl text-zinc-600">Podaj metraż, miejscowość i dołącz zdjęcia całej powierzchni oraz uszkodzeń. Pomożemy Ci dobrać rozwiązanie.</p>
         <Link href="/zamow?miejsce=taras" className="brand-button mt-6 inline-block rounded-full px-7 py-3.5 font-semibold">Poproś o indywidualną wycenę</Link>
       </section>
     </main>
