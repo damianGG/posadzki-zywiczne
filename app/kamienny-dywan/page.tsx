@@ -130,8 +130,8 @@ function structuredData(data: unknown) {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
 
-function SectionEyebrow({ children, light = false }: { children: React.ReactNode; light?: boolean }) {
-  return <p className={"mb-4 text-xs font-bold uppercase tracking-[0.25em] " + (light ? "text-zinc-300" : "text-muted-foreground")}>{children}</p>;
+function SectionEyebrow({ children }: { children: React.ReactNode }) {
+  return <p className="brand-eyebrow mb-4">{children}</p>;
 }
 
 export default function StoneCarpetPage() {
@@ -148,42 +148,40 @@ export default function StoneCarpetPage() {
         </nav>
       </div>
 
-      <section className="relative isolate overflow-hidden bg-zinc-950 text-white">
-        <div className="absolute -left-32 -top-40 h-96 w-96 rounded-full bg-white/5 blur-3xl" aria-hidden="true" />
-        <div className="absolute bottom-0 right-10 h-72 w-72 rounded-full bg-white/5 blur-3xl" aria-hidden="true" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-[1.12fr_0.88fr] lg:gap-20">
+      <section className="relative isolate overflow-hidden brand-surface">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-7 px-5 py-8 md:px-8 md:py-16 lg:grid-cols-[1.12fr_0.88fr] lg:gap-20">
           <div>
-            <span className="inline-flex rounded-full border border-white/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.17em] text-zinc-300">
+            <span className="inline-flex rounded-full border border-[#D7DEDA] px-4 py-2 text-xs font-semibold uppercase tracking-[0.17em] text-[#007A3D]">
               Naturalne kruszywo · Żywica · Precyzja
             </span>
-            <h1 className="mt-8 max-w-3xl text-5xl font-semibold leading-[1.06] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
+            <h1 className="mt-5 max-w-3xl text-4xl font-semibold leading-[1.06] tracking-[-0.045em] sm:text-6xl lg:text-7xl">
               Kamienny dywan.{" "}
-              <span className="mt-2 block font-normal italic text-zinc-300">Piękno natury</span>{" "}
+              <span className="mt-2 block font-normal italic text-zinc-600">Piękno natury</span>{" "}
               <span className="block">pod stopami.</span>
             </h1>
-            <p className="mt-7 max-w-xl text-lg leading-relaxed text-zinc-300">
+            <p className="mt-7 max-w-xl text-lg leading-relaxed text-zinc-600">
               Efektowna nawierzchnia na tarasy, balkony i schody.
               Naturalny kamień połączony żywicą tworzy charakterystyczną, szlachetną strukturę —
               ale trwałość zaczyna się od tego, czego nie widać: podłoża i prawidłowych warstw.
             </p>
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <Link href="/kontakt" className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-bold text-zinc-950 transition hover:bg-zinc-200">
+              <Link href="/zamow?miejsce=taras&wyglad=dywan" className="inline-flex items-center gap-2 rounded-full brand-button px-7 py-3.5 text-sm font-bold">
                 Poproś o wycenę <ArrowUpRight className="h-4 w-4" />
               </Link>
-              <a href={"tel:" + SITE_PHONE} className="inline-flex items-center gap-2 rounded-full border border-white/30 px-6 py-3.5 text-sm font-semibold transition hover:bg-white/10">
+              <a href={"tel:" + SITE_PHONE} className="inline-flex items-center gap-2 rounded-full border border-[#D7DEDA] px-6 py-3.5 text-sm font-semibold transition hover:bg-white">
                 <PhoneCall className="h-4 w-4" /> 507 384 619
               </a>
             </div>
-            <div className="mt-12 flex flex-wrap gap-5 border-t border-white/15 pt-6 text-sm text-zinc-300">
-              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-zinc-300" /> Bez klasycznych fug</span>
-              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-zinc-300" /> Naturalna struktura</span>
-              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-zinc-300" /> Indywidualny dobór systemu</span>
+            <div className="mt-12 flex flex-wrap gap-5 border-t border-[#DDE4E0] pt-6 text-sm text-zinc-600">
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-[#007A3D]" /> Bez klasycznych fug</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-[#007A3D]" /> Naturalna struktura</span>
+              <span className="inline-flex items-center gap-2"><Check className="h-4 w-4 text-[#007A3D]" /> Indywidualny dobór systemu</span>
             </div>
           </div>
 
 
-          <div className="relative mx-auto w-full max-w-[530px] lg:max-w-none">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-[2rem] border border-white/10 bg-zinc-800 shadow-2xl shadow-black/30">
+          <div className="relative order-first mx-auto w-full max-w-[530px] lg:order-none lg:max-w-none">
+            <div className="relative aspect-[16/10] lg:aspect-[4/5] overflow-hidden rounded-[2rem] border border-[#DDE4E0] bg-zinc-100 shadow-xl shadow-zinc-900/10">
               <Image
                 src="/kamienny-dywan/realizacje/kamienny-dywan-schody-realizacja-hq.webp"
                 alt="Schody wejściowe wykończone ciemnoszarą dekoracyjną nawierzchnią z kruszywa i żywicy"
@@ -247,16 +245,16 @@ export default function StoneCarpetPage() {
             zarówno mocne strony, jak i ograniczenia, które warto znać przed zamówieniem.
           </p>
           <div className="mt-10 grid gap-6 lg:grid-cols-2">
-            <div className="rounded-[2rem] bg-zinc-950 p-7 text-white sm:p-10">
+            <div className="rounded-[2rem] border border-[#DDE4E0] bg-[#F6F7F6] p-7 text-zinc-900 sm:p-10">
               <div className="mb-8 flex items-center gap-3">
-                <span className="rounded-full bg-white/10 p-3"><Check className="h-6 w-6 text-zinc-300" /></span>
+                <span className="rounded-full bg-white/80 p-3"><Check className="h-6 w-6 text-[#007A3D]" /></span>
                 <h3 className="text-2xl font-semibold">Co przemawia za?</h3>
               </div>
               <ul className="space-y-6">
                 {advantages.map(([title, description]) => (
-                  <li key={title} className="border-t border-white/15 pt-5">
-                    <p className="font-semibold text-white">{title}</p>
-                    <p className="mt-2 text-sm leading-relaxed text-zinc-300">{description}</p>
+                  <li key={title} className="border-t border-[#DDE4E0] pt-5">
+                    <p className="font-semibold text-zinc-900">{title}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-zinc-600">{description}</p>
                   </li>
                 ))}
               </ul>
@@ -333,16 +331,16 @@ export default function StoneCarpetPage() {
         </div>
       </section>
 
-      <section className="bg-zinc-900 py-20 text-white md:py-28">
+      <section className="brand-surface py-20 md:py-28">
         <div className="mx-auto max-w-7xl px-5 md:px-8">
-          <SectionEyebrow light>Realizacja krok po kroku</SectionEyebrow>
-          <h2 className="max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">Dobry efekt zaczyna się <span className="text-zinc-300">pod powierzchnią.</span></h2>
+          <SectionEyebrow>Realizacja krok po kroku</SectionEyebrow>
+          <h2 className="max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">Dobry efekt zaczyna się <span className="text-zinc-600">pod powierzchnią.</span></h2>
           <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
             {workStages.map(stage => (
-              <div key={stage.number} className="border-t border-white/25 pt-5">
-                <p className="text-sm font-semibold text-zinc-300">{stage.number}</p>
+              <div key={stage.number} className="border-t border-[#D7DEDA] pt-5">
+                <p className="text-sm font-semibold text-[#007A3D]">{stage.number}</p>
                 <h3 className="mt-6 text-xl font-semibold">{stage.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-zinc-300">{stage.description}</p>
+                <p className="mt-3 text-sm leading-relaxed text-zinc-600">{stage.description}</p>
               </div>
             ))}
           </div>
@@ -412,7 +410,7 @@ export default function StoneCarpetPage() {
               realizacji. Dużą część budżetu może stanowić renowacja podłoża,
               hydroizolacja oraz detale przy schodach i balustradach.
             </p>
-            <Link href="/kontakt" className="mt-8 inline-flex items-center gap-2 rounded-full bg-zinc-950 px-7 py-3.5 font-semibold text-white transition hover:bg-zinc-800">
+            <Link href="/zamow?miejsce=taras&wyglad=dywan" className="mt-8 inline-flex items-center gap-2 rounded-full brand-button px-7 py-3.5 font-semibold">
               Wyślij zdjęcia do wyceny <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
@@ -505,19 +503,19 @@ export default function StoneCarpetPage() {
       </section>
 
       <section className="px-5 pb-20 md:px-8 md:pb-28">
-        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] bg-zinc-950 px-7 py-14 text-white sm:px-12 md:py-20 lg:px-20">
-          <div className="absolute -right-20 -top-24 h-80 w-80 rounded-full border-[55px] border-white/10" aria-hidden="true" />
-          <p className="text-xs font-bold uppercase tracking-[0.25em] text-zinc-300">Porozmawiajmy o Twojej powierzchni</p>
+        <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2rem] brand-surface px-7 py-14 sm:px-12 md:py-20 lg:px-20">
+          <div className="absolute -right-20 -top-24 h-80 w-80 rounded-full border-[55px] border-[#DDE4E0]/30" aria-hidden="true" />
+          <p className="brand-eyebrow">Porozmawiajmy o Twojej powierzchni</p>
           <h2 className="relative mt-5 max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">Masz taras, balkon lub schody do wykończenia?</h2>
-          <p className="relative mt-5 max-w-2xl text-lg leading-relaxed text-zinc-300">
+          <p className="relative mt-5 max-w-2xl text-lg leading-relaxed text-zinc-600">
             Prześlij orientacyjny metraż, zdjęcia i informację o istniejących warstwach.
             Doradzimy, czy kamienny dywan ma sens w Twoim przypadku i co trzeba uwzględnić w wycenie.
           </p>
           <div className="relative mt-8 flex flex-wrap gap-3">
-            <Link href="/kontakt" className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 font-bold text-zinc-950 transition hover:bg-zinc-200">
+            <Link href="/zamow?miejsce=taras&wyglad=dywan" className="inline-flex items-center gap-2 rounded-full brand-button px-7 py-3.5 font-bold">
               Poproś o wycenę <ArrowUpRight className="h-4 w-4" />
             </Link>
-            <a href={"tel:" + SITE_PHONE} className="inline-flex items-center gap-2 rounded-full border border-white/35 px-7 py-3.5 font-semibold hover:bg-white/10">
+            <a href={"tel:" + SITE_PHONE} className="inline-flex items-center gap-2 rounded-full border border-[#D7DEDA] px-7 py-3.5 font-semibold hover:bg-white">
               <PhoneCall className="h-4 w-4" /> Zadzwoń
             </a>
           </div>
