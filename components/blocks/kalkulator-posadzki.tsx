@@ -1,4 +1,5 @@
 import KalkulatorPosadzkiClient from "./kalkulator-posadzki-client"
+import { SITE_PHONE } from "@/lib/site-config"
 import {
     getAllSurfaceTypes,
     getAllColors,
@@ -82,7 +83,7 @@ export default async function KalkulatorPosadzki({ presetGarage = false, presetL
         return <section className="mx-auto max-w-3xl px-6 py-16 text-center">
             <h1 className="text-2xl font-semibold">Kalkulator chwilowo niedostępny</h1>
             <p className="mt-3 text-muted-foreground">Nie możemy teraz pobrać aktualnego cennika. Skontaktuj się z nami w sprawie indywidualnej wyceny.</p>
-            <a className="mt-6 inline-block font-semibold text-primary underline" href={presetGarage ? "/zamow?miejsce=garaz" + (presetLook ? "&wyglad=" + encodeURIComponent(presetLook) : "") + (presetArea ? "&metraz=" + encodeURIComponent(String(presetArea)) : "") : "/zamow"}>Zapytaj o wycenę</a>
+            <a className="mt-6 inline-block font-semibold text-primary underline" href={"tel:" + SITE_PHONE}>Zadzwoń: 507 384 619</a>
         </section>
     }
 

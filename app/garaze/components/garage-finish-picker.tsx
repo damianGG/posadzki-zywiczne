@@ -44,17 +44,17 @@ export default function GarageFinishPicker() {
               <h3 className="mt-5 text-2xl font-semibold text-zinc-950">{finish.title}</h3>
               <p className="mt-3 leading-relaxed text-zinc-600">{finish.advantage}</p>
               <p className="mt-4 border-l-2 border-zinc-300 pl-4 leading-relaxed text-zinc-600"><strong className="text-zinc-950">Co warto wiedzieć? </strong>{finish.limitation}</p>
-              <Link href={`/zamow?miejsce=garaz&wyglad=${finish.id}`} className="mt-5 inline-block rounded-full brand-button px-5 py-3 text-base font-semibold">Wybieram to wykończenie</Link>
-              <p className="mt-2 text-sm text-zinc-600">Sprawdź koszt lub przejdź do indywidualnej wyceny.</p>
+              <Link href={`/kalkulator?typ=garaz&wyglad=${finish.id}`} className="mt-5 inline-block rounded-full brand-button px-5 py-3 text-base font-semibold">Sprawdź koszt tego wykończenia</Link>
+              <p className="mt-2 text-sm text-zinc-600">Bez podawania telefonu i e-maila.</p>
             </article>
           ))}
         </div>
-        <p className="mt-5 text-sm text-zinc-600">Nie wiesz, co wybrać? <Link href="/zamow?miejsce=garaz&wyglad=doradztwo" className="font-semibold underline underline-offset-4">Pomożemy dobrać wykończenie.</Link></p>
+        <p className="mt-5 text-sm text-zinc-600">Nie wiesz, co wybrać? <Link href="/kalkulator?typ=garaz&wyglad=doradztwo" className="font-semibold underline underline-offset-4">Pomożemy dobrać wykończenie.</Link></p>
         <div className="mt-8 grid gap-8 rounded-2xl border border-zinc-200 bg-white p-6 md:grid-cols-2 sm:p-8">
           <div>
             <h3 className="text-xl font-semibold">A jeśli potrzebuję mocniejszej faktury?</h3>
             <p className="mt-3 leading-relaxed text-zinc-600">Możemy rozważyć posypkę kwarcową. Bardziej wyczuwalna struktura zmienia komfort chodzenia i sposób czyszczenia. Stopień antypoślizgowości potwierdzamy dla dobranego systemu, nie na podstawie zdjęcia.</p>
-            <Link href="/zamow?miejsce=garaz&wyglad=kwarc" className="mt-4 inline-block py-2 font-semibold underline underline-offset-4">Wybieram posypkę kwarcową</Link>
+            <Link href="/kalkulator?typ=garaz&wyglad=kwarc" className="mt-4 inline-block py-2 font-semibold underline underline-offset-4">Wybieram posypkę kwarcową</Link>
           </div>
           <div>
             <h3 className="text-xl font-semibold">Jaki kolor wybrać?</h3>

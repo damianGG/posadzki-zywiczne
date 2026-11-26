@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react"
 import { calculateFloorEstimate } from "@/lib/calculator-engine"
+import { garageLookLabels, matchGarageSurface } from "@/lib/garage-calculator-flow"
+import GarageExecutionOptions from "@/components/garage-execution-options"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -838,7 +840,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
     const [powierzchniaBezposrednia, setPowierzchniaBezposrednia] = useState(presetArea ? String(presetArea) : "")
     const [trybWymiarow, setTrybWymiarow] = useState<"wymiary" | "powierzchnia">(presetArea ? "powierzchnia" : "wymiary")
     const [wybranyRodzaj, setWybranyRodzaj] = useState<string>("zywica")
-    const [wybranyRodzajPowierzchni, setWybranyRodzajPowierzchni] = useState<string>("")
+    const [wybranyRodzajPowierzchni, setWybranyRodzajPowierzchni] = useState<string>(() => presetGarage && !transformedSurfaces.isFallback ? matchGarageSurface(presetLook, transformedSurfaces.data) : "")
     const [wybranyKolor, setWybranyKolor] = useState<string>("")
     const [wybraneDodatki, setWybraneDodatki] = useState<string[]>([])
     const [obwod, setObwod] = useState("")
@@ -1009,6 +1011,8 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
         return s && !s.wCeniePosadzki && !s.cenaZaM2 && !!s.cenaZaMb
     })
     const canGenerateOffer = powierzchnia > 0 && kosztCalkowity > 0 && !requiresPerimeter
+    const garageMode = rodzajPomieszczenia === "garaz-piwnica" || (presetGarage && !rodzajPomieszczenia)
+    const garageResultReady = garageMode && !usingFallbackData && !!wymiarySaWypelnione && canGenerateOffer && !!wybranyRodzajPowierzchniObj && !!wybranyKolorObj
     const shouldShowMobileStickyBar = canGenerateOffer && 
         !!wybranaPosadzka && 
         !!wybranyRodzajPowierzchniObj && 
@@ -1193,6 +1197,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
     }
 
     const generujPDF = async (sendEmail = false) => {
+        if (sendEmail && garageMode) return
         if (!canGenerateOffer || !wybranaPosadzka || !wybranyRodzajPowierzchniObj || !wybranyKolorObj) return
 
         if (sendEmail && !isValidEmail(userEmail)) {
@@ -1626,12 +1631,13 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                     <div className="text-center">
                         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center justify-center gap-2 sm:gap-3">
                             <Calculator className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600" />
-                            <span className="hidden sm:inline">Kalkulator Posadzki Żywicznej</span>
-                            <span className="sm:hidden">Kalkulator Posadzki</span>
+                            <span className="hidden sm:inline">{garageMode ? "Ile kosztuje posadzka w garażu?" : "Kalkulator Posadzki Żywicznej"}</span>
+                            <span className="sm:hidden">{garageMode ? "Koszt posadzki w garażu" : "Kalkulator Posadzki"}</span>
                         </h1>
                         <p className="text-sm sm:text-base text-gray-600 mt-2">
-                            Oblicz koszt posadzki żywicznej dla swojego pomieszczenia
+                            {garageMode ? "Oblicz cenę bez e-maila. Na końcu wybierz wykonanie przez nas lub samodzielnie." : "Oblicz koszt posadzki żywicznej dla swojego pomieszczenia"}
                         </p>
+                        {garageMode && presetLook && garageLookLabels[presetLook] && <p className="mt-2 text-sm text-zinc-600">Wybrane wcześniej wykończenie: <strong>{garageLookLabels[presetLook]}</strong>. Sprawdź lub zmień wariant w kalkulatorze.</p>}
                     </div>
                 </div>
             </div>
@@ -1645,8 +1651,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3">
                         <Alert className="bg-blue-100 border-blue-300">
                             <AlertDescription className="text-blue-800 text-sm">
-                                <strong>Informacja:</strong> Kalkulator korzysta z domyślnych danych. 
-                                Wszystkie funkcje działają poprawnie.
+                                <strong>Informacja:</strong> Nie udało się pobrać pełnego aktualnego cennika. Kwoty mogą się różnić od aktualnych stawek; skontaktuj się z nami, aby je potwierdzić.
                             </AlertDescription>
                         </Alert>
                     </div>
@@ -1654,7 +1659,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
             )}
 
             {/* Main content with extra bottom padding on mobile for sticky bottom bar (128px to accommodate bar height) */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pb-32 lg:pb-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 pb-40 lg:pb-8">
                 <div className="flex flex-col lg:grid lg:grid-cols-12 gap-4 lg:gap-8 min-h-[600px]">
                     {/* Panel opcji - pełna szerokość */}
                     <div className="lg:col-span-12 space-y-4 lg:space-y-6">
@@ -2412,7 +2417,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                         )}
 
                         {/* Podsumowanie i akcje - ukryte na mobile (przeniesione do sticky bottom bar) */}
-                        {powierzchnia > 0 && wybranaPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
+                        {(!garageMode || !usingFallbackData) && powierzchnia > 0 && wybranaPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
                             <div className="hidden lg:block animate-in slide-in-from-bottom-4 duration-700">
                                 <Card className="bg-green-50 border-green-200 shadow-lg">
                                     <CardHeader className="pb-3">
@@ -2434,7 +2439,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                                         <Separator className="my-2" />
                                         <div className="flex justify-between text-lg font-bold text-green-700">
                                             <span>{requiresPerimeter ? "Suma częściowa:" : "Koszt całkowity:"}</span>
-                                            <span className="animate-pulse">{kosztPoRabacie.toFixed(2)} zł</span>
+                                            <span>{kosztPoRabacie.toFixed(2)} zł</span>
                                         </div>
                                         <div className="text-center text-sm text-green-600">
                                             ({kosztPoRabacieZaM2.toFixed(2)} zł/m²)
@@ -2454,9 +2459,24 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                             </div>
                         )}
 
+                        {garageMode && (
+                          <div className="space-y-3">
+                            {garageResultReady && wybranyRodzajPowierzchniObj && wybranyKolorObj ? (
+                              <GarageExecutionOptions estimate={{ area: powierzchnia, total: kosztPoRabacie, finish: wybranyRodzajPowierzchniObj.nazwa, color: wybranyKolorObj.kodRAL }} />
+                            ) : (
+                              <div id="garaz-dwie-opcje" className="scroll-mt-28 rounded-xl border bg-white p-5 text-sm text-zinc-700">
+                                <h2 className="font-semibold text-zinc-950">Najpierw oblicz koszt wykonania</h2>
+                                <p className="mt-2">{usingFallbackData ? "Aktualny cennik jest niepełny. Skontaktuj się z nami, aby potwierdzić wycenę." : requiresPerimeter && kosztCalkowity > 0 ? "Podaj obwód garażu, aby doliczyć wybrane usługi za metr bieżący." : "Uzupełnij metraż, podłoże, wykończenie i kolor. Potem wybierzesz wykonanie przez nas lub zestaw do samodzielnego wykonania."}</p>
+                                <a href="tel:+48507384619" className="mt-3 inline-flex min-h-11 items-center font-medium underline">Potrzebujesz pomocy z doborem materiału? Zadzwoń</a>
+                              </div>
+                            )}
+                            {garageResultReady && <Button onClick={() => generujPDF(false)} disabled={isGeneratingPDF} variant="outline" className="w-full min-h-11 sm:w-auto"><Download className="h-4 w-4" aria-hidden="true"/>{isGeneratingPDF ? "Generowanie…" : "Pobierz kosztorys PDF"}</Button>}
+                          </div>
+                        )}
+
                         {/* Przyciski akcji - ukryte na mobile (przeniesione do sticky bottom bar) */}
-                        <div className="hidden lg:block space-y-3">
-                            {presetGarage && <Link href={`/zamow?miejsce=garaz&wyglad=${encodeURIComponent(presetLook || "doradztwo")}&metraz=${encodeURIComponent(powierzchnia.toFixed(2))}`} className="block rounded-lg bg-zinc-950 px-4 py-3 text-center text-sm font-semibold text-white">Poproś o indywidualną wycenę</Link>}
+                        <div className={garageMode ? "space-y-3" : "hidden lg:block space-y-3"}>
+                            
                             <div className="space-y-2">
                                 <Label htmlFor="discountCode" className="font-medium">
                                     Kod rabatowy
@@ -2497,7 +2517,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                             </Button>
 
                             {/* Input email - pokazuje się po kliknięciu "Wyślij email" */}
-                            {showEmailInput && (
+                            {!garageMode && showEmailInput && (
                                 <div className="animate-in slide-in-from-bottom-2 duration-300 space-y-3">
                                     <div>
                                         <Label htmlFor="userEmail" className="font-medium">
@@ -2548,7 +2568,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                                 wybranaPosadzka &&
                                 wybranyRodzajPowierzchniObj &&
                                 wybranyKolorObj &&
-                                !showEmailInput && (
+                                !garageMode && !showEmailInput && (
                                     <div className="animate-in slide-in-from-bottom-2 duration-500 space-y-2">
                                         <Button
                                             onClick={() => generujPDF(false)}
@@ -2581,7 +2601,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                         </div>
                     </div>
 
-                    {shouldShowPreview && wybranyKolorObj && wybranyRodzajPowierzchniObj && (
+                    {(!garageMode || !usingFallbackData) && shouldShowPreview && wybranyKolorObj && wybranyRodzajPowierzchniObj && (
                         <div className="lg:col-span-12 px-4">
                             <Card className="transition-all duration-500 ease-in-out">
                                 <CardHeader className="pb-3 sm:pb-4">
@@ -2657,7 +2677,12 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
             </div>
             
             {/* Sticky bottom bar for mobile - floating pinned at the very bottom */}
-            {shouldShowMobileStickyBar && (
+            {garageResultReady && (
+                <div className="fixed inset-x-0 bottom-0 z-40 border-t bg-white p-3 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] shadow-lg lg:hidden">
+                    <div className="flex items-center justify-between gap-3"><div className="min-w-0"><p className="text-xs text-zinc-600">Orientacyjny koszt wykonania</p><p className="text-xl font-semibold">{new Intl.NumberFormat("pl-PL", { maximumFractionDigits: 2 }).format(kosztPoRabacie)} zł</p></div><a href="#garaz-dwie-opcje" className="brand-accent-button inline-flex min-h-11 shrink-0 items-center rounded-full px-4 text-sm font-semibold">Wybierz opcję</a></div>
+                </div>
+            )}
+            {!garageMode && shouldShowMobileStickyBar && (
                 <div className="block lg:hidden fixed bottom-0 left-0 right-0 w-full bg-white/95 backdrop-blur border-t-2 border-green-500 shadow-lg z-[9999]">
                     <div className="px-5 sm:px-6 py-3 pb-[calc(1rem+env(safe-area-inset-bottom,0px))]">
                         {/* Compact summary */}
@@ -2717,7 +2742,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                             )}
                         </div>
                         
-                        {presetGarage && <Link href={`/zamow?miejsce=garaz&wyglad=${encodeURIComponent(presetLook || "doradztwo")}&metraz=${encodeURIComponent(powierzchnia.toFixed(2))}`} className="block rounded-lg bg-zinc-950 px-4 py-3 text-center text-sm font-semibold text-white">Poproś o indywidualną wycenę</Link>}
+                        
                         {/* Email input for mobile */}
                         {showEmailInput ? (
                             <div className="space-y-2 mb-3">

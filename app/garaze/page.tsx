@@ -7,6 +7,7 @@ import { getRealizacjeByCategory } from "@/lib/realizacje";
 import GarageFinishPicker from "./components/garage-finish-picker";
 import ProjectPhoto from "@/components/project-photo";
 import ServiceSectionNav from "@/components/service-section-nav";
+import GarageExecutionOptions from "@/components/garage-execution-options";
 import SocialProofSection from "@/blocks/socialproofsection/SocialProofSection";
 
 const heroImage = "https://res.cloudinary.com/dvvqfkmsw/image/upload/v1793190382/realizacje/chatgpt/posadzka-zywiczna-garaz-30m2-sedziszow-malopolski/garaz-30m2-ral7035-oryginal-b2e28c4ecd288ef1.jpg";
@@ -118,7 +119,7 @@ export default async function GaragePage() {
         </div>
       </section>
 
-      <ServiceSectionNav items={[{"href":"#cena","label":"Cena"},{"href":"#wykonczenia","label":"Wykończenia"},{"href":"#realizacje","label":"Zdjęcia"},{"href":"#garaz-detale","label":"Detale"},{"href":"#garaz-przebieg","label":"Przebieg"},{"href":"#garaz-faq","label":"Wady i pytania"},{"href":"#garaz-opinie","label":"Opinie"}]} quoteHref="/zamow?miejsce=garaz" />
+      <ServiceSectionNav items={[{"href":"#cena","label":"Cena"},{"href":"#wykonczenia","label":"Wykończenia"},{"href":"#realizacje","label":"Zdjęcia"},{"href":"#garaz-detale","label":"Detale"},{"href":"#garaz-przebieg","label":"Przebieg"},{"href":"#garaz-faq","label":"Wady i pytania"},{"href":"#garaz-opinie","label":"Opinie"}]} quoteHref="/kalkulator?typ=garaz" quoteLabel="Oblicz koszt" />
       <section id="cena" aria-labelledby="garaz-cena" className="scroll-mt-40 mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Cena i zakres</p>
@@ -282,16 +283,17 @@ export default async function GaragePage() {
 
       <div id="garaz-opinie" className="scroll-mt-40"><SocialProofSection /></div>
 
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6"><GarageExecutionOptions /></div>
       <section className="brand-surface px-4 py-16 text-center sm:px-6 lg:py-24">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">Twój garaż może wyglądać tak samo dobrze.</h2>
-          <p className="mt-5 text-zinc-600">Podaj metraż i lokalizację. Jeśli beton wymaga naprawy, dołącz zdjęcia całej podłogi oraz zbliżenia uszkodzeń.</p>
+          <p className="mt-5 text-zinc-600">Oblicz orientacyjny koszt bez podawania danych kontaktowych, a następnie wybierz wykonanie przez nas lub samodzielną pracę z naszym wsparciem.</p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <Link href="/zamow?miejsce=garaz" className="inline-flex items-center justify-center gap-2 rounded-full brand-button px-7 py-3.5 text-sm font-semibold">
-              Wyceń garaż <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center gap-2 rounded-full brand-button px-7 py-3.5 text-sm font-semibold">
+              Oblicz koszt garażu <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
-            <Link href="/kalkulator?typ=garaz" className="inline-flex items-center justify-center rounded-full border border-zinc-400 px-7 py-3.5 text-sm font-semibold text-zinc-900 hover:bg-white">
-              Sprawdź orientacyjny koszt
+            <Link href="#garaz-dwie-opcje" className="inline-flex items-center justify-center rounded-full border border-zinc-400 px-7 py-3.5 text-sm font-semibold text-zinc-900 hover:bg-white">
+              Zobacz obie możliwości
             </Link>
           </div>
           <p className="mt-8 text-sm text-zinc-600">
