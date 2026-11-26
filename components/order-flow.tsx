@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { garageCalculatorHref } from "@/lib/garage-calculator-flow";
 import { ArrowLeft, ArrowRight, Check, Phone } from "lucide-react";
 import { findLook, findPlace, floorPlaces, type PlaceId } from "@/lib/visual-offers";
 
@@ -20,6 +21,7 @@ function isPlaceId(value: string | null): value is PlaceId {
 
 export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" }) {
   const params = useSearchParams();
+  const router = useRouter();
   const requestedPlace = params.get("miejsce");
   const requestedLook = params.get("wyglad");
   const startingPlace = isPlaceId(requestedPlace) ? requestedPlace : null;
@@ -115,12 +117,14 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
   }, [place, look, name, phone, email, city, area, note]);
 
   function choosePlace(next: PlaceId) {
+    if (next === "garaz") { router.push(garageCalculatorHref(null, area)); return; }
     if (next !== placeId) setLookId(null);
     setPlaceId(next);
     goTo(2);
   }
 
   function chooseLook(next: string) {
+    if (placeId === "garaz") { router.push(garageCalculatorHref(next, area)); return; }
     setLookId(next);
     goTo(3);
   }
@@ -129,6 +133,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
     event.preventDefault();
     if (sending || sent) return;
     setError("");
+    if (placeId === "garaz") { router.push(garageCalculatorHref(lookId, area)); return; }
     if (!place || !look) {
       goTo(place ? 2 : 1);
       return;
@@ -198,7 +203,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
           Przygotuj zapytanie o wycenę posadzki.
         </Title>
         <p className="mt-3 max-w-2xl text-base leading-relaxed text-zinc-600">
-          Wybierz miejsce i wykończenie albo poproś o doradztwo. Na końcu podaj metraż i telefon. Nie musisz znać technologii; to zapytanie, a nie zamówienie.
+          Wybierz miejsce. Dla garażu od razu obliczysz orientacyjny koszt bez danych kontaktowych. Dla pozostałych obiektów możesz poprosić o indywidualną wycenę.
         </p>
 
         {!sent && <ol className="mt-8 grid grid-cols-3 gap-1.5 sm:gap-2" aria-label="Postęp wyceny">
@@ -253,7 +258,7 @@ export default function OrderFlow({ heading = "h2" }: { heading?: "h1" | "h2" })
                   <span className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950">{item.title}</span>
                   <span className="mt-2 text-sm leading-relaxed text-zinc-600">{item.summary}</span>
                   <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-zinc-950">
-                    Wybieram <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    {item.id === "garaz" ? "Oblicz koszt garażu" : "Wybieram"} <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </span>
                 </span>
               </button>
