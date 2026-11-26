@@ -2463,12 +2463,10 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                             {garageResultReady && wybranyRodzajPowierzchniObj && wybranyKolorObj ? (
                               <GarageExecutionOptions estimate={{ area: powierzchnia, total: kosztPoRabacie, finish: wybranyRodzajPowierzchniObj.nazwa, color: wybranyKolorObj.kodRAL }} />
                             ) : (
-                              <div id="garaz-dwie-opcje" className="scroll-mt-28 rounded-xl border bg-white p-5 text-sm text-zinc-700">
-                                <h2 className="font-semibold text-zinc-950">Najpierw oblicz koszt wykonania</h2>
-                                {!usingFallbackData && requiresPerimeter && !!wymiarySaWypelnione && kosztCalkowity > 0 && <p className="mt-3 text-xl font-semibold text-zinc-950 lg:hidden">Suma częściowa: {new Intl.NumberFormat("pl-PL", {maximumFractionDigits: 2}).format(kosztPoRabacie)} zł</p>}
-                                <p className="mt-2">{usingFallbackData ? "Aktualny cennik jest niepełny. Skontaktuj się z nami, aby potwierdzić wycenę." : requiresPerimeter && kosztCalkowity > 0 ? "Podaj obwód garażu, aby doliczyć wybrane usługi za metr bieżący." : "Uzupełnij metraż, podłoże, wykończenie i kolor. Potem wybierzesz wykonanie przez nas lub zestaw do samodzielnego wykonania."}</p>
-                                <a href="tel:+48507384619" className="mt-3 inline-flex min-h-11 items-center font-medium underline">Potrzebujesz pomocy z doborem materiału? Zadzwoń</a>
-                              </div>
+                              <GarageExecutionOptions area={powierzchnia} pending={{
+                                message: usingFallbackData ? "Aktualny cennik wykonania jest niepełny. Skontaktuj się z nami, aby potwierdzić wycenę." : requiresPerimeter && kosztCalkowity > 0 ? "Podaj obwód garażu, aby doliczyć wybrane usługi za metr bieżący." : "Uzupełnij metraż, podłoże, wykończenie i kolor, aby poznać orientacyjną cenę wykonania.",
+                                partialTotal: !usingFallbackData && requiresPerimeter && !!wymiarySaWypelnione && kosztCalkowity > 0 ? kosztPoRabacie : undefined,
+                              }} />
                             )}
                             {garageResultReady && <Button onClick={() => generujPDF(false)} disabled={isGeneratingPDF} variant="outline" className="w-full min-h-11 sm:w-auto"><Download className="h-4 w-4" aria-hidden="true"/>{isGeneratingPDF ? "Generowanie…" : "Pobierz kosztorys PDF"}</Button>}
                           </div>
