@@ -119,7 +119,7 @@ export default async function GaragePage() {
         </div>
       </section>
 
-      <ServiceSectionNav items={[{"href":"#cena","label":"Cena"},{"href":"#wykonczenia","label":"Wykończenia"},{"href":"#realizacje","label":"Zdjęcia"},{"href":"#garaz-detale","label":"Detale"},{"href":"#garaz-przebieg","label":"Przebieg"},{"href":"#garaz-faq","label":"Wady i pytania"},{"href":"#garaz-opinie","label":"Opinie"}]} quoteHref="/kalkulator?typ=garaz" quoteLabel="Oblicz koszt" />
+      <ServiceSectionNav items={[{"href":"#cena","label":"Cena"},{"href":"#wykonczenia","label":"Wykończenia"},{"href":"#realizacje","label":"Zdjęcia"},{"href":"#garaz-detale","label":"Detale"},{"href":"#garaz-przebieg","label":"Przebieg"},{"href":"#garaz-faq","label":"Wady i pytania"},{"href":"#garaz-opinie","label":"Opinie"},{"href":"#garaz-dwie-opcje","label":"Wykonanie lub DIY"}]} quoteHref="/kalkulator?typ=garaz" quoteLabel="Oblicz koszt" />
       <section id="cena" aria-labelledby="garaz-cena" className="scroll-mt-40 mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-24">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500">Cena i zakres</p>

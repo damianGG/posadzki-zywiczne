@@ -30,7 +30,6 @@ import {
 } from "lucide-react"
 import jsPDF from "jspdf"
 import Image from "next/image"
-import Link from "next/link"
 import confetti from "canvas-confetti"
 
 // Constants
@@ -1178,7 +1177,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
     }
 
     const resetKalkulator = () => {
-        setRodzajPomieszczenia("")
+        setRodzajPomieszczenia(presetGarage && rodzajePomieszczen.some(room => room.id === "garaz-piwnica" && room.dostepny) ? "garaz-piwnica" : "")
         setStanBetonu("")
         setWymiary({ dlugosc: "", szerokosc: "" })
         setPowierzchniaBezposrednia("")
@@ -2417,7 +2416,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                         )}
 
                         {/* Podsumowanie i akcje - ukryte na mobile (przeniesione do sticky bottom bar) */}
-                        {(!garageMode || !usingFallbackData) && powierzchnia > 0 && wybranaPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
+                        {(!garageMode || (!usingFallbackData && !garageResultReady)) && powierzchnia > 0 && wybranaPosadzka && wybranyRodzajPowierzchniObj && wybranyKolorObj && (
                             <div className="hidden lg:block animate-in slide-in-from-bottom-4 duration-700">
                                 <Card className="bg-green-50 border-green-200 shadow-lg">
                                     <CardHeader className="pb-3">
@@ -2452,7 +2451,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                                         <div className="text-center text-xs text-gray-600">
                                             {requiresPerimeter
                                                 ? "Suma częściowa: bez cokołów i innych usług za mb. Podaj obwód, aby poznać pełną wycenę."
-                                                : FINAL_PRICE_NOTE}
+                                                : garageMode ? "Orientacyjny koszt wykonania; zakres, dojazd i VAT do potwierdzenia." : FINAL_PRICE_NOTE}
                                         </div>
                                     </CardContent>
                                 </Card>
@@ -2466,6 +2465,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
                             ) : (
                               <div id="garaz-dwie-opcje" className="scroll-mt-28 rounded-xl border bg-white p-5 text-sm text-zinc-700">
                                 <h2 className="font-semibold text-zinc-950">Najpierw oblicz koszt wykonania</h2>
+                                {!usingFallbackData && requiresPerimeter && !!wymiarySaWypelnione && kosztCalkowity > 0 && <p className="mt-3 text-xl font-semibold text-zinc-950 lg:hidden">Suma częściowa: {new Intl.NumberFormat("pl-PL", {maximumFractionDigits: 2}).format(kosztPoRabacie)} zł</p>}
                                 <p className="mt-2">{usingFallbackData ? "Aktualny cennik jest niepełny. Skontaktuj się z nami, aby potwierdzić wycenę." : requiresPerimeter && kosztCalkowity > 0 ? "Podaj obwód garażu, aby doliczyć wybrane usługi za metr bieżący." : "Uzupełnij metraż, podłoże, wykończenie i kolor. Potem wybierzesz wykonanie przez nas lub zestaw do samodzielnego wykonania."}</p>
                                 <a href="tel:+48507384619" className="mt-3 inline-flex min-h-11 items-center font-medium underline">Potrzebujesz pomocy z doborem materiału? Zadzwoń</a>
                               </div>
