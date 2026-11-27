@@ -139,11 +139,198 @@ export default function BalconyPage() {
             ["jaka-zywica-na-balkon-sikafloor-400-n-elastic", "Jaka żywica na balkon? Sikafloor 400 N Elastic"],
             ["babelki-pecherze-na-zywicy-balkonowej", "Bąbelki i pęcherze na żywicy balkonowej"],
           ].map(([slug, label]) => <li key={slug}><Link href={`/blog/${slug}`} className="font-semibold underline underline-offset-4">{label}</Link></li>)}</ul></div>
-          <div><h3 className="text-xl font-semibold">Żywica na balkony – miasta i regiony</h3><ul className="mt-4 grid gap-3 text-sm text-zinc-700 sm:grid-cols-2">{[
-            ["krakow", "Kraków"], ["rzeszow", "Rzeszów"], ["warszawa", "Warszawa"], ["lublin", "Lublin"],
-            ["mielec-stalowa-wola", "Mielec i Stalowa Wola"], ["tarnow-nowy-sacz", "Tarnów i Nowy Sącz"],
-            ["radom-plock", "Radom i Płock"], ["zamosc-chelm", "Zamość i Chełm"],
-          ].map(([slug, label]) => <li key={slug}><Link href={`/blog/zywica-na-balkony-${slug}`} className="font-semibold underline underline-offset-4">{label}</Link></li>)}</ul></div>
+          <div><h3 className="text-xl font-semibold">Żywica na balkony – wybierz miasto</h3><div className="mt-4 grid gap-5 sm:grid-cols-2">{([
+  [
+    "Podkarpackie",
+    [
+      [
+        "rzeszow",
+        "Rzeszów"
+      ],
+      [
+        "mielec",
+        "Mielec"
+      ],
+      [
+        "przemysl",
+        "Przemyśl"
+      ],
+      [
+        "stalowa-wola",
+        "Stalowa Wola"
+      ],
+      [
+        "krosno",
+        "Krosno"
+      ],
+      [
+        "tarnobrzeg",
+        "Tarnobrzeg"
+      ],
+      [
+        "debica",
+        "Dębica"
+      ],
+      [
+        "jaroslaw",
+        "Jarosław"
+      ],
+      [
+        "sanok",
+        "Sanok"
+      ],
+      [
+        "jaslo",
+        "Jasło"
+      ]
+    ]
+  ],
+  [
+    "Małopolskie",
+    [
+      [
+        "krakow",
+        "Kraków"
+      ],
+      [
+        "tarnow",
+        "Tarnów"
+      ],
+      [
+        "nowy-sacz",
+        "Nowy Sącz"
+      ],
+      [
+        "oswiecim",
+        "Oświęcim"
+      ],
+      [
+        "chrzanow",
+        "Chrzanów"
+      ],
+      [
+        "nowy-targ",
+        "Nowy Targ"
+      ],
+      [
+        "olkusz",
+        "Olkusz"
+      ]
+    ]
+  ],
+  [
+    "Lubelskie",
+    [
+      [
+        "lublin",
+        "Lublin"
+      ],
+      [
+        "zamosc",
+        "Zamość"
+      ],
+      [
+        "chelm",
+        "Chełm"
+      ],
+      [
+        "biala-podlaska",
+        "Biała Podlaska"
+      ],
+      [
+        "pulawy",
+        "Puławy"
+      ],
+      [
+        "swidnik",
+        "Świdnik"
+      ],
+      [
+        "krasnik",
+        "Kraśnik"
+      ]
+    ]
+  ],
+  [
+    "Mazowieckie",
+    [
+      [
+        "warszawa",
+        "Warszawa"
+      ],
+      [
+        "radom",
+        "Radom"
+      ],
+      [
+        "plock",
+        "Płock"
+      ],
+      [
+        "siedlce",
+        "Siedlce"
+      ],
+      [
+        "pruszkow",
+        "Pruszków"
+      ],
+      [
+        "legionowo",
+        "Legionowo"
+      ],
+      [
+        "piaseczno",
+        "Piaseczno"
+      ],
+      [
+        "ostroleka",
+        "Ostrołęka"
+      ],
+      [
+        "marki",
+        "Marki"
+      ],
+      [
+        "zabki",
+        "Ząbki"
+      ],
+      [
+        "otwock",
+        "Otwock"
+      ],
+      [
+        "ciechanow",
+        "Ciechanów"
+      ],
+      [
+        "minsk-mazowiecki",
+        "Mińsk Mazowiecki"
+      ],
+      [
+        "zyrardow",
+        "Żyrardów"
+      ],
+      [
+        "grodzisk-mazowiecki",
+        "Grodzisk Mazowiecki"
+      ],
+      [
+        "wolomin",
+        "Wołomin"
+      ],
+      [
+        "sochaczew",
+        "Sochaczew"
+      ],
+      [
+        "mlawa",
+        "Mława"
+      ]
+    ]
+  ]
+] as const).map(([region, cities]) => {
+            return <div key={region}><h4 className="font-semibold text-zinc-900">{region}</h4><ul className="mt-2 space-y-2 text-sm text-zinc-700">{cities.map(([slug,label]) => <li key={slug}><Link href={`/blog/zywica-na-balkony-${slug}`} className="underline underline-offset-4">{label}</Link></li>)}</ul></div>;
+          })}</div></div>
         </div>
       </section>
       <section id="faq" className="scroll-mt-44 bg-muted/50 py-12 sm:py-16">
