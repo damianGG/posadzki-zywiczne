@@ -146,6 +146,7 @@ export async function getRealizacjaBySlug(slug: string): Promise<{ success: bool
 export async function listRealizacje(options?: {
   limit?: number;
   offset?: number;
+  includeCount?: boolean;
   projectType?: string;
   orderBy?: 'created_at' | 'updated_at';
   orderDirection?: 'asc' | 'desc';
@@ -163,7 +164,7 @@ export async function listRealizacje(options?: {
       where = `where project_type = $${params.length}`;
     }
 
-    const countRow = await queryOne<{ count: number }>(`select count(*) as count from realizacje ${where}`, params);
+    const countRow = options?.includeCount === false ? null : await queryOne<{ count: number }>(`select count(*) as count from realizacje ${where}`, params);
 
     let sql = `select * from realizacje ${where} order by ${orderBy} ${direction}`;
     if (options?.limit) {
@@ -176,7 +177,7 @@ export async function listRealizacje(options?: {
     }
 
     const rows = await query<RealizacjaData & Record<string, unknown>>(sql, params);
-    return { success: true, data: rows, count: countRow?.count ?? 0 };
+    return { success: true, data: rows, count: countRow?.count ?? rows.length };
   } catch (err) {
     console.error('Error listing realizacje:', err);
     return { success: false, error: errorMessage(err) };
