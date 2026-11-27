@@ -44,7 +44,7 @@ export const Header2 = () => {
                         <p className="mb-3 text-sm font-semibold text-muted-foreground">{group.title}</p>
                         <ul className="space-y-1">{group.items.map(item => (
                           <li key={item.href}><NavigationMenuLink asChild active={pathname === item.href}>
-                            <Link href={item.href} aria-current={active(item.href)} className="block rounded-md px-3 py-2 text-sm hover:bg-muted focus:bg-muted">{item.title}</Link>
+                            <Link prefetch={false} href={item.href} aria-current={active(item.href)} className="block rounded-md px-3 py-2 text-sm hover:bg-muted focus:bg-muted">{item.title}</Link>
                           </NavigationMenuLink></li>
                         ))}</ul>
                       </div>
@@ -54,7 +54,7 @@ export const Header2 = () => {
               </NavigationMenuItem>
               {links.map(item => (
                 <NavigationMenuItem key={item.href}><NavigationMenuLink asChild active={pathname === item.href}>
-                  <Link href={item.href} aria-current={active(item.href)} className="block rounded-md px-4 py-2 text-sm font-medium hover:bg-muted">{item.title}</Link>
+                  <Link prefetch={false} href={item.href} aria-current={active(item.href)} className="block rounded-md px-4 py-2 text-sm font-medium hover:bg-muted">{item.title}</Link>
                 </NavigationMenuLink></NavigationMenuItem>
               ))}
             </NavigationMenuList>
@@ -74,7 +74,7 @@ export const Header2 = () => {
           <details key={group.title} open className="mb-4 border-b pb-3">
             <summary className="cursor-pointer py-2 font-medium">{group.title}</summary>
             <ul>{group.items.map(item => (
-              <li key={item.href}><Link href={item.href} aria-current={active(item.href)} onClick={() => setOpen(false)} className="block rounded px-3 py-3 text-sm hover:bg-muted">{item.title}</Link></li>
+              <li key={item.href}><Link prefetch={false} href={item.href} aria-current={active(item.href)} onClick={() => setOpen(false)} className="block rounded px-3 py-3 text-sm hover:bg-muted">{item.title}</Link></li>
             ))}</ul>
           </details>
         ))}
