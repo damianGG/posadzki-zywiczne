@@ -10,6 +10,7 @@ import CustomerPhotoAnswers from "@/components/customer-photo-answers";
 import StoneCarpetTeaser from "@/components/stone-carpet-teaser";
 import RelatedRealizations from "@/components/related-realizations";
 import Link from "next/link";
+import HomeCraftSection from "@/components/home-craft-section";
 import { localServicePages } from "@/lib/local-service-pages";
 
 export const revalidate = 300;
@@ -19,26 +20,28 @@ export default async function Home() {
   const serviceProjects = await getAllRealizacje();
 
   return (
-    <main>
+    <main className="premium-home">
       <HeroMainPage variant="home" />
+      <HomeCraftSection />
       <Feature5 projects={serviceProjects} />
-      <section className="mx-auto grid max-w-7xl gap-6 scroll-mt-28 px-4 py-10 sm:px-6 md:grid-cols-[1fr_1fr] md:items-center" id="home-price-section" aria-labelledby="home-price">
+      <section className="mx-auto grid max-w-7xl gap-8 scroll-mt-28 px-4 py-14 sm:px-6 sm:py-20 md:grid-cols-[1fr_1fr] md:items-center" id="home-price-section" aria-labelledby="home-price">
         <div>
-          <h2 id="home-price" className="text-3xl font-semibold tracking-tight">Ile kosztuje posadzka żywiczna?</h2>
+          <p className="brand-eyebrow mb-3">Jasne zasady</p>
+          <h2 id="home-price" className="premium-display text-3xl font-medium sm:text-4xl">Ile kosztuje posadzka żywiczna?</h2>
           <p className="mt-3 max-w-xl text-zinc-600">Sprawdź orientacyjny koszt garażu bez podawania danych kontaktowych. Dla innych zastosowań dobierzemy zakres indywidualnie.</p>
           <div className="mt-5 flex flex-wrap gap-4">
             <Link href="/kalkulator?typ=garaz" className="rounded-full brand-button px-6 py-3 font-semibold">Oblicz koszt garażu</Link>
             <Link href="/zamow" className="rounded-full border px-6 py-3 font-semibold">Zapytaj o inną posadzkę</Link>
           </div>
         </div>
-        <div className="rounded-2xl brand-surface p-6 sm:p-8">
+        <div className="rounded-xl border border-[#DADBD3] brand-surface p-6 sm:p-9">
           <p className="text-sm font-medium text-zinc-600">Przykład wykonanego garażu · 45 m²</p>
           <p className="mt-2 text-4xl font-semibold tracking-tight">7 500 zł <span className="text-lg">netto</span></p>
           <p className="mt-3 text-sm text-zinc-600">Przygotowanie podłoża, żywica, kratka, cokoły i uszczelnienie. Historyczna cena konkretnego zlecenia, nie cennik.</p>
           <Link href="/garaze#cena" className="mt-4 inline-block font-semibold underline underline-offset-4">Zobacz dokładny zakres</Link>
         </div>
       </section>
-      <div id="home-realizations" className="scroll-mt-28"><RelatedRealizations title="Zobacz efekty naszych prac" projects={serviceProjects} /></div>
+      <div id="home-realizations" className="scroll-mt-28"><RelatedRealizations title="Przestrzenie, które już wykonaliśmy" projects={serviceProjects} /></div>
       <SocialProofSection />
       <CustomerPhotoAnswers />
       <StoneCarpetTeaser />
@@ -62,10 +65,11 @@ export default async function Home() {
         title="Poradniki o posadzkach żywicznych"
         subtitle="Poznaj systemy epoksydowe i poliuretanowe, zasady przygotowania podłoża oraz praktyczne wskazówki dotyczące wyboru posadzki."
       />
-      <section className="brand-surface px-4 py-14 text-center">
-        <h2 className="text-3xl font-semibold tracking-tight">Dobierzmy posadzkę do Twojego obiektu</h2>
-        <p className="mx-auto mt-3 max-w-xl text-stone-600">Podaj metraż i lokalizację. Możesz wybrać wygląd lub poprosić nas o pomoc w doborze.</p>
-        <Link href="/zamow" className="mt-6 inline-block rounded-full brand-button px-7 py-3.5 font-semibold">Poproś o indywidualną wycenę</Link>
+      <section className="bg-[#273B2E] px-4 py-16 text-center text-[#F8F7F1] sm:py-24">
+        <h2 className="premium-display text-3xl font-medium sm:text-5xl">Porozmawiajmy o Twojej przestrzeni</h2>
+        <p className="mx-auto mt-4 max-w-xl text-[#E1E5DC]">Opowiedz nam, czego potrzebujesz. Podpowiemy, jakie wykończenie i rozwiązanie techniczne będzie odpowiednie, oraz przygotujemy indywidualną wycenę.</p>
+        <Link href="/zamow" className="mt-6 inline-flex min-h-12 items-center rounded-full bg-[#F8F7F1] px-7 py-3.5 font-semibold text-[#273B2E] hover:bg-white">Poproś o indywidualną wycenę</Link>
+        <p className="mt-4 text-sm text-[#E1E5DC]">Lub zadzwoń: <a href="tel:+48507384619" className="font-semibold underline underline-offset-4">507 384 619</a></p>
       </section>
     </main>
   );
