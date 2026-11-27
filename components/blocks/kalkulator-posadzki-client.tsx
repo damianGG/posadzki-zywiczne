@@ -543,7 +543,7 @@ function HelpTooltip({ content, children }: HelpTooltipProps) {
 // Funkcja konfetti
 const triggerConfetti = async () => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
-    let confetti: typeof import("canvas-confetti").default
+    let confetti: typeof import("canvas-confetti")["default"]
     try { confetti = (await import("canvas-confetti")).default } catch { return }
     const duration = 3000
     const animationEnd = Date.now() + duration
@@ -1207,7 +1207,7 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
             setIsGeneratingPDF(true)
         }
 
-        let jsPDF: typeof import("jspdf").default
+        let jsPDF: typeof import("jspdf")["default"]
         try {
             jsPDF = (await import("jspdf")).default
         } catch (error) {
