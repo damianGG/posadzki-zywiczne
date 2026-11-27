@@ -1,5 +1,5 @@
 const production = process.env.LHCI_TARGET === "production";
-const origin = production ? "https://posadzkizywiczne.com" : "http://localhost:3000";
+const origin = production ? "https://www.posadzkizywiczne.com" : "http://localhost:3000";
 const routes = ["/", "/garaze", "/posadzki-zywiczne-na-balkony", "/kamienny-dywan", "/posadzki-elektrostatyczne"];
 // Local CI has no production Neon credentials: don't score a calculator fallback as the real calculator.
 if (production) routes.push("/kalkulator?typ=garaz");
