@@ -18,6 +18,8 @@ import {
   absoluteUrl,
 } from "@/lib/site-config";
 
+// Only disable the direct GA4 tag after verifying the GTM container owns GA4 and conversion events.
+const gaManagedByGtm = process.env.GA4_MANAGED_BY_GTM === "true";
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_VERIFICATION;
 const defaultTitle = "Posadzki żywiczne | Garaże, hale i posadzki ESD";
 const homeBannerUrl = absoluteUrl("/garaz/garaz-zywica-2.jpg");
@@ -101,6 +103,7 @@ export default function RootLayout({
 
       <GoogleTagManager gtmId="GTM-5D97JCZ5" />
 
+      {!gaManagedByGtm && <>
       <Script
         id="google-analytics-script"
         strategy="afterInteractive"
@@ -118,6 +121,8 @@ export default function RootLayout({
           `,
         }}
       />
+
+      </>}
 
       <Script
         id="clarity-script"
