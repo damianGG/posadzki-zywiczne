@@ -29,11 +29,11 @@ const servicePhotos: Record<string, { src: string; alt: string; caption: string 
 export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
 
   return (
-    <section className="container mx-auto px-4 py-12 lg:py-20" aria-labelledby="services-heading">
+    <section className="container mx-auto px-4 py-14 lg:py-24" aria-labelledby="services-heading">
       <p className="brand-eyebrow">Zastosowania i realizacje</p>
-      <h2 id="services-heading" className="mt-3 scroll-mt-28 text-3xl font-semibold tracking-tight md:text-4xl">Gdzie potrzebujesz posadzki?</h2>
+      <h2 id="services-heading" className="premium-display mt-3 scroll-mt-28 text-3xl font-medium md:text-5xl">Każda przestrzeń potrzebuje innego wykończenia.</h2>
       <p className="mt-4 max-w-2xl text-muted-foreground">
-        Wybierz miejsce, w którym planujesz posadzkę. Zobacz zdjęcia, zakres wykonania i odpowiedzi na pytania o koszt oraz codzienne użytkowanie.
+        Od prywatnego garażu po wymagającą halę produkcyjną. Zobacz wykończenia, przykładowe realizacje i rozwiązania dopasowane do codziennego użytkowania.
       </p>
       {serviceGroups.map((group,index) => (
         <div key={group.title} id={index === 0 ? "home-services-private" : "home-services-business"} className="mt-10 scroll-mt-28">
@@ -53,14 +53,14 @@ export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
                   key={item.href}
                   prefetch={false}
                   href={item.href}
-                  className="group grid min-w-0 grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] overflow-hidden rounded-2xl border bg-background transition-colors hover:border-[#007A3D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:flex sm:flex-col"
+                  className="group grid min-w-0 grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] overflow-hidden rounded-xl border border-[#DEDED5] bg-white transition-colors hover:border-[#64836A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:flex sm:flex-col"
                 >
-                  {src && alt && <div className="relative min-h-32 self-stretch overflow-hidden bg-zinc-100 sm:aspect-[16/10]"><Image src={src} alt={alt} fill sizes="(min-width: 1536px) 488px, (min-width: 1280px) 402px, (min-width: 1024px) 317px, (min-width: 768px) 357px, (min-width: 640px) 293px, calc((100vw - 34px) * 0.4)" className="object-cover motion-safe:transition-transform motion-safe:group-hover:scale-[1.025]" /></div>}
-                  <div className={"flex min-w-0 flex-1 flex-col p-3 sm:p-5 " + (!src || !alt ? "col-span-2" : "")}>
-                    <h4 className="text-base font-semibold tracking-tight sm:text-lg">{item.title}</h4>
+                  {src && alt && <div className="relative min-h-32 self-stretch overflow-hidden bg-zinc-100 sm:aspect-[4/3]"><Image src={src} alt={alt} fill sizes="(min-width: 1536px) 488px, (min-width: 1280px) 402px, (min-width: 1024px) 317px, (min-width: 768px) 357px, (min-width: 640px) 293px, calc((100vw - 34px) * 0.4)" className="object-cover motion-safe:transition-transform motion-safe:group-hover:scale-[1.025]" /></div>}
+                  <div className={"flex min-w-0 flex-1 flex-col p-3 sm:p-6 " + (!src || !alt ? "col-span-2" : "")}>
+                    <h4 className="text-base font-semibold tracking-tight sm:text-xl">{item.title}</h4>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>
                     {caption && <p className="mt-2 text-xs text-zinc-600">{caption}</p>}
-                    <span className="mt-auto flex items-center justify-between gap-1 pt-3 text-sm font-semibold text-zinc-950">Zobacz szczegóły <ArrowRight className="h-4 w-4 shrink-0 text-[#007A3D]" aria-hidden="true" /></span>
+                    <span className="mt-auto flex items-center justify-between gap-1 pt-3 text-sm font-semibold text-zinc-950">Poznaj rozwiązanie <ArrowRight className="h-4 w-4 shrink-0 text-[#007A3D]" aria-hidden="true" /></span>
                   </div>
                 </Link>
               );
