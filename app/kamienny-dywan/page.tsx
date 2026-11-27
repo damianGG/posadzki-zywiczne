@@ -187,8 +187,9 @@ export default function StoneCarpetPage() {
                 alt="Schody wejściowe wykończone ciemnoszarą dekoracyjną nawierzchnią z kruszywa i żywicy"
                 fill
                 priority
-                quality={90}
-                sizes="(max-width: 1024px) 100vw, 45vw"
+                fetchPriority="high"
+                quality={80}
+                sizes="(min-width: 1280px) 500px, (min-width: 1024px) 40vw, (min-width: 570px) 530px, calc(100vw - 40px)"
                 className="object-cover object-center"
               />
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-zinc-950/85 via-zinc-950/35 to-transparent p-6 pt-28 text-white sm:p-8 sm:pt-32">
