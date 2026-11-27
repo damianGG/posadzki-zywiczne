@@ -50,7 +50,7 @@ export default function BlogPreviewSection({
                   alt={post.image.alt}
                   width={400}
                   height={300}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes={index === 0 && limit === 3 ? "(min-width: 1024px) 33vw, (min-width: 768px) calc(100vw - 32px), calc(100vw - 32px)" : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, calc(100vw - 32px)"}
                   className="w-full h-48 object-cover"
                 />
                 {showCategory && (
@@ -67,7 +67,7 @@ export default function BlogPreviewSection({
 
               <CardHeader className="pt-6">
                 <h3 className="text-xl font-bold line-clamp-2 hover:text-primary transition-colors">
-                  <Link href={`/blog/${post.id}`}>{post.title}</Link>
+                  <Link prefetch={false} href={`/blog/${post.id}`}>{post.title}</Link>
                 </h3>
               </CardHeader>
 
@@ -94,7 +94,7 @@ export default function BlogPreviewSection({
 
               <CardFooter>
                 <Button variant="link" asChild className="px-0 group">
-                  <Link href={`/blog/${post.id}`} className="flex items-center">
+                  <Link prefetch={false} href={`/blog/${post.id}`} className="flex items-center">
                     Czytaj więcej
                     <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                   </Link>
