@@ -38,7 +38,7 @@ export default async function Home() {
           <Link href="/garaze#cena" className="mt-4 inline-block font-semibold underline underline-offset-4">Zobacz dokładny zakres</Link>
         </div>
       </section>
-      <div id="home-realizations" className="scroll-mt-28"><RelatedRealizations title="Zobacz efekty naszych prac" /></div>
+      <div id="home-realizations" className="scroll-mt-28"><RelatedRealizations title="Zobacz efekty naszych prac" projects={serviceProjects} /></div>
       <SocialProofSection />
       <CustomerPhotoAnswers />
       <StoneCarpetTeaser />
@@ -50,7 +50,7 @@ export default async function Home() {
         </p>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {Object.values(localServicePages).map((page) => (
-            <Link key={page.slug} href={"/posadzki-zywiczne/" + page.slug} className="group rounded-xl border p-6 hover:border-primary">
+            <Link key={page.slug} prefetch={false} href={"/posadzki-zywiczne/" + page.slug} className="group rounded-xl border p-6 hover:border-primary">
               <h3 className="text-xl font-semibold group-hover:text-primary">Posadzki żywiczne {page.city}</h3>
               <p className="mt-2 text-sm text-muted-foreground">{page.description}</p>
             </Link>
