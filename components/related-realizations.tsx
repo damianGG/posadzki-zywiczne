@@ -8,6 +8,7 @@ interface RelatedRealizationsProps {
   city?: string
   title?: string
   limit?: number
+  projects?: Realizacja[]
 }
 
 /** Match only explicitly documented city names, not guessed travel radii. */
@@ -32,9 +33,9 @@ function isInCity(project: Realizacja, city: string): boolean {
 }
 
 export default async function RelatedRealizations({
-  category, city, title, limit = 3,
+  category, city, title, limit = 3, projects: suppliedProjects,
 }: RelatedRealizationsProps) {
-  const projects = await getAllRealizacje()
+  const projects = suppliedProjects ?? await getAllRealizacje()
   const matching = projects
     .filter(project =>
       Boolean(project.slug && project.images.main) &&
@@ -59,6 +60,7 @@ export default async function RelatedRealizations({
         {matching.map(project => (
           <Link
             key={project.slug}
+            prefetch={false}
             href={"/realizacje/" + project.slug}
             className="group overflow-hidden rounded-xl border bg-background hover:border-primary"
           >
