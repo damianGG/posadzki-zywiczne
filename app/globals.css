@@ -143,3 +143,20 @@
   :where(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid #007A3D; outline-offset: 3px; }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto !important; } }
 }
+
+/* Premium homepage: architectural palette, system typography, no extra font downloads. */
+@layer components {
+  .premium-home { background: #FCFBF8; color: #242923; }
+  .premium-hero { background: #F1EFE9; color: #242923; }
+  .premium-display { line-height: 1.07; letter-spacing: -0.045em; }
+  .premium-serif { font-family: Georgia, Cambria, "Times New Roman", serif; font-weight: 400; line-height: 1.2; }
+  .premium-primary { background: #273B2E; color: #fff; transition: background-color 160ms ease; }
+  .premium-primary:hover { background: #3B5241; color: #fff; }
+  .premium-secondary { border: 1px solid #93998B; color: #273B2E; transition: background-color 160ms ease; }
+  .premium-secondary:hover { background: #fff; }
+  .premium-home .brand-surface { background: #F1EFE9; color: #242923; }
+  .premium-home .brand-button { background: #273B2E; }
+  .premium-home .brand-button:hover { background: #3B5241; }
+  .premium-home .brand-eyebrow::before { background: linear-gradient(#64836A,#64836A) 0 0 / 22px 2px no-repeat, linear-gradient(#64836A,#64836A) 4px 5px / 18px 2px no-repeat, linear-gradient(#A6B5A0,#A6B5A0) 8px 10px / 14px 2px no-repeat; }
+  .premium-home .brand-section-heading::before { background: #64836A; }
+}
