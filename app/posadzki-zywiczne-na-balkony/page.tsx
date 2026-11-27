@@ -22,12 +22,13 @@ const faqs = [
   ["Czy żywica jest śliska na mokro?", "Gładkie wykończenie może być śliskie. Dobieramy fakturę do ekspozycji, wody i sposobu czyszczenia, a klasę antypoślizgowości potwierdzamy dokumentacją konkretnego systemu."],
   ["Czy żywica żółknie na słońcu?", "Niektóre żywice zmieniają kolor pod UV. Na zewnątrz trzeba zastosować system przeznaczony do ekspozycji na słońce i warunki atmosferyczne."],
   ["Jak długo trwa remont?", "Czas zależy od zakresu napraw, wilgotności, pogody i warunków utwardzania. Przy mokrej wylewce prace mogą wymagać przerwy na osuszenie."],
+  ["Czy dajecie gwarancję na balkony?", "Na wykonane przez nas systemy balkonowe oferujemy 10 lat gwarancji. Zakres i warunki gwarancji określamy w ofercie oraz umowie."],
   ["Żywica czy płytki?", "Żywica daje bezspoinowy wygląd, ale wymaga prawidłowego przygotowania i ochrony podłoża. Płytki mają inny sposób napraw i pielęgnacji. W obu rozwiązaniach kluczowa jest hydroizolacja."],
 ];
 const steps = [
   ["01", "Ocena stanu balkonu", "Sprawdzamy płytki, rysy, wilgotność, spadki, progi i obróbki."],
-  ["02", "Przygotowanie podłoża", "Usuwamy niestabilne warstwy, przygotowujemy mechanicznie i wykonujemy niezbędne naprawy."],
-  ["03", "Izolacja i nawierzchnia", "Dobieramy kompatybilny układ warstw do wody, nasłonecznienia i użytkowania."],
+  ["02", "Szlifowanie planetarne", "Usuwamy niestabilne warstwy, szlifujemy beton maszynami planetarnymi, odpylamy i wykonujemy niezbędne naprawy."],
+  ["03", "Grunt i warstwa żywiczna", "Dobieramy kompatybilny grunt penetrujący, kontrolujemy pory, wykonujemy detale izolacji i rozlewamy warstwę zasadniczą żywicy."],
   ["04", "Detale i odbiór", "Ustalamy wykończenie krawędzi, połączeń i dylatacji oraz termin bezpiecznego użytkowania."],
 ];
 
@@ -40,7 +41,7 @@ export default function BalconyPage() {
             <nav aria-label="Ścieżka nawigacji" className="mb-4 flex items-center gap-2 text-xs text-zinc-600"><Link href="/">Strona główna</Link><ChevronRight className="h-3 w-3" aria-hidden="true"/><span aria-current="page">Balkony i tarasy</span></nav>
             <p className="brand-eyebrow">Nawierzchnie zewnętrzne</p>
             <h1 className="mt-3 text-4xl font-semibold leading-tight tracking-tight sm:text-5xl">Posadzki żywiczne na balkony i tarasy</h1>
-            <p className="mt-4 max-w-xl text-lg leading-relaxed text-zinc-600">Zobacz nasze wykonane nawierzchnie, porównaj wygląd i sprawdź, co trzeba uwzględnić, aby remont był dopasowany do Twojego balkonu.</p>
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-zinc-600">Chroń beton przed wodą i ciesz się estetyczną nawierzchnią bez klasycznych fug. Wykonujemy żywicę na balkonach żelbetowych, prefabrykowanych i z łącznikami Isokorb. Dobieramy system do konstrukcji, podłoża i warunków użytkowania.</p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link href="#wykonczenia" className="brand-button rounded-full px-6 py-3.5 text-center font-semibold">Porównaj wykończenia</Link>
               <Link href="#cena" className="rounded-full border border-zinc-400 px-6 py-3.5 text-center font-semibold hover:bg-white">Sprawdź koszt</Link>
@@ -49,6 +50,7 @@ export default function BalconyPage() {
               <span className="flex items-center gap-2"><Droplets className="h-4 w-4 text-[#007A3D]"/> Hydroizolacja</span>
               <span className="flex items-center gap-2"><Sun className="h-4 w-4 text-[#007A3D]"/> Dobór do UV</span>
               <span className="flex items-center gap-2"><Layers3 className="h-4 w-4 text-[#007A3D]"/> Ocena podłoża</span>
+              <span className="flex items-center gap-2 font-semibold text-zinc-900"><Check className="h-4 w-4 text-[#007A3D]"/> 10 lat gwarancji na systemy balkonowe</span>
             </div>
           </div>
           <figure className="order-first lg:order-none">
@@ -124,6 +126,25 @@ export default function BalconyPage() {
         <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{steps.map(([n,title,body]) => <article key={n} className="border-t-2 border-[#00D664] pt-4"><p className="text-sm font-bold text-[#007A3D]">{n}</p><h3 className="mt-3 text-lg font-semibold">{title}</h3><p className="mt-2 text-sm leading-relaxed text-zinc-600">{body}</p></article>)}</div>
         <div className="mt-9"><RelatedSystems application="balkony" title="Systemy na balkony i tarasy"/></div>
         <p className="mt-5 text-sm text-zinc-600">Więcej o doborze technologii: <Link href="/blog/czy-posadzka-zywiczna-nadaje-sie-na-taras" className="font-semibold underline underline-offset-4">Czy posadzka żywiczna nadaje się na taras?</Link></p>
+      </section>
+      <section id="poradniki-balkonowe" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+        <p className="brand-eyebrow">Wiedza techniczna i lokalna obsługa</p>
+        <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">Żywica na balkonach – technologia i wykonawstwo w Twoim mieście</h2>
+        <p className="mt-3 max-w-3xl text-zinc-600">Sprawdź, jak zabezpieczamy beton, dobieramy żywicę i ograniczamy ryzyko pęcherzy. Przy prostych, odpowiednio przygotowanych płytach rozważamy elastyczną powłokę Sikafloor®-400 N Elastic; bardziej złożone detale wymagają doboru pełnego systemu. Na wykonane przez nas systemy balkonowe oferujemy 10 lat gwarancji na warunkach określonych w umowie.</p>
+        <div className="mt-7 grid gap-8 md:grid-cols-2">
+          <div><h3 className="text-xl font-semibold">Poradniki techniczne</h3><ul className="mt-4 space-y-3 text-sm text-zinc-700">{[
+            ["zywica-na-balkony-zelbetowe", "Żywica na balkony żelbetowe"],
+            ["zywica-na-balkony-prefabrykowane", "Żywica na balkony prefabrykowane"],
+            ["zywica-na-balkony-izokorb", "Balkony z łącznikami Isokorb"],
+            ["jaka-zywica-na-balkon-sikafloor-400-n-elastic", "Jaka żywica na balkon? Sikafloor 400 N Elastic"],
+            ["babelki-pecherze-na-zywicy-balkonowej", "Bąbelki i pęcherze na żywicy balkonowej"],
+          ].map(([slug, label]) => <li key={slug}><Link href={`/blog/${slug}`} className="font-semibold underline underline-offset-4">{label}</Link></li>)}</ul></div>
+          <div><h3 className="text-xl font-semibold">Żywica na balkony – miasta i regiony</h3><ul className="mt-4 grid gap-3 text-sm text-zinc-700 sm:grid-cols-2">{[
+            ["krakow", "Kraków"], ["rzeszow", "Rzeszów"], ["warszawa", "Warszawa"], ["lublin", "Lublin"],
+            ["mielec-stalowa-wola", "Mielec i Stalowa Wola"], ["tarnow-nowy-sacz", "Tarnów i Nowy Sącz"],
+            ["radom-plock", "Radom i Płock"], ["zamosc-chelm", "Zamość i Chełm"],
+          ].map(([slug, label]) => <li key={slug}><Link href={`/blog/zywica-na-balkony-${slug}`} className="font-semibold underline underline-offset-4">{label}</Link></li>)}</ul></div>
+        </div>
       </section>
       <section id="faq" className="scroll-mt-44 bg-muted/50 py-12 sm:py-16">
         <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr]">
