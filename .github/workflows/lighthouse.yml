@@ -1,0 +1,62 @@
+name: Lighthouse mobile
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      production:
+        description: "Audit live production (including real calculator), not this branch"
+        type: boolean
+        default: false
+permissions:
+  contents: read
+concurrency:
+  group: lighthouse-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: dvvqfkmsw
+      NEXT_TELEMETRY_DISABLED: "1"
+      LHCI_TARGET: ${{ inputs.production == true && 'production' || 'local' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: pnpm
+      - name: Install dependencies
+        if: env.LHCI_TARGET == 'local'
+        run: pnpm install --frozen-lockfile
+      - name: Build and test calculator engine
+        if: env.LHCI_TARGET == 'local'
+        run: |
+          pnpm run prebuild
+          pnpm exec next build
+      - name: Verify live calculator is not the fallback
+        if: env.LHCI_TARGET == 'production'
+        run: |
+          curl -fsSL 'https://www.posadzkizywiczne.com/kalkulator?typ=garaz' -o /tmp/calculator.html
+          if grep -q 'Kalkulator chwilowo niedostępny' /tmp/calculator.html; then
+            echo 'Production calculator unavailable; refusing to score fallback.'
+            exit 1
+          fi
+      - name: Install Lighthouse CI
+        run: npm install --global @lhci/cli@0.16.1
+      - name: Collect mobile audits (three runs per route)
+        run: lhci collect --config=./lighthouserc.cjs
+      - name: Enforce transfer budgets and report CWV targets
+        run: lhci assert --config=./lighthouserc.cjs
+      - name: Save private reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-${{ env.LHCI_TARGET }}-${{ github.run_id }}
+          path: .lighthouseci/
+          include-hidden-files: true
+          retention-days: 14

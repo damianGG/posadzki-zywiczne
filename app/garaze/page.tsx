@@ -106,7 +106,7 @@ export default async function GaragePage() {
           </div>
           <figure className="order-first lg:order-none">
             <div className="relative aspect-[16/9] overflow-hidden rounded-2xl bg-zinc-100 lg:aspect-[4/3]">
-              <Image src={heroImage} alt="Posadzka żywiczna z płatkami dekoracyjnymi RAL 7035 w garażu 30 m² w Sędziszowie Małopolskim" fill priority sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" />
+              <Image src={heroImage} alt="Posadzka żywiczna z płatkami dekoracyjnymi RAL 7035 w garażu 30 m² w Sędziszowie Małopolskim" fill priority fetchPriority="high" quality={75} sizes="(min-width: 1280px) 659px, (min-width: 1024px) 52vw, (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)" className="object-cover" />
             </div>
             <figcaption className="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-zinc-500">
               <span>Nasza realizacja · Sędziszów Małopolski · 30 m² · RAL 7035</span>

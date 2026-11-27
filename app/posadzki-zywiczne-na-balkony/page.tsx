@@ -53,7 +53,7 @@ export default function BalconyPage() {
           </div>
           <figure className="order-first lg:order-none">
             <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-zinc-200 lg:aspect-[4/3]">
-              <Image src={looks[1].src} alt={looks[1].alt} fill priority sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-bottom"/>
+              <Image src={looks[1].src} alt={looks[1].alt} fill priority fetchPriority="high" quality={75} sizes="(min-width: 1280px) 588px, (min-width: 1024px) calc((100vw - 104px) / 2), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)" className="object-cover object-bottom"/>
             </div>
             <figcaption className="mt-3 text-sm text-zinc-600">Nasza realizacja · taras w Głogowie Małopolskim</figcaption>
           </figure>

@@ -1,14 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { ExternalLink, Star } from "lucide-react";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
+import { useRef, useState } from "react";
+import { ArrowLeft, ArrowRight, ExternalLink, Star } from "lucide-react";
 import { GOOGLE_MAPS_PROFILE_URL, type GoogleReview } from "@/lib/google-reviews";
 
 function ReviewCard({ review }: { review: GoogleReview }) {
@@ -85,34 +78,37 @@ function ReviewCard({ review }: { review: GoogleReview }) {
 }
 
 export default function GoogleReviewsCarousel({ reviews }: { reviews: GoogleReview[] }) {
+  const track = useRef<HTMLDivElement>(null);
   if (!reviews.length) return null;
 
+  // Native CSS scrolling needs no startup layout measurements or resize observer.
+  function move(direction: -1 | 1) {
+    const element = track.current;
+    const first = element?.firstElementChild as HTMLElement | null;
+    if (!element || !first) return;
+    const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth";
+    const max = element.scrollWidth - element.clientWidth;
+    const current = element.scrollLeft;
+    const step = first.offsetWidth + 16;
+    const target = direction > 0 && current >= max - 2 ? 0
+      : direction < 0 && current <= 2 ? max
+      : Math.max(0, Math.min(max, current + direction * step));
+    element.scrollTo({ left: target, behavior: behavior === "instant" ? "auto" : "smooth" });
+  }
+
   return (
-    <div className="relative mx-auto w-full max-w-5xl">
-      <Carousel opts={{ align: "start", loop: reviews.length > 2 }} className="w-full">
-        <CarouselContent className="-ml-4 items-stretch pb-2">
-          {reviews.map((review) => (
-            <CarouselItem
-              key={review.id}
-              className="flex pl-4 sm:basis-[85%] md:basis-1/2 lg:basis-[46%]"
-            >
-              <ReviewCard review={review} />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        {reviews.length > 1 && (
-          <>
-            <CarouselPrevious
-              aria-label="Poprzednia opinia"
-              className="left-1 top-1/2 z-10 h-10 w-10 border-slate-200 bg-white shadow-md md:-left-5"
-            />
-            <CarouselNext
-              aria-label="Następna opinia"
-              className="right-1 top-1/2 z-10 h-10 w-10 border-slate-200 bg-white shadow-md md:-right-5"
-            />
-          </>
-        )}
-      </Carousel>
+    <div className="relative mx-auto w-full max-w-5xl" role="region" aria-label="Opinie klientów" aria-roledescription="karuzela">
+      <div ref={track} tabIndex={0} aria-label="Przewijaj opinie" className="flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto overscroll-x-contain pb-2 focus-visible:outline focus-visible:outline-2">
+        {reviews.map(review => (
+          <div key={review.id} className="flex min-w-0 shrink-0 basis-full snap-start sm:basis-[85%] md:basis-[calc(50%_-_0.5rem)] lg:basis-[46%]">
+            <ReviewCard review={review} />
+          </div>
+        ))}
+      </div>
+      {reviews.length > 1 && <>
+        <button type="button" onClick={() => move(-1)} aria-label="Poprzednia opinia" className="absolute left-1 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-slate-200 bg-white shadow-md md:-left-5"><ArrowLeft className="h-4 w-4" aria-hidden="true" /></button>
+        <button type="button" onClick={() => move(1)} aria-label="Następna opinia" className="absolute right-1 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full border border-slate-200 bg-white shadow-md md:-right-5"><ArrowRight className="h-4 w-4" aria-hidden="true" /></button>
+      </>}
     </div>
   );
 }

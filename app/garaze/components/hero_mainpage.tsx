@@ -8,7 +8,7 @@ export default function HeroMainPage({ variant = "home" }: { variant?: "home" | 
       <div className="mx-auto grid max-w-7xl items-center gap-5 px-4 py-5 sm:px-6 sm:py-10 lg:grid-cols-2 lg:gap-12 lg:py-14">
         <figure className="order-first min-w-0 lg:order-last">
           <div className="relative aspect-[16/8] overflow-hidden rounded-2xl bg-zinc-200 sm:aspect-[16/10] lg:aspect-[4/3]">
-            <Image src="/chatgpt-realizacje/posadzka-zywiczna-garaz-30m2-sedziszow-malopolski/garaz-30m2-ral7035-oryginal.jpg" alt="Jasnoszara posadzka z płatkami w garażu 30 m² w Sędziszowie Małopolskim" fill priority sizes="(max-width: 1024px) 100vw, 50vw" className="object-cover object-bottom" />
+            <Image src="/chatgpt-realizacje/posadzka-zywiczna-garaz-30m2-sedziszow-malopolski/garaz-30m2-ral7035-oryginal.jpg" alt="Jasnoszara posadzka z płatkami w garażu 30 m² w Sędziszowie Małopolskim" fill priority fetchPriority="high" quality={72} sizes="(min-width: 1280px) 592px, (min-width: 1024px) calc((100vw - 96px) / 2), (min-width: 640px) calc(100vw - 48px), calc(100vw - 32px)" className="object-cover object-bottom" />
           </div>
           <figcaption className="mt-3 text-sm text-zinc-600">
             <Link href="/realizacje/posadzka-zywiczna-garaz-30m2-sedziszow-malopolski" className="underline underline-offset-4">Nasza realizacja · Sędziszów Małopolski · 30 m²</Link>

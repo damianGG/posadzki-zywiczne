@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { Realizacja, RealizacjaCategory, RealizacjeMetadata } from '@/types/realizacje';
 import { listRealizacje, getRealizacjaBySlug as getRealizacjaBySlugFromDB, RealizacjaData } from './neon-realizacje';
 import { chatgptRealizacje } from './chatgpt-realizacje';
@@ -101,12 +102,13 @@ function mapToRealizacja(data: RealizacjaData): Realizacja {
  * Get all realizacje from Supabase database
  * This function is async and fetches from the database
  */
-export async function getAllRealizacje(): Promise<Realizacja[]> {
+export const getAllRealizacje = cache(async (): Promise<Realizacja[]> => {
   let databaseProjects: Realizacja[] = [];
   try {
     const result = await listRealizacje({
       orderBy: 'created_at',
       orderDirection: 'desc',
+      includeCount: false,
     });
 
     if (result.success && result.data) {
@@ -125,7 +127,7 @@ export async function getAllRealizacje(): Promise<Realizacja[]> {
     ...databaseProjects,
     ...chatgptRealizacje.filter(project => !existingSlugs.has(project.slug)),
   ].sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
-}
+});
 
 /**
  * Get realizacje filtered by category

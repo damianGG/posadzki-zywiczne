@@ -21,10 +21,10 @@ export default function StoneCarpetTeaser() {
         </Link>
       </div>
       <div className="grid grid-cols-[1.25fr_0.75fr] gap-3">
-        {[stairs, detail].map(photo => (
+        {[stairs, detail].map((photo, index) => (
           <figure key={photo.id} className="min-w-0">
             <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-zinc-100">
-              <Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 1024px) 50vw, 30vw" className="object-cover" />
+              <Image src={photo.src} alt={photo.alt} fill sizes={index === 0 ? "(min-width: 1280px) 360px, (min-width: 1024px) 32vw, 60vw" : "(min-width: 1280px) 216px, (min-width: 1024px) 20vw, 36vw"} className="object-cover" />
             </div>
             <figcaption className="mt-2 text-xs leading-snug text-muted-foreground">{photo.caption}</figcaption>
           </figure>

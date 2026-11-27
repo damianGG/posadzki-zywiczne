@@ -51,10 +51,11 @@ export function Feature5({ projects = [] }: { projects?: Realizacja[] }) {
               return (
                 <Link
                   key={item.href}
+                  prefetch={false}
                   href={item.href}
                   className="group grid min-w-0 grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] overflow-hidden rounded-2xl border bg-background transition-colors hover:border-[#007A3D] focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary sm:flex sm:flex-col"
                 >
-                  {src && alt && <div className="relative min-h-32 self-stretch overflow-hidden bg-zinc-100 sm:aspect-[16/10]"><Image src={src} alt={alt} fill sizes="(max-width: 640px) 40vw, (max-width: 1024px) 50vw, 33vw" className="object-cover motion-safe:transition-transform motion-safe:group-hover:scale-[1.025]" /></div>}
+                  {src && alt && <div className="relative min-h-32 self-stretch overflow-hidden bg-zinc-100 sm:aspect-[16/10]"><Image src={src} alt={alt} fill sizes="(min-width: 1536px) 488px, (min-width: 1280px) 402px, (min-width: 1024px) 317px, (min-width: 768px) 357px, (min-width: 640px) 293px, calc((100vw - 34px) * 0.4)" className="object-cover motion-safe:transition-transform motion-safe:group-hover:scale-[1.025]" /></div>}
                   <div className={"flex min-w-0 flex-1 flex-col p-3 sm:p-5 " + (!src || !alt ? "col-span-2" : "")}>
                     <h4 className="text-base font-semibold tracking-tight sm:text-lg">{item.title}</h4>
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>

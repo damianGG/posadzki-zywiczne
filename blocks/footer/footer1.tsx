@@ -63,6 +63,7 @@ export const Footer1 = () => {
                     item.items.map((subItem) => (
                       <Link
                         key={subItem.title}
+                        prefetch={false}
                         href={subItem.href}
                         className="flex justify-between items-center"
                       >

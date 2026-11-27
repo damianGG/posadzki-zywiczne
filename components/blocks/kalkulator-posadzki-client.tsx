@@ -26,10 +26,8 @@ import {
     ToggleLeft,
     ToggleRight,
 } from "lucide-react"
-import jsPDF from "jspdf"
 import Image from "next/image"
 import Link from "next/link"
-import confetti from "canvas-confetti"
 
 // Constants
 const PLACEHOLDER_IMAGE = "/placeholder.svg"
@@ -543,7 +541,10 @@ function HelpTooltip({ content, children }: HelpTooltipProps) {
 }
 
 // Funkcja konfetti
-const triggerConfetti = () => {
+const triggerConfetti = async () => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    let confetti: typeof import("canvas-confetti")["default"]
+    try { confetti = (await import("canvas-confetti")).default } catch { return }
     const duration = 3000
     const animationEnd = Date.now() + duration
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 }
@@ -1206,9 +1207,16 @@ export default function KalkulatorPosadzkiClient({ initialData, presetGarage = f
             setIsGeneratingPDF(true)
         }
 
-        // Symulacja generowania PDF
-        await new Promise((resolve) => setTimeout(resolve, 1500))
-
+        let jsPDF: typeof import("jspdf")["default"]
+        try {
+            jsPDF = (await import("jspdf")).default
+        } catch (error) {
+            console.error("PDF library load failed:", error)
+            alert("Nie udało się załadować generatora PDF. Spróbuj ponownie.")
+            setIsGeneratingPDF(false)
+            setIsSendingEmail(false)
+            return
+        }
         const doc = new jsPDF()
         const pageWidth = doc.internal.pageSize.width
         const pageHeight = doc.internal.pageSize.height
