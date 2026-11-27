@@ -100,7 +100,7 @@ export default function GoogleReviewsCarousel({ reviews }: { reviews: GoogleRevi
     <div className="relative mx-auto w-full max-w-5xl" role="region" aria-label="Opinie klientów" aria-roledescription="karuzela">
       <div ref={track} tabIndex={0} aria-label="Przewijaj opinie" className="flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto overscroll-x-contain pb-2 focus-visible:outline focus-visible:outline-2">
         {reviews.map(review => (
-          <div key={review.id} className="flex min-w-0 shrink-0 basis-full snap-start sm:basis-[85%] md:basis-[calc(50%-0.5rem)] lg:basis-[46%]">
+          <div key={review.id} className="flex min-w-0 shrink-0 basis-full snap-start sm:basis-[85%] md:basis-[calc(50%_-_0.5rem)] lg:basis-[46%]">
             <ReviewCard review={review} />
           </div>
         ))}
