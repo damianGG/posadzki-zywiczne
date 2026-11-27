@@ -37,8 +37,8 @@ export default function CustomerPhotoAnswers() {
     <section className="brand-surface py-14 sm:py-20" aria-labelledby="photo-answers-heading">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <p className="brand-eyebrow">Zanim wybierzesz</p>
-        <h2 id="photo-answers-heading" className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">Przyjrzyj się temu, o co pytają klienci.</h2>
-        <p className="mt-4 max-w-2xl text-zinc-600">Powiększ zdjęcia naszych prac. Sprawdź detale i ograniczenia, które warto poznać przed wyceną.</p>
+        <h2 id="photo-answers-heading" className="mt-3 max-w-3xl text-3xl font-semibold tracking-tight sm:text-4xl">Jakość widać w detalach.</h2>
+        <p className="mt-4 max-w-2xl text-zinc-600">Przyjrzyj się wykończeniu z bliska. To właśnie faktura, połączenia i krawędzie pokazują, jak posadzka będzie wyglądała na co dzień. Sprawdź też ograniczenia poszczególnych rozwiązań.</p>
         <div className="mt-9 grid gap-8 md:grid-cols-3">
           {answers.map(answer => (
             <article key={answer.question} className="min-w-0">
