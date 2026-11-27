@@ -35,11 +35,13 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build and test calculator engine
         if: env.LHCI_TARGET == 'local'
-        run: pnpm build
+        run: |
+          pnpm run prebuild
+          pnpm exec next build
       - name: Verify live calculator is not the fallback
         if: env.LHCI_TARGET == 'production'
         run: |
-          curl -fsSL 'https://posadzkizywiczne.com/kalkulator?typ=garaz' -o /tmp/calculator.html
+          curl -fsSL 'https://www.posadzkizywiczne.com/kalkulator?typ=garaz' -o /tmp/calculator.html
           if grep -q 'Kalkulator chwilowo niedostępny' /tmp/calculator.html; then
             echo 'Production calculator unavailable; refusing to score fallback.'
             exit 1
